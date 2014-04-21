@@ -1,3 +1,9 @@
+How to get assimp working:
+1. Get the assimp source from https://launchpad.net/ubuntu/+source/assimp
+2. go to the folder with assimp and use 
+	cmake .
+3. sudo make install
+==================================================================================
 How to get bullet (if needed)
 Go to this site https://github.com/bulletphysics/bullet3
 download the zip
@@ -6,6 +12,7 @@ in the bullet-3 master folder, run:
 	1. cmake .
 	2. sudo make install
 
+==================================================================================
 How to get git onto your computer:
 1. In the terminal call: 	
 	sudo apt-get install git-core git-gui git-doc
@@ -24,6 +31,7 @@ The two guides I used as reference here:
 	http://www.ubuntumanual.org/posts/393/how-to-setup-and-use-github-in-ubuntu
 	https://www.digitalocean.com/community/articles/how-to-install-git-on-ubuntu-12-04
 
+==================================================================================
 How to use the git gui you just got (warning: pull doesn't work yet):
 	Go to the repo you got and in the terminal run:
 		git gui
@@ -41,6 +49,7 @@ How to use the git gui you just got (warning: pull doesn't work yet):
 	To pull using the GUI (WARNING! DOESN'T WORK YET!):
 		Go under Remote->fetch from->origin (or any branch you want to fetch from)
 
+==================================================================================
 How to use git on your computer:
 	Now that you have the Repository on your computer, let's do stuff with it.
 	
@@ -69,3 +78,4 @@ How to use git on your computer:
 			Press q to escape
 		To see what is different with the stuff you are about to add/change to the repo:
 			git diff --staged
+==================================================================================
