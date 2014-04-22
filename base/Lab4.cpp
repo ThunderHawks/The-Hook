@@ -70,15 +70,6 @@ GLint h_uModelMatrix;
 GLuint NormalBuffObj;
 GLuint MeshBuffObj, MeshIndxBuffObj;
 
-float alpha = 0.0;
-float beta = -M_PI/2.0;
-float lookAtx = 0.0f;
-float lookAty = 0.0f;
-float lookAtz = 0.0f;
-glm::vec3 lookAtPoint;
-glm::vec3 eye = glm::vec3(4.0, 1.0, 4.0);
-glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-
 /* projection matrix  - do not change */
 void SetProjectionMatrix() {
    glm::mat4 Projection = glm::perspective(80.0f, (float)g_width/g_height, 0.1f, 100.f);	
@@ -88,6 +79,7 @@ void SetProjectionMatrix() {
 /* camera controls - do not change */
 void SetView() {
    glm::mat4 view = glm::lookAt(eye, lookAtPoint, up);
+   //glm::mat4 view = glm::lookAt(lookAtPoint, eye, up);
    safe_glUniformMatrix4fv(h_uViewMatrix, glm::value_ptr(view));
 }
 
@@ -99,7 +91,7 @@ void SetModelStat() {
 void SetModel(float x, float y, float z, float Sx, float Sy, float Sz, float angle) {
    glm::mat4 Trans = glm::translate( glm::mat4(1.0f), glm::vec3(x, y, z));
    glm::mat4 Scale = glm::scale(glm::mat4(1.0f), glm::vec3(Sx, Sy, Sz));
-   printf("%f %f ModelPosition\n",Sy,Sz);
+   //printf("%f %f ModelPosition\n",Sy,Sz);
    glm::mat4 Rotate = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 1.0f, 0.0f));
    glm::mat4 ctm = Trans * Rotate * Scale;
    safe_glUniformMatrix4fv(h_uModelMatrix, glm::value_ptr(ctm));
@@ -182,6 +174,11 @@ void glfwDraw (GLFWwindow *window)
    glDrawElements(GL_TRIANGLES, g_GiboLen, GL_UNSIGNED_SHORT, 0);
    safe_glDisableVertexAttribArray(h_aPosition);
 
+   //DRAW THE DANCING CYLINDER HERE!!
+   SetupCube(lookAtPoint.x, lookAtPoint.y, lookAtPoint.z, 6, 0, 0.2, 0.2, 0.2);
+   //END OF DANCING CYLINDER CODE HERE!!
+
+   //Draw Cubes
    SetupCube(3,0,6,2,45,1,1,2);
    SetupCube(3,1,6,2,45,1,.5,1);
    SetupCube(3,2,6,2,45,2,1,1);

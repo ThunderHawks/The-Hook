@@ -1,4 +1,4 @@
-extern float g_width, g_height, beta, alpha, lookAtx, lookAty, lookAtz;
+extern float g_width, g_height, beta, alpha, eyeAtx, eyeAty, eyeAtz;
 extern glm::vec3 eye, lookAtPoint, up;
 
 void glfwKeyboard(void);

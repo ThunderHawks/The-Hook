@@ -101,10 +101,10 @@ void glInitialize(GLFWwindow *window)
    glDepthFunc (GL_LEQUAL);        // The Type Of Depth Testing
    glEnable (GL_DEPTH_TEST);// Enable Depth Testing
 
-   lookAtx = cos(alpha) * cos(beta);
-   lookAty = sin(alpha);
-   lookAtz = cos(alpha) * cos(M_PI/2.0 - beta);
-   lookAtPoint = glm::vec3(lookAtx, lookAty, lookAtz);
+   eyeAtx = cos(alpha) * cos(beta);
+   eyeAty = sin(alpha);
+   eyeAtz = cos(alpha) * cos(M_PI/2.0 - beta);
+   eye = glm::vec3(eyeAtx, eyeAty, eyeAtz);
 
    ModelTrans.useModelViewMatrix();
    ModelTrans.loadIdentity();

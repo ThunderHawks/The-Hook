@@ -25,7 +25,16 @@
 
 float startX, startY;
 float endX, endY;
+float eyeAtx = 0.0f;
+float eyeAty = 0.0f;
+float eyeAtz = 0.0f;
+float alpha = 0.0;
+float beta = -M_PI/2.0;
 
+//Camera look at, eye position, up vector, and gaze, w, and u vectors
+glm::vec3 lookAtPoint = glm::vec3(4.0, 0.3, 4.0);
+glm::vec3 eye;
+glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::vec3 gaze;
 glm::vec3 w, u;
 
@@ -37,6 +46,11 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    if(xpos > g_width || xpos < 0 || ypos < 0 || ypos > g_height) {
       return;
    }
+
+   //Get rid of if unneeded
+   gaze = lookAtPoint - eye;
+   w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
+   u = glm::cross(up, w)/magnitude(glm::cross(up, w));
 
    endX = xpos;
    endY = g_height-ypos-1;
@@ -58,45 +72,34 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    }
 
    //Calculate change in Y
-   if(startY < endY && alpha <= 0.98) {
+   if(startY < endY && alpha <= 0.4) {
       diff = endY - startY;
       alpha += (diff * M_PI)/g_width;
    }
-   else if(startY > endY && alpha >= -0.98) {
+   else if(startY > endY && alpha >= -0.1) {
       diff = startY - endY;
       alpha -= (diff * M_PI)/g_width;
    }
    //Update lookAt
-   //printf("alpha: %f, beta: %f\n", alpha, beta);
-   lookAtx = 1.0 * cos(alpha) * cos(beta);
-   lookAty = 1.0 * sin(alpha);
-   lookAtz = 1.0 * cos(alpha) * cos(M_PI/2.0 - beta);
+   eyeAtx = 1.0 * cos(alpha) * cos(beta);
+   eyeAty = 1.0 * sin(alpha);
+   eyeAtz = 1.0 * cos(alpha) * cos(M_PI/2.0 - beta);
 
-   lookAtx += eye.x;
-   lookAty += eye.y;
-   lookAtz += eye.z;
+   eyeAtx += lookAtPoint.x;
+   eyeAty += lookAtPoint.y;
+   eyeAtz += lookAtPoint.z;
 
-   //printf("x: %f, y: %f, z: %f\n", lookAtx, lookAty, lookAtz);
-
-   lookAtPoint = glm::vec3(lookAtx, lookAty, lookAtz);
-
-  startX = g_width/2.0;// = endX;
-  startY = g_height/2.0-1;// endY;
+   eye = glm::vec3(eyeAtx, eyeAty, eyeAtz);
 
 
+   startX = g_width/2.0;// = endX;
+   startY = g_height/2.0-1;// endY;
 }
-
-
-
-/*void glfw(GLFWwindow *window, int button, int action, int mods) {
-   
-}*/
-
 
 //the function that is called in the main loop that will act on the keys pressed
 //that are kept track of inside of the array
 void glfwKeyboard(void) {
-  gaze = lookAtPoint - eye;
+  //gaze = lookAtPoint - eye;
 
   w = gaze/magnitude(gaze);
   w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
@@ -105,7 +108,7 @@ void glfwKeyboard(void) {
    //GLFW_KEY_S
    if(KeysPressed[0]) {
        eye = glm::vec3(eye.x + 0.1 * w.x, eye.y, eye.z + 0.1 * w.z);
-       lookAtPoint = glm::vec3(0.1 * w.x + lookAtPoint.x, lookAtPoint.y, 0.1 * w.z + lookAtPoint.z);
+       lookAtPoint = glm::vec3(lookAtPoint.x + 0.1 * w.x, lookAtPoint.y, lookAtPoint.z + 0.1 * w.z);
    }
    //GLFW_KEY_W
    if(KeysPressed[1]) {
