@@ -29,6 +29,9 @@ float endX, endY;
 glm::vec3 gaze;
 glm::vec3 w, u;
 
+//Change size to increase amount of keys input
+int KeysPressed[5] = {0, 0, 0, 0, 0};
+
 void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
 
    if(xpos > g_width || xpos < 0 || ypos < 0 || ypos > g_height) {
@@ -89,33 +92,90 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    
 }*/
 
-//the keyboard callback
-void glfwKeyPress(GLFWwindow *window, int key, int scan, int action, int mods) {
+
+//the function that is called in the main loop that will act on the keys pressed
+//that are kept track of inside of the array
+void glfwKeyboard(void) {
   gaze = lookAtPoint - eye;
 
   w = gaze/magnitude(gaze);
   w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
   u = glm::cross(up, w)/magnitude(glm::cross(up, w));
-  switch( key ) {
-    case GLFW_KEY_S:
+
+   //GLFW_KEY_S
+   if(KeysPressed[0]) {
        eye = glm::vec3(eye.x + 0.1 * w.x, eye.y, eye.z + 0.1 * w.z);
        lookAtPoint = glm::vec3(0.1 * w.x + lookAtPoint.x, lookAtPoint.y, 0.1 * w.z + lookAtPoint.z);
-      break;
-    case GLFW_KEY_W:
+   }
+   //GLFW_KEY_W
+   if(KeysPressed[1]) {
        eye = glm::vec3(eye.x - 0.1 * w.x, eye.y, eye.z - 0.1 * w.z);
        lookAtPoint = glm::vec3(lookAtPoint.x - 0.1 * w.x, lookAtPoint.y, lookAtPoint.z - 0.1 * w.z);
-      break;
-    case GLFW_KEY_D:
+   }
+   //GLFW_KEY_D
+   if(KeysPressed[2]) {
        eye = glm::vec3(eye.x + 0.1 * u.x, eye.y, eye.z + 0.1 * u.z);
        lookAtPoint = glm::vec3(lookAtPoint.x + 0.1 * u.x, lookAtPoint.y, lookAtPoint.z + 0.1 * u.z);
-      break;
-    case GLFW_KEY_A:
+   }
+   //GLFW_KEY_A
+   if(KeysPressed[3]) {
        eye = glm::vec3(eye.x - 0.1 * u.x, eye.y, eye.z - 0.1 * u.z);
        lookAtPoint = glm::vec3(lookAtPoint.x - 0.1 * u.x, lookAtPoint.y, lookAtPoint.z - 0.1 * u.z);
-      break;
-    case GLFW_KEY_Q:
+   }
+   //GLFW_KEY_Q
+   if(KeysPressed[4]) {
+      printf("Space is not implemented!\n");
+   }
+   //GLFW_KEY_SPACE
+   if(KeysPressed[5]) {
       exit( EXIT_SUCCESS );
-      break;
-  }
+   }
+}
 
+//the keyboard callback that will alter the array based on key pressed/released
+void glfwKeyPress(GLFWwindow *window, int key, int scan, int action, int mods) {
+   if(action == GLFW_PRESS) {
+      switch( key ) {
+       case GLFW_KEY_S:
+         KeysPressed[0] = 1;
+         break;
+       case GLFW_KEY_W:
+         KeysPressed[1] = 1;
+         break;
+       case GLFW_KEY_D:
+         KeysPressed[2] = 1;
+         break;
+       case GLFW_KEY_A:
+         KeysPressed[3] = 1;
+         break;
+       case GLFW_KEY_SPACE:
+         KeysPressed[4] = 1;
+         break;
+       case GLFW_KEY_Q:
+         KeysPressed[5] = 1;
+         break;
+     }
+   }   
+   else if(action == GLFW_RELEASE) {
+      switch( key ) {
+       case GLFW_KEY_S:
+         KeysPressed[0] = 0;
+         break;
+       case GLFW_KEY_W:
+         KeysPressed[1] = 0;
+         break;
+       case GLFW_KEY_D:
+         KeysPressed[2] = 0;
+         break;
+       case GLFW_KEY_A:
+         KeysPressed[3] = 0;
+         break;
+       case GLFW_KEY_SPACE:
+         KeysPressed[4] = 0;
+         break;
+       case GLFW_KEY_Q:
+         KeysPressed[5] = 0;
+         break;
+     }
+   }
 }

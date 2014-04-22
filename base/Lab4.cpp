@@ -269,13 +269,13 @@ int main( int argc, char *argv[] )
    glfwMakeContextCurrent(window);
    glfwSetWindowPos(window, 80, 80);
    glfwSetWindowSizeCallback(window, glfwWindowResize);
-      glfwSetWindowSize(window,800,800);
+   glfwSetWindowSize(window,800,800);
    g_height = g_width = 800;
    glfwSetKeyCallback(window, glfwKeyPress);
    glfwSetCursorPosCallback( window, glfwGetCursorPos );
 
    glewInit();
-   glInitialize();
+   glInitialize(window);
    physicsInit();
 
    InitGeom();
@@ -289,6 +289,8 @@ int main( int argc, char *argv[] )
       glfwDraw(window);
       //Keep the cursor centered
       glfwSetCursorPos(window,g_width/2,g_height/2);
+      //Allows movement based on the keyboard callback
+      glfwKeyboard();
       usleep(15000);
    }
 

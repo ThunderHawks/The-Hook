@@ -89,26 +89,25 @@ int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName) {
 }
 
 //Perform some initial GL setup.
-void glInitialize(void)
+void glInitialize(GLFWwindow *window)
 {
-   // TODO GL_VERSION not being set?
-  // getGLversion();
    srand(time(0));
 
-        // Start Of User Initialization
-        glClearColor (1.0f, 1.0f, 1.0f, 1.0f);                                                          
-        // Black Background
-        glClearDepth (1.0f);    // Depth Buffer Setup
-        glDepthFunc (GL_LEQUAL);        // The Type Of Depth Testing
-        glEnable (GL_DEPTH_TEST);// Enable Depth Testing
+   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
-        lookAtx = cos(alpha) * cos(beta);
-        lookAty = sin(alpha);
-        lookAtz = cos(alpha) * cos(M_PI/2.0 - beta);
-        lookAtPoint = glm::vec3(lookAtx, lookAty, lookAtz);
+   // Black Background
+   glClearColor (0.7f, 0.8f, 0.9f, 1.0f);                                                          
+   glClearDepth (1.0f);    // Depth Buffer Setup
+   glDepthFunc (GL_LEQUAL);        // The Type Of Depth Testing
+   glEnable (GL_DEPTH_TEST);// Enable Depth Testing
 
-         ModelTrans.useModelViewMatrix();
-         ModelTrans.loadIdentity();
+   lookAtx = cos(alpha) * cos(beta);
+   lookAty = sin(alpha);
+   lookAtz = cos(alpha) * cos(M_PI/2.0 - beta);
+   lookAtPoint = glm::vec3(lookAtx, lookAty, lookAtz);
+
+   ModelTrans.useModelViewMatrix();
+   ModelTrans.loadIdentity();
 
    // Install the shader.
    if (!InstallShader(textFileRead((char *)"Lab4_vert.glsl"),

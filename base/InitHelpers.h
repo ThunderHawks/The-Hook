@@ -12,4 +12,4 @@ extern GLint h_uModelMatrix;
 extern RenderingHelper ModelTrans;
 
 int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName);
-void glInitialize(void);
+void glInitialize(GLFWwindow *window);
