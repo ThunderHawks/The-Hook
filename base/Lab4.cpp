@@ -179,6 +179,15 @@ void glfwDraw (GLFWwindow *window)
    safe_glDisableVertexAttribArray(h_aPosition);
 
    //DRAW THE DANCING CYLINDER HERE!!
+   btTransform pla;
+   //physGetPlayerLocation(pla);
+   float tesX,tesY,tesZ;
+   /*tesX=tesY=tesZ=0;
+   tesX=pla.getOrigin().getX();
+   tesY=pla.getOrigin().getY();
+   tesZ=pla.getOrigin().getZ();
+   printf("%f %f %f phys loc\n",tesX, tesY, tesZ);*/
+   //SetupCube(pla.getOrigin().getX(), pla.getOrigin().getY(), pla.getOrigin().getZ(), 4, 0, 1, 1, 1);   
    SetupCube(lookAtPoint.x, lookAtPoint.y, lookAtPoint.z, 6, 0, 0.2, 0.2, 0.2);
    //END OF DANCING CYLINDER CODE HERE!!
 
@@ -193,6 +202,7 @@ void glfwDraw (GLFWwindow *window)
    for(int i = 0;i<loopable.size();i++){
       btTransform trans;
       loopable[i]->getMotionState()->getWorldTransform(trans);
+      printf("actual is %f %f %f\n",trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ());
       SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),2,0,2,2,2);
    }
 
