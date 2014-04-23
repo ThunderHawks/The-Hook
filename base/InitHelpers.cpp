@@ -6,7 +6,6 @@
 
 #define GLM_FORCE_RADIANS
 #include "GLSL_helper.h"
-#include "MStackHelp.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp" //perspective, trans etc
@@ -19,8 +18,8 @@
 #include <algorithm>
 #include <vector>
 #include <time.h>
-
 #include "InitHelpers.h"
+
 /*function to help load the shaders (both vertex and fragment */
 /* for this assignment we are doing anything interesting with the fragment sahder */
 int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName) {

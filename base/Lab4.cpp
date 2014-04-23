@@ -158,7 +158,7 @@ draws the model :D AWW YEAH!
 
 Output: YOU GET NOTHING!
 ******************************************************************************/
-void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle) {
+/*void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle) {
    SetModel(locx, locy, locz, sx, sy, sz, angle);
    safe_glEnableVertexAttribArray(h_aPosition);
    glBindBuffer(GL_ARRAY_BUFFER, mesh.PositionHandle);
@@ -169,10 +169,10 @@ void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float s
    safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
    /* draw!*/
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndexHandle);
+/*   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndexHandle);
 
    glDrawElements(GL_TRIANGLES, mesh.IndexBufferLength, GL_UNSIGNED_SHORT, 0);
-}
+}*/
 
 /* Main display function */
 void glfwDraw (GLFWwindow *window)
@@ -231,7 +231,9 @@ void glfwDraw (GLFWwindow *window)
    for(int i = 0;i<loopable.size();i++){
       btTransform trans;
       loopable[i]->getMotionState()->getWorldTransform(trans);
-      printf("actual is %f %f %f\n",trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ());
+      //printf("actual is %f %f %f\n",trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ());
+      
+if(i) PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),1,1,1,1);
       SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),2,0,2,2,2);
    }
 

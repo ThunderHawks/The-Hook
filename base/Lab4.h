@@ -8,6 +8,7 @@
 #define GLM_FORCE_RADIANS
 #include "GLSL_helper.h"
 #include "MStackHelp.h"
+#include "InitHelpers.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp" //perspective, trans etc
