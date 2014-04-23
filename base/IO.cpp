@@ -42,7 +42,7 @@ glm::vec3 gaze;
 glm::vec3 w, u;
 
 //Change size to increase amount of keys input
-int KeysPressed[6];
+int KeysPressed[255];
 
 void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
 
@@ -111,44 +111,47 @@ void glfwKeyboard(void) {
   u = glm::cross(up, w)/magnitude(glm::cross(up, w));
   //eye = glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
    //GLFW_KEY_S
-   if(KeysPressed[0]) {
+   if(KeysPressed['S']) {
        setPlayerSpeed(w.x,0,w.z);
        eye = glm::vec3(eye.x + 0.1 * w.x, eye.y, eye.z + 0.1 * w.z);
        //lookAtPoint = glm::vec3(lookAtPoint.x + 0.1 * w.x, lookAtPoint.y, lookAtPoint.z + 0.1 * w.z);
    }
    //GLFW_KEY_W
-   if(KeysPressed[1]) {
+   if(KeysPressed['W']) {
        printf("eye %f %f %f  %f\n",eye.x,eye.y,eye.z,physGetPlayerX());
        setPlayerSpeed(-w.x,0,-w.z);
        eye = glm::vec3(eye.x - 0.1 * w.x, eye.y, eye.z - 0.1 * w.z);
        //lookAtPoint = glm::vec3(lookAtPoint.x - 0.1 * w.x, lookAtPoint.y, lookAtPoint.z - 0.1 * w.z);
    }
    //GLFW_KEY_D
-   if(KeysPressed[2]) {
+   if(KeysPressed['D']) {
        setPlayerSpeed(u.x,0,u.z);
        eye = glm::vec3(eye.x + 0.1 * u.x, eye.y, eye.z + 0.1 * u.z);
        //lookAtPoint = glm::vec3(lookAtPoint.x + 0.1 * u.x, lookAtPoint.y, lookAtPoint.z + 0.1 * u.z);
    }
    //GLFW_KEY_A
-   if(KeysPressed[3]) {
+   if(KeysPressed['A']) {
         setPlayerSpeed(-u.x,0,-u.z);
        eye = glm::vec3(eye.x - 0.1 * u.x, eye.y, eye.z - 0.1 * u.z);
        //lookAtPoint = glm::vec3(lookAtPoint.x - 0.1 * u.x, lookAtPoint.y, lookAtPoint.z - 0.1 * u.z);
    }
    //GLFW_KEY_SPACE
-   if(KeysPressed[4]) {
+   if(KeysPressed[' ']) {
       setPlayerSpeed(0,2.5,0);
-      KeysPressed[4]=0;
+      KeysPressed[' ']=0;
       printf("Space is not implemented!\n");
    }
    //GLFW_KEY_Q
-   if(KeysPressed[5]) {
+   if(KeysPressed['Q']) {
       exit( EXIT_SUCCESS );
    }
-   if(KeysPressed[6]){
+   if(KeysPressed['F']){
       printf("box %f %f %f\n",gaze.x*5,gaze.y*5,gaze.z*5);
       createStaticBox(eye.x,eye.y,eye.z,1,1,1,btQuaternion(0,0,0,1),1,gaze.x*10,gaze.y*10,gaze.z*10);
-      KeysPressed[6]=0;
+      KeysPressed['F']=0;
+   }
+   if(KeysPressed['E']){
+      physGrapple(gaze.x,gaze.y,gaze.z);
    }
 }
 
@@ -157,50 +160,56 @@ void glfwKeyPress(GLFWwindow *window, int key, int scan, int action, int mods) {
    if(action == GLFW_PRESS) {
       switch( key ) {
        case GLFW_KEY_S:
-         KeysPressed[0] = 1;
+         KeysPressed['S'] = 1;
          break;
        case GLFW_KEY_W:
-         KeysPressed[1] = 1;
+         KeysPressed['W'] = 1;
          break;
        case GLFW_KEY_D:
-         KeysPressed[2] = 1;
+         KeysPressed['D'] = 1;
          break;
        case GLFW_KEY_A:
-         KeysPressed[3] = 1;
+         KeysPressed['A'] = 1;
          break;
        case GLFW_KEY_SPACE:
-         KeysPressed[4] = 1;
+         KeysPressed[' '] = 1;
          break;
        case GLFW_KEY_Q:
-         KeysPressed[5] = 1;
+         KeysPressed['Q'] = 1;
          break;
        case GLFW_KEY_F:
-         KeysPressed[6] = 1;
+         KeysPressed['F'] = 1;
+         break;
+      case GLFW_KEY_E:
+         KeysPressed['E'] = 1;
          break;
      }
    }   
    else if(action == GLFW_RELEASE) {
       switch( key ) {
        case GLFW_KEY_S:
-         KeysPressed[0] = 0;
+         KeysPressed['S'] = 0;
          break;
        case GLFW_KEY_W:
-         KeysPressed[1] = 0;
+         KeysPressed['W'] = 0;
          break;
        case GLFW_KEY_D:
-         KeysPressed[2] = 0;
+         KeysPressed['D'] = 0;
          break;
        case GLFW_KEY_A:
-         KeysPressed[3] = 0;
+         KeysPressed['A'] = 0;
          break;
        case GLFW_KEY_SPACE:
-         KeysPressed[4] = 0;
+         KeysPressed[' '] = 0;
          break;
        case GLFW_KEY_Q:
-         KeysPressed[5] = 0;
+         KeysPressed['Q'] = 0;
          break;
        case GLFW_KEY_F:
-         KeysPressed[6] = 0;
+         KeysPressed['F'] = 0;
+         break;
+       case GLFW_KEY_E:
+         KeysPressed['E'] = 0;
          break;
      }
    }

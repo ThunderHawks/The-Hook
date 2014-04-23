@@ -100,8 +100,9 @@ float physGetPlayerZ(){
    btobjes[0]->getMotionState()->getWorldTransform(trans);
    return trans.getOrigin().getZ();
 }
-void physGrapple(float x,float y,float z,float lx,float ly,float lz){
-   
+void physGrapple(float lx,float ly,float lz){
+   glm::vec3 dir = glm::normalize(glm::vec3(lx,ly,lz));
+   printf("grapple in dir %f %f %f\n",dir.x,dir.y,dir.z);
 }
 void physSetDisplayObj(btRigidBody* phys, void *obj){
    phys->setUserPointer(obj);
