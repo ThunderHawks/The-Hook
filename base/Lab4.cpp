@@ -88,7 +88,9 @@ void SetProjectionMatrix() {
 
 /* camera controls - do not change */
 void SetView() {
+   lookAtPoint.y+=4;
    glm::mat4 view = glm::lookAt(eye, lookAtPoint, up);
+   lookAtPoint.y-=4;
    //glm::mat4 view = glm::lookAt(lookAtPoint, eye, up);
    safe_glUniformMatrix4fv(h_uViewMatrix, glm::value_ptr(view));
 }
@@ -216,16 +218,16 @@ void glfwDraw (GLFWwindow *window)
    tesZ=pla.getOrigin().getZ();
    printf("%f %f %f phys loc\n",tesX, tesY, tesZ);*/
    //SetupCube(pla.getOrigin().getX(), pla.getOrigin().getY(), pla.getOrigin().getZ(), 4, 0, 1, 1, 1);   
-   PlaceModel(damesh, lookAtPoint.x, lookAtPoint.y - 1, lookAtPoint.z, .03, .05, .03, 1);
+   PlaceModel(damesh, lookAtPoint.x, lookAtPoint.y - 1, lookAtPoint.z, .25, .1, .25, 1);
    //SetupCube(lookAtPoint.x, lookAtPoint.y, lookAtPoint.z, 6, 0, 0.2, 0.2, 0.2);
    //END OF DANCING CYLINDER CODE HERE!!
 
    //Draw Cubes
-//   SetupCube(3,0,6,2,45,1,1,2);
-//   SetupCube(3,1,6,2,45,1,.5,1);
-//   SetupCube(3,2,6,2,45,2,1,1);
-   SetupCube(plsRndr().getX(),plsRndr().getY(),plsRndr().getZ(),2,60,1,1,1);
-   
+   //SetupCube(3,0,6,2,45,1,1,2);
+   //SetupCube(3,1,6,2,45,1,.5,1);
+   //SetupCube(3,2,6,2,45,2,1,1);
+   SetupCube(plsRndr().getX(),plsRndr().getY(),plsRndr().getZ(),5,60,1,1,1);
+   SetMaterial(2);
    //draw phys cubes
    vector<btRigidBody*> loopable = getVecList();
    for(int i = 0;i<loopable.size();i++){
@@ -233,7 +235,7 @@ void glfwDraw (GLFWwindow *window)
       loopable[i]->getMotionState()->getWorldTransform(trans);
       //printf("actual is %f %f %f\n",trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ());
    
-if(!i)PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY() + 1.0,trans.getOrigin().getZ(),.03*SCALE,-.05*SCALE,.03*SCALE,1);
+if(!i)PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.15*SCALE,-.05*SCALE,.15*SCALE,1);
 else  PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.1*SCALE,.1*SCALE,.1*SCALE,0);
      // SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),2,0,2,2,2);
    }

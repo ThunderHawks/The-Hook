@@ -77,11 +77,11 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    }
 
    //Calculate change in Y
-   if(startY < endY && alpha <= 0.4) {
+   if(startY < endY && alpha <= 0.8) {
       diff = endY - startY;
       alpha += (diff * M_PI)/g_width;
    }
-   else if(startY > endY && alpha >= -0.4) {
+   else if(startY > endY && alpha >= -0.1) {
       diff = startY - endY;
       alpha -= (diff * M_PI)/g_width;
    }
@@ -105,56 +105,58 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
 //that are kept track of inside of the array
 void glfwKeyboard(void) {
   //gaze = lookAtPoint - eye;
-  glm::vec3 newSpeed = glm::vec3(0, 0, 0);
-
+  glm::vec3 newSpeed = glm::vec3(0,0,0);
   w = gaze/magnitude(gaze);
   w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
   u = glm::cross(up, w)/magnitude(glm::cross(up, w));
   //eye = glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
    //GLFW_KEY_S
    if(KeysPressed['S']) {
-   	newSpeed.x += w.x;
-   	newSpeed.z += w.z;
+       setPlayerSpeed(w.x*3,0,w.z*3);
+       //newSpeed.x=newSpeed.x+w.x*3;
+       //newSpeed.z=newSpeed.z+w.z*3;
        eye = glm::vec3(eye.x + 0.1 * w.x, eye.y, eye.z + 0.1 * w.z);
        //lookAtPoint = glm::vec3(lookAtPoint.x + 0.1 * w.x, lookAtPoint.y, lookAtPoint.z + 0.1 * w.z);
    }
    //GLFW_KEY_W
    if(KeysPressed['W']) {
-   	newSpeed.x -= w.x;
-   	newSpeed.z -= w.z;
        printf("eye %f %f %f  %f\n",eye.x,eye.y,eye.z,physGetPlayerX());
+       setPlayerSpeed(-w.x*3,0,-w.z*3);
+       //newSpeed.x=newSpeed.x-w.x*3;
+       //newSpeed.z=newSpeed.z-w.z*3;
        eye = glm::vec3(eye.x - 0.1 * w.x, eye.y, eye.z - 0.1 * w.z);
        //lookAtPoint = glm::vec3(lookAtPoint.x - 0.1 * w.x, lookAtPoint.y, lookAtPoint.z - 0.1 * w.z);
    }
    //GLFW_KEY_D
    if(KeysPressed['D']) {
-   	newSpeed.x += u.x;
-   	newSpeed.z += u.z;
+       setPlayerSpeed(u.x*3,0,u.z*3);
+       //newSpeed.x=newSpeed.x+u.x*3;
+       //newSpeed.z=newSpeed.z+u.z*3;
        eye = glm::vec3(eye.x + 0.1 * u.x, eye.y, eye.z + 0.1 * u.z);
        //lookAtPoint = glm::vec3(lookAtPoint.x + 0.1 * u.x, lookAtPoint.y, lookAtPoint.z + 0.1 * u.z);
    }
    //GLFW_KEY_A
    if(KeysPressed['A']) {
-   	newSpeed.x -= u.x;
-   	newSpeed.z -= u.z;
+        setPlayerSpeed(-u.x*3,0,-u.z*3);
+       //newSpeed.x=newSpeed.x-u.x*3;
+       //newSpeed.z=newSpeed.z-u.z*3;
        eye = glm::vec3(eye.x - 0.1 * u.x, eye.y, eye.z - 0.1 * u.z);
        //lookAtPoint = glm::vec3(lookAtPoint.x - 0.1 * u.x, lookAtPoint.y, lookAtPoint.z - 0.1 * u.z);
    }
+   ///setPlayerSpeed(newSpeed.x,newSpeed.y,newSpeed.z);
    //GLFW_KEY_SPACE
-   if(KeysPressed[' ']) {
-   	newSpeed.y += 2.5;
+   if(KeysPressed[' ']&&physGetPlayerY()<1.3) {
+      setPlayerSpeed(0,4,0);
       KeysPressed[' ']=0;
       printf("Space is not implemented!\n");
    }
-   
-   setPlayerSpeed(newSpeed.x,newSpeed.y,newSpeed.z);
    //GLFW_KEY_Q
    if(KeysPressed['Q']) {
       exit( EXIT_SUCCESS );
    }
    if(KeysPressed['F']){
-      printf("box %f %f %f\n",-gaze.x*5,gaze.y*5,-gaze.z*5);
-      createStaticBox(eye.x,eye.y,eye.z,1,1,1,btQuaternion(0,0,0,1),1,gaze.x*10,gaze.y*10,gaze.z*10);
+     // printf("box %f %f %f\n",-gaze.x*5,gaze.y*5,-gaze.z*5);
+   //   createStaticBox(eye.x,eye.y,eye.z,1,1,1,btQuaternion(0,0,0,1),1,gaze.x*10,gaze.y*10,gaze.z*10);
       KeysPressed['F']=0;
    }
    if(KeysPressed['E']){
