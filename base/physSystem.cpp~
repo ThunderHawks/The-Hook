@@ -102,7 +102,16 @@ float physGetPlayerZ(){
 }
 void physGrapple(float lx,float ly,float lz){
    glm::vec3 dir = glm::normalize(glm::vec3(lx,ly,lz));
-   printf("grapple in dir %d %d %d\n",dir.x,dir.y,dir.z);
+   printf("grapple in dir %f %f %f\n",dir.x,dir.y,dir.z);
+   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAtPoint.x,lookAtPoint.y,lookAtPoint.z), btVector3(lookAtPoint.x+dir.x,lookAtPoint.y+dir.y,lookAtPoint.z+dir.z));
+   dynamicsWorld->rayTest(btVector3(lookAtPoint.x,lookAtPoint.y,lookAtPoint.z), btVector3(lookAtPoint.x+dir.x,lookAtPoint.y+dir.y,lookAtPoint.z+dir.z), RayCallback);
+   player->setLinearVelocity(btVector3(dir.z*5,dir.y*5,dir.z*5));
+   if(RayCallback.hasHit()) {
+    //End = RayCallback.m_hitPointWorld;
+    //Normal = RayCallback.m_hitNormalWorld;
+//      player->setLinearVelocity(RayCallback.m_hitNormalWorld*5);
+    // Do some clever stuff here
+   }
 }
 void physSetDisplayObj(btRigidBody* phys, void *obj){
    phys->setUserPointer(obj);
