@@ -104,6 +104,7 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
 //that are kept track of inside of the array
 void glfwKeyboard(void) {
   //gaze = lookAtPoint - eye;
+  glm::vec3 newSpeed = glm::vec3(0, 0, 0);
 
   w = gaze/magnitude(gaze);
   w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
@@ -111,34 +112,60 @@ void glfwKeyboard(void) {
   //eye = glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
    //GLFW_KEY_S
    if(KeysPressed['S']) {
+<<<<<<< HEAD
        setPlayerSpeed(w.x * 3.0,0,w.z * 3.0);
+=======
+   	newSpeed.x += w.x;
+   	newSpeed.z += w.z;
+>>>>>>> 0423568ada1a0d9827c7ee59fd5f6ad39695487f
        eye = glm::vec3(eye.x + 0.1 * w.x, eye.y, eye.z + 0.1 * w.z);
        //lookAtPoint = glm::vec3(lookAtPoint.x + 0.1 * w.x, lookAtPoint.y, lookAtPoint.z + 0.1 * w.z);
    }
    //GLFW_KEY_W
    if(KeysPressed['W']) {
+   	newSpeed.x -= w.x;
+   	newSpeed.z -= w.z;
        printf("eye %f %f %f  %f\n",eye.x,eye.y,eye.z,physGetPlayerX());
+<<<<<<< HEAD
        setPlayerSpeed(-w.x * 3.0,0,-w.z * 3.0);
+=======
+>>>>>>> 0423568ada1a0d9827c7ee59fd5f6ad39695487f
        eye = glm::vec3(eye.x - 0.1 * w.x, eye.y, eye.z - 0.1 * w.z);
        //lookAtPoint = glm::vec3(lookAtPoint.x - 0.1 * w.x, lookAtPoint.y, lookAtPoint.z - 0.1 * w.z);
    }
    //GLFW_KEY_D
    if(KeysPressed['D']) {
+<<<<<<< HEAD
        setPlayerSpeed(u.x * 3.0,0,u.z * 3.0);
+=======
+   	newSpeed.x += u.x;
+   	newSpeed.z += u.z;
+>>>>>>> 0423568ada1a0d9827c7ee59fd5f6ad39695487f
        eye = glm::vec3(eye.x + 0.1 * u.x, eye.y, eye.z + 0.1 * u.z);
        //lookAtPoint = glm::vec3(lookAtPoint.x + 0.1 * u.x, lookAtPoint.y, lookAtPoint.z + 0.1 * u.z);
    }
    //GLFW_KEY_A
    if(KeysPressed['A']) {
+<<<<<<< HEAD
         setPlayerSpeed(-u.x * 3.0,0,-u.z * 3.0);
+=======
+   	newSpeed.x -= u.x;
+   	newSpeed.z -= u.z;
+>>>>>>> 0423568ada1a0d9827c7ee59fd5f6ad39695487f
        eye = glm::vec3(eye.x - 0.1 * u.x, eye.y, eye.z - 0.1 * u.z);
        //lookAtPoint = glm::vec3(lookAtPoint.x - 0.1 * u.x, lookAtPoint.y, lookAtPoint.z - 0.1 * u.z);
    }
    //GLFW_KEY_SPACE
    if(KeysPressed[' ']) {
+<<<<<<< HEAD
       setPlayerSpeed(0, 4,0);
+=======
+   	newSpeed.y += 2.5;
+>>>>>>> 0423568ada1a0d9827c7ee59fd5f6ad39695487f
       KeysPressed[' ']=0;
    }
+   
+   setPlayerSpeed(newSpeed.x,newSpeed.y,newSpeed.z);
    //GLFW_KEY_Q
    if(KeysPressed['Q']) {
       exit( EXIT_SUCCESS );
