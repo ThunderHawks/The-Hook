@@ -11,4 +11,5 @@ void physStep();
 float physGetPlayerX();
 float physGetPlayerY();
 float physGetPlayerZ();
+void physSetDisplayObj(btRigidBody* phys, void* obj);
 void setPlayerSpeed(float x,float y,float z);

@@ -1,1 +1,1 @@
-void loadLevel();
+void loadLevel(Mesh *obj);
