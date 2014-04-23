@@ -53,7 +53,9 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    //Get rid of if unneeded
    gaze = lookAtPoint - eye;
    w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
+   w = glm::normalize(w);
    u = glm::cross(up, w)/magnitude(glm::cross(up, w));
+   u = glm::normalize(u);
 
    endX = xpos;
    endY = g_height-ypos-1;
@@ -84,9 +86,9 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
       alpha -= (diff * M_PI)/g_width;
    }
    //Update lookAt
-   eyeAtx = 1.0 * cos(alpha) * cos(beta);
-   eyeAty = 1.0 * sin(alpha);
-   eyeAtz = 1.0 * cos(alpha) * cos(M_PI/2.0 - beta);
+   eyeAtx = 3.0 * cos(alpha) * cos(beta);
+   eyeAty = 3.0 * sin(alpha);
+   eyeAtz = 3.0 * cos(alpha) * cos(M_PI/2.0 - beta);
 
    eyeAtx += lookAtPoint.x;
    eyeAty += lookAtPoint.y;
@@ -110,34 +112,36 @@ void glfwKeyboard(void) {
   //eye = glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
    //GLFW_KEY_S
    if(KeysPressed[0]) {
-       setPlayerSpeed(10*w.x,0,10*w.z);
+       setPlayerSpeed(w.x,0,w.z);
        eye = glm::vec3(eye.x + 0.1 * w.x, eye.y, eye.z + 0.1 * w.z);
-       lookAtPoint = glm::vec3(lookAtPoint.x + 0.1 * w.x, lookAtPoint.y, lookAtPoint.z + 0.1 * w.z);
+       //lookAtPoint = glm::vec3(lookAtPoint.x + 0.1 * w.x, lookAtPoint.y, lookAtPoint.z + 0.1 * w.z);
    }
    //GLFW_KEY_W
    if(KeysPressed[1]) {
        printf("eye %f %f %f  %f\n",eye.x,eye.y,eye.z,physGetPlayerX());
-       setPlayerSpeed(10*-w.x,0,10*-w.z);
+       setPlayerSpeed(-w.x,0,-w.z);
        eye = glm::vec3(eye.x - 0.1 * w.x, eye.y, eye.z - 0.1 * w.z);
-       lookAtPoint = glm::vec3(lookAtPoint.x - 0.1 * w.x, lookAtPoint.y, lookAtPoint.z - 0.1 * w.z);
+       //lookAtPoint = glm::vec3(lookAtPoint.x - 0.1 * w.x, lookAtPoint.y, lookAtPoint.z - 0.1 * w.z);
    }
    //GLFW_KEY_D
    if(KeysPressed[2]) {
-       setPlayerSpeed(10*u.x,0,10*u.z);
+       setPlayerSpeed(u.x,0,u.z);
        eye = glm::vec3(eye.x + 0.1 * u.x, eye.y, eye.z + 0.1 * u.z);
-       lookAtPoint = glm::vec3(lookAtPoint.x + 0.1 * u.x, lookAtPoint.y, lookAtPoint.z + 0.1 * u.z);
+       //lookAtPoint = glm::vec3(lookAtPoint.x + 0.1 * u.x, lookAtPoint.y, lookAtPoint.z + 0.1 * u.z);
    }
    //GLFW_KEY_A
    if(KeysPressed[3]) {
-        setPlayerSpeed(10*-u.x,0,10*-u.z);
+        setPlayerSpeed(-u.x,0,-u.z);
        eye = glm::vec3(eye.x - 0.1 * u.x, eye.y, eye.z - 0.1 * u.z);
-       lookAtPoint = glm::vec3(lookAtPoint.x - 0.1 * u.x, lookAtPoint.y, lookAtPoint.z - 0.1 * u.z);
-   }
-   //GLFW_KEY_Q
-   if(KeysPressed[4]) {
-      printf("Space is not implemented!\n");
+       //lookAtPoint = glm::vec3(lookAtPoint.x - 0.1 * u.x, lookAtPoint.y, lookAtPoint.z - 0.1 * u.z);
    }
    //GLFW_KEY_SPACE
+   if(KeysPressed[4]) {
+      setPlayerSpeed(0,5,0);
+      KeysPressed[4]=0;
+      printf("Space is not implemented!\n");
+   }
+   //GLFW_KEY_Q
    if(KeysPressed[5]) {
       exit( EXIT_SUCCESS );
    }
