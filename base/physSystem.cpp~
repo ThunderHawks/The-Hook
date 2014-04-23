@@ -63,7 +63,7 @@ void physicsInit() {
 //   printf("%d is pl point\n",player);
    player = createStaticBox(1,1,1,1,1,1,btQuaternion(0,0,0,1),1,0,0,0);
    player->setSleepingThresholds (0, 0);
-   chara = LoadMesh("../assets/tempChar.obj");
+   chara = LoadMesh("../Assets/tempCharv2.obj");
    physSetDisplayObj(player,&chara);
    
   // printf("%d is pl point\n",player);
