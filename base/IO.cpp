@@ -151,7 +151,7 @@ void glfwKeyboard(void) {
       KeysPressed['F']=0;
    }
    if(KeysPressed['E']){
-      physGrapple(w.x,w.y,w.z);
+      physGrapple(gaze.x,gaze.y,w.z);
    }
 }
 
