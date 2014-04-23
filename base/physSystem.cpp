@@ -7,6 +7,7 @@
 #include "Helper.h"
 #include "IO.h"
 #include "Shapes.h"
+#include "Mesh.h"
 #include "physSystem.h"
 #include <vector>
 
@@ -18,7 +19,7 @@ btRigidBody* groundRigidBody;
 btRigidBody* player;
 btDiscreteDynamicsWorld* dynamicsWorld;
 vector<btRigidBody*> btobjes;
-
+Mesh chara;
 vector<btRigidBody*> getVecList(){
    return btobjes;
 }
@@ -62,6 +63,9 @@ void physicsInit() {
 //   printf("%d is pl point\n",player);
    player = createStaticBox(1,1,1,1,1,1,btQuaternion(0,0,0,1),1,0,0,0);
    player->setSleepingThresholds (0, 0);
+   chara = LoadMesh("../Assets/tempChar.obj");
+   physSetDisplayObj(player,&chara);
+   
   // printf("%d is pl point\n",player);
    
 }
