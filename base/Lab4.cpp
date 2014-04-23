@@ -358,9 +358,7 @@ int main( int argc, char *argv[] )
    physicsInit();
    InitGeom();
 
-	//merp REMOVE LATER
-	damesh = LoadMesh("../Assets/streetlight.obj");
-   loadLevel(&damesh);
+   loadLevel();
 
    // Start the main execution loop.
    while (!glfwWindowShouldClose(window)) {
