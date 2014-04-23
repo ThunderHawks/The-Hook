@@ -15,3 +15,4 @@ float physGetPlayerZ();
 void physSetDisplayObj(btRigidBody* phys, void* obj);
 void setPlayerSpeed(float x,float y,float z);
 btVector3 plsRndr();
+void physGrapplePoint();

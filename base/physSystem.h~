@@ -14,4 +14,4 @@ float physGetPlayerY();
 float physGetPlayerZ();
 void physSetDisplayObj(btRigidBody* phys, void* obj);
 void setPlayerSpeed(float x,float y,float z);
-glm::vec3 plsRndr();
+btVector3 plsRndr();

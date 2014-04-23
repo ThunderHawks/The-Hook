@@ -120,13 +120,20 @@ void physGrapple(float lx,float ly,float lz){
     //End = RayCallback.m_hitPointWorld;
     //Normal = RayCallback.m_hitNormalWorld;
       printf("hit!\n");
-      btVector3 go=RayCallback.m_hitNormalWorld*5+player->getLinearVelocity();
+      btVector3 go=RayCallback.m_hitNormalWorld*-5+player->getLinearVelocity();
       if (go.length()>10)(go/go.length())*10;
       player->setLinearVelocity(go);
       printf("%f %f %f on hit norm",RayCallback.m_hitNormalWorld.getX(),RayCallback.m_hitNormalWorld.getY(),RayCallback.m_hitNormalWorld.getZ());
       tmp = RayCallback.m_hitPointWorld;
     // Do some clever stuff here
    }
+}
+void physGrapplePoint(){
+   glm::vec3 at = glm::vec3(lookAtPoint.x,lookAtPoint.y,lookAtPoint.z);
+   glm::vec3 targ = glm::vec3(tmp.getX(),tmp.getY(),tmp.getZ());
+   targ-=at;
+   targ/glm::magnitude(targ);
+   player->setLinearVelocity(btVector3(targ.x,targ.y,targ.z));
 }
 void physSetDisplayObj(btRigidBody* phys, void *obj){
    phys->setUserPointer(obj);

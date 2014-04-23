@@ -160,7 +160,12 @@ void glfwKeyboard(void) {
       KeysPressed['F']=0;
    }
    if(KeysPressed['E']){
-      physGrapple(w.x,w.y,w.z);
+   
+      if(KeysPressed['E']==1){
+         physGrapple(w.x,w.y,w.z);
+         KeysPressed['E']=2;
+      }
+      else physGrapplePoint();
    }
 }
 
@@ -190,7 +195,8 @@ void glfwKeyPress(GLFWwindow *window, int key, int scan, int action, int mods) {
          KeysPressed['F'] = 1;
          break;
       case GLFW_KEY_E:
-         KeysPressed['E'] = 1;
+         if(!KeysPressed['E'])
+            KeysPressed['E'] = 1;
          break;
      }
    }   

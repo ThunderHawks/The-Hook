@@ -128,6 +128,13 @@ void physGrapple(float lx,float ly,float lz){
     // Do some clever stuff here
    }
 }
+void physGrapplePoint(){
+   glm::vec3 at = glm::vec3(lookAtPoint.x,lookAtPoint.y,lookAtPoint.z);
+   glm::vec3 targ = glm::vec3(tmp.getX(),tmp.getY(),tmp.getZ());
+   targ-=at;
+   targ*=5;
+   player->setLinearVelocity(btVector3(targ.x,targ.y,targ.z));
+}
 void physSetDisplayObj(btRigidBody* phys, void *obj){
    phys->setUserPointer(obj);
 }
