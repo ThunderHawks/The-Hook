@@ -1,0 +1,16 @@
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
+#include <stdlib.h>
+#include <stdio.h>
+
+#include <list>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+
+#include "mesh_loader.h"
+#include "GeometryCreator.h"
+
+void PlaceModel(Mesh damesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle);
+Mesh LoadMesh(char *file);
