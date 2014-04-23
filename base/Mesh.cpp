@@ -38,3 +38,30 @@ Mesh LoadMesh(std::string file) {
 	return ret;
 }
 
+/*******************************************************************************
+Input: takes in a Mesh, and everything you would ever want to do to it. The angle is rotation around the y axis
+
+draws the model :D AWW YEAH!
+
+Output: YOU GET NOTHING!
+******************************************************************************/
+void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle) {
+   SetModel(locx, locy, locz, sx, sy, sz, angle);
+   //safe_glEnableVertexAttribArray(h_aPosition);
+   glEnableVertexAttribArray(h_aPosition);
+   glBindBuffer(GL_ARRAY_BUFFER, mesh.PositionHandle);
+   //safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+   glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+   //safe_glEnableVertexAttribArray(h_aNormal);
+   glEnableVertexAttribArray(h_aNormal);
+   glBindBuffer(GL_ARRAY_BUFFER, mesh.NormalHandle);
+   //safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+   glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+   /* draw!*/
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndexHandle);
+
+   glDrawElements(GL_TRIANGLES, mesh.IndexBufferLength, GL_UNSIGNED_SHORT, 0);
+}
+

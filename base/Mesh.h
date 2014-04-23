@@ -26,6 +26,7 @@
 
 #include "glm/glm.hpp"
 #include "mesh_loader.h"
+#include "InitHelpers.h"
 #include <vector>
 #include <string>
 

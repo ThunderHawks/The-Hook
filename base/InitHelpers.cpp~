@@ -6,7 +6,7 @@
 
 #define GLM_FORCE_RADIANS
 #include "GLSL_helper.h"
-#include "MStackHelp.h"
+//#include "MStackHelp.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp" //perspective, trans etc
@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <vector>
 #include <time.h>
+#include "InitHelpers.h"
 
 /*function to help load the shaders (both vertex and fragment */
 /* for this assignment we are doing anything interesting with the fragment sahder */
@@ -87,28 +88,26 @@ int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName) {
    return 1;
 }
 
-
 //Perform some initial GL setup.
-void glInitialize(void)
+void glInitialize(GLFWwindow *window)
 {
-   // TODO GL_VERSION not being set?
-  // getGLversion();
    srand(time(0));
 
-        // Start Of User Initialization
-        glClearColor (1.0f, 1.0f, 1.0f, 1.0f);                                                          
-        // Black Background
-        glClearDepth (1.0f);    // Depth Buffer Setup
-        glDepthFunc (GL_LEQUAL);        // The Type Of Depth Testing
-        glEnable (GL_DEPTH_TEST);// Enable Depth Testing
+   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
-        lookAtx = cos(alpha) * cos(beta);
-        lookAty = sin(alpha);
-        lookAtz = cos(alpha) * cos(M_PI/2.0 - beta);
-        lookAtPoint = glm::vec3(lookAtx, lookAty, lookAtz);
+   // Black Background
+   glClearColor (0.7f, 0.8f, 0.9f, 1.0f);                                                          
+   glClearDepth (1.0f);    // Depth Buffer Setup
+   glDepthFunc (GL_LEQUAL);        // The Type Of Depth Testing
+   glEnable (GL_DEPTH_TEST);// Enable Depth Testing
 
-         ModelTrans.useModelViewMatrix();
-         ModelTrans.loadIdentity();
+   eyeAtx = cos(alpha) * cos(beta);
+   eyeAty = sin(alpha);
+   eyeAtz = cos(alpha) * cos(M_PI/2.0 - beta);
+   eye = glm::vec3(eyeAtx, eyeAty, eyeAtz);
+
+   ModelTrans.useModelViewMatrix();
+   ModelTrans.loadIdentity();
 
    // Install the shader.
    if (!InstallShader(textFileRead((char *)"Lab4_vert.glsl"),
@@ -116,6 +115,7 @@ void glInitialize(void)
       std::cout << "Error installing shader!" << std::endl;
       exit(EXIT_FAILURE);
    }
+   glCullFace(GL_BACK);
 
 //   initTextures();
 }
