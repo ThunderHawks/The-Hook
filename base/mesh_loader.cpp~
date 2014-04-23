@@ -40,5 +40,5 @@ AssimpMesh loadMesh(const std::string& path) {
              mesh.mFaces[i].mIndices + kNumAxes);
     }
 
-    return ret;
+    return std::move(ret);
 }

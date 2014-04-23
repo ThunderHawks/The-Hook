@@ -9,6 +9,8 @@
  *
  *****************************************************************************/
 #include "Lab4.h"
+#include "GeometryCreator.h"
+#include "mesh_loader.h"
 #include "InitHelpers.h"
 #include "Helper.h"
 #include "IO.h"
@@ -74,6 +76,8 @@ int g_MiboLen;
 GLint h_uModelMatrix;
 GLuint NormalBuffObj;
 GLuint MeshBuffObj, MeshIndxBuffObj;
+//The assimp mesh stuff
+Mesh damesh;
 
 /* projection matrix  - do not change */
 void SetProjectionMatrix() {
@@ -121,6 +125,42 @@ void DrawShadow(float x, float z, float Sx, float Sy, float Sz, float angle) {
    /* Disable the attributes used by our shader*/
    safe_glDisableVertexAttribArray(h_aPosition);
    safe_glDisableVertexAttribArray(h_aNormal);
+}
+/*******************************************************************************
+Input: takes in the path of to the model you want 
+
+Uses Assimp to convert models into useable stuff
+
+Output: a Mesh of the model you want
+******************************************************************************/
+Mesh LoadMesh(std::string file) {
+	AssimpMesh AssimpModel = loadMesh(file);
+	Mesh ret = Mesh(AssimpModel.vertex_array, AssimpModel.normal_array, AssimpModel.index_array);
+	
+	return ret;
+}
+
+/*******************************************************************************
+Input: takes in a Mesh, and everything you would ever want to do to it. The angle is rotation around the y axis
+
+draws the model :D AWW YEAH!
+
+Output: YOU GET NOTHING!
+******************************************************************************/
+void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle) {
+   SetModel(locx, locy, locz, sx, sy, sz, angle);
+   safe_glEnableVertexAttribArray(h_aPosition);
+   glBindBuffer(GL_ARRAY_BUFFER, mesh.PositionHandle);
+   safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+   safe_glEnableVertexAttribArray(h_aNormal);
+   glBindBuffer(GL_ARRAY_BUFFER, mesh.NormalHandle);
+   safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+   /* draw!*/
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndexHandle);
+
+   glDrawElements(GL_TRIANGLES, mesh.IndexBufferLength, GL_UNSIGNED_SHORT, 0);
 }
 
 void SetupCube(float x, float y, float z, int material, float angle, float scaleX, float scaleY, float scaleZ) {
@@ -188,7 +228,8 @@ void glfwDraw (GLFWwindow *window)
    tesZ=pla.getOrigin().getZ();
    printf("%f %f %f phys loc\n",tesX, tesY, tesZ);*/
    //SetupCube(pla.getOrigin().getX(), pla.getOrigin().getY(), pla.getOrigin().getZ(), 4, 0, 1, 1, 1);   
-   SetupCube(lookAtPoint.x, lookAtPoint.y, lookAtPoint.z, 6, 0, 0.2, 0.2, 0.2);
+   PlaceModel(damesh, lookAtPoint.x, lookAtPoint.y - 1, lookAtPoint.z, .25, .1, .25, 1);
+   //SetupCube(lookAtPoint.x, lookAtPoint.y, lookAtPoint.z, 6, 0, 0.2, 0.2, 0.2);
    //END OF DANCING CYLINDER CODE HERE!!
 
    //Draw Cubes
@@ -327,6 +368,9 @@ int main( int argc, char *argv[] )
    physicsInit();
 
    InitGeom();
+
+	//merp REMOVE LATER
+	damesh = LoadMesh("../Assets/streetlight.obj");
 
    // Start the main execution loop.
    while (!glfwWindowShouldClose(window)) {
