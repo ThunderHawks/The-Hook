@@ -7,6 +7,7 @@
 #include "Helper.h"
 #include "IO.h"
 #include "Shapes.h"
+#include "Mesh.h"
 #include "physSystem.h"
 #include <vector>
 
@@ -18,7 +19,7 @@ btRigidBody* groundRigidBody;
 btRigidBody* player;
 btDiscreteDynamicsWorld* dynamicsWorld;
 vector<btRigidBody*> btobjes;
-
+Mesh chara;
 vector<btRigidBody*> getVecList(){
    return btobjes;
 }
@@ -62,6 +63,9 @@ void physicsInit() {
 //   printf("%d is pl point\n",player);
    player = createStaticBox(1,1,1,1,1,1,btQuaternion(0,0,0,1),1,0,0,0);
    player->setSleepingThresholds (0, 0);
+   chara = LoadMesh("../assets/tempChar.obj");
+   physSetDisplayObj(player,&chara);
+   
   // printf("%d is pl point\n",player);
    
 }
@@ -101,22 +105,26 @@ float physGetPlayerZ(){
    return trans.getOrigin().getZ();
 }
 glm::vec3 dir;
+btVector3 tmp;
 void physGrapple(float lx,float ly,float lz){
    dir = glm::normalize(glm::vec3(-lx,ly,-lz));
    printf("grapple in dir %f %f %f\n",dir.x,dir.y,dir.z);
    printf("looks at is %f %f %f\n",lookAtPoint.x,lookAtPoint.y,lookAtPoint.z);
-   
-   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAtPoint.x+.0*dir.x,lookAtPoint.y-.0*dir.y,lookAtPoint.z+.0*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z));
+   /*   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAtPoint.x+.0*dir.x,lookAtPoint.y-.0*dir.y,lookAtPoint.z+.0*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z));
    dynamicsWorld->rayTest(btVector3(lookAtPoint.x+.0*dir.x,lookAtPoint.y-.0*dir.y,lookAtPoint.z+.0*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z), RayCallback);
+*/
+   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAtPoint.x+1*dir.x,lookAtPoint.y+1*dir.y+1,lookAtPoint.z+1*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y+50*dir.y,lookAtPoint.z+50*dir.z));
+   dynamicsWorld->rayTest(btVector3(lookAtPoint.x+1*dir.x,lookAtPoint.y+1*dir.y+1,lookAtPoint.z+1*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y+50*dir.y,lookAtPoint.z+50*dir.z), RayCallback);
    //player->setLinearVelocity(btVector3(dir.x*50,dir.y*50,dir.z*50));
    if(RayCallback.hasHit()) {
     //End = RayCallback.m_hitPointWorld;
     //Normal = RayCallback.m_hitNormalWorld;
       printf("hit!\n");
       btVector3 go=RayCallback.m_hitNormalWorld*-5+player->getLinearVelocity();
-      if (go.length()>20)(go/go.length())*20;
+      if (go.length()>10)(go/go.length())*10;
       player->setLinearVelocity(go);
       printf("%f %f %f on hit norm",RayCallback.m_hitNormalWorld.getX(),RayCallback.m_hitNormalWorld.getY(),RayCallback.m_hitNormalWorld.getZ());
+      tmp = RayCallback.m_hitPointWorld;
     // Do some clever stuff here
    }
 }
@@ -124,7 +132,8 @@ void physSetDisplayObj(btRigidBody* phys, void *obj){
    phys->setUserPointer(obj);
 }
 btVector3 plsRndr(){
-   return btVector3(lookAtPoint.x+3*dir.x,lookAtPoint.y-3*dir.y,lookAtPoint.z+3*dir.z);
+   return tmp;
+   //return btVector3(lookAtPoint.x+3*dir.x,lookAtPoint.y-3*dir.y,lookAtPoint.z+3*dir.z);
 }
 void physStep(){
    //player->getX();
