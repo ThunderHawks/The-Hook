@@ -20,8 +20,11 @@
 #include <vector>
 #include <time.h>
 
+//#include "*.h"
+
 #include "Helper.h"
 #include "IO.h"
+#include "physSystem.h"
 
 float startX, startY;
 float endX, endY;
@@ -39,7 +42,7 @@ glm::vec3 gaze;
 glm::vec3 w, u;
 
 //Change size to increase amount of keys input
-int KeysPressed[5] = {0, 0, 0, 0, 0};
+int KeysPressed[6];
 
 void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
 
@@ -133,6 +136,11 @@ void glfwKeyboard(void) {
    if(KeysPressed[5]) {
       exit( EXIT_SUCCESS );
    }
+   if(KeysPressed[6]){
+      printf("box %f %f %f\n",gaze.x*5,gaze.y*5,gaze.z*5);
+      createStaticBox(eye.x,eye.y,eye.z,1,1,1,btQuaternion(0,0,0,1),1,gaze.x*10,gaze.y*10,gaze.z*10);
+      KeysPressed[6]=0;
+   }
 }
 
 //the keyboard callback that will alter the array based on key pressed/released
@@ -157,6 +165,9 @@ void glfwKeyPress(GLFWwindow *window, int key, int scan, int action, int mods) {
        case GLFW_KEY_Q:
          KeysPressed[5] = 1;
          break;
+       case GLFW_KEY_F:
+         KeysPressed[6] = 1;
+         break;
      }
    }   
    else if(action == GLFW_RELEASE) {
@@ -178,6 +189,9 @@ void glfwKeyPress(GLFWwindow *window, int key, int scan, int action, int mods) {
          break;
        case GLFW_KEY_Q:
          KeysPressed[5] = 0;
+         break;
+       case GLFW_KEY_F:
+         KeysPressed[6] = 0;
          break;
      }
    }

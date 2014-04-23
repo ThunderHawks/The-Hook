@@ -12,7 +12,9 @@
 #include "InitHelpers.h"
 #include "Helper.h"
 #include "IO.h"
+#include "physSystem.h"
 #include "Shapes.h"
+#include <vector>
 
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
@@ -29,11 +31,14 @@ int shade = 1;
 int ShadeProg;
 
 //phys//
+/*
 btRigidBody* groundRigidBody;
 btRigidBody* fallRigidBody;
 btRigidBody* fallRigidBodyb;
+btRigidBody* FRBbuilding;
 btDiscreteDynamicsWorld* dynamicsWorld;
-
+vector<btRigidBody> objectVectorList;// = new vector<btRigidBody>();
+*/
 //Handles to the shader data
 GLint h_aPosition, h_aNormal, h_uViewMatrix, h_uProjMatrix;
 GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj;
@@ -138,7 +143,7 @@ void SetupCube(float x, float y, float z, int material, float angle, float scale
    /* Disable the attributes used by our shader*/
    safe_glDisableVertexAttribArray(h_aPosition);
    safe_glDisableVertexAttribArray(h_aNormal);
-   DrawShadow(x, z + 0.6, scaleX, scaleY, scaleZ + 0.4, angle);
+//   DrawShadow(x, z + 0.6, scaleX, scaleY, scaleZ + 0.4, angle);
 }
 
 /* Main display function */
@@ -147,7 +152,6 @@ void glfwDraw (GLFWwindow *window)
    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    /*Start our shader      */
    glUseProgram(ShadeProg);
-
    SetProjectionMatrix();
    SetView();
 
@@ -183,41 +187,53 @@ void glfwDraw (GLFWwindow *window)
    SetupCube(3,1,6,2,45,1,.5,1);
    SetupCube(3,2,6,2,45,2,1,1);
    SetupCube(3,3,6,2,60,1,1,1);
+   
+   //draw phys cubes
+   vector<btRigidBody*> loopable = getVecList();
+   for(int i = 0;i<loopable.size();i++){
+      btTransform trans;
+      loopable[i]->getMotionState()->getWorldTransform(trans);
+      SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),2,0,2,2,2);
+   }
 
    ///render spherse
+/*
    btTransform trans;
    fallRigidBody->getMotionState()->getWorldTransform(trans);
    std::cout << "sphere height: " << trans.getOrigin().getY() << " sphere x:"<<trans.getOrigin().getX()<< " sphere z:"<< trans.getOrigin().getZ() <<std::endl;
    SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),2,60,2,2,2);
    fallRigidBodyb->getMotionState()->getWorldTransform(trans);
    SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),2,60,2,2,2);
-
+   FRBbuilding->getMotionState()->getWorldTransform(trans);
+   SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),3,0,2,2,2);
+*/
    //Disable the shader
    glUseProgram(0);	
    glfwSwapBuffers(window);
 
 }
-
+/*
 void physicsInit() {
+   objectVectorList = vector<btRigidBody>();
    btBroadphaseInterface* broadphase = new btDbvtBroadphase();
    btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
    btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
    btGImpactCollisionAlgorithm::registerAlgorithm(dispatcher);
    btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
-   /*btDiscreteDynamicsWorld* */dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,broadphase,solver,collisionConfiguration);
+   /*btDiscreteDynamicsWorld* * /dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,broadphase,solver,collisionConfiguration);
    dynamicsWorld->setGravity(btVector3(0,-10,0));
 
    //shapes
    btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0,1,0),1);//1m up (y=1)
    btCollisionShape* fallShape = new btSphereShape(1);
    btCollisionShape* fallShapeb = new btSphereShape(1);
+   btCollisionShape* fallShapeBox = new btBoxShape(btVector3(1,1,1));
 
    //ground   
    btDefaultMotionState* groundMotionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,-1,0)));//-1m (y=1-1=0)
 
-   btRigidBody::btRigidBodyConstructionInfo
-   groundRigidBodyCI(0,groundMotionState,groundShape,btVector3(0,0,0));//zeros give infinite mass
-   /*btRigidBody**/ groundRigidBody = new btRigidBody(groundRigidBodyCI);
+   btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0,groundMotionState,groundShape,btVector3(0,0,0));//zeros give infinite mass
+   /*btRigidBody** / groundRigidBody = new btRigidBody(groundRigidBodyCI);
 
    dynamicsWorld->addRigidBody(groundRigidBody);
    
@@ -228,7 +244,7 @@ void physicsInit() {
    fallShape->calculateLocalInertia(mass,fallInertia);//i duknow
 
    btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCI(mass,fallMotionState,fallShape,fallInertia);
-/*   btRigidBody**/ fallRigidBody = new btRigidBody(fallRigidBodyCI);
+/*   btRigidBody** / fallRigidBody = new btRigidBody(fallRigidBodyCI);
 
    dynamicsWorld->addRigidBody(fallRigidBody);
 
@@ -239,11 +255,36 @@ void physicsInit() {
    fallShapeb->calculateLocalInertia(massb,fallInertiab);//i duknow
 
    btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCIb(massb,fallMotionStateb,fallShapeb,fallInertiab);
-  /* btRigidBody**/ fallRigidBodyb = new btRigidBody(fallRigidBodyCIb);
+  /* btRigidBody** / fallRigidBodyb = new btRigidBody(fallRigidBodyCIb);
 
    dynamicsWorld->addRigidBody(fallRigidBodyb);
-}
 
+   //box
+   btDefaultMotionState* fallMotionStateBox = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,1,0)));//50m up
+   btVector3 fallInertiaBox(0,0,0);//inital velocity?
+   fallShapeBox->calculateLocalInertia(massb,fallInertiaBox);//i duknow
+
+   btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCIBox(0,fallMotionStateBox,fallShapeBox,btVector3(0,0,0));
+//                                           groundRigidBodyCI(0,groundMotionState,groundShape,btVector3(0,0,0));
+  /* btRigidBody** / FRBbuilding = new btRigidBody(fallRigidBodyCIBox);
+
+   dynamicsWorld->addRigidBody(FRBbuilding);
+}
+btRigidBody* createStaticBox(float posX,float posY,float posZ,float scaleX,float scaleY,float scaleZ,btQuaternion rotation,float mass,float ix,float iy,float iz){
+   btCollisionShape* fallShapeBoxC = new btBoxShape(btVector3(scaleX,scaleY,scaleZ));
+   //box
+   btDefaultMotionState* fallMotionStateb = new btDefaultMotionState(btTransform(rotation,btVector3(posX,posY,posZ)));//50m up
+   btScalar massb = mass;
+   btVector3 fallInertiab(ix,iy,iz);//inital velocity?
+   fallShapeBoxC->calculateLocalInertia(massb,fallInertiab);//i duknow
+
+   btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCIb(massb,fallMotionStateb,fallShapeBoxC,fallInertiab);
+   btRigidBody* FRBbox = new btRigidBody(fallRigidBodyCIb);
+
+   dynamicsWorld->addRigidBody(FRBbox);
+   return FRBbox;
+}
+*/
 
 int main( int argc, char *argv[] )
 {
@@ -281,7 +322,8 @@ int main( int argc, char *argv[] )
    while (!glfwWindowShouldClose(window)) {
       glfwPollEvents();
       //player appy physics controls
-      dynamicsWorld->stepSimulation(1/60.f,10);
+      physStep();
+      //dynamicsWorld->stepSimulation(1/60.f,10);
       //Draw stuff
       glfwDraw(window);
       //Keep the cursor centered
