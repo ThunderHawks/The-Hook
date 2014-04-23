@@ -113,8 +113,8 @@ void physGrapple(float lx,float ly,float lz){
    /*   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAtPoint.x+.0*dir.x,lookAtPoint.y-.0*dir.y,lookAtPoint.z+.0*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z));
    dynamicsWorld->rayTest(btVector3(lookAtPoint.x+.0*dir.x,lookAtPoint.y-.0*dir.y,lookAtPoint.z+.0*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z), RayCallback);
 */
-   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAtPoint.x+1*dir.x,lookAtPoint.y+1*dir.y+1,lookAtPoint.z+1*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y+50*dir.y,lookAtPoint.z+50*dir.z));
-   dynamicsWorld->rayTest(btVector3(lookAtPoint.x+1*dir.x,lookAtPoint.y+1*dir.y+1,lookAtPoint.z+1*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y+50*dir.y,lookAtPoint.z+50*dir.z), RayCallback);
+   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAtPoint.x+1*dir.x,lookAtPoint.y+1*dir.y-1,lookAtPoint.z+1*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z));
+   dynamicsWorld->rayTest(btVector3(lookAtPoint.x+1*dir.x,lookAtPoint.y-1*dir.y+1,lookAtPoint.z+1*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z), RayCallback);
    //player->setLinearVelocity(btVector3(dir.x*50,dir.y*50,dir.z*50));
    if(RayCallback.hasHit()) {
     //End = RayCallback.m_hitPointWorld;
