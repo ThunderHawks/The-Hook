@@ -2,6 +2,7 @@
 #include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
 #include <vector>
 
+void physGrapple(float lx, float ly, float lz);
 std::vector<btRigidBody*> getVecList();
 void physicsInit();
 void physGetPlayerLocation(btTransform);
@@ -13,3 +14,4 @@ float physGetPlayerY();
 float physGetPlayerZ();
 void physSetDisplayObj(btRigidBody* phys, void* obj);
 void setPlayerSpeed(float x,float y,float z);
+glm::vec3 plsRndr();

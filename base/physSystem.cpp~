@@ -100,23 +100,28 @@ float physGetPlayerZ(){
    btobjes[0]->getMotionState()->getWorldTransform(trans);
    return trans.getOrigin().getZ();
 }
+glm::vec3 dir;
 void physGrapple(float lx,float ly,float lz){
-   glm::vec3 dir = glm::normalize(glm::vec3(-lx,ly,-lz));
+   dir = glm::normalize(glm::vec3(-lx,ly,-lz));
    printf("grapple in dir %f %f %f\n",dir.x,dir.y,dir.z);
    printf("looks at is %f %f %f\n",lookAtPoint.x,lookAtPoint.y,lookAtPoint.z);
    
-   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAtPoint.x-dir.x,lookAtPoint.y+dir.y,lookAtPoint.z-dir.z), btVector3(lookAtPoint.x-2*dir.x,lookAtPoint.y+2*dir.y,lookAtPoint.z-2*dir.z));
+   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAtPoint.x+3*dir.x,lookAtPoint.y-3*dir.y,lookAtPoint.z+3*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z));
    dynamicsWorld->rayTest(btVector3(lookAtPoint.x-dir.x,lookAtPoint.y+dir.y,lookAtPoint.z-dir.z), btVector3(lookAtPoint.x-2*dir.x,lookAtPoint.y+2*dir.y,lookAtPoint.z-2*dir.z), RayCallback);
    //player->setLinearVelocity(btVector3(dir.x*50,dir.y*50,dir.z*50));
    if(RayCallback.hasHit()) {
     //End = RayCallback.m_hitPointWorld;
     //Normal = RayCallback.m_hitNormalWorld;
+      printf("hit!\n");
       player->setLinearVelocity(RayCallback.m_hitNormalWorld*5);
     // Do some clever stuff here
    }
 }
 void physSetDisplayObj(btRigidBody* phys, void *obj){
    phys->setUserPointer(obj);
+}
+btVector3 plsRndr(){
+   return btVector3(lookAtPoint.x+3*dir.x,lookAtPoint.y-3*dir.y,lookAtPoint.z+3*dir.z);
 }
 void physStep(){
    //player->getX();

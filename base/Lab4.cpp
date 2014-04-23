@@ -224,7 +224,7 @@ void glfwDraw (GLFWwindow *window)
    SetupCube(3,0,6,2,45,1,1,2);
    SetupCube(3,1,6,2,45,1,.5,1);
    SetupCube(3,2,6,2,45,2,1,1);
-   SetupCube(3,3,6,2,60,1,1,1);
+   SetupCube(plsRndr().getX(),plsRndr().getY(),plsRndr().getZ(),2,60,1,1,1);
    
    //draw phys cubes
    vector<btRigidBody*> loopable = getVecList();
