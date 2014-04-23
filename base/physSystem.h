@@ -1,5 +1,6 @@
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
+#include <vector>
 
 std::vector<btRigidBody*> getVecList();
 void physicsInit();

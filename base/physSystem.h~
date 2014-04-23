@@ -11,4 +11,3 @@ float physGetPlayerX();
 float physGetPlayerY();
 float physGetPlayerZ();
 void setPlayerSpeed(float x,float y,float z);
-btRigidBody* player;

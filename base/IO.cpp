@@ -86,9 +86,9 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
       alpha -= (diff * M_PI)/g_width;
    }
    //Update lookAt
-   eyeAtx = 3.0 * cos(alpha) * cos(beta);
-   eyeAty = 3.0 * sin(alpha);
-   eyeAtz = 3.0 * cos(alpha) * cos(M_PI/2.0 - beta);
+   eyeAtx = 6.0 * cos(alpha) * cos(beta);
+   eyeAty = 6.0 * sin(alpha);
+   eyeAtz = 6.0 * cos(alpha) * cos(M_PI/2.0 - beta);
 
    eyeAtx += lookAtPoint.x;
    eyeAty += lookAtPoint.y;
@@ -137,7 +137,7 @@ void glfwKeyboard(void) {
    }
    //GLFW_KEY_SPACE
    if(KeysPressed[4]) {
-      setPlayerSpeed(0,5,0);
+      setPlayerSpeed(0,2.5,0);
       KeysPressed[4]=0;
       printf("Space is not implemented!\n");
    }

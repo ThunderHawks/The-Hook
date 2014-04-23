@@ -16,6 +16,7 @@
 #include "IO.h"
 #include "physSystem.h"
 #include "Shapes.h"
+#include "level.h"
 #include <vector>
 
 #include <bullet/btBulletDynamicsCommon.h>
@@ -366,7 +367,7 @@ int main( int argc, char *argv[] )
    glewInit();
    glInitialize(window);
    physicsInit();
-
+   loadLevel();
    InitGeom();
 
 	//merp REMOVE LATER
