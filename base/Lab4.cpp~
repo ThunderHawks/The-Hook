@@ -224,7 +224,7 @@ void glfwDraw (GLFWwindow *window)
    SetupCube(3,0,6,2,45,1,1,2);
    SetupCube(3,1,6,2,45,1,.5,1);
    SetupCube(3,2,6,2,45,2,1,1);
-   SetupCube(plsRndr().getY(),plsRndr().getY(),plsRndr().getZ(),2,60,1,1,1);
+   SetupCube(plsRndr().getX(),plsRndr().getY(),plsRndr().getZ(),2,60,1,1,1);
    
    //draw phys cubes
    vector<btRigidBody*> loopable = getVecList();
@@ -233,7 +233,7 @@ void glfwDraw (GLFWwindow *window)
       loopable[i]->getMotionState()->getWorldTransform(trans);
       //printf("actual is %f %f %f\n",trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ());
       
-if(i) PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),1,1,1,1);
+if(i) PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.1,.1,.1,0);
       SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),2,0,2,2,2);
    }
 

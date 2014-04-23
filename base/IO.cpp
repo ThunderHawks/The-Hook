@@ -81,7 +81,7 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
       diff = endY - startY;
       alpha += (diff * M_PI)/g_width;
    }
-   else if(startY > endY && alpha >= -0.1) {
+   else if(startY > endY && alpha >= -0.4) {
       diff = startY - endY;
       alpha -= (diff * M_PI)/g_width;
    }

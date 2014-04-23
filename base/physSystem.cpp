@@ -40,7 +40,7 @@ void physicsInit() {
    btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
    /*btDiscreteDynamicsWorld* */dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,broadphase,solver,collisionConfiguration);
    //end of bullet setup   
-   dynamicsWorld->setGravity(btVector3(0,-10,0));
+   dynamicsWorld->setGravity(btVector3(0,-15,0));
 
    //shapes
    btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0,1,0),1);//1m up (y=1)
@@ -106,14 +106,17 @@ void physGrapple(float lx,float ly,float lz){
    printf("grapple in dir %f %f %f\n",dir.x,dir.y,dir.z);
    printf("looks at is %f %f %f\n",lookAtPoint.x,lookAtPoint.y,lookAtPoint.z);
    
-   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAtPoint.x+3*dir.x,lookAtPoint.y-3*dir.y,lookAtPoint.z+3*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z));
-   dynamicsWorld->rayTest(btVector3(lookAtPoint.x+3*dir.x,lookAtPoint.y-3*dir.y,lookAtPoint.z+3*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z), RayCallback);
+   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAtPoint.x+.0*dir.x,lookAtPoint.y-.0*dir.y,lookAtPoint.z+.0*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z));
+   dynamicsWorld->rayTest(btVector3(lookAtPoint.x+.0*dir.x,lookAtPoint.y-.0*dir.y,lookAtPoint.z+.0*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z), RayCallback);
    //player->setLinearVelocity(btVector3(dir.x*50,dir.y*50,dir.z*50));
    if(RayCallback.hasHit()) {
     //End = RayCallback.m_hitPointWorld;
     //Normal = RayCallback.m_hitNormalWorld;
       printf("hit!\n");
-      player->setLinearVelocity(RayCallback.m_hitNormalWorld*5);
+      btVector3 go=RayCallback.m_hitNormalWorld*-5+player->getLinearVelocity();
+      if (go.length()>10)(go/go.length())*10;
+      player->setLinearVelocity(go);
+      printf("%f %f %f on hit norm",RayCallback.m_hitNormalWorld.getX(),RayCallback.m_hitNormalWorld.getY(),RayCallback.m_hitNormalWorld.getZ());
     // Do some clever stuff here
    }
 }
