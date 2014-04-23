@@ -146,12 +146,12 @@ void glfwKeyboard(void) {
       exit( EXIT_SUCCESS );
    }
    if(KeysPressed['F']){
-      printf("box %f %f %f\n",gaze.x*5,gaze.y*5,gaze.z*5);
+      printf("box %f %f %f\n",-gaze.x*5,gaze.y*5,-gaze.z*5);
       createStaticBox(eye.x,eye.y,eye.z,1,1,1,btQuaternion(0,0,0,1),1,gaze.x*10,gaze.y*10,gaze.z*10);
       KeysPressed['F']=0;
    }
    if(KeysPressed['E']){
-      physGrapple(gaze.x,gaze.y,w.z);
+      physGrapple(w.x,w.y,w.z);
    }
 }
 
