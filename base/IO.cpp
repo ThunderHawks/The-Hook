@@ -35,7 +35,7 @@ float alpha = 0.0;
 float beta = -M_PI/2.0;
 
 //Camera look at, eye position, up vector, and gaze, w, and u vectors
-glm::vec3 lookAtPoint = glm::vec3(4.0, 2.0, 4.0);
+glm::vec3 lookAtPoint = glm::vec3(4.0, 0.3, 4.0);
 glm::vec3 eye;
 glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::vec3 gaze;
@@ -81,20 +81,21 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
       diff = endY - startY;
       alpha += (diff * M_PI)/g_width;
    }
-   else if(startY > endY && alpha >= -0.2) {
+   else if(startY > endY && alpha >= -0.4) {
       diff = startY - endY;
       alpha -= (diff * M_PI)/g_width;
    }
    //Update lookAt
-   eyeAtx = 3.0 * cos(alpha) * cos(beta);
-   eyeAty = 3.0 * sin(alpha);
-   eyeAtz = 3.0 * cos(alpha) * cos(M_PI/2.0 - beta);
+   eyeAtx = 6.0 * cos(alpha) * cos(beta);
+   eyeAty = 6.0 * sin(alpha);
+   eyeAtz = 6.0 * cos(alpha) * cos(M_PI/2.0 - beta);
 
    eyeAtx += lookAtPoint.x;
    eyeAty += lookAtPoint.y;
    eyeAtz += lookAtPoint.z;
 
    eye = glm::vec3(eyeAtx, eyeAty, eyeAtz);
+
 
    startX = g_width/2.0;// = endX;
    startY = g_height/2.0-1;// endY;
@@ -112,12 +113,8 @@ void glfwKeyboard(void) {
   //eye = glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
    //GLFW_KEY_S
    if(KeysPressed['S']) {
-<<<<<<< HEAD
-       setPlayerSpeed(w.x * 3.0,0,w.z * 3.0);
-=======
    	newSpeed.x += w.x;
    	newSpeed.z += w.z;
->>>>>>> 0423568ada1a0d9827c7ee59fd5f6ad39695487f
        eye = glm::vec3(eye.x + 0.1 * w.x, eye.y, eye.z + 0.1 * w.z);
        //lookAtPoint = glm::vec3(lookAtPoint.x + 0.1 * w.x, lookAtPoint.y, lookAtPoint.z + 0.1 * w.z);
    }
@@ -126,43 +123,28 @@ void glfwKeyboard(void) {
    	newSpeed.x -= w.x;
    	newSpeed.z -= w.z;
        printf("eye %f %f %f  %f\n",eye.x,eye.y,eye.z,physGetPlayerX());
-<<<<<<< HEAD
-       setPlayerSpeed(-w.x * 3.0,0,-w.z * 3.0);
-=======
->>>>>>> 0423568ada1a0d9827c7ee59fd5f6ad39695487f
        eye = glm::vec3(eye.x - 0.1 * w.x, eye.y, eye.z - 0.1 * w.z);
        //lookAtPoint = glm::vec3(lookAtPoint.x - 0.1 * w.x, lookAtPoint.y, lookAtPoint.z - 0.1 * w.z);
    }
    //GLFW_KEY_D
    if(KeysPressed['D']) {
-<<<<<<< HEAD
-       setPlayerSpeed(u.x * 3.0,0,u.z * 3.0);
-=======
    	newSpeed.x += u.x;
    	newSpeed.z += u.z;
->>>>>>> 0423568ada1a0d9827c7ee59fd5f6ad39695487f
        eye = glm::vec3(eye.x + 0.1 * u.x, eye.y, eye.z + 0.1 * u.z);
        //lookAtPoint = glm::vec3(lookAtPoint.x + 0.1 * u.x, lookAtPoint.y, lookAtPoint.z + 0.1 * u.z);
    }
    //GLFW_KEY_A
    if(KeysPressed['A']) {
-<<<<<<< HEAD
-        setPlayerSpeed(-u.x * 3.0,0,-u.z * 3.0);
-=======
    	newSpeed.x -= u.x;
    	newSpeed.z -= u.z;
->>>>>>> 0423568ada1a0d9827c7ee59fd5f6ad39695487f
        eye = glm::vec3(eye.x - 0.1 * u.x, eye.y, eye.z - 0.1 * u.z);
        //lookAtPoint = glm::vec3(lookAtPoint.x - 0.1 * u.x, lookAtPoint.y, lookAtPoint.z - 0.1 * u.z);
    }
    //GLFW_KEY_SPACE
    if(KeysPressed[' ']) {
-<<<<<<< HEAD
-      setPlayerSpeed(0, 4,0);
-=======
    	newSpeed.y += 2.5;
->>>>>>> 0423568ada1a0d9827c7ee59fd5f6ad39695487f
       KeysPressed[' ']=0;
+      printf("Space is not implemented!\n");
    }
    
    setPlayerSpeed(newSpeed.x,newSpeed.y,newSpeed.z);
@@ -170,12 +152,11 @@ void glfwKeyboard(void) {
    if(KeysPressed['Q']) {
       exit( EXIT_SUCCESS );
    }
-/*  CAUSES CRASHES
-    if(KeysPressed['F']){
+   if(KeysPressed['F']){
       printf("box %f %f %f\n",-gaze.x*5,gaze.y*5,-gaze.z*5);
       createStaticBox(eye.x,eye.y,eye.z,1,1,1,btQuaternion(0,0,0,1),1,gaze.x*10,gaze.y*10,gaze.z*10);
       KeysPressed['F']=0;
-   }*/
+   }
    if(KeysPressed['E']){
       physGrapple(w.x,w.y,w.z);
    }
