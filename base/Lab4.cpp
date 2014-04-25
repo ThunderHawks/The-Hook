@@ -368,6 +368,8 @@ int main( int argc, char *argv[] )
    while (!glfwWindowShouldClose(window)) {
       glfwPollEvents();
       //player appy physics controls
+      lookAtPoint = glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
+      glfwGetCursorPos(NULL,g_width/2.0,g_height/2.0);
       physStep();
       //dynamicsWorld->stepSimulation(1/60.f,10);
       //Draw stuff

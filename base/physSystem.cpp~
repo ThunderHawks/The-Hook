@@ -132,7 +132,7 @@ void physGrapplePoint(){
    glm::vec3 at = glm::vec3(lookAtPoint.x,lookAtPoint.y,lookAtPoint.z);
    glm::vec3 targ = glm::vec3(tmp.getX(),tmp.getY(),tmp.getZ());
    targ-=at;
-   targ/glm::magnitude(targ);
+   targ*=5;
    player->setLinearVelocity(btVector3(targ.x,targ.y,targ.z));
 }
 void physSetDisplayObj(btRigidBody* phys, void *obj){
@@ -147,6 +147,4 @@ void physStep(){
    //setPlayerSpeed(2,2,2);
 
    dynamicsWorld->stepSimulation(1/60.f,10);
-   lookAtPoint = glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
-   glfwGetCursorPos(NULL,g_width/2.0,g_height/2.0);
 }

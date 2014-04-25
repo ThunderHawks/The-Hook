@@ -147,6 +147,5 @@ void physStep(){
    //setPlayerSpeed(2,2,2);
 
    dynamicsWorld->stepSimulation(1/60.f,10);
-   lookAtPoint = glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
-   glfwGetCursorPos(NULL,g_width/2.0,g_height/2.0);
+
 }
