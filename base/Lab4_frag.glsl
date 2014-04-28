@@ -85,6 +85,12 @@ void main() {
         g += uLColor.g * uMat.sColor.g * pow(1.0, uMat.shine);
         b += uLColor.b * uMat.sColor.b * pow(1.0, uMat.shine);
      }
+    r+=ambientR;
+    g+=ambientG;
+    b+=ambientB;
+    //r=dot(V,R);
+    //g=0;
+    //b=0;
 
      //gl_FragColor = vec4(diffusedR + ambientR, diffusedG + ambientG, diffusedB + ambientB, 1.0);
      //gl_FragColor = vec4(diffusedR + ambientR, diffusedG + ambientG, diffusedB + ambientB, 1.0);
@@ -95,4 +101,5 @@ void main() {
 //     gl_FragColor = vec4(vColor.r, vColor.g, vColor.b, 1.0);
 
      gl_FragColor = vec4(r, g, b, 1.0);
+   ///  gl_FragColor = R;
 }
