@@ -47,6 +47,7 @@ void main() {
 
      R = reflection;
      float temp = max(dot(V, R), 0.0);
+     float r, g, b;
 
      diffusedR = dist * uLColor.r * uMat.dColor.r * max(dot(N, L), 0.0);
      diffusedG = dist * uLColor.g * uMat.dColor.g * max(dot(N, L), 0.0);
@@ -63,11 +64,35 @@ void main() {
      ambientG = uLColor.g * uMat.aColor.g;
      ambientB = uLColor.b * uMat.aColor.b;
 
+     if (dot(N, L) > 0.7) {
+        r = (uLColor.r * uMat.dColor.r);
+        g = (uLColor.g * uMat.dColor.g);
+        b = (uLColor.b * uMat.dColor.b);
+     }
+     else if (dot(N, L) > 0.4) {
+        r = (uLColor.r * uMat.dColor.r * 0.7);
+        g = (uLColor.g * uMat.dColor.g * 0.7);
+        b = (uLColor.b * uMat.dColor.b * 0.7);
+     }
+     else {
+        r = (uLColor.r * uMat.dColor.r * 0.4);
+        g = (uLColor.g * uMat.dColor.g * 0.4);
+        b = (uLColor.b * uMat.dColor.b * 0.4);
+     }
+      
+     if (dot(V, R) > 0.95) {
+        r += uLColor.r * uMat.sColor.r * pow(1.0, uMat.shine);
+        g += uLColor.g * uMat.sColor.g * pow(1.0, uMat.shine);
+        b += uLColor.b * uMat.sColor.b * pow(1.0, uMat.shine);
+     }
+
      //gl_FragColor = vec4(diffusedR + ambientR, diffusedG + ambientG, diffusedB + ambientB, 1.0);
      //gl_FragColor = vec4(diffusedR + ambientR, diffusedG + ambientG, diffusedB + ambientB, 1.0);
-     gl_FragColor = vec4(diffusedR*1.0 + specularR*1.0 + ambientR*1.0, diffusedG*1.0 + specularG*1.0 + ambientG*1.0, diffusedB*1.0 + specularB*1.0 + ambientB*1.0, 1.0);
+     //gl_FragColor = vec4(diffusedR*1.0 + specularR*1.0 + ambientR*1.0, diffusedG*1.0 + specularG*1.0 + ambientG*1.0, diffusedB*1.0 + specularB*1.0 + ambientB*1.0, 1.0);
 	//gl_FragColor = vec4(uLColor.r,uLColor.g,uLColor.b,1.0);
 	//gl_FragColor = vec4(uMat.sColor.r,uMat.sColor.g,temp,1.0);
 	//gl_FragColor = vPosition;
 //     gl_FragColor = vec4(vColor.r, vColor.g, vColor.b, 1.0);
+
+     gl_FragColor = vec4(r, g, b, 1.0);
 }
