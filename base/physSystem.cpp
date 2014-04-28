@@ -20,12 +20,14 @@ btRigidBody* player;
 btDiscreteDynamicsWorld* dynamicsWorld;
 vector<btRigidBody*> btobjes;
 Mesh chara;
+int playerGrappleActive = 0;
 vector<btRigidBody*> getVecList(){
    return btobjes;
 }
 void setPlayerSpeed(float x, float y, float z){
 //   printf("%f %f %f speedy\n",30*x,30*y,30*z);
-   player->setLinearVelocity(btVector3(3*x,3*y+player->getLinearVelocity().getY(),3*z));
+   if(!playerGrappleActive)
+      player->setLinearVelocity(btVector3(3*x,3*y+player->getLinearVelocity().getY(),3*z));
   // player->clearForces();
 //   player->applyCentralForce(btVector3(x*300,200*y,300*z));
    //btobjes[0]->setLinearVelocity(btVector3(0,1000,0));
@@ -113,10 +115,10 @@ void physGrapple(float lx,float ly,float lz){
    /*   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAtPoint.x+.0*dir.x,lookAtPoint.y-.0*dir.y,lookAtPoint.z+.0*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z));
    dynamicsWorld->rayTest(btVector3(lookAtPoint.x+.0*dir.x,lookAtPoint.y-.0*dir.y,lookAtPoint.z+.0*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z), RayCallback);
 */
-   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAtPoint.x+1*dir.x,lookAtPoint.y-1*dir.y+1,lookAtPoint.z+1*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z));
-   dynamicsWorld->rayTest(btVector3(lookAtPoint.x+1*dir.x,lookAtPoint.y-1*dir.y+1,lookAtPoint.z+1*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z), RayCallback);
+   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAtPoint.x+0*dir.x,lookAtPoint.y-0*dir.y,lookAtPoint.z+0*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z));
+   dynamicsWorld->rayTest(btVector3(lookAtPoint.x+0*dir.x,lookAtPoint.y-0*dir.y,lookAtPoint.z+0*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z), RayCallback);
    //player->setLinearVelocity(btVector3(dir.x*50,dir.y*50,dir.z*50));
-   if(RayCallback.hasHit()) {
+   if(RayCallback.hasHit()&& !playerGrappleActive) {
     //End = RayCallback.m_hitPointWorld;
     //Normal = RayCallback.m_hitNormalWorld;
       printf("hit!\n");
@@ -126,14 +128,18 @@ void physGrapple(float lx,float ly,float lz){
       printf("%f %f %f on hit norm",RayCallback.m_hitNormalWorld.getX(),RayCallback.m_hitNormalWorld.getY(),RayCallback.m_hitNormalWorld.getZ());
       tmp = RayCallback.m_hitPointWorld;
     // Do some clever stuff here
+      playerGrappleActive =1;
    }
 }
 void physGrapplePoint(){
    glm::vec3 at = glm::vec3(lookAtPoint.x,lookAtPoint.y,lookAtPoint.z);
    glm::vec3 targ = glm::vec3(tmp.getX(),tmp.getY(),tmp.getZ());
+   glm::vec3 loc = targ-at;
+   float dist = sqrt(loc.x*loc.x+loc.y*loc.y+loc.z*loc.z);
    targ-=at;
    targ*=5;
    player->setLinearVelocity(btVector3(targ.x,targ.y,targ.z));
+   if(dist<2 && !getPressed('h')) playerGrappleActive=0;
 }
 void physSetDisplayObj(btRigidBody* phys, void *obj){
    phys->setUserPointer(obj);
@@ -145,7 +151,7 @@ btVector3 plsRndr(){
 void physStep(){
    //player->getX();
    //setPlayerSpeed(2,2,2);
-
+   if(playerGrappleActive) physGrapplePoint();
    dynamicsWorld->stepSimulation(1/60.f,10);
 
 }

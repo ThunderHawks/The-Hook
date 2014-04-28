@@ -96,7 +96,11 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    startX = g_width/2.0;// = endX;
    startY = g_height/2.0-1;// endY;
 }
-
+//returns bool of character pressed
+//takes the character for a given key
+int getPressed(char ch){
+   return KeysPressed[ch];
+}
 //the function that is called in the main loop that will act on the keys pressed
 //that are kept track of inside of the array
 void glfwKeyboard(void) {
@@ -155,11 +159,11 @@ void glfwKeyboard(void) {
    }
    if(KeysPressed['E']){
    
-      if(KeysPressed['E']==1){
-         physGrapple(w.x,w.y,w.z);
-         KeysPressed['E']=2;
-      }
-      else physGrapplePoint();
+//      if(KeysPressed['E']==1){
+      physGrapple(w.x,w.y,w.z);
+         //KeysPressed['E']=2;
+  //    }
+      //else physGrapplePoint();
    }
 }
 
