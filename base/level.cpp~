@@ -15,7 +15,7 @@ void loadLevel(){
             physSetDisplayObj(createStaticBox(strX,SCALE*3,strZ,SCALE*2,SCALE*3,SCALE*2,btQuaternion(0,0,0,1),0/*INFINITE*/,0,0,0),&mb); 
          }
          else{
-            physSetDisplayObj(createStaticBox(strX,SCALE*1,strZ,SCALE*2,SCALE*1.25,SCALE*2,btQuaternion(0,0,0,1),0/*INFINITE*/,0,0,0),&ms); 
+            physSetDisplayObj(createStaticBox(strX,SCALE*1,strZ,SCALE*2.25,SCALE*1.25,SCALE*2,btQuaternion(0,0,0,1),0/*INFINITE*/,0,0,0),&ms); 
          }
       }
    }

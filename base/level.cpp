@@ -1,8 +1,11 @@
 #include "physSystem.h"
 #include "Mesh.h"
 #include "level.h"
+
 Mesh mb;
 Mesh ms;
+
+/*Loads all of the meshes and places all of the objects*/
 void loadLevel(){
    mb = LoadMesh("../Assets/ModMBasicBldg.obj");
    ms = LoadMesh("../Assets/shopBldg.obj");
