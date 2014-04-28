@@ -60,10 +60,6 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    endX = xpos;
    endY = g_height-ypos-1;
 
-   float startWX = p2w_x(startX);
-   float startWY = p2w_y(startY);
-   float endWX = p2w_x(endX);
-   float endWY = p2w_y(endY);
    float diff;
 
    //Calculate change in X
@@ -104,8 +100,6 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
 //the function that is called in the main loop that will act on the keys pressed
 //that are kept track of inside of the array
 void glfwKeyboard(void) {
-  //gaze = lookAtPoint - eye;
-  glm::vec3 newSpeed = glm::vec3(0,0,0);
   w = gaze/magnitude(gaze);
   w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
   u = glm::cross(up, w)/magnitude(glm::cross(up, w));

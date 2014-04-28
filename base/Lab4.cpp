@@ -47,26 +47,12 @@ GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine;
 //declare Matrix stack
 RenderingHelper ModelTrans;
 
-/**ALL JUNK FOR MESH LOGIC**/
-static glm::vec3 *faceNormals;
-static float *MeshPos;
-static unsigned short *idx;
-int idxSize;
-int MeshPosSize;
-float *VertexNormal;
-float g_sf = 1.7;
-glm::vec3 g_axis(0.000000001, 0.000000001, 0.000000001);
-glm::mat4 allRot(1.0);
-glm::vec3 g_trans(0.0, 0.8, 0.0);
-int g_track;
-float g_angle = 180;
-int g_MiboLen;
-//CMesh *TheMesh;
 GLint h_uModelMatrix;
 GLuint NormalBuffObj;
 GLuint MeshBuffObj, MeshIndxBuffObj;
+
 //The assimp mesh stuff
-Mesh damesh;
+Mesh playerMesh;
 
 /* projection matrix  - do not change */
 void SetProjectionMatrix() {
@@ -176,16 +162,7 @@ void glfwDraw (GLFWwindow *window)
 
    //DRAW THE DANCING CYLINDER HERE!!
    btTransform pla;
-   //physGetPlayerLocation(pla);
-   float tesX,tesY,tesZ;
-   /*tesX=tesY=tesZ=0;
-   tesX=pla.getOrigin().getX();
-   tesY=pla.getOrigin().getY();
-   tesZ=pla.getOrigin().getZ();
-   printf("%f %f %f phys loc\n",tesX, tesY, tesZ);*/
-   //SetupCube(pla.getOrigin().getX(), pla.getOrigin().getY(), pla.getOrigin().getZ(), 4, 0, 1, 1, 1);   
-   PlaceModel(damesh, lookAtPoint.x, lookAtPoint.y - 1, lookAtPoint.z, .25, .1, .25, 1);
-   //SetupCube(lookAtPoint.x, lookAtPoint.y, lookAtPoint.z, 6, 0, 0.2, 0.2, 0.2);
+   PlaceModel(playerMesh, lookAtPoint.x, lookAtPoint.y - 1, lookAtPoint.z, .25, .1, .25, 1);
    //END OF DANCING CYLINDER CODE HERE!!
 
    //Draw Cubes
