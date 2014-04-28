@@ -30,7 +30,6 @@ GLuint triBuffObj, colBuffObj;
 int ShadeMode = 0;
 
 //flag and ID to toggle on and off the shader
-int shade = 1;
 int ShadeProg;
 
 //Handles to the shader data
