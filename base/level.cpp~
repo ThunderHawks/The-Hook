@@ -5,7 +5,7 @@ Mesh mb;
 Mesh ms;
 void loadLevel(){
    mb = LoadMesh("../Assets/ModMBasicBldg.obj");
-   ms = LoadMesh("../Assets/shop.obj");
+   ms = LoadMesh("../Assets/shopBldg.obj");
    int tf = 0;
    for(int strX=-100;strX<100;strX+=30){
       for(int strZ=-100;strZ<100;strZ+=30){
@@ -15,7 +15,7 @@ void loadLevel(){
             physSetDisplayObj(createStaticBox(strX,SCALE*3,strZ,SCALE*2,SCALE*3,SCALE*2,btQuaternion(0,0,0,1),0/*INFINITE*/,0,0,0),&mb); 
          }
          else{
-            physSetDisplayObj(createStaticBox(strX,SCALE*3,strZ,SCALE*2,SCALE*3,SCALE*2,btQuaternion(0,0,0,1),0/*INFINITE*/,0,0,0),&ms); 
+            physSetDisplayObj(createStaticBox(strX,SCALE*1,strZ,SCALE*2,SCALE*1.25,SCALE*2,btQuaternion(0,0,0,1),0/*INFINITE*/,0,0,0),&ms); 
          }
       }
    }
