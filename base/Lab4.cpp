@@ -18,6 +18,7 @@
 #include "Shapes.h"
 #include "level.h"
 #include <vector>
+#include "Camera.h"
 
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
@@ -58,15 +59,6 @@ Mesh playerMesh;
 void SetProjectionMatrix() {
    glm::mat4 Projection = glm::perspective(80.0f, (float)g_width/g_height, 0.1f, 100.f);	
    safe_glUniformMatrix4fv(h_uProjMatrix, glm::value_ptr(Projection));
-}
-
-/* camera controls - do not change */
-void SetView() {
-//   lookAtPoint.y+=4;
-   glm::mat4 view = glm::lookAt(eye, lookAtPoint, up);
-  // lookAtPoint.y-=4;
-   //glm::mat4 view = glm::lookAt(lookAtPoint, eye, up);
-   safe_glUniformMatrix4fv(h_uViewMatrix, glm::value_ptr(view));
 }
 
 void SetModelStat() {
@@ -135,7 +127,7 @@ void glfwDraw (GLFWwindow *window)
    /*Start our shader      */
    glUseProgram(ShadeProg);
    SetProjectionMatrix();
-   SetView();
+   SetView(eye, lookAtPoint);
 
    glUniform3f(h_uLightColor, 0.4, 0.4, 0.38);
    glUniform4f(h_uLightVec, 0.0, -1.0, 1.0, 0.0);
