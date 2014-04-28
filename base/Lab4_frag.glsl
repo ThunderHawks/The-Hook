@@ -45,7 +45,7 @@ void main() {
         N = normalize(N);
      }
 
-     R = reflection;
+     R = normalize(reflect(-L, N));
      float temp = max(dot(V, R), 0.0);
      float r, g, b;
 
@@ -84,6 +84,7 @@ void main() {
         r += uLColor.r * uMat.sColor.r * pow(1.0, uMat.shine);
         g += uLColor.g * uMat.sColor.g * pow(1.0, uMat.shine);
         b += uLColor.b * uMat.sColor.b * pow(1.0, uMat.shine);
+        g+=1;
      }
     r+=ambientR;
     g+=ambientG;
