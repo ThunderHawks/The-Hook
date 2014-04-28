@@ -127,7 +127,9 @@ void glfwDraw (GLFWwindow *window)
    /*Start our shader      */
    glUseProgram(ShadeProg);
    SetProjectionMatrix();
-   SetView(eye, lookAtPoint);
+   SetEye(eye);
+   SetLookAt(lookAtPoint);
+   SetView();
 
    glUniform3f(h_uLightColor, 0.4, 0.4, 0.38);
    glUniform4f(h_uLightVec, 0.0, -1.0, 1.0, 0.0);

@@ -25,6 +25,7 @@
 #include "Helper.h"
 #include "IO.h"
 #include "physSystem.h"
+#include "Camera.h"
 
 float startX, startY;
 float endX, endY;
