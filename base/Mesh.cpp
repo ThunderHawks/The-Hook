@@ -6,6 +6,7 @@ Mesh::Mesh()
     : PositionHandle(0), NormalHandle(0), IndexHandle(0), IndexBufferLength(0)
 {}
 
+/*Creates a Mesh Object*/
 Mesh::Mesh(std::vector<float> const & Positions, std::vector<float> const & Normals, std::vector<unsigned short> const & Indices)
     : PositionHandle(0), NormalHandle(0), IndexHandle(0), IndexBufferLength(0)
 {
@@ -45,9 +46,6 @@ draws the model :D AWW YEAH!
 
 Output: YOU GET NOTHING!
 ******************************************************************************/
-void drawAtM4(Mesh *m, mat4 trans, int shaderProg){
-
-}
 void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle) {
    SetModel(locx, locy, locz, sx, sy, sz, angle);
    //safe_glEnableVertexAttribArray(h_aPosition);
@@ -68,3 +66,7 @@ void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float s
    glDrawElements(GL_TRIANGLES, mesh.IndexBufferLength, GL_UNSIGNED_SHORT, 0);
 }
 
+/*currently does nothing, but might be used in the future. Talk to Andrew M.*/
+void drawAtM4(Mesh *m, mat4 trans, int shaderProg){
+
+}

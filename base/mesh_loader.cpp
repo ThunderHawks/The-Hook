@@ -6,6 +6,11 @@
 
 #include <iostream>
 
+/*
+input: takes in the path of the Mesh you want to load
+output: and AssimpMesh object That has everything you want to load
+Summary: creates and assimp mesh for a Mesh
+*/
 AssimpMesh loadMesh(const std::string& path) {
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(path,
