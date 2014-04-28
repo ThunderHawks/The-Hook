@@ -33,15 +33,6 @@ int ShadeMode = 0;
 int shade = 1;
 int ShadeProg;
 
-//phys//
-/*
-btRigidBody* groundRigidBody;
-btRigidBody* fallRigidBody;
-btRigidBody* fallRigidBodyb;
-btRigidBody* FRBbuilding;
-btDiscreteDynamicsWorld* dynamicsWorld;
-vector<btRigidBody> objectVectorList;// = new vector<btRigidBody>();
-*/
 //Handles to the shader data
 GLint h_aPosition, h_aNormal, h_uViewMatrix, h_uProjMatrix;
 GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj;
@@ -153,28 +144,6 @@ void SetupCube(float x, float y, float z, int material, float angle, float scale
 //   DrawShadow(x, z + 0.6, scaleX, scaleY, scaleZ + 0.4, angle);
 }
 
-/*******************************************************************************
-Input: takes in a Mesh, and everything you would ever want to do to it. The angle is rotation around the y axis
-
-draws the model :D AWW YEAH!
-
-Output: YOU GET NOTHING!
-******************************************************************************/
-/*void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle) {
-   SetModel(locx, locy, locz, sx, sy, sz, angle);
-   safe_glEnableVertexAttribArray(h_aPosition);
-   glBindBuffer(GL_ARRAY_BUFFER, mesh.PositionHandle);
-   safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-   safe_glEnableVertexAttribArray(h_aNormal);
-   glBindBuffer(GL_ARRAY_BUFFER, mesh.NormalHandle);
-   safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-   /* draw!*/
-/*   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndexHandle);
-
-   glDrawElements(GL_TRIANGLES, mesh.IndexBufferLength, GL_UNSIGNED_SHORT, 0);
-}*/
 
 /* Main display function */
 void glfwDraw (GLFWwindow *window)
@@ -223,9 +192,6 @@ void glfwDraw (GLFWwindow *window)
    //END OF DANCING CYLINDER CODE HERE!!
 
    //Draw Cubes
-   //SetupCube(3,0,6,2,45,1,1,2);
-   //SetupCube(3,1,6,2,45,1,.5,1);
-   //SetupCube(3,2,6,2,45,2,1,1);
    SetupCube(plsRndr().getX(),plsRndr().getY(),plsRndr().getZ(),5,60,1,1,1);
    SetMaterial(2);
    //draw phys cubes
@@ -256,79 +222,6 @@ else  PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX
    glfwSwapBuffers(window);
 
 }
-/*
-void physicsInit() {
-   objectVectorList = vector<btRigidBody>();
-   btBroadphaseInterface* broadphase = new btDbvtBroadphase();
-   btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
-   btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
-   btGImpactCollisionAlgorithm::registerAlgorithm(dispatcher);
-   btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
-   /*btDiscreteDynamicsWorld* * /dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,broadphase,solver,collisionConfiguration);
-   dynamicsWorld->setGravity(btVector3(0,-10,0));
-
-   //shapes
-   btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0,1,0),1);//1m up (y=1)
-   btCollisionShape* fallShape = new btSphereShape(1);
-   btCollisionShape* fallShapeb = new btSphereShape(1);
-   btCollisionShape* fallShapeBox = new btBoxShape(btVector3(1,1,1));
-
-   //ground   
-   btDefaultMotionState* groundMotionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,-1,0)));//-1m (y=1-1=0)
-
-   btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0,groundMotionState,groundShape,btVector3(0,0,0));//zeros give infinite mass
-   /*btRigidBody** / groundRigidBody = new btRigidBody(groundRigidBodyCI);
-
-   dynamicsWorld->addRigidBody(groundRigidBody);
-   
-   //sphere
-   btDefaultMotionState* fallMotionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,50,0)));//50m up
-   btScalar mass = 1;
-   btVector3 fallInertia(0,0,0);//inital velocity?
-   fallShape->calculateLocalInertia(mass,fallInertia);//i duknow
-
-   btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCI(mass,fallMotionState,fallShape,fallInertia);
-/*   btRigidBody** / fallRigidBody = new btRigidBody(fallRigidBodyCI);
-
-   dynamicsWorld->addRigidBody(fallRigidBody);
-
-   //second
-   btDefaultMotionState* fallMotionStateb = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(.5,55,0)));//50m up
-   btScalar massb = 1;
-   btVector3 fallInertiab(0,0,0);//inital velocity?
-   fallShapeb->calculateLocalInertia(massb,fallInertiab);//i duknow
-
-   btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCIb(massb,fallMotionStateb,fallShapeb,fallInertiab);
-  /* btRigidBody** / fallRigidBodyb = new btRigidBody(fallRigidBodyCIb);
-
-   dynamicsWorld->addRigidBody(fallRigidBodyb);
-
-   //box
-   btDefaultMotionState* fallMotionStateBox = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,1,0)));//50m up
-   btVector3 fallInertiaBox(0,0,0);//inital velocity?
-   fallShapeBox->calculateLocalInertia(massb,fallInertiaBox);//i duknow
-
-   btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCIBox(0,fallMotionStateBox,fallShapeBox,btVector3(0,0,0));
-//                                           groundRigidBodyCI(0,groundMotionState,groundShape,btVector3(0,0,0));
-  /* btRigidBody** / FRBbuilding = new btRigidBody(fallRigidBodyCIBox);
-
-   dynamicsWorld->addRigidBody(FRBbuilding);
-}
-btRigidBody* createStaticBox(float posX,float posY,float posZ,float scaleX,float scaleY,float scaleZ,btQuaternion rotation,float mass,float ix,float iy,float iz){
-   btCollisionShape* fallShapeBoxC = new btBoxShape(btVector3(scaleX,scaleY,scaleZ));
-   //box
-   btDefaultMotionState* fallMotionStateb = new btDefaultMotionState(btTransform(rotation,btVector3(posX,posY,posZ)));//50m up
-   btScalar massb = mass;
-   btVector3 fallInertiab(ix,iy,iz);//inital velocity?
-   fallShapeBoxC->calculateLocalInertia(massb,fallInertiab);//i duknow
-
-   btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCIb(massb,fallMotionStateb,fallShapeBoxC,fallInertiab);
-   btRigidBody* FRBbox = new btRigidBody(fallRigidBodyCIb);
-
-   dynamicsWorld->addRigidBody(FRBbox);
-   return FRBbox;
-}
-*/
 
 int main( int argc, char *argv[] )
 {
@@ -371,7 +264,6 @@ int main( int argc, char *argv[] )
       lookAtPoint = glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
       glfwGetCursorPos(NULL,g_width/2.0,g_height/2.0);
       physStep();
-      //dynamicsWorld->stepSimulation(1/60.f,10);
       //Draw stuff
       glfwDraw(window);
       //Keep the cursor centered
