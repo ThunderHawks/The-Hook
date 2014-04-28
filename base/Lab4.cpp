@@ -88,9 +88,9 @@ void SetProjectionMatrix() {
 
 /* camera controls - do not change */
 void SetView() {
-   lookAtPoint.y+=4;
+//   lookAtPoint.y+=4;
    glm::mat4 view = glm::lookAt(eye, lookAtPoint, up);
-   lookAtPoint.y-=4;
+  // lookAtPoint.y-=4;
    //glm::mat4 view = glm::lookAt(lookAtPoint, eye, up);
    safe_glUniformMatrix4fv(h_uViewMatrix, glm::value_ptr(view));
 }
