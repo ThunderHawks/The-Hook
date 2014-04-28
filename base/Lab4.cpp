@@ -39,8 +39,6 @@ GLuint ShadowCubeBuffObj, SCIndxBuffObj, ShadowNormalBuffObj, RampBuffObj, RIndx
 int g_CiboLen, g_GiboLen, g_RiboLen, g_SCiboLen;
 
 float g_width, g_height;
-float g_Camtrans = -3.0;
-float g_Mtrans = 0;
 GLint h_uLightVec;
 GLint h_uLightColor;
 GLint h_uCamPos, h_uShadeMode;
