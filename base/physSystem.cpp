@@ -63,7 +63,7 @@ void physicsInit() {
 //   printf("%d is pl point\n",player);
    player = createStaticBox(1,1,1,1,1,1,btQuaternion(0,0,0,1),1,0,0,0);
    player->setSleepingThresholds (0, 0);
-   chara = LoadMesh("../Assets/tempChar.obj");
+   chara = LoadMesh("../Assets/streetlight.obj");
    physSetDisplayObj(player,&chara);
    
   // printf("%d is pl point\n",player);
@@ -113,8 +113,8 @@ void physGrapple(float lx,float ly,float lz){
    /*   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAtPoint.x+.0*dir.x,lookAtPoint.y-.0*dir.y,lookAtPoint.z+.0*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z));
    dynamicsWorld->rayTest(btVector3(lookAtPoint.x+.0*dir.x,lookAtPoint.y-.0*dir.y,lookAtPoint.z+.0*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z), RayCallback);
 */
-   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAtPoint.x+1*dir.x,lookAtPoint.y+1*dir.y+1,lookAtPoint.z+1*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y+50*dir.y,lookAtPoint.z+50*dir.z));
-   dynamicsWorld->rayTest(btVector3(lookAtPoint.x+1*dir.x,lookAtPoint.y+1*dir.y+1,lookAtPoint.z+1*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y+50*dir.y,lookAtPoint.z+50*dir.z), RayCallback);
+   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAtPoint.x+1*dir.x,lookAtPoint.y-1*dir.y+1,lookAtPoint.z+1*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z));
+   dynamicsWorld->rayTest(btVector3(lookAtPoint.x+1*dir.x,lookAtPoint.y-1*dir.y+1,lookAtPoint.z+1*dir.z), btVector3(lookAtPoint.x+50*dir.x,lookAtPoint.y-50*dir.y,lookAtPoint.z+50*dir.z), RayCallback);
    //player->setLinearVelocity(btVector3(dir.x*50,dir.y*50,dir.z*50));
    if(RayCallback.hasHit()) {
     //End = RayCallback.m_hitPointWorld;
@@ -128,6 +128,13 @@ void physGrapple(float lx,float ly,float lz){
     // Do some clever stuff here
    }
 }
+void physGrapplePoint(){
+   glm::vec3 at = glm::vec3(lookAtPoint.x,lookAtPoint.y,lookAtPoint.z);
+   glm::vec3 targ = glm::vec3(tmp.getX(),tmp.getY(),tmp.getZ());
+   targ-=at;
+   targ*=5;
+   player->setLinearVelocity(btVector3(targ.x,targ.y,targ.z));
+}
 void physSetDisplayObj(btRigidBody* phys, void *obj){
    phys->setUserPointer(obj);
 }
@@ -140,6 +147,5 @@ void physStep(){
    //setPlayerSpeed(2,2,2);
 
    dynamicsWorld->stepSimulation(1/60.f,10);
-   lookAtPoint = glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
-   glfwGetCursorPos(NULL,g_width/2.0,g_height/2.0);
+
 }

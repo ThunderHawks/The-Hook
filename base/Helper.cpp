@@ -23,6 +23,10 @@
 
 #include "Helper.h"
 
+/* Input:  a vec3 vector
+*  output: the magnitude of the vec3
+*	Summary: finds the magnitude of a vec3 
+*/ 
 float magnitude(glm::vec3 vector) {
    return sqrt(pow(vector.x, 2.0) + pow(vector.y, 2.0) + pow(vector.z, 2.0));
 }
@@ -42,6 +46,13 @@ void glfwWindowResize(GLFWwindow *window, int width, int height)
    glViewport(0, 0, (GLsizei)(width), (GLsizei)(height));
 }
 
+/*The next 4 functions do the followng with a pixel
+
+	convert the x if the x of the pixel to 
+	convert the y if the y of the pixel to 
+	convert the x if the x of the pixel to world
+	convert the y if the y of the pixel to world
+*/
 float p2i_x(int p_x) {
   float x_i = ( (float)p_x - ((g_width-1.0)/2.0) )*2.0/g_width;
   return(x_i);
@@ -69,6 +80,10 @@ float p2w_y(int p_y) {
 //  return( ( (float)p_y - ((g_height-1.0)/2.0) )*2.0/g_height);
 }
 
+/* Input:  two floats that determine the bounds of the random number
+	Output: a random float in between the two numbers
+	Summary: get a random float in between two numbers
+*/
 float RandomFloat(float a, float b) {
     float random = ((float) rand()) / (float) RAND_MAX;
     float diff = b - a;

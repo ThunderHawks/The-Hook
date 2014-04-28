@@ -10,3 +10,6 @@ alt:
 
 pkgconfig:
 	g++ *.cpp `pkg-config --libs --static --cflags glu glfw3` $(GLEW) $(BULLET) 
+	
+clean:
+	rm -f a.out Lab4.exec *.o *.gch *~
