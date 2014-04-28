@@ -17,16 +17,15 @@ class PRSentity{
    Mesh *m;
    float time = 0;
 }
-entity entity::entity()
-void entity::draw(vector<int> shprogs){
+entity::draw(vector<int> shprogs){
    for(int i=0;i<shprogs.size();i++){
       //m.draw(shprogs[i]);
    }
 }
-void entity::draw(){
-   m.draw(innerPos*innerRot*innerScale);
+entity::draw(){
+   //m.draw(1);
    PlaceModel();
 }
-void entity::startInterpolatePos(glm::mat4 start, glm::mat4 end){
+entity::startInterpolatePos(glm::mat4 start, glm::mat4 end){
    
 }

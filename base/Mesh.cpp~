@@ -57,6 +57,7 @@ void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float s
    glEnableVertexAttribArray(h_aNormal);
    glBindBuffer(GL_ARRAY_BUFFER, mesh.NormalHandle);
    //safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+   glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
    /* draw!*/
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndexHandle);

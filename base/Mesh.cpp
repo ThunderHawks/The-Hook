@@ -45,6 +45,9 @@ draws the model :D AWW YEAH!
 
 Output: YOU GET NOTHING!
 ******************************************************************************/
+void drawModel(mat4 position, mat4 rotation, mat4 scale, int shaderProg){
+
+}
 void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle) {
    SetModel(locx, locy, locz, sx, sy, sz, angle);
    //safe_glEnableVertexAttribArray(h_aPosition);
