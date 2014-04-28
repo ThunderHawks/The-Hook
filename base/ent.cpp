@@ -13,7 +13,7 @@ class PRSentity{
    glm::mat4 endRot;
    glm::mat4 endScale;
 
-   btRigidBody *btPhys;
+   //btRigidBody *btPhys;
    void *ourPhys;
    Mesh *m;
    float time;

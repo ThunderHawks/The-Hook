@@ -77,7 +77,7 @@ void main() {
    else if(uShadeMode == 1.0) {
       N = normalize(N);
    }
-   R = reflect(-L, N);
+   R = reflect(L, N);
    R = normalize(R);
    V = vec4(normalize(camVec), 0.0);
      
