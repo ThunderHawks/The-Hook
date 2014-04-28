@@ -34,7 +34,7 @@ void main() {
      //L = view * light;
      L = normalize(light);
      N = uModelMatrix1 * vec4(normal, 0);
-     V = view;
+     V = uViewMatrix*vec4(1,0,0,0);//view;
 
      //L = vec4(-1.0 * L.x, -1.0 * L.y, L.z, 0.0);
      N = normalize(vec4(normal, 0));
