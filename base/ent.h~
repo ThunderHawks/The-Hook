@@ -1,3 +1,3 @@
-#include "Mesh.h"
+#include "Mesh.cpp"
 #include <bullet/btBulletDynamicsCommon.h>
 

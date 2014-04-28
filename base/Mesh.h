@@ -43,5 +43,6 @@ struct Mesh
 };
 
 Mesh LoadMesh(std::string file);
+void drawAtM4(Mesh *m, mat4 trans, int shaderProg);
 void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle);
 

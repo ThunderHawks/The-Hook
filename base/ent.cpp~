@@ -1,7 +1,8 @@
 #include "ent.h"
+
 class PRSentity{
    glm::mat4 position;
-   glm::mat4 rotation
+   glm::mat4 rotation;
    glm::mat4 scale;
 
    glm::mat4 innerPos;
@@ -13,19 +14,33 @@ class PRSentity{
    glm::mat4 endScale;
 
    btRigidBody *btPhys;
-   void *ourPhys
+   void *ourPhys;
    Mesh *m;
-   float time = 0;
+   float time;
+
+   void draw();
+   void startInterpolatePos(glm::mat4 pos,glm::mat4 rot,glm::mat4 sca, glm::mat4 ePos,glm::mat4 eRot,glm::mat4 eSca);
+   void stepAnimation(float a);
+};
+
+void PRSentity::draw(){
+   drawAtM4(m, innerPos*innerRot*innerScale, 1);
 }
-entity::draw(vector<int> shprogs){
-   for(int i=0;i<shprogs.size();i++){
-      //m.draw(shprogs[i]);
-   }
+void PRSentity::startInterpolatePos(glm::mat4 pos,glm::mat4 rot,glm::mat4 sca, glm::mat4 ePos,glm::mat4 eRot,glm::mat4 eSca){
+   time=0;
+
+   position = pos;
+   rotation = rot;
+   scale = sca;
+
+   endPos = ePos;
+   endRot = eRot;
+   endScale = eSca;
 }
-entity::draw(){
-   //m.draw(1);
-   PlaceModel();
-}
-entity::startInterpolatePos(glm::mat4 start, glm::mat4 end){
-   
+void PRSentity::stepAnimation(float a){
+   time+=a;
+   a=time;
+   innerPos = position*(1-a) + endPos*a;
+   innerRot = rotation*(1-a) + endRot*a;
+   innerScale = scale*(1-a) + endScale*a;
 }

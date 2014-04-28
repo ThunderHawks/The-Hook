@@ -45,7 +45,7 @@ draws the model :D AWW YEAH!
 
 Output: YOU GET NOTHING!
 ******************************************************************************/
-void drawModel(mat4 position, mat4 rotation, mat4 scale, int shaderProg){
+void drawAtM4(Mesh *m, mat4 trans, int shaderProg){
 
 }
 void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle) {
