@@ -19,6 +19,7 @@
 #include <vector>
 #include <time.h>
 #include "InitHelpers.h"
+#include "Camera.h"
 
 /*function to help load the shaders (both vertex and fragment */
 /* for this assignment we are doing anything interesting with the fragment sahder */
@@ -103,7 +104,7 @@ void glInitialize(GLFWwindow *window)
    eyeAtx = cos(alpha) * cos(beta);
    eyeAty = sin(alpha);
    eyeAtz = cos(alpha) * cos(M_PI/2.0 - beta);
-   eye = glm::vec3(eyeAtx, eyeAty, eyeAtz);
+   SetEye(glm::vec3(eyeAtx, eyeAty, eyeAtz));
 
    ModelTrans.useModelViewMatrix();
    ModelTrans.loadIdentity();

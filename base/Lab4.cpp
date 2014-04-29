@@ -127,13 +127,12 @@ void glfwDraw (GLFWwindow *window)
    /*Start our shader      */
    glUseProgram(ShadeProg);
    SetProjectionMatrix();
-   SetEye(eye);
    SetLookAt(lookAtPoint);
    SetView();
 
    glUniform3f(h_uLightColor, 0.4, 0.4, 0.38);
    glUniform4f(h_uLightVec, 0.0, -1.0, 1.0, 0.0);
-   glUniform3f(h_uCamPos, eye.x, eye.y, eye.z);
+   glUniform3f(h_uCamPos, GetEye().x, GetEye().y, GetEye().z);
 
    ModelTrans.loadIdentity();
    SetModelStat();
@@ -209,6 +208,8 @@ int main( int argc, char *argv[] )
    }
 
    srand(time(0));
+
+   SetEye(vec3(0, 0, 0));
 
    glfwMakeContextCurrent(window);
    glfwSetWindowPos(window, 80, 80);

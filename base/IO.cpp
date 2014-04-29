@@ -1,4 +1,4 @@
-#include <GL/glew.h>
+	#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <stdlib.h>
@@ -35,9 +35,8 @@ float eyeAtz = 0.0f;
 float alpha = 0.0;
 float beta = -M_PI/2.0;
 
-//Camera look at, eye position, up vector, and gaze, w, and u vectors
+//Camera look at, up vector, and gaze, w, and u vectors
 glm::vec3 lookAtPoint = glm::vec3(4.0, 0.3, 4.0);
-glm::vec3 eye;
 glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::vec3 gaze;
 glm::vec3 w, u;
@@ -52,7 +51,7 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    }
 
    //Get rid of if unneeded
-   gaze = lookAtPoint - eye;
+   gaze = lookAtPoint - GetEye();
    w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
    w = glm::normalize(w);
    u = glm::cross(up, w)/magnitude(glm::cross(up, w));
@@ -91,7 +90,7 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    eyeAty += lookAtPoint.y;
    eyeAtz += lookAtPoint.z;
 
-   eye = glm::vec3(eyeAtx, eyeAty, eyeAtz);
+   SetEye(glm::vec3(eyeAtx, eyeAty, eyeAtz));
 
 
    startX = g_width/2.0;// = endX;
@@ -114,16 +113,17 @@ void glfwKeyboard(void) {
        setPlayerSpeed(w.x*3,0,w.z*3);
        //newSpeed.x=newSpeed.x+w.x*3;
        //newSpeed.z=newSpeed.z+w.z*3;
-       eye = glm::vec3(eye.x + 0.1 * w.x, eye.y, eye.z + 0.1 * w.z);
+       MoveEye(glm::vec3(0.1 * w.x, 0, 0.1 * w.z));
        //lookAtPoint = glm::vec3(lookAtPoint.x + 0.1 * w.x, lookAtPoint.y, lookAtPoint.z + 0.1 * w.z);
    }
    //GLFW_KEY_W
    if(KeysPressed['W']) {
-       printf("eye %f %f %f  %f\n",eye.x,eye.y,eye.z,physGetPlayerX());
+   	 printf("%lf %lf %lf\n", GetEye().x, GetEye().y, GetEye().z);
        setPlayerSpeed(-w.x*3,0,-w.z*3);
        //newSpeed.x=newSpeed.x-w.x*3;
        //newSpeed.z=newSpeed.z-w.z*3;
-       eye = glm::vec3(eye.x - 0.1 * w.x, eye.y, eye.z - 0.1 * w.z);
+       MoveEye(glm::vec3(-0.1 * w.x, 0, -0.1 * w.z));
+       printf("%lf %lf %lf\n", GetEye().x, GetEye().y, GetEye().z);
        //lookAtPoint = glm::vec3(lookAtPoint.x - 0.1 * w.x, lookAtPoint.y, lookAtPoint.z - 0.1 * w.z);
    }
    //GLFW_KEY_D
@@ -131,7 +131,7 @@ void glfwKeyboard(void) {
        setPlayerSpeed(u.x*3,0,u.z*3);
        //newSpeed.x=newSpeed.x+u.x*3;
        //newSpeed.z=newSpeed.z+u.z*3;
-       eye = glm::vec3(eye.x + 0.1 * u.x, eye.y, eye.z + 0.1 * u.z);
+       MoveEye(glm::vec3(0.1 * u.x, 0, 0.1 * u.z));
        //lookAtPoint = glm::vec3(lookAtPoint.x + 0.1 * u.x, lookAtPoint.y, lookAtPoint.z + 0.1 * u.z);
    }
    //GLFW_KEY_A
@@ -139,7 +139,7 @@ void glfwKeyboard(void) {
         setPlayerSpeed(-u.x*3,0,-u.z*3);
        //newSpeed.x=newSpeed.x-u.x*3;
        //newSpeed.z=newSpeed.z-u.z*3;
-       eye = glm::vec3(eye.x - 0.1 * u.x, eye.y, eye.z - 0.1 * u.z);
+       MoveEye(glm::vec3(-0.1 * u.x, 0, -0.1 * u.z));
        //lookAtPoint = glm::vec3(lookAtPoint.x - 0.1 * u.x, lookAtPoint.y, lookAtPoint.z - 0.1 * u.z);
    }
    ///setPlayerSpeed(newSpeed.x,newSpeed.y,newSpeed.z);

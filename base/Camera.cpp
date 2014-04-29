@@ -6,13 +6,13 @@
 
 #include "Camera.h"
 
-glm::vec3 cameye, clookAtPoint;
+glm::vec3 eye = glm::vec3(0, 0, 0), clookAtPoint;
+glm::vec3 up = glm::vec3(0, 1, 0);
 
 /*Sends the view matrix to the shader*/
 void SetView() {
-	glm::vec3 up = glm::vec3(0, 1, 0);
 //   clookAtPoint.y+=4;
-   glm::mat4 view = glm::lookAt(cameye, clookAtPoint, up);
+   glm::mat4 view = glm::lookAt(eye, clookAtPoint, up);
   // clookAtPoint.y-=4;
    //glm::mat4 view = glm::lookAt(clookAtPoint, eye, up);
    safe_glUniformMatrix4fv(h_uViewMatrix, glm::value_ptr(view));
@@ -20,12 +20,17 @@ void SetView() {
 
 /*Returns the a vec3 of the Eye*/
 glm::vec3 GetEye() {
-	return cameye;
+	return eye;
 }
 /*Sets the eye to a new vec3 and returns it's new location*/
 glm::vec3 SetEye(glm::vec3 newEye) {
-	cameye = newEye;
-	return cameye;
+	eye = newEye;
+	return eye;
+}
+/*Increment the eye by this vec3 and returns its new location*/
+glm::vec3 MoveEye(glm::vec3 toAdd) {
+	eye += toAdd;
+	return eye;
 }
 /*returns a vec3 of the LookAt point*/
 glm::vec3 GetLookAt() {
