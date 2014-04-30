@@ -1,4 +1,4 @@
-	#include <GL/glew.h>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <stdlib.h>
@@ -36,8 +36,9 @@ float alpha = 0.0;
 float beta = -M_PI/2.0;
 
 //Camera look at, up vector, and gaze, w, and u vectors
+
 glm::vec3 lookAtPoint = glm::vec3(4.0, 0.3, 4.0);
-glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+//glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::vec3 gaze;
 glm::vec3 w, u;
 
