@@ -35,9 +35,6 @@ float eyeAtz = 0.0f;
 float alpha = 0.0;
 float beta = -M_PI/2.0;
 
-//Camera look at, up vector, and gaze, w, and u vectors
-
-glm::vec3 lookAtPoint = glm::vec3(4.0, 0.3, 4.0);
 //glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::vec3 gaze;
 glm::vec3 w, u;
@@ -52,10 +49,10 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    }
 
    //Get rid of if unneeded
-   gaze = lookAtPoint - GetEye();
+   gaze = GetLookAt() - GetEye();
    w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
    w = glm::normalize(w);
-   u = glm::cross(up, w)/magnitude(glm::cross(up, w));
+   u = glm::cross(GetUp(), w)/magnitude(glm::cross(GetUp(), w));
    u = glm::normalize(u);
 
    endX = xpos;
@@ -87,9 +84,9 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    eyeAty = 6.0 * sin(alpha);
    eyeAtz = 6.0 * cos(alpha) * cos(M_PI/2.0 - beta);
 
-   eyeAtx += lookAtPoint.x;
-   eyeAty += lookAtPoint.y;
-   eyeAtz += lookAtPoint.z;
+   eyeAtx += GetLookAt().x;
+   eyeAty += GetLookAt().y;
+   eyeAtz += GetLookAt().z;
 
    SetEye(glm::vec3(eyeAtx, eyeAty, eyeAtz));
 
@@ -97,17 +94,21 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    startX = g_width/2.0;// = endX;
    startY = g_height/2.0-1;// endY;
 }
-//returns bool of character pressed
-//takes the character for a given key
+/*
+*  returns bool of character pressed
+*  takes the character for a given key
+*/
 int getPressed(char ch){
    return KeysPressed[ch];
 }
-//the function that is called in the main loop that will act on the keys pressed
-//that are kept track of inside of the array
+/*
+* the function that is called in the main loop that will act on the keys pressed
+* that are kept track of inside of the array
+*/
 void glfwKeyboard(void) {
   w = gaze/magnitude(gaze);
   w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
-  u = glm::cross(up, w)/magnitude(glm::cross(up, w));
+  u = glm::cross(GetUp(), w)/magnitude(glm::cross(GetUp(), w));
   //eye = glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
    //GLFW_KEY_S
    if(KeysPressed['S']) {
@@ -115,7 +116,6 @@ void glfwKeyboard(void) {
        //newSpeed.x=newSpeed.x+w.x*3;
        //newSpeed.z=newSpeed.z+w.z*3;
        MoveEye(glm::vec3(0.1 * w.x, 0, 0.1 * w.z));
-       //lookAtPoint = glm::vec3(lookAtPoint.x + 0.1 * w.x, lookAtPoint.y, lookAtPoint.z + 0.1 * w.z);
    }
    //GLFW_KEY_W
    if(KeysPressed['W']) {
@@ -125,7 +125,6 @@ void glfwKeyboard(void) {
        //newSpeed.z=newSpeed.z-w.z*3;
        MoveEye(glm::vec3(-0.1 * w.x, 0, -0.1 * w.z));
        printf("%lf %lf %lf\n", GetEye().x, GetEye().y, GetEye().z);
-       //lookAtPoint = glm::vec3(lookAtPoint.x - 0.1 * w.x, lookAtPoint.y, lookAtPoint.z - 0.1 * w.z);
    }
    //GLFW_KEY_D
    if(KeysPressed['D']) {
@@ -133,7 +132,6 @@ void glfwKeyboard(void) {
        //newSpeed.x=newSpeed.x+u.x*3;
        //newSpeed.z=newSpeed.z+u.z*3;
        MoveEye(glm::vec3(0.1 * u.x, 0, 0.1 * u.z));
-       //lookAtPoint = glm::vec3(lookAtPoint.x + 0.1 * u.x, lookAtPoint.y, lookAtPoint.z + 0.1 * u.z);
    }
    //GLFW_KEY_A
    if(KeysPressed['A']) {
@@ -141,7 +139,6 @@ void glfwKeyboard(void) {
        //newSpeed.x=newSpeed.x-u.x*3;
        //newSpeed.z=newSpeed.z-u.z*3;
        MoveEye(glm::vec3(-0.1 * u.x, 0, -0.1 * u.z));
-       //lookAtPoint = glm::vec3(lookAtPoint.x - 0.1 * u.x, lookAtPoint.y, lookAtPoint.z - 0.1 * u.z);
    }
    ///setPlayerSpeed(newSpeed.x,newSpeed.y,newSpeed.z);
    //GLFW_KEY_SPACE

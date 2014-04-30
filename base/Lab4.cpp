@@ -127,7 +127,6 @@ void glfwDraw (GLFWwindow *window)
    /*Start our shader      */
    glUseProgram(ShadeProg);
    SetProjectionMatrix();
-   SetLookAt(lookAtPoint);
    SetView();
 
    glUniform3f(h_uLightColor, 0.4, 0.4, 0.38);
@@ -155,7 +154,7 @@ void glfwDraw (GLFWwindow *window)
 
    //DRAW THE DANCING CYLINDER HERE!!
    btTransform pla;
-   PlaceModel(playerMesh, lookAtPoint.x, lookAtPoint.y - 1, lookAtPoint.z, .25, .1, .25, 1);
+   PlaceModel(playerMesh, GetLookAt().x, GetLookAt().y - 1, GetLookAt().z, .25, .1, .25, 1);
    //END OF DANCING CYLINDER CODE HERE!!
 
    //Draw Cubes
@@ -231,7 +230,7 @@ int main( int argc, char *argv[] )
    while (!glfwWindowShouldClose(window)) {
       glfwPollEvents();
       //player appy physics controls
-      lookAtPoint = glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
+      SetLookAt(glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ()));
       glfwGetCursorPos(NULL,g_width/2.0,g_height/2.0);
       physStep();
       //Draw stuff

@@ -6,7 +6,6 @@ extern GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, G
 extern GLuint ShadowCubeBuffObj, SCIndxBuffObj, ShadowNormalBuffObj, RampBuffObj, RIndxBuffObj, RampNormalBuffObj;
 extern GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine;
 extern float g_width, g_height, beta, alpha, eyeAtx, eyeAty, eyeAtz;
-extern glm::vec3 lookAtPoint, up;
 extern int ShadeProg;
 extern GLint h_uLightVec;
 extern GLint h_uLightColor;

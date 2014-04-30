@@ -6,15 +6,15 @@
 
 #include "Camera.h"
 
-glm::vec3 eye = glm::vec3(0, 0, 0), clookAtPoint;
+glm::vec3 eye = glm::vec3(0, 0, 0), lookAtPoint;
 glm::vec3 up = glm::vec3(0, 1, 0);
 
 /*Sends the view matrix to the shader*/
 void SetView() {
-//   clookAtPoint.y+=4;
-   glm::mat4 view = glm::lookAt(eye, clookAtPoint, up);
-  // clookAtPoint.y-=4;
-   //glm::mat4 view = glm::lookAt(clookAtPoint, eye, up);
+//   lookAtPoint.y+=4;
+   glm::mat4 view = glm::lookAt(eye, lookAtPoint, up);
+  // lookAtPoint.y-=4;
+   //glm::mat4 view = glm::lookAt(lookAtPoint, eye, up);
    safe_glUniformMatrix4fv(h_uViewMatrix, glm::value_ptr(view));
 }
 
@@ -34,10 +34,19 @@ glm::vec3 MoveEye(glm::vec3 toAdd) {
 }
 /*returns a vec3 of the LookAt point*/
 glm::vec3 GetLookAt() {
-	return clookAtPoint;
+	return lookAtPoint;
 }
-/*Sets the clookAtPoint to a new location, and returns it*/
+/*Sets the lookAtPoint to a new location, and returns it*/
 glm::vec3 SetLookAt(glm::vec3 newLookAt) {
-	clookAtPoint = newLookAt;
-	return clookAtPoint;
+	lookAtPoint = newLookAt;
+	return lookAtPoint;
+}
+/*gets the up vector and returns it*/
+glm::vec3 GetUp() {
+	return up;
+}
+/*Sets the up vector to a new direction, and returns it*/
+glm::vec3 SetUp(glm::vec3 newUp) {
+	up = newUp;
+	return up;
 }
