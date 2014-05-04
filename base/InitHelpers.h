@@ -13,7 +13,5 @@ extern GLint h_uCamPos, h_uShadeMode;
 extern GLint h_uModelMatrix;
 extern RenderingHelper ModelTrans;
 
-extern void SetModel(float x, float y, float z, float Sx, float Sy, float Sz, float angle);
-
 int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName);
 void glInitialize(GLFWwindow *window);

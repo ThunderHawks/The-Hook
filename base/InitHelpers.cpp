@@ -7,9 +7,7 @@
 #define GLM_FORCE_RADIANS
 #include "GLSL_helper.h"
 
-#include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp" //perspective, trans etc
-#include "glm/gtc/type_ptr.hpp" //value_ptr
 #include <list>
 #include <math.h>
 #include <fstream>
@@ -20,6 +18,7 @@
 #include <time.h>
 #include "InitHelpers.h"
 #include "Camera.h"
+#include "Mesh.h"
 
 /*function to help load the shaders (both vertex and fragment */
 /* for this assignment we are doing anything interesting with the fragment sahder */
