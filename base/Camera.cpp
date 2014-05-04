@@ -11,10 +11,7 @@ glm::vec3 up = glm::vec3(0, 1, 0);
 
 /*Sends the view matrix to the shader*/
 glm::mat4 SetView() {
-//   lookAtPoint.y+=4;
    glm::mat4 view = glm::lookAt(eye, lookAtPoint, up);
-  // lookAtPoint.y-=4;
-   //glm::mat4 view = glm::lookAt(lookAtPoint, eye, up);
    safe_glUniformMatrix4fv(h_uViewMatrix, glm::value_ptr(view));
    return view;
 }
