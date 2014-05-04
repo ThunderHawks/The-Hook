@@ -181,34 +181,44 @@ void glfwDraw (GLFWwindow *window)
 
 }
 
-int main( int argc, char *argv[] )
-{
-   GLFWwindow *window;
-
-   glfwSetErrorCallback(glfwError);
-   if (!glfwInit()) {
-      exit(EXIT_FAILURE);
-   }
-
-   // Set up the main window.
-   window = glfwCreateWindow(800, 800, "The Creation", NULL, NULL);
+void initWorldEdit(GLFWwindow *window) {
+   window = glfwCreateWindow(800, 800, "World Editor", NULL, NULL);
    if (!window) {
       glfwTerminate();
       exit(EXIT_FAILURE);
    }
-
    srand(time(0));
-
-   SetEye(vec3(0, 0, 0));
-
    glfwMakeContextCurrent(window);
    glfwSetWindowPos(window, 80, 80);
    glfwSetWindowSizeCallback(window, glfwWindowResize);
    glfwSetWindowSize(window,1600,800);
    g_height =800;
    g_width = 1600;
+
    glfwSetKeyCallback(window, glfwKeyPress);
-   glfwSetCursorPosCallback( window, glfwGetCursorPos );
+   glfwSetCursorPosCallback( window, glfwEditGetCursorPos );
+
+   glewInit();
+   glInitialize(window);
+   InitGeom();
+}
+
+void initGamePlay(GLFWwindow *window) {
+   window = glfwCreateWindow(800, 800, "Grapple", NULL, NULL);
+   if (!window) {
+      glfwTerminate();
+      exit(EXIT_FAILURE);
+   }
+   srand(time(0));
+   glfwMakeContextCurrent(window);
+   glfwSetWindowPos(window, 80, 80);
+   glfwSetWindowSizeCallback(window, glfwWindowResize);
+   glfwSetWindowSize(window,1600,800);
+   g_height =800;
+   g_width = 1600;
+
+   glfwSetKeyCallback(window, glfwKeyPress);
+   glfwSetCursorPosCallback( window, glfwGameGetCursorPos );
 
    glewInit();
    glInitialize(window);
@@ -216,20 +226,96 @@ int main( int argc, char *argv[] )
    InitGeom();
 
    loadLevel();
+}
+
+int main( int argc, char *argv[] )
+{
+   GLFWwindow *window;
+   int Edit;
+
+   glfwSetErrorCallback(glfwError);
+   if (!glfwInit()) {
+      exit(EXIT_FAILURE);
+   }
+
+   printf("Type 0 to play, any other int to edit\n");
+   scanf("%i", &Edit);
+
+   //If Edit Mode
+   if(Edit) {
+      //World Edit Init
+      //initWorldEdit(window);
+      window = glfwCreateWindow(800, 800, "World Editor", NULL, NULL);
+      if (!window) {
+         glfwTerminate();
+         exit(EXIT_FAILURE);
+      }
+      srand(time(0));
+      glfwMakeContextCurrent(window);
+      glfwSetWindowPos(window, 80, 80);
+      glfwSetWindowSizeCallback(window, glfwWindowResize);
+      glfwSetWindowSize(window,1600,800);
+      g_height =800;
+      g_width = 1600;
+
+      glfwSetKeyCallback(window, glfwKeyPress);
+      glfwSetCursorPosCallback( window, glfwEditGetCursorPos );
+
+      glewInit();
+      glInitialize(window);
+      InitGeom();
+   }
+   //If Play Mode
+   else {
+      //Game Play Init
+      //initGamePlay(window);
+      window = glfwCreateWindow(800, 800, "Grapple", NULL, NULL);
+      if (!window) {
+         glfwTerminate();
+         exit(EXIT_FAILURE);
+      }
+      srand(time(0));
+      SetEye(vec3(0, 0, 0));
+      glfwMakeContextCurrent(window);
+      glfwSetWindowPos(window, 80, 80);
+      glfwSetWindowSizeCallback(window, glfwWindowResize);
+      glfwSetWindowSize(window,1600,800);
+      g_height =800;
+      g_width = 1600;
+
+      glfwSetKeyCallback(window, glfwKeyPress);
+      glfwSetCursorPosCallback( window, glfwGameGetCursorPos );
+
+      glewInit();
+      glInitialize(window);
+      physicsInit();
+      InitGeom();
+      loadLevel();
+   }
+
 
    // Start the main execution loop.
    while (!glfwWindowShouldClose(window)) {
       glfwPollEvents();
-      //player appy physics controls
-      SetLookAt(glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ()));
-      glfwGetCursorPos(NULL,g_width/2.0,g_height/2.0);
-      physStep();
-      //Draw stuff
-      glfwDraw(window);
-      //Keep the cursor centered
-      glfwSetCursorPos(window,g_width/2,g_height/2);
-      //Allows movement based on the keyboard callback
-      glfwKeyboard();
+      if(Edit) {
+         glfwSetCursorPos(window,g_width/2,g_height/2);  
+         glfwDraw(window);
+         glfwEditGetCursorPos(NULL,g_width/2.0,g_height/2.0);
+         //glfw Game Keyboard
+         glfwEditKeyboard();
+      }
+      else {
+         //player appy physics controls
+         SetLookAt(glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ()));
+         //Keep the cursor centered
+         glfwSetCursorPos(window,g_width/2,g_height/2);         
+         physStep();
+         //Draw stuff
+         glfwDraw(window);
+         glfwGameGetCursorPos(NULL,g_width/2.0,g_height/2.0);
+         //glfw Game Keyboard
+         glfwGameKeyboard();
+      }
       usleep(15000);
    }
 

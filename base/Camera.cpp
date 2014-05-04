@@ -11,7 +11,10 @@ glm::vec3 up = glm::vec3(0, 1, 0);
 
 /*Sends the view matrix to the shader*/
 glm::mat4 SetView() {
+//   lookAtPoint.y+=4;
    glm::mat4 view = glm::lookAt(eye, lookAtPoint, up);
+  // lookAtPoint.y-=4;
+   //glm::mat4 view = glm::lookAt(lookAtPoint, eye, up);
    safe_glUniformMatrix4fv(h_uViewMatrix, glm::value_ptr(view));
    return view;
 }
@@ -37,6 +40,11 @@ glm::vec3 GetLookAt() {
 /*Sets the lookAtPoint to a new location, and returns it*/
 glm::vec3 SetLookAt(glm::vec3 newLookAt) {
 	lookAtPoint = newLookAt;
+	return lookAtPoint;
+}
+/*Increment the lookAt by this vec3 and return its new location*/
+glm::vec3 MoveLookAt(glm::vec3 toAdd) {
+	lookAtPoint += toAdd;
 	return lookAtPoint;
 }
 /*gets the up vector and returns it*/

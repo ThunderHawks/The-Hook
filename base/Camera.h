@@ -14,6 +14,8 @@ glm::vec3 MoveEye(glm::vec3 toAdd);
 glm::vec3 GetLookAt();
 /*Sets the LookAtPoint to a new location, and returns it*/
 glm::vec3 SetLookAt(glm::vec3 newLookAt);
+/*Increment the lookAt by this vec3 and return its new location*/
+glm::vec3 MoveLookAt(glm::vec3 toAdd);
 /*returns the up vector*/
 glm::vec3 GetUp();
 /*Sets the up vector to a new direction, and returns it*/

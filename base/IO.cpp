@@ -32,6 +32,9 @@ float endX, endY;
 float eyeAtx = 0.0f;
 float eyeAty = 0.0f;
 float eyeAtz = 0.0f;
+float lookAtx = 0.0f;
+float lookAty = 0.0f;
+float lookAtz = 0.0f;
 float alpha = 0.0;
 float beta = -M_PI/2.0;
 
@@ -42,7 +45,7 @@ glm::vec3 w, u;
 //Change size to increase amount of keys input
 int KeysPressed[255];
 
-void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
+void glfwGameGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
 
    if(xpos > g_width || xpos < 0 || ypos < 0 || ypos > g_height) {
       return;
@@ -75,7 +78,7 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
       diff = endY - startY;
       alpha += (diff * M_PI)/g_width;
    }
-   else if(startY > endY && alpha >= -0.1) {
+   else if(startY > endY && alpha >= -0.5) {
       diff = startY - endY;
       alpha -= (diff * M_PI)/g_width;
    }
@@ -94,6 +97,59 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    startX = g_width/2.0;// = endX;
    startY = g_height/2.0-1;// endY;
 }
+
+void glfwEditGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
+
+   if(xpos > g_width || xpos < 0 || ypos < 0 || ypos > g_height) {
+      return;
+   }
+
+   //Get rid of if unneeded
+   gaze = GetLookAt() - GetEye();
+   w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
+   w = glm::normalize(w);
+   u = glm::cross(GetUp(), w)/magnitude(glm::cross(GetUp(), w));
+   u = glm::normalize(u);
+
+   endX = xpos;
+   endY = g_height-ypos-1;
+
+   float diff;
+
+   //Calculate change in X
+   if(startX < endX) {
+      diff = endX - startX;
+      beta += (diff * M_PI)/g_width;
+   }
+   else if(startX > endX){
+      diff = startX - endX;
+      beta -= (diff * M_PI)/g_width;
+   }
+
+   //Calculate change in Y
+   if(startY < endY && alpha <= 0.98) {
+      diff = endY - startY;
+      alpha += (diff * M_PI)/g_width;
+   }
+   else if(startY > endY && alpha >= -0.98) {
+      diff = startY - endY;
+      alpha -= (diff * M_PI)/g_width;
+   }
+   //Update lookAt
+   lookAtx = 6.0 * cos(alpha) * cos(beta);
+   lookAty = 6.0 * sin(alpha);
+   lookAtz = 6.0 * cos(alpha) * cos(M_PI/2.0 - beta);
+
+   lookAtx += GetEye().x;
+   lookAty += GetEye().y;
+   lookAtz += GetEye().z;
+
+   SetLookAt(glm::vec3(lookAtx, lookAty, lookAtz));
+
+   startX = g_width/2.0;// = endX;
+   startY = g_height/2.0-1;// endY;
+}
+
 /*
 *  returns bool of character pressed
 *  takes the character for a given key
@@ -101,11 +157,8 @@ void glfwGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
 int getPressed(char ch){
    return KeysPressed[ch];
 }
-/*
-* the function that is called in the main loop that will act on the keys pressed
-* that are kept track of inside of the array
-*/
-void glfwKeyboard(void) {
+
+void glfwGameKeyboard(void) {
   w = gaze/magnitude(gaze);
   w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
   u = glm::cross(GetUp(), w)/magnitude(glm::cross(GetUp(), w));
@@ -163,6 +216,41 @@ void glfwKeyboard(void) {
          //KeysPressed['E']=2;
   //    }
       //else physGrapplePoint();
+   }
+}
+
+/*
+* the function that is called in the main loop that will act on the keys pressed
+* that are kept track of inside of the array
+*/
+void glfwEditKeyboard(void) {
+  w = gaze/magnitude(gaze);
+  w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
+  u = glm::cross(GetUp(), w)/magnitude(glm::cross(GetUp(), w));
+  //eye = glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
+   //GLFW_KEY_S
+   if(KeysPressed['S']) {
+       MoveEye(glm::vec3(0.1 * w.x, 0.1 * w.y, 0.1 * w.z));
+       MoveLookAt(glm::vec3(0.1 * w.x, 0.1 * w.y, 0.1 * w.z));
+   }
+   //GLFW_KEY_W
+   if(KeysPressed['W']) {
+       MoveEye(glm::vec3(-0.1 * w.x, -0.1 * w.y, -0.1 * w.z));
+       MoveLookAt(glm::vec3(-0.1 * w.x, -0.1 * w.y, -0.1 * w.z));
+   }
+   //GLFW_KEY_D
+   if(KeysPressed['D']) {
+       MoveEye(glm::vec3(0.1 * u.x, 0.1 * u.y, 0.1 * u.z));
+       MoveLookAt(glm::vec3(0.1 * u.x, 0.1 * u.y, 0.1 * u.z));
+   }
+   //GLFW_KEY_A
+   if(KeysPressed['A']) {
+       MoveEye(glm::vec3(-0.1 * u.x, -0.1 * u.y, -0.1 * u.z));
+       MoveLookAt(glm::vec3(-0.1 * u.x, -0.1 * u.y, -0.1 * u.z));
+   }
+   //GLFW_KEY_Q
+   if(KeysPressed['Q']) {
+      exit( EXIT_SUCCESS );
    }
 }
 
