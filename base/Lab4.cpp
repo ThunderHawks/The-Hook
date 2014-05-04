@@ -24,8 +24,6 @@
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
 
-void HideMesh();
-
 //position and color data handles
 GLuint triBuffObj, colBuffObj;
 
@@ -56,10 +54,14 @@ GLuint MeshBuffObj, MeshIndxBuffObj;
 //The assimp mesh stuff
 Mesh playerMesh;
 
+/*Do something better with this later. I don't like that it is a global but oh well for now.*/
+glm::mat4 curProj, curView;
+
 /* projection matrix  - do not change */
-void SetProjectionMatrix() {
+glm::mat4 SetProjectionMatrix() {
    glm::mat4 Projection = glm::perspective(80.0f, (float)g_width/g_height, 0.1f, 100.f);	
    safe_glUniformMatrix4fv(h_uProjMatrix, glm::value_ptr(Projection));
+   return Projection;
 }
 
 void DrawShadow(float x, float z, float Sx, float Sy, float Sz, float angle) {
@@ -113,8 +115,8 @@ void glfwDraw (GLFWwindow *window)
    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    /*Start our shader      */
    glUseProgram(ShadeProg);
-   SetProjectionMatrix();
-   SetView();
+   curProj = SetProjectionMatrix();
+   curView = SetView();
 
    glUniform3f(h_uLightColor, 0.4, 0.4, 0.38);
    glUniform4f(h_uLightVec, 0.0, -1.0, 1.0, 0.0);

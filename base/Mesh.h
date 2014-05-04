@@ -24,14 +24,14 @@
 #pragma comment(lib, "freeglut.lib")
 #endif
 
-#include "glm/glm.hpp"
-#include "glm/gtc/type_ptr.hpp"
+#include "ViewFrustum.h"
 #include "mesh_loader.h"
 #include "InitHelpers.h"
 #include <vector>
 #include <string>
 
 extern RenderingHelper ModelTrans;
+extern glm::mat4 curProj, curView;
 
 struct Mesh
 {
