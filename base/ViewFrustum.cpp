@@ -37,7 +37,7 @@ int checkViewFrustum (glm::vec3 point, int rad, glm::mat4 mView) {
 		matArray[i] = pSource[i];
 		
 	/*I can use 2 fancy loops to iterate through it and make the code smaller. However, Until I know this works, I won't be using it. Here it is below though:*/
-	/*
+	
 		for (int i = 0; i < 12; ) {
 			a = m41 + matArray[i++];
 			b = m42 + matArray[i++];
@@ -57,9 +57,9 @@ int checkViewFrustum (glm::vec3 point, int rad, glm::mat4 mView) {
 			if (a*point.x + b*point.y + c*point.z + d + rad < 0)
 				return 1;
 		}
-	*/
+	
 		
-	/* checking left plane*/
+	/* checking left plane
 	a = m41 + m11;
 	b = m42 + m12;
 	c = m43 + m13;
@@ -68,7 +68,7 @@ int checkViewFrustum (glm::vec3 point, int rad, glm::mat4 mView) {
 	if (a*point.x + b*point.y + c*point.z + d + rad < 0)
 		return 1;
 	
-	/* checking right plane*/
+	/* checking right plane
 	a = m41 - m11;
 	b = m42 - m12;
 	c = m43 - m13;
@@ -77,7 +77,7 @@ int checkViewFrustum (glm::vec3 point, int rad, glm::mat4 mView) {
 	if (a*point.x + b*point.y + c*point.z + d + rad < 0)
 		return 2;
 		
-	/* checking bottom plane*/
+	/* checking bottom plane
 	a = m41 + m21;
 	b = m42 + m22;
 	c = m43 + m23;
@@ -86,7 +86,7 @@ int checkViewFrustum (glm::vec3 point, int rad, glm::mat4 mView) {
 	if (a*point.x + b*point.y + c*point.z + d + rad < 0)
 		return 3;
 		
-	/* checking top plane*/
+	/* checking top plane
 	a = m41 - m21;
 	b = m42 - m22;
 	c = m43 - m23;
@@ -95,7 +95,7 @@ int checkViewFrustum (glm::vec3 point, int rad, glm::mat4 mView) {
 	if (a*point.x + b*point.y + c*point.z + d + rad < 0)
 		return 4;
 		
-	/* checking near plane*/
+	/* checking near plane
 	a = m41 + m31;
 	b = m42 + m32;
 	c = m43 + m33;
@@ -104,7 +104,7 @@ int checkViewFrustum (glm::vec3 point, int rad, glm::mat4 mView) {
 	if (a*point.x + b*point.y + c*point.z + d + rad < 0)
 		return 5;
 		
-	/* checking far plane*/
+	/* checking far plane
 	a = m41 - m31;
 	b = m42 - m32;
 	c = m43 - m33;
@@ -112,6 +112,7 @@ int checkViewFrustum (glm::vec3 point, int rad, glm::mat4 mView) {
 	//if it is not in the space
 	if (a*point.x + b*point.y + c*point.z + d + rad < 0)
 		return 6;
-		
+	
+	*/	
 	return 0;
 }
