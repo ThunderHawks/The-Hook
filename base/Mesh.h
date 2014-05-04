@@ -25,6 +25,7 @@
 #endif
 
 #include "glm/glm.hpp"
+#include "glm/gtc/type_ptr.hpp"
 #include "mesh_loader.h"
 #include "InitHelpers.h"
 #include <vector>
@@ -45,4 +46,5 @@ struct Mesh
 Mesh LoadMesh(std::string file);
 void drawAtM4(Mesh *m, mat4 trans, int shaderProg);
 void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle);
-
+void SetModelStat();
+void SetModel(float x, float y, float z, float Sx, float Sy, float Sz, float angle);

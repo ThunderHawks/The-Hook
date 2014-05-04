@@ -1,4 +1,5 @@
 #define GL_GLEXT_PROTOTYPES
+#include "GLSL_helper.h"
 #include "Mesh.h"
 using namespace glm;
 
@@ -64,6 +65,21 @@ void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float s
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndexHandle);
 
    glDrawElements(GL_TRIANGLES, mesh.IndexBufferLength, GL_UNSIGNED_SHORT, 0);
+}
+
+/**/
+void SetModelStat() {
+   safe_glUniformMatrix4fv(h_uModelMatrix, glm::value_ptr(ModelTrans.modelViewMatrix));
+}
+
+/* model transforms */
+void SetModel(float x, float y, float z, float Sx, float Sy, float Sz, float angle) {
+   glm::mat4 Trans = glm::translate( glm::mat4(1.0f), glm::vec3(x, y, z));
+   glm::mat4 Scale = glm::scale(glm::mat4(1.0f), glm::vec3(Sx, Sy, Sz));
+   //printf("%f %f ModelPosition\n",Sy,Sz);
+   glm::mat4 Rotate = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 1.0f, 0.0f));
+   glm::mat4 ctm = Trans * Rotate * Scale;
+   safe_glUniformMatrix4fv(h_uModelMatrix, glm::value_ptr(ctm));
 }
 
 /*currently does nothing, but might be used in the future. Talk to Andrew M.*/

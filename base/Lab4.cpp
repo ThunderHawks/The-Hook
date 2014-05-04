@@ -19,6 +19,7 @@
 #include "level.h"
 #include <vector>
 #include "Camera.h"
+#include "ViewFrustum.h"
 
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
@@ -59,20 +60,6 @@ Mesh playerMesh;
 void SetProjectionMatrix() {
    glm::mat4 Projection = glm::perspective(80.0f, (float)g_width/g_height, 0.1f, 100.f);	
    safe_glUniformMatrix4fv(h_uProjMatrix, glm::value_ptr(Projection));
-}
-
-void SetModelStat() {
-   safe_glUniformMatrix4fv(h_uModelMatrix, glm::value_ptr(ModelTrans.modelViewMatrix));
-}
-
-/* model transforms */
-void SetModel(float x, float y, float z, float Sx, float Sy, float Sz, float angle) {
-   glm::mat4 Trans = glm::translate( glm::mat4(1.0f), glm::vec3(x, y, z));
-   glm::mat4 Scale = glm::scale(glm::mat4(1.0f), glm::vec3(Sx, Sy, Sz));
-   //printf("%f %f ModelPosition\n",Sy,Sz);
-   glm::mat4 Rotate = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 1.0f, 0.0f));
-   glm::mat4 ctm = Trans * Rotate * Scale;
-   safe_glUniformMatrix4fv(h_uModelMatrix, glm::value_ptr(ctm));
 }
 
 void DrawShadow(float x, float z, float Sx, float Sy, float Sz, float angle) {
@@ -168,8 +155,10 @@ void glfwDraw (GLFWwindow *window)
       loopable[i]->getMotionState()->getWorldTransform(trans);
       //printf("actual is %f %f %f\n",trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ());
    
-if(!i)PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.15*SCALE,-.05*SCALE,.15*SCALE,1);
-else  PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.1*SCALE,.1*SCALE,.1*SCALE,rand()/300.0);
+	if(!i)
+		PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.15*SCALE,-.05*SCALE,.15*SCALE,1);
+	else  
+		PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.1*SCALE,.1*SCALE,.1*SCALE,rand()/300.0);
      // SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),2,0,2,2,2);
    }
 
