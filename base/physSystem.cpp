@@ -145,7 +145,10 @@ void physGrapplePoint(){
    targ-=at;
    targ*=5;
    player->setLinearVelocity(btVector3(targ.x,targ.y,targ.z));
-   if(dist<2 && !getPressed('h')) playerGrappleActive=0;
+   if(dist<2 && !getPressed('E')){
+      playerGrappleActive=0;
+      printf("reset\n");
+   }
 }
 void physSetDisplayObj(btRigidBody* phys, void *obj){
    phys->setUserPointer(obj);
@@ -162,6 +165,7 @@ void physStep(){
    y = physGetPlayerY();
    z = physGetPlayerZ();
    lookAt = glm::vec3(x,y,z);
+   printf("the h is %d\n",getPressed('E'));
    if(playerGrappleActive) physGrapplePoint();
    dynamicsWorld->stepSimulation(1/60.f,10);
 

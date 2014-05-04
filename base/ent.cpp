@@ -44,3 +44,13 @@ void PRSentity::stepAnimation(float a){
    innerRot = rotation*(1-a) + endRot*a;
    innerScale = scale*(1-a) + endScale*a;
 }
+
+class StaticEnt{
+   Mesh* m;
+   void* ourPhys;
+   btRigidBody* btPhys;
+   
+   glm::mat4 physOff;
+   glm::mat4 rotOff;
+   glm::mat4 scale;
+};
