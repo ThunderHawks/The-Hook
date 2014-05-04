@@ -144,7 +144,11 @@ void physGrapplePoint(){
    float dist = sqrt(loc.x*loc.x+loc.y*loc.y+loc.z*loc.z);
    targ-=at;
    targ*=5;
-   player->setLinearVelocity(btVector3(targ.x,targ.y,targ.z));
+   //
+   dist/=5;
+   dist = dist>1?dist:1;
+   //
+   player->setLinearVelocity(btVector3(targ.x,targ.y/dist,targ.z));
    if(dist<2 && !getPressed('E')){
       playerGrappleActive=0;
       printf("reset\n");
