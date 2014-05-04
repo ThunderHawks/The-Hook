@@ -114,7 +114,9 @@ float physGetPlayerZ(){
 }
 glm::vec3 dir;
 btVector3 tmp;
+int flip;
 void physGrapple(float lx,float ly,float lz){
+   flip = 0;
    dir = glm::normalize(glm::vec3(-lx,ly,-lz));
    //printf("grapple in dir %f %f %f\n",dir.x,dir.y,dir.z);
    //printf("looks at is %f %f %f\n",lookAt.x,lookAt.y,lookAt.z);
@@ -147,9 +149,15 @@ void physGrapplePoint(){
    //
    dist/=5;
    dist = dist>1?dist:1;
+   dist = targ.y>0?dist:1;
    //
    player->setLinearVelocity(btVector3(targ.x,targ.y/dist,targ.z));
    if(dist<2 && !getPressed('E')){
+      if(flip==0){
+         flip = 1;
+         printf("pls rotate camera to normal of building\n");
+//         rotateCamera(pi);
+      }
       playerGrappleActive=0;
       printf("reset\n");
    }
