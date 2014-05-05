@@ -8,13 +8,36 @@
 
 glm::vec3 eye = glm::vec3(0, 0, 0), lookAtPoint;
 glm::vec3 up = glm::vec3(0, 1, 0);
+glm::vec3 wVec, uVec, vVec;
+float pitch = 0, yaw = -M_PI/2.0, distance = 10;
+
+
+
+void resetVecs() {
+	//Update lookAt
+   eye.x = cos(pitch) * cos(yaw);
+   eye.y = sin(pitch);
+   eye.z = cos(pitch) * cos(M_PI/2.0 - yaw);
+
+	eye *= glm::vec3(distance, distance, distance);
+   
+   while (eye.y + lookAtPoint.y < .1) {
+   	eye.x -= .2*cos(pitch) * cos(yaw);
+   	eye.y -= .2*sin(pitch);
+   	eye.z -= .2*cos(pitch) * cos(M_PI/2.0 - yaw);
+   }
+   
+   eye.x += lookAtPoint.x;
+   eye.y += lookAtPoint.y;
+   eye.z += lookAtPoint.z;
+   
+   
+}
 
 /*Sends the view matrix to the shader*/
 glm::mat4 SetView() {
-//   lookAtPoint.y+=4;
+	resetVecs();
    glm::mat4 view = glm::lookAt(eye, lookAtPoint, up);
-  // lookAtPoint.y-=4;
-   //glm::mat4 view = glm::lookAt(lookAtPoint, eye, up);
    safe_glUniformMatrix4fv(h_uViewMatrix, glm::value_ptr(view));
    return view;
 }
@@ -55,4 +78,30 @@ glm::vec3 GetUp() {
 glm::vec3 SetUp(glm::vec3 newUp) {
 	up = newUp;
 	return up;
+}
+
+float setPitch (float newPitch) {
+	pitch = newPitch;
+	return pitch;
+}
+
+float incrementPitch(float toAdd) {
+	pitch += toAdd;
+	return pitch;
+}
+float setYaw (float newYaw) {
+	yaw = newYaw;
+	return yaw;
+}
+float incrementYaw(float toAdd) {
+	yaw += toAdd;
+	return yaw;
+}
+float setDistance(float newDist) {
+	distance = newDist;
+	return distance;
+}
+float addDistance(float toAdd) {
+	distance += toAdd;
+	return distance;
 }

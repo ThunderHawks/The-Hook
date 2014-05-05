@@ -20,3 +20,10 @@ glm::vec3 MoveLookAt(glm::vec3 toAdd);
 glm::vec3 GetUp();
 /*Sets the up vector to a new direction, and returns it*/
 glm::vec3 SetUp(glm::vec3 newUp);
+
+float setPitch (float newPitch);
+float incrementPitch(float toAdd);
+float setYaw (float newYaw);
+float incrementYaw(float toAdd);
+float setDistance(float newDist);
+float addDistance(float toAdd);
