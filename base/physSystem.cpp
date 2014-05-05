@@ -21,11 +21,17 @@ btDiscreteDynamicsWorld* dynamicsWorld;
 vector<btRigidBody*> btobjes;
 Mesh chara;
 glm::vec3 lookAt;
+float curXsp,curYsp,curZsp;
 int playerGrappleActive = 0;
 vector<btRigidBody*> getVecList(){
    return btobjes;
 }
 void setPlayerSpeed(float x, float y, float z){
+   curXsp += x;
+   curYsp += y;
+   curZsp += z;
+}
+void AsetPlayerSpeed(float x, float y, float z){
 //   printf("%f %f %f speedy\n",30*x,30*y,30*z);
    if(!playerGrappleActive)
       player->setLinearVelocity(btVector3(3*x,3*y+player->getLinearVelocity().getY(),3*z));
@@ -172,6 +178,9 @@ btVector3 plsRndr(){
 void physStep(){
    //player->getX();
    //setPlayerSpeed(2,2,2);
+   AsetPlayerSpeed(curXsp,curYsp,curZsp);
+   printf("%f %f %f speeds\n",curXsp,curYsp,curZsp);
+   curXsp=curYsp=curZsp=0;
    float x,y,z;
    x = physGetPlayerX();
    y = physGetPlayerY();
