@@ -1,6 +1,7 @@
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
 #include <vector>
+#include "glm/glm.hpp"
 
 void physGrapple(float lx, float ly, float lz);
 std::vector<btRigidBody*> getVecList();
@@ -16,3 +17,5 @@ void physSetDisplayObj(btRigidBody* phys, void* obj);
 void setPlayerSpeed(float x,float y,float z);
 btVector3 plsRndr();
 void physGrapplePoint();
+/*returns a vector that is the speed of the player as a vec3*/
+glm::vec3 getPlayerSpeed();

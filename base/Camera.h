@@ -20,10 +20,17 @@ glm::vec3 MoveLookAt(glm::vec3 toAdd);
 glm::vec3 GetUp();
 /*Sets the up vector to a new direction, and returns it*/
 glm::vec3 SetUp(glm::vec3 newUp);
-
+/*Sets the pitch and returns it*/
 float setPitch (float newPitch);
+/*Increment the pitch by the input and return its new location*/
 float incrementPitch(float toAdd);
+/*Sets the yaw and returns it*/
 float setYaw (float newYaw);
+/*Increment the yaw by the input and return its new location*/
 float incrementYaw(float toAdd);
+/*Sets the distance and returns it*/
 float setDistance(float newDist);
+/*Increment the distance by the input and return its new location*/
 float addDistance(float toAdd);
+/*Check to see if the camera has collided with a bounding sphere*/
+bool checkCollision(glm::vec3 point, float rad);

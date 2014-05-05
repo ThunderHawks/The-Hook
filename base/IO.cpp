@@ -108,21 +108,21 @@ void glfwEditGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    //Calculate change in X
    if(startX < endX) {
       diff = endX - startX;
-      beta += (diff * M_PI)/g_width;
+      beta = incrementYaw((diff * M_PI)/g_width);
    }
    else if(startX > endX){
       diff = startX - endX;
-      beta -= (diff * M_PI)/g_width;
+      beta = incrementYaw(-(diff * M_PI)/g_width);
    }
 
    //Calculate change in Y
-   if(startY < endY && alpha <= 0.98) {
+   if(startY < endY && alpha <= 0.8) {
       diff = endY - startY;
-      alpha += (diff * M_PI)/g_width;
+      alpha = incrementPitch((diff * M_PI)/g_width);
    }
-   else if(startY > endY && alpha >= -0.98) {
+   else if(startY > endY && alpha >= -0.5) {
       diff = startY - endY;
-      alpha -= (diff * M_PI)/g_width;
+      alpha = incrementPitch(-(diff * M_PI)/g_width);
    }
 
    startX = g_width/2.0;// = endX;
@@ -141,13 +141,11 @@ void glfwGameKeyboard(void) {
   w = gaze/magnitude(gaze);
   w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
   u = glm::cross(GetUp(), w)/magnitude(glm::cross(GetUp(), w));
-  //eye = glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
    //GLFW_KEY_S
    if(KeysPressed['S']) {
        setPlayerSpeed(w.x*3,0,w.z*3);
        //newSpeed.x=newSpeed.x+w.x*3;
        //newSpeed.z=newSpeed.z+w.z*3;
-       MoveEye(glm::vec3(0.1 * w.x, 0, 0.1 * w.z));
    }
    //GLFW_KEY_W
    if(KeysPressed['W']) {
@@ -155,7 +153,6 @@ void glfwGameKeyboard(void) {
        setPlayerSpeed(-w.x*3,0,-w.z*3);
        //newSpeed.x=newSpeed.x-w.x*3;
        //newSpeed.z=newSpeed.z-w.z*3;
-       MoveEye(glm::vec3(-0.1 * w.x, 0, -0.1 * w.z));
        printf("%lf %lf %lf\n", GetEye().x, GetEye().y, GetEye().z);
    }
    //GLFW_KEY_D
@@ -163,14 +160,12 @@ void glfwGameKeyboard(void) {
        setPlayerSpeed(u.x*3,0,u.z*3);
        //newSpeed.x=newSpeed.x+u.x*3;
        //newSpeed.z=newSpeed.z+u.z*3;
-       MoveEye(glm::vec3(0.1 * u.x, 0, 0.1 * u.z));
    }
    //GLFW_KEY_A
    if(KeysPressed['A']) {
         setPlayerSpeed(-u.x*3,0,-u.z*3);
        //newSpeed.x=newSpeed.x-u.x*3;
        //newSpeed.z=newSpeed.z-u.z*3;
-       MoveEye(glm::vec3(-0.1 * u.x, 0, -0.1 * u.z));
    }
    ///setPlayerSpeed(newSpeed.x,newSpeed.y,newSpeed.z);
    //GLFW_KEY_SPACE
@@ -206,26 +201,21 @@ void glfwEditKeyboard(void) {
   w = gaze/magnitude(gaze);
   w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
   u = glm::cross(GetUp(), w)/magnitude(glm::cross(GetUp(), w));
-  //eye = glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
    //GLFW_KEY_S
    if(KeysPressed['S']) {
-       MoveEye(glm::vec3(0.1 * w.x, 0.1 * w.y, 0.1 * w.z));
-       MoveLookAt(glm::vec3(0.1 * w.x, 0.1 * w.y, 0.1 * w.z));
+       MoveLookAt(glm::vec3(.1 * w.x, .1 * w.y, .1 * w.z));
    }
    //GLFW_KEY_W
    if(KeysPressed['W']) {
-       MoveEye(glm::vec3(-0.1 * w.x, -0.1 * w.y, -0.1 * w.z));
-       MoveLookAt(glm::vec3(-0.1 * w.x, -0.1 * w.y, -0.1 * w.z));
+       MoveLookAt(glm::vec3(-.1 * w.x, -.1 * w.y, -.1 * w.z));
    }
    //GLFW_KEY_D
    if(KeysPressed['D']) {
-       MoveEye(glm::vec3(0.1 * u.x, 0.1 * u.y, 0.1 * u.z));
-       MoveLookAt(glm::vec3(0.1 * u.x, 0.1 * u.y, 0.1 * u.z));
+       MoveLookAt(glm::vec3(.1 * u.x, .1 * u.y, .1 * u.z));
    }
    //GLFW_KEY_A
    if(KeysPressed['A']) {
-       MoveEye(glm::vec3(-0.1 * u.x, -0.1 * u.y, -0.1 * u.z));
-       MoveLookAt(glm::vec3(-0.1 * u.x, -0.1 * u.y, -0.1 * u.z));
+       MoveLookAt(glm::vec3(-.1 * u.x, -.1 * u.y, -.1 * u.z));
    }
    //GLFW_KEY_Q
    if(KeysPressed['Q']) {

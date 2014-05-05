@@ -180,7 +180,7 @@ void glfwDraw (GLFWwindow *window)
    glfwSwapBuffers(window);
 
 }
-
+//not in use
 void initWorldEdit(GLFWwindow *window) {
    window = glfwCreateWindow(800, 800, "World Editor", NULL, NULL);
    if (!window) {
@@ -202,7 +202,7 @@ void initWorldEdit(GLFWwindow *window) {
    glInitialize(window);
    InitGeom();
 }
-
+//not in use
 void initGamePlay(GLFWwindow *window) {
    window = glfwCreateWindow(800, 800, "Grapple", NULL, NULL);
    if (!window) {
@@ -293,11 +293,15 @@ int main( int argc, char *argv[] )
       loadLevel();
    }
 
-
+	if (Edit)
+		setDistance(.0001);
+	else
+		setDistance(10);
    // Start the main execution loop.
    while (!glfwWindowShouldClose(window)) {
       glfwPollEvents();
       if(Edit) {
+         //Keep the cursor centered
          glfwSetCursorPos(window,g_width/2,g_height/2);  
          glfwDraw(window);
          glfwEditGetCursorPos(NULL,g_width/2.0,g_height/2.0);

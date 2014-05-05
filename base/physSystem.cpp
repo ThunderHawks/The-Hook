@@ -191,3 +191,8 @@ void physStep(){
    dynamicsWorld->stepSimulation(1/60.f,10);
 
 }
+/*returns a vector that is the speed of the player as a vec3*/
+glm::vec3 getPlayerSpeed() {
+	btVector3 pVec = player->getLinearVelocity();
+	return glm::vec3(pVec.getX(), pVec.getY(), pVec.getZ());
+}
