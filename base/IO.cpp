@@ -66,33 +66,22 @@ void glfwGameGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    //Calculate change in X
    if(startX < endX) {
       diff = endX - startX;
-      beta += (diff * M_PI)/g_width;
+      beta = incrementYaw((diff * M_PI)/g_width);
    }
    else if(startX > endX){
       diff = startX - endX;
-      beta -= (diff * M_PI)/g_width;
+      beta = incrementYaw(-(diff * M_PI)/g_width);
    }
 
    //Calculate change in Y
    if(startY < endY && alpha <= 0.8) {
       diff = endY - startY;
-      alpha += (diff * M_PI)/g_width;
+      alpha = incrementPitch((diff * M_PI)/g_width);
    }
    else if(startY > endY && alpha >= -0.5) {
       diff = startY - endY;
-      alpha -= (diff * M_PI)/g_width;
+      alpha = incrementPitch(-(diff * M_PI)/g_width);
    }
-   //Update lookAt
-   eyeAtx = 6.0 * cos(alpha) * cos(beta);
-   eyeAty = 6.0 * sin(alpha);
-   eyeAtz = 6.0 * cos(alpha) * cos(M_PI/2.0 - beta);
-
-   eyeAtx += GetLookAt().x;
-   eyeAty += GetLookAt().y;
-   eyeAtz += GetLookAt().z;
-
-   SetEye(glm::vec3(eyeAtx, eyeAty, eyeAtz));
-
 
    startX = g_width/2.0;// = endX;
    startY = g_height/2.0-1;// endY;
@@ -135,16 +124,6 @@ void glfwEditGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
       diff = startY - endY;
       alpha -= (diff * M_PI)/g_width;
    }
-   //Update lookAt
-   lookAtx = 6.0 * cos(alpha) * cos(beta);
-   lookAty = 6.0 * sin(alpha);
-   lookAtz = 6.0 * cos(alpha) * cos(M_PI/2.0 - beta);
-
-   lookAtx += GetEye().x;
-   lookAty += GetEye().y;
-   lookAtz += GetEye().z;
-
-   SetLookAt(glm::vec3(lookAtx, lookAty, lookAtz));
 
    startX = g_width/2.0;// = endX;
    startY = g_height/2.0-1;// endY;
