@@ -311,6 +311,7 @@ int main( int argc, char *argv[] )
       else {
          //player appy physics controls
          SetLookAt(glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ()));
+         SetSpeed(.05*magnitude(getPlayerSpeed()));
          //Keep the cursor centered
          glfwSetCursorPos(window,g_width/2,g_height/2);         
          physStep();

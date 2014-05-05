@@ -34,3 +34,5 @@ float setDistance(float newDist);
 float addDistance(float toAdd);
 /*Check to see if the camera has collided with a bounding sphere*/
 bool checkCollision(glm::vec3 point, float rad);
+/*Adds a speed factor to the camera*/
+void SetSpeed(float speed);

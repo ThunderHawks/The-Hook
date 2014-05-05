@@ -12,6 +12,7 @@ glm::vec3 eye = glm::vec3(0, 1, 0), lookAtPoint = glm::vec3(0, 0, 1);
 glm::vec3 up = glm::vec3(0, 1, 0);
 glm::vec3 wVec, uVec, vVec;
 float pitch = 0, yaw = -M_PI/2.0, distance = 10;
+float inSpeed = 0;
 
 
 
@@ -21,7 +22,7 @@ void resetVecs() {
    eye.y = sin(pitch);
    eye.z = cos(pitch) * cos(M_PI/2.0 - yaw);
 
-	eye *= glm::vec3(distance, distance, distance);
+	eye *= glm::vec3(distance + inSpeed, distance + inSpeed, distance + inSpeed);
    
    while (eye.y + lookAtPoint.y < .1 && distance > 1) {
    	eye.x -= .2*cos(pitch) * cos(yaw);
@@ -119,4 +120,8 @@ bool checkCollision(glm::vec3 point, float rad) {
 		ret = true;
 	
 	return ret;
+}
+/*Adds a speed factor to the camera*/
+void SetSpeed(float speed) {
+	inSpeed = speed;
 }
