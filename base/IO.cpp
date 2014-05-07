@@ -74,12 +74,12 @@ void glfwGameGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    }
 
    //Calculate change in Y
-   if(startY < endY && alpha <= 0.8) {
-      diff = endY - startY;
+   if(endY < startY && alpha <= 0.8) {
+      diff = startY - endY;
       alpha = incrementPitch((diff * M_PI)/g_width);
    }
-   else if(startY > endY && alpha >= -0.5) {
-      diff = startY - endY;
+   else if(endY > startY && alpha >= -0.5) {
+      diff = endY - startY;
       alpha = incrementPitch(-(diff * M_PI)/g_width);
    }
 
@@ -116,12 +116,12 @@ void glfwEditGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    }
 
    //Calculate change in Y
-   if(startY < endY && alpha <= 0.8) {
-      diff = endY - startY;
+   if(endY < startY && alpha <= 0.8) {
+      diff = startY - endY;
       alpha = incrementPitch((diff * M_PI)/g_width);
    }
-   else if(startY > endY && alpha >= -0.5) {
-      diff = startY - endY;
+   else if(endY > startY && alpha >= -0.5) {
+      diff = endY - startY;
       alpha = incrementPitch(-(diff * M_PI)/g_width);
    }
 
