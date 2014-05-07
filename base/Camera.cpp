@@ -13,28 +13,34 @@ glm::vec3 up = glm::vec3(0, 1, 0);
 glm::vec3 wVec, uVec, vVec;
 float pitch = 0, yaw = -M_PI/2.0, distance = 10;
 float inSpeed = 0;
-
-
+int inEdit = 0;
 
 void resetVecs() {
-	//Update lookAt
-   eye.x = cos(pitch) * cos(yaw);
-   eye.y = sin(pitch);
-   eye.z = cos(pitch) * cos(M_PI/2.0 - yaw);
+	if (inEdit == 0) {
+		//Update lookAt
+	   eye.x = cos(pitch) * cos(yaw);
+	   eye.y = sin(pitch);
+	   eye.z = cos(pitch) * cos(M_PI/2.0 - yaw);
 
-	eye *= glm::vec3(distance + inSpeed, distance + inSpeed, distance + inSpeed);
-   
-   while (eye.y + lookAtPoint.y < .1 && distance > 1) {
-   	eye.x -= .2*cos(pitch) * cos(yaw);
-   	eye.y -= .2*sin(pitch);
-   	eye.z -= .2*cos(pitch) * cos(M_PI/2.0 - yaw);
-   }
-   
-   eye.x += lookAtPoint.x;
-   eye.y += lookAtPoint.y;
-   eye.z += lookAtPoint.z;
-   
-   
+		eye *= glm::vec3(distance + inSpeed, distance + inSpeed, distance + inSpeed);
+	   
+	   while (eye.y + lookAtPoint.y < .1 && distance > 1) {
+	   	eye.x -= .2*cos(pitch) * cos(yaw);
+	   	eye.y -= .2*sin(pitch);
+	   	eye.z -= .2*cos(pitch) * cos(M_PI/2.0 - yaw);
+	   }
+	   
+	   eye.x += lookAtPoint.x;
+	   eye.y += lookAtPoint.y;
+	   eye.z += lookAtPoint.z;
+	}
+	else {
+		lookAtPoint.x = cos(pitch) * cos(yaw);
+	   	lookAtPoint.y = sin(pitch);
+	   	lookAtPoint.z = cos(pitch) * cos(M_PI/2.0 - yaw);
+		lookAtPoint *= glm::vec3(distance, distance, distance);
+		lookAtPoint += eye;
+	}
 }
 
 /*Sends the view matrix to the shader*/
@@ -113,6 +119,10 @@ float addDistance(float toAdd) {
 	distance += toAdd;
 	return distance;
 }
+/*gets the distance*/
+float getDistance() {
+	return distance;
+}
 /*Check to see if the camera has collided with a bounding sphere*/
 bool checkCollision(glm::vec3 point, float rad) {
 	bool ret = false;
@@ -124,4 +134,7 @@ bool checkCollision(glm::vec3 point, float rad) {
 /*Adds a speed factor to the camera*/
 void SetSpeed(float speed) {
 	inSpeed = speed;
+}
+void SetEdit (int status) {
+	inEdit = status;
 }

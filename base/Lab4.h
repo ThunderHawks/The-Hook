@@ -23,11 +23,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#define MODEL_TYPE_UNDEFINED -1
-#define MODEL_TYPE_STACKED_CUBES 0
-#define MODEL_TYPE_WALL_JUMP 1
-#define MODEL_TYPE_RAMP 2
-
 using namespace std;
 
 typedef struct Node {

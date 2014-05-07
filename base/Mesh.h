@@ -4,6 +4,8 @@
  *  Created on: 9/26/2012
  *      Author: Ian Dunn
  */
+#ifndef MESH_H_
+#define MESH_H_
 
 #ifdef __APPLE__
 #include "GLUT/glut.h"
@@ -50,3 +52,4 @@ void drawAtM4(Mesh *m, mat4 trans, int shaderProg);
 void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle);
 glm::mat4 SetModelStat();
 glm::mat4 SetModel(float x, float y, float z, float Sx, float Sy, float Sz, float angle);
+#endif

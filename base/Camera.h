@@ -32,7 +32,11 @@ float incrementYaw(float toAdd);
 float setDistance(float newDist);
 /*Increment the distance by the input and return its new location*/
 float addDistance(float toAdd);
+/*returns the distance*/
+float getDistance();
 /*Check to see if the camera has collided with a bounding sphere*/
 bool checkCollision(glm::vec3 point, float rad);
 /*Adds a speed factor to the camera*/
 void SetSpeed(float speed);
+/*check if you are in edit mode*/
+void SetEdit (int status);

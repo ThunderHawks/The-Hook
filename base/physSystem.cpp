@@ -175,22 +175,24 @@ btVector3 plsRndr(){
    return tmp;
    //return btVector3(lookAt.x+3*dir.x,lookAt.y-3*dir.y,lookAt.z+3*dir.z);
 }
+
 glm::vec3 grapplingHookLocation(){
    return glm::vec3(tmp.getX(),tmp.getY(),tmp.getZ());
    //return btVector3(lookAt.x+3*dir.x,lookAt.y-3*dir.y,lookAt.z+3*dir.z);
 }
+
 void physStep(){
    //player->getX();
    //setPlayerSpeed(2,2,2);
    AsetPlayerSpeed(curXsp,curYsp,curZsp);
-   printf("%f %f %f speeds\n",curXsp,curYsp,curZsp);
+   //printf("%f %f %f speeds\n",curXsp,curYsp,curZsp);
    curXsp=curYsp=curZsp=0;
    float x,y,z;
    x = physGetPlayerX();
    y = physGetPlayerY();
    z = physGetPlayerZ();
    lookAt = glm::vec3(x,y,z);
-   printf("the h is %d\n",getPressed('E'));
+   //printf("the h is %d\n",getPressed('E'));
    if(playerGrappleActive) physGrapplePoint();
    dynamicsWorld->stepSimulation(1/60.f,10);
 

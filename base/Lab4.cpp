@@ -59,7 +59,7 @@ glm::mat4 curProj, curView;
 
 /* projection matrix  - do not change */
 glm::mat4 SetProjectionMatrix() {
-   glm::mat4 Projection = glm::perspective(80.0f, (float)g_width/g_height, 0.1f, 100.f);	
+   glm::mat4 Projection = glm::perspective(80.0f, (float)g_width/g_height, 0.1f, 500.f);	
    safe_glUniformMatrix4fv(h_uProjMatrix, glm::value_ptr(Projection));
    return Projection;
 }
@@ -108,6 +108,28 @@ void SetupCube(float x, float y, float z, int material, float angle, float scale
 //   DrawShadow(x, z + 0.6, scaleX, scaleY, scaleZ + 0.4, angle);
 }
 
+//Draws the currently selected entity
+void drawSelectedObject() {
+   //Only draw if an entity is selected
+   if(isEntitySelected() == true) {
+      //Get selected entity
+      Entity entityTemp = getSelectedEntity();
+      //Update position to lookAtPoint
+      entityTemp.position = GetLookAt();
+      //Place at that point
+      PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x, entityTemp.scale.y, entityTemp.scale.z, entityTemp.angle);
+   }
+}
+
+//Draws the entities into the world
+void drawEntities() {
+   Entity entityTemp;
+
+   for(int i = 0; i < getEntityNum(); i++) {
+      entityTemp = getEntityAt(i);
+      PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x, entityTemp.scale.y, entityTemp.scale.z, entityTemp.angle);
+   }
+}
 
 /* Main display function */
 void glfwDraw (GLFWwindow *window)
@@ -145,8 +167,12 @@ void glfwDraw (GLFWwindow *window)
    btTransform pla;
    PlaceModel(playerMesh, GetLookAt().x, GetLookAt().y - 1, GetLookAt().z, .25, .1, .25, 1);
    //END OF DANCING CYLINDER CODE HERE!!
+   SetMaterial(2);
+   drawSelectedObject();
+   drawEntities();
 
-   //Draw Cubes
+   //Draw Cubes, ??????????
+   SetupCube(plsRndr().getX(),plsRndr().getY(),plsRndr().getZ(),5,60,1,1,1);
    for(float i=.05;i<1;i+=.0075){
       srand(physGetPlayerX());
       float x = physGetPlayerX()*(1-i)+grapplingHookLocation().x*i;
@@ -154,7 +180,9 @@ void glfwDraw (GLFWwindow *window)
       float z = physGetPlayerZ()*(1-i)+grapplingHookLocation().z*i;
       SetupCube(x,y,z,5,rand()/300.0,.15,.15,.15);
    }
+
    SetMaterial(2);
+
    //draw phys cubes
    vector<btRigidBody*> loopable = getVecList();
    srand(0);
@@ -166,9 +194,10 @@ void glfwDraw (GLFWwindow *window)
 	if(!i)
 		PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.15*SCALE,-.05*SCALE,.15*SCALE,1);
 	else  
-		PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.1*SCALE,.1*SCALE,.1*SCALE,rand()/300.0);
+		PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.1*SCALE,.1*SCALE,.1*SCALE, 0);
      // SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),2,0,2,2,2);
    }
+
 
    ///render spherse
 /*
@@ -185,53 +214,6 @@ void glfwDraw (GLFWwindow *window)
    glUseProgram(0);	
    glfwSwapBuffers(window);
 
-}
-//not in use
-void initWorldEdit(GLFWwindow *window) {
-   window = glfwCreateWindow(800, 800, "World Editor", NULL, NULL);
-   if (!window) {
-      glfwTerminate();
-      exit(EXIT_FAILURE);
-   }
-   srand(time(0));
-   glfwMakeContextCurrent(window);
-   glfwSetWindowPos(window, 80, 80);
-   glfwSetWindowSizeCallback(window, glfwWindowResize);
-   glfwSetWindowSize(window,1600,800);
-   g_height =800;
-   g_width = 1600;
-
-   glfwSetKeyCallback(window, glfwKeyPress);
-   glfwSetCursorPosCallback( window, glfwEditGetCursorPos );
-
-   glewInit();
-   glInitialize(window);
-   InitGeom();
-}
-//not in use
-void initGamePlay(GLFWwindow *window) {
-   window = glfwCreateWindow(800, 800, "Grapple", NULL, NULL);
-   if (!window) {
-      glfwTerminate();
-      exit(EXIT_FAILURE);
-   }
-   srand(time(0));
-   glfwMakeContextCurrent(window);
-   glfwSetWindowPos(window, 80, 80);
-   glfwSetWindowSizeCallback(window, glfwWindowResize);
-   glfwSetWindowSize(window,1600,800);
-   g_height =800;
-   g_width = 1600;
-
-   glfwSetKeyCallback(window, glfwKeyPress);
-   glfwSetCursorPosCallback( window, glfwGameGetCursorPos );
-
-   glewInit();
-   glInitialize(window);
-   physicsInit();
-   InitGeom();
-
-   loadLevel();
 }
 
 int main( int argc, char *argv[] )
@@ -263,13 +245,20 @@ int main( int argc, char *argv[] )
       glfwSetWindowSize(window,1600,800);
       g_height =800;
       g_width = 1600;
+      setDistance(1);
+      SetEdit(1);
 
-      glfwSetKeyCallback(window, glfwKeyPress);
+      glfwSetKeyCallback( window, glfwEditKeyPress);
       glfwSetCursorPosCallback( window, glfwEditGetCursorPos );
+      glfwSetMouseButtonCallback( window, glfwEditMouse );
+      glfwSetScrollCallback( window, glfwEditScroll );
 
       glewInit();
       glInitialize(window);
+      physicsInit();
       InitGeom();
+      initLevelLoader();
+      loadLevel();
    }
    //If Play Mode
    else {
@@ -288,21 +277,19 @@ int main( int argc, char *argv[] )
       glfwSetWindowSize(window,1600,800);
       g_height =800;
       g_width = 1600;
+      setDistance(10);
 
-      glfwSetKeyCallback(window, glfwKeyPress);
+      glfwSetKeyCallback(window, glfwGameKeyPress);
       glfwSetCursorPosCallback( window, glfwGameGetCursorPos );
 
       glewInit();
       glInitialize(window);
       physicsInit();
       InitGeom();
+      initLevelLoader();
       loadLevel();
    }
 
-	if (Edit)
-		setDistance(.0001);
-	else
-		setDistance(10);
    // Start the main execution loop.
    while (!glfwWindowShouldClose(window)) {
       glfwPollEvents();
