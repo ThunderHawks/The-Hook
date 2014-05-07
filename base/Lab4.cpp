@@ -141,7 +141,7 @@ void glfwDraw (GLFWwindow *window)
    curView = SetView();
 
    glUniform3f(h_uLightColor, 0.4, 0.4, 0.38);
-   glUniform4f(h_uLightVec, 0.0, -1.0, 1.0, 0.0);
+   glUniform4f(h_uLightVec, 0.0, 1.0, 1.0, 0.0);
    glUniform3f(h_uCamPos, GetEye().x, GetEye().y, GetEye().z);
 
    ModelTrans.loadIdentity();

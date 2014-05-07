@@ -10,7 +10,6 @@ uniform mat4 uViewMatrix;
 uniform mat4 uModelMatrix;
 uniform vec4 uLightVec;
 uniform vec3 uLColor;
-uniform vec3 uCamVec;
 uniform Material uMat;
 
 attribute vec3 aPosition;
