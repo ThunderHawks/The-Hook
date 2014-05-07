@@ -147,7 +147,13 @@ void glfwDraw (GLFWwindow *window)
    //END OF DANCING CYLINDER CODE HERE!!
 
    //Draw Cubes
-   SetupCube(plsRndr().getX(),plsRndr().getY(),plsRndr().getZ(),5,60,1,1,1);
+   for(float i=.05;i<1;i+=.0075){
+      srand(physGetPlayerX());
+      float x = physGetPlayerX()*(1-i)+grapplingHookLocation().x*i;
+      float y = physGetPlayerY()*(1-i)*(1-i)+grapplingHookLocation().y*i*i;
+      float z = physGetPlayerZ()*(1-i)+grapplingHookLocation().z*i;
+      SetupCube(x,y,z,5,rand()/300.0,.15,.15,.15);
+   }
    SetMaterial(2);
    //draw phys cubes
    vector<btRigidBody*> loopable = getVecList();

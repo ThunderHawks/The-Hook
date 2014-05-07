@@ -34,7 +34,7 @@ void setPlayerSpeed(float x, float y, float z){
 void AsetPlayerSpeed(float x, float y, float z){
 //   printf("%f %f %f speedy\n",30*x,30*y,30*z);
    if(!playerGrappleActive)
-      player->setLinearVelocity(btVector3(3*x,3*y+player->getLinearVelocity().getY(),3*z));
+      player->setLinearVelocity(btVector3(3*x+player->getLinearVelocity().getX()/2,3*y+player->getLinearVelocity().getY(),3*z+player->getLinearVelocity().getZ()/2));
   // player->clearForces();
 //   player->applyCentralForce(btVector3(x*300,200*y,300*z));
    //btobjes[0]->setLinearVelocity(btVector3(0,1000,0));
@@ -173,6 +173,10 @@ void physSetDisplayObj(btRigidBody* phys, void *obj){
 }
 btVector3 plsRndr(){
    return tmp;
+   //return btVector3(lookAt.x+3*dir.x,lookAt.y-3*dir.y,lookAt.z+3*dir.z);
+}
+glm::vec3 grapplingHookLocation(){
+   return glm::vec3(tmp.getX(),tmp.getY(),tmp.getZ());
    //return btVector3(lookAt.x+3*dir.x,lookAt.y-3*dir.y,lookAt.z+3*dir.z);
 }
 void physStep(){

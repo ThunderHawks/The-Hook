@@ -1,5 +1,6 @@
 #include "ent.h"
-
+//#include "Mesh.h"
+//#include <bullet/btBulletDynamicsCommon.h>
 class PRSentity{
    glm::mat4 position;
    glm::mat4 rotation;
@@ -45,7 +46,8 @@ void PRSentity::stepAnimation(float a){
    innerScale = scale*(1-a) + endScale*a;
 }
 
-class StaticEnt{
+/*class StaticEnt{
+   public:
    Mesh* m;
    void* ourPhys;
    btRigidBody* btPhys;
@@ -53,4 +55,4 @@ class StaticEnt{
    glm::mat4 physOff;
    glm::mat4 rotOff;
    glm::mat4 scale;
-};
+};*/
