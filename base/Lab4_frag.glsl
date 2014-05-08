@@ -28,42 +28,51 @@ void main() {
    angleVR = dot(refl, view);
    angleVR = angleVR < 0.0 ? 0.0 : pow(clamp(angleVR, 0.0, 1.0), uMat.shine);
 
-   if (angleNL > 0.7) {
+   if (angleNL > 0.8) {
       r = (uLColor.r * uMat.dColor.r);
       g = (uLColor.g * uMat.dColor.g);
       b = (uLColor.b * uMat.dColor.b);
    }
-   else if (angleNL > 0.4) {
-      r = (uLColor.r * uMat.dColor.r * 0.7);
-      g = (uLColor.g * uMat.dColor.g * 0.7);
-      b = (uLColor.b * uMat.dColor.b * 0.7);
+   else if (angleNL > 0.6) {
+      r = (uLColor.r * uMat.dColor.r * 0.8);
+      g = (uLColor.g * uMat.dColor.g * 0.8);
+      b = (uLColor.b * uMat.dColor.b * 0.8);
    }
-   else {
+   else if (angleNL > 0.4) {
+      r = (uLColor.r * uMat.dColor.r * 0.6);
+      g = (uLColor.g * uMat.dColor.g * 0.6);
+      b = (uLColor.b * uMat.dColor.b * 0.6);
+   }
+   else if (angleNL > 0.2) {
       r = (uLColor.r * uMat.dColor.r * 0.4);
       g = (uLColor.g * uMat.dColor.g * 0.4);
       b = (uLColor.b * uMat.dColor.b * 0.4);
    }
+   else {
+      r = (uLColor.r * uMat.dColor.r * 0.2);
+      g = (uLColor.g * uMat.dColor.g * 0.2);
+      b = (uLColor.b * uMat.dColor.b * 0.2);
+   }
  
-   if (angleVR > 0.95) {
-      r += uLColor.r * uMat.sColor.r * pow(0.95, uMat.shine);
-      g += uLColor.g * uMat.sColor.g * pow(0.95, uMat.shine);
-      b += uLColor.b * uMat.sColor.b * pow(0.95, uMat.shine);
+   if (angleVR > 0.95 && uMat.shine >= 100.0) {
+      r += uLColor.r * uMat.sColor.r * pow(1.0, uMat.shine);
+      g += uLColor.g * uMat.sColor.g * pow(1.0, uMat.shine);
+      b += uLColor.b * uMat.sColor.b * pow(1.0, uMat.shine);
    }
 
    r += uLColor.r * uMat.aColor.r;
    g += uLColor.g * uMat.aColor.g;
    b += uLColor.b * uMat.aColor.b;
 
-   if (dot(view, norm) < 0.4) {
+   if (dot(view, norm) < 0.3) {
       //r = g = b = 0.0;
    }
 
 
-   r = (uLColor.r * uMat.dColor.r * angleNL) + (uLColor.r * uMat.sColor.r * /*pow(angleVR, uMat.shine)*/angleVR) + (uLColor.r * uMat.aColor.r);
-   g = (uLColor.g * uMat.dColor.g * angleNL) + (uLColor.g * uMat.sColor.g * /*pow(angleVR, uMat.shine)*/angleVR) + (uLColor.g * uMat.aColor.g);
-   b = (uLColor.b * uMat.dColor.b * angleNL) + (uLColor.b * uMat.sColor.b * /*pow(angleVR, uMat.shine)*/angleVR) + (uLColor.b * uMat.aColor.b);
+   //r = (uLColor.r * uMat.dColor.r * angleNL) + (uLColor.r * uMat.sColor.r * angleVR) + (uLColor.r * uMat.aColor.r);
+   //g = (uLColor.g * uMat.dColor.g * angleNL) + (uLColor.g * uMat.sColor.g * angleVR) + (uLColor.g * uMat.aColor.g);
+   //b = (uLColor.b * uMat.dColor.b * angleNL) + (uLColor.b * uMat.sColor.b * angleVR) + (uLColor.b * uMat.aColor.b);
 
    gl_FragColor = vec4(r, g, b, 1.0);
    //gl_FragColor = vec4(norm, 1.0);
-   //gl_FragColor = vec4(refl, 1.0);
 }

@@ -25,7 +25,7 @@ void main() {
    /* First model transforms */
    vPosition = uModelMatrix * vec4(aPosition.x, aPosition.y, aPosition.z, 1);
    vPosition = uViewMatrix * vPosition;
-   gl_Position = uProjMatrix*vPosition;
+   gl_Position = uProjMatrix * vPosition;
   
    /* Calculating transformed position and normal */
    transPos = uModelMatrix * vec4(aPosition, 1);
