@@ -17,12 +17,17 @@
 #include "physSystem.h"
 #include "Shapes.h"
 #include "level.h"
+#include <stdio.h>
 #include <vector>
+#include <string>
 #include "Camera.h"
 #include "ViewFrustum.h"
 
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
+
+//Paused/unpause
+bool paused;
 
 //position and color data handles
 GLuint triBuffObj, colBuffObj;
@@ -131,6 +136,24 @@ void drawEntities() {
    }
 }
 
+//Bool that returns true if game is paused
+bool isPaused() {
+   if(paused == true) {
+      return paused;
+   }  
+   return false;
+}
+
+//Pauses/unpasses game
+void pauseorUnpause() {
+   if(paused == true) {
+      paused = false;
+   }
+   else {
+      paused = true;
+   }
+}
+
 /* Main display function */
 void glfwDraw (GLFWwindow *window)
 {
@@ -220,14 +243,47 @@ int main( int argc, char *argv[] )
 {
    GLFWwindow *window;
    int Edit;
+   //File name to load
+   string fileName;
+   //whether name inputtted is valid
+   bool validFile = false;
+
+   //Try to determine file input
+   while(validFile == false) {
+      printf("Type the file to load (Special options: 'd' = default, 'c' = clean):\n");
+      scanf("%s", &fileName[0]);
+
+      ifstream toLoad(&fileName[0]);
+      validFile = toLoad.good();
+
+      //If 'c' was entered, then load a clean level
+      if(strcmp(&fileName[0], "c") == 0) {
+         printf("Loading clean level...\n");
+         fileName = "clean";
+         validFile = true;
+      }
+      //If 'd' was entered, then deafult level
+      else if(strcmp(&fileName[0], "d") == 0) {
+         printf("Loading default level...\n");
+         fileName = "default";
+         validFile = true;
+      }
+      else if(validFile == false){
+         printf("Bad file, please type another file to load.\n");
+      }
+      else if(validFile == true) {
+         toLoad.close();
+      }
+   }
+
+   //Determine mode
+   printf("Type 0 to play, any other int to edit\n");
+   scanf("%i", &Edit);
 
    glfwSetErrorCallback(glfwError);
    if (!glfwInit()) {
       exit(EXIT_FAILURE);
    }
-
-   printf("Type 0 to play, any other int to edit\n");
-   scanf("%i", &Edit);
 
    //If Edit Mode
    if(Edit) {
@@ -245,8 +301,9 @@ int main( int argc, char *argv[] )
       glfwSetWindowSize(window,1600,800);
       g_height =800;
       g_width = 1600;
-      setDistance(1);
+      setDistance(2);
       SetEdit(1);
+      paused = false;
 
       glfwSetKeyCallback( window, glfwEditKeyPress);
       glfwSetCursorPosCallback( window, glfwEditGetCursorPos );
@@ -258,7 +315,7 @@ int main( int argc, char *argv[] )
       physicsInit();
       InitGeom();
       initLevelLoader();
-      loadLevel();
+      loadLevel(fileName);
    }
    //If Play Mode
    else {
@@ -278,6 +335,7 @@ int main( int argc, char *argv[] )
       g_height =800;
       g_width = 1600;
       setDistance(10);
+      paused = false;
 
       glfwSetKeyCallback(window, glfwGameKeyPress);
       glfwSetCursorPosCallback( window, glfwGameGetCursorPos );
@@ -287,32 +345,36 @@ int main( int argc, char *argv[] )
       physicsInit();
       InitGeom();
       initLevelLoader();
-      loadLevel();
+      loadLevel(fileName);
    }
 
    // Start the main execution loop.
    while (!glfwWindowShouldClose(window)) {
       glfwPollEvents();
       if(Edit) {
-         //Keep the cursor centered
-         glfwSetCursorPos(window,g_width/2,g_height/2);  
-         glfwDraw(window);
-         glfwEditGetCursorPos(NULL,g_width/2.0,g_height/2.0);
-         //glfw Game Keyboard
-         glfwEditKeyboard();
+         if(paused == false) {
+            //Keep the cursor centered
+            glfwSetCursorPos(window,g_width/2,g_height/2);  
+            glfwDraw(window);
+            glfwEditGetCursorPos(NULL,g_width/2.0,g_height/2.0);
+            //glfw Game Keyboard
+            glfwEditKeyboard();
+         }
       }
       else {
-         //player appy physics controls
-         SetLookAt(glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ()));
-         SetSpeed(.05*magnitude(getPlayerSpeed()));
-         //Keep the cursor centered
-         glfwSetCursorPos(window,g_width/2,g_height/2);         
-         physStep();
-         //Draw stuff
-         glfwDraw(window);
-         glfwGameGetCursorPos(NULL,g_width/2.0,g_height/2.0);
-         //glfw Game Keyboard
-         glfwGameKeyboard();
+         if(paused == false) {
+            //player appy physics controls
+            SetLookAt(glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ()));
+            SetSpeed(.05*magnitude(getPlayerSpeed()));
+            //Keep the cursor centered
+            glfwSetCursorPos(window,g_width/2,g_height/2);         
+            physStep();
+            //Draw stuff
+            glfwDraw(window);
+            glfwGameGetCursorPos(NULL,g_width/2.0,g_height/2.0);
+            //glfw Game Keyboard
+            glfwGameKeyboard();
+         }
       }
       usleep(15000);
    }

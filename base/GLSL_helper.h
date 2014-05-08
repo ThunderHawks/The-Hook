@@ -6,6 +6,8 @@
  *  Created by zwood on 2/21/10.
  *
  */
+#ifndef GLSL_HELPER_H_
+#define GLSL_HELPER_H_
 
 #include <GL/glew.h>
 
@@ -125,3 +127,4 @@ public:
   }
 };
 
+#endif

@@ -1,6 +1,14 @@
+#ifndef LEVEL_H_
+#define LEVEL_H_
+
 #define SCALE 3
 #include "Mesh.h"
 #include "Camera.h"
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+using namespace std;
 
 #define SCALE_MIN 0.0
 #define SCALE_MAX 2.0
@@ -13,6 +21,8 @@ struct Entity {
    glm::vec3 scale;
    //Bounding Sphere Radius
    float BSRadius;
+   //Mesh index
+   int meshIndex;
    //"Special Custom Physics Pointer"
    void *physics;
 };
@@ -20,7 +30,7 @@ struct Entity {
 //This method loads the level models and initializes the hotbar
 void initLevelLoader();
 //The entities are loaded into the physics engine
-void loadLevel();
+void loadLevel(string fileName);
 //Creates an entity with the given arguments
 Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIndex);
 //Use entity at hotbar index as the currently selected entity
@@ -46,5 +56,7 @@ int getEntityNum();
 void placeEntity(Entity entity);
 //Undo last placement
 void undo();
+//Save the current world in .wub format
+void saveWorld(string lvName);
 
-
+#endif

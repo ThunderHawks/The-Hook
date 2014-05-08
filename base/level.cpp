@@ -70,12 +70,59 @@ void initLevelLoader() {
 //Entity createEntity(glm::vec3 rotate, glm::vec3 scale,
 
 //The entities are loaded into the physics engine
-void loadLevel(){
+void loadLevel(string fileName){
    printf("Loading Level...\n");
-   glm::vec3 tempScale, tempPosition;
-   float tempAngle;
    Entity tempEntity;
+   int numOfEntities;
+   ifstream infile;
 
+   //If clean level, load nothing
+   if(strcmp(&fileName[0], "clean") == 0) {
+      return;
+   }
+   //If default level, load default
+   else if(strcmp(&fileName[0], "default") == 0) {
+      infile.open("level1.wub");
+   }
+   //Else just load level
+   else {
+      infile.open(&fileName[0]);
+   }
+
+   int i;
+
+   cout << "Opened file " << fileName << endl;
+   infile >> numOfEntities;
+   printf("NumOfEntites: %d\n", numOfEntities);
+   while(0 < numOfEntities--) {
+      //Read angle
+      infile >> tempEntity.angle;
+      //Read position
+      infile >> tempEntity.position.x;
+      infile >> tempEntity.position.y;
+      infile >> tempEntity.position.z; 
+      //Read scale
+      infile >> tempEntity.scale.x;
+      infile >> tempEntity.scale.y;
+      infile >> tempEntity.scale.z;
+      //Read BSRadius
+      infile >> tempEntity.BSRadius;
+      //Read meshIndex
+      infile >> tempEntity.meshIndex;
+      //SetMeshPointer
+      tempEntity.mesh = &mesh[tempEntity.meshIndex];
+
+      //Store entity into "entities" vector
+      entities.push_back(tempEntity);
+   }
+/*
+   while(!infile.eof()) {
+      infile >> i;
+      printf("%d\n", i);
+   }*/
+   
+
+#if 0
    int tf = 0;
    for(int strX=-100;strX<100;strX+=30){
       for(int strZ=-500;strZ<500;strZ+=30){
@@ -92,6 +139,7 @@ void loadLevel(){
          }
       }
    }
+#endif 
  
 #if 0
 Hard coded physics boxes
@@ -133,6 +181,7 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
    entity.scale = scale;
    entity.angle = angle;
    entity.mesh = &mesh[meshIndex];
+   entity.meshIndex = meshIndex;
    return entity;
 }
 
@@ -201,6 +250,36 @@ void undo() {
       //Undo one
       entities.pop_back();
    }
+}
+
+//Save the current world in .wub format
+void saveWorld(string lvName) {
+   ofstream file;
+   Entity entityTemp;
+   string fileName = lvName + ".wub";
+   file.open(&fileName[0]);
+
+   //Write number of entities
+   file << entities.size() << "\n";
+
+   //For each entitys
+   for(int i = 0; i < entities.size(); i++) {
+      entityTemp = entities.at(i);
+      printf("entity: %d\n", i);
+   
+      //Write angle
+      file << entityTemp.angle << " ";
+      //Write position
+      file << entityTemp.position.x << " " << entityTemp.position.y << " " << entityTemp.position.z << " ";
+      //Write scale
+      file << entityTemp.scale.x << " " << entityTemp.scale.y << " " << entityTemp.scale.z << " ";
+      //Write BSRadius
+      file << entityTemp.BSRadius << " ";
+      //Write meshIndex
+      file << entityTemp.meshIndex << "\n";
+   }
+   file.close();
+   printf("%s saved\n", &fileName[0]);
 }
 
 /*

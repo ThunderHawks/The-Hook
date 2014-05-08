@@ -27,6 +27,7 @@
 #include "physSystem.h"
 #include "Camera.h"
 #include "level.h"
+#include "Lab4.h"
 
 float startX, startY;
 float endX, endY;
@@ -42,14 +43,18 @@ glm::vec3 gaze;
 glm::vec3 w, u;
 
 //Change size to increase amount of keys input
-int KeysPressed[255];
+int KeysPressed[350];
 
 //Mouse press callback for Edit Mode
 void glfwEditMouse(GLFWwindow *window, int button, int action, int mods) {
    //If the left button is pressed
    if(button == GLFW_MOUSE_BUTTON_LEFT) {
+      //If game is paused
+      if(isPaused()) {
+         pauseorUnpause();
+      }
       //If an entity is selected, add it
-      if(isEntitySelected() == true) {
+      else if(isEntitySelected() == true) {
          placeSelectedEntity();
          //Reset lookAtDistance
          previousLookAtDistance = lookAtDistance;
@@ -231,8 +236,23 @@ void glfwEditKeyboard(void) {
   w = gaze/magnitude(gaze);
   w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
   u = glm::cross(GetUp(), w)/magnitude(glm::cross(GetUp(), w));
+   //GLFW_KEY_LEFTCONTROL + 'S'
+   if(KeysPressed[341] && KeysPressed['S']) {
+      string toSave;
+      pauseorUnpause();
+      printf("Enter a string to have this world saved (don't include .wub, type 'none' to abort save):\n");
+      scanf("%s", &toSave[0]);
+
+      if(strcmp(&toSave[0], "abort") == 0) {
+         printf("Save aborted\n");
+         return;
+      }
+
+      printf("Going to save world as: %s\n", &toSave[0]);
+      saveWorld(&toSave[0]);
+   } 
    //GLFW_KEY_S
-   if(KeysPressed['S']) {
+   else if(KeysPressed['S']) {
        MoveEye(glm::vec3(0.1 * w.x, 0.1 * w.y, 0.1 * w.z));
    }
    //GLFW_KEY_W
@@ -296,6 +316,10 @@ void glfwEditKeyboard(void) {
    //GLFW_KEY_0
    if(KeysPressed['0']) {
       selectAtHotBarIndex(0);
+   }
+   //GLFW_KEY_P
+   if(KeysPressed['P']) {
+      pauseorUnpause();
    }
    //GLFW_KEY_Q
    if(KeysPressed['Q']) {
@@ -394,6 +418,14 @@ void glfwEditKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
        case GLFW_KEY_BACKSPACE:
          KeysPressed[8] = 1;
          break;
+       //Left control + s = save
+       case GLFW_KEY_LEFT_CONTROL:
+         KeysPressed[341] = 1;
+         break;
+       //Pause/unpause
+       case GLFW_KEY_P:
+         KeysPressed['P'] = 1;
+         break;
        //Quit
        case GLFW_KEY_Q:
          KeysPressed['Q'] = 1;
@@ -460,8 +492,16 @@ void glfwEditKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
        case GLFW_KEY_BACKSPACE:
          KeysPressed[8] = 0;
          break;
+       //Left control + s = save
+       case GLFW_KEY_LEFT_CONTROL:
+         KeysPressed[341] = 0;
+         break;
        case GLFW_KEY_Q:
          KeysPressed['Q'] = 0;
+         break;
+       //Pause/unpause
+       case GLFW_KEY_P:
+         KeysPressed['P'] = 0;
          break;
        case GLFW_KEY_1:
          KeysPressed['1'] = 0;

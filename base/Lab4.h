@@ -1,4 +1,7 @@
 
+#ifndef LAB4_H_
+#define LAB4_H_
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -183,9 +186,13 @@ int Table_Size();
 void Set_ModelType(int index, int type);
 Node Get_Index(int index);
 void Free_LinkedList();
+//Bool that returns true if game is paused
+bool isPaused();
+//Pauses/unpasses game
+void pauseorUnpause();
 glm::vec3 computeWeightedNormal(int vertex);
 int RandomInt(int one, int two);
 
 // Macro used to obtain relative offset of a field within a struct
 #define FIELD_OFFSET(StructType, field) &(((StructType *)0)->field)
-//
+#endif 
