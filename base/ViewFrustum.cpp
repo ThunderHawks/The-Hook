@@ -20,7 +20,7 @@
 
 /* input:   the center of a bounding sphere, the radius of the bounding sphere (put 0 for just a point), and the model view matrix
  * summary: Checks if a bounding sphere is inside the view frustum
- * output:  A number representing which plane it didn't pass. Still working on things other than 0. might just have it always be 1 if it fails
+ * output:  A number representing if it is in the view frustum or not
  *				0 = inside frustum
  *				1 = not in frustum
 */
@@ -36,7 +36,7 @@ int checkViewFrustum (glm::vec3 point, int rad, glm::mat4 mView) {
 	for (int i = 0; i < 16; ++i)
 		matArray[i] = pSource[i];
 		
-	/*I can use 2 fancy loops to iterate through it and make the code smaller. However, Until I know this works, I won't be using it. Here it is below though:*/
+	/*Go through the planes and check if the sphere is in it*/
 	
 		for (int i = 0; i < 12; ) {
 			a = m41 + matArray[i++];
