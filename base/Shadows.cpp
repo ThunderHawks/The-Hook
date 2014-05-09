@@ -60,22 +60,23 @@ int ShadowMap::MakeShadowMap(int width, int height) {
    return isSuccessful;
 }
 
-void ShadowMap::BindTexWrite() {
+void ShadowMap::BindFBO() {
    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER, FrameBuf);
 }
 
-void ShadowMap::BindTexRead(int texUnit) {
+void ShadowMap::BindDepthTex(int texUnit) {
    glActiveTexture(texUnit);
    glBindTexture(GL_TEXTURE_2D, DepthTex);
 }
 
-void ShadowMap::UnbindTex() {
+void ShadowMap::UnbindFBO() {
    glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
 }
 
-void SetOrthoProjectionMatrix() {
+glm::mat4 SetOrthoProjectionMatrix() {
    glm::mat4 orthoProj = glm::ortho(-10.f, 10.f, -10.f, 10.f, -10.f, 20.f);
    safe_glUniformMatrix4fv(h_uProjMatrix, glm::value_ptr(orthoProj));
+   return orthoProj;
 }
 
 

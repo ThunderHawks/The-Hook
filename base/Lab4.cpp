@@ -158,16 +158,6 @@ void pauseorUnpause() {
 /* Main display function */
 void glfwDraw (GLFWwindow *window)
 {
-   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   /*Start our shader      */
-   glUseProgram(ShadeProg);
-   curProj = SetProjectionMatrix();
-   curView = SetView();
-
-   glUniform3f(h_uLightColor, 0.4, 0.4, 0.38);
-   glUniform4f(h_uLightVec, 0.0, 1.0, 1.0, 0.0);
-   glUniform3f(h_uCamPos, GetEye().x, GetEye().y, GetEye().z);
-
    ModelTrans.loadIdentity();
    SetModelStat();
 
@@ -234,10 +224,33 @@ void glfwDraw (GLFWwindow *window)
    FRBbuilding->getMotionState()->getWorldTransform(trans);
    SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),3,0,2,2,2);
 */
-   //Disable the shader
+}
+
+void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
+   glUseProgram(ShadeProg);
+
+   glUniform3f(h_uLightColor, 0.4, 0.4, 0.38);
+   glUniform4f(h_uLightVec, 0.0, 1.0, 1.0, 0.0);
+
+   // Render depth info from light's perspective
+   shadowMap->BindFBO();
+   glClear(GL_DEPTH_BUFFER_BIT);
+   curView = SetView(); // CHANGE TO LIGHT'S PERSPECTIVE, NOT EYE
+   curProj = SetOrthoProjectionMatrix();
+   glUniform3f(h_uCamPos, 0.0, 1.0, 1.0);
+   glfwDraw(window);
+
+   // Render scene normally and draw
+   shadowMap->UnbindFBO();
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   curView = SetView();
+   curProj = SetProjectionMatrix();
+   glUniform3f(h_uCamPos, GetEye().x, GetEye().y, GetEye().z);
+   glfwDraw(window);
+
+   // Disable the shaders
    glUseProgram(0);	
    glfwSwapBuffers(window);
-
 }
 
 int main( int argc, char *argv[] )
@@ -362,7 +375,7 @@ int main( int argc, char *argv[] )
          if(paused == false) {
             //Keep the cursor centered
             glfwSetCursorPos(window,g_width/2,g_height/2);  
-            glfwDraw(window);
+            renderScene(window, shadowMap);
             glfwEditGetCursorPos(NULL,g_width/2.0,g_height/2.0);
             //glfw Game Keyboard
             glfwEditKeyboard();
@@ -377,7 +390,7 @@ int main( int argc, char *argv[] )
             glfwSetCursorPos(window,g_width/2,g_height/2);         
             physStep();
             //Draw stuff
-            glfwDraw(window);
+            renderScene(window, shadowMap);
             glfwGameGetCursorPos(NULL,g_width/2.0,g_height/2.0);
             //glfw Game Keyboard
             glfwGameKeyboard();

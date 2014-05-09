@@ -1,5 +1,8 @@
 #include <GLFW/glfw3.h>
 #include "MStackHelp.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp" //perspective, trans etc
+#include "glm/gtc/type_ptr.hpp" //value_ptr
 
 extern GLint h_aPosition, h_aNormal, h_uViewMatrix, h_uProjMatrix;
 extern GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj;
@@ -19,13 +22,13 @@ public:
    ShadowMap();
    ~ShadowMap();
    int MakeShadowMap(int width, int height);
-   void BindTexWrite();
-   void BindTexRead(int texUnit);
-   void UnbindTex();
+   void BindFBO();
+   void BindDepthTex(int texUnit);
+   void UnbindFBO();
 
 private:
    GLuint FrameBuf;
    GLuint DepthTex;
 };
 
-void SetOrthoProjectionMatrix();
+glm::mat4 SetOrthoProjectionMatrix();
