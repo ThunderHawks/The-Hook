@@ -22,6 +22,7 @@
 #include <string>
 #include "Camera.h"
 #include "ViewFrustum.h"
+#include "Shadows.h"
 
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
@@ -346,6 +347,12 @@ int main( int argc, char *argv[] )
       InitGeom();
       initLevelLoader();
       loadLevel(fileName);
+   }
+
+   ShadowMap *shadowMap = new ShadowMap();
+   if (shadowMap->MakeShadowMap(g_width, g_height) == -1) {
+      printf("SHADOW MAP FAILED\n");
+      exit(EXIT_FAILURE);  
    }
 
    // Start the main execution loop.
