@@ -1,5 +1,4 @@
-extern float g_width, g_height, beta, alpha, eyeAtx, eyeAty, eyeAtz;
-extern glm::vec3 gaze;
+extern float g_width, g_height;
 
 //Mouse press callback for Edit Mode
 void glfwEditMouse(GLFWwindow *window, int button, int action, int mods);
