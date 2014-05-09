@@ -56,6 +56,8 @@ int getEntityNum();
 void placeEntity(Entity entity);
 //Undo last placement
 void undo();
+//Saves the world to the currentLevel
+void saveWorld();
 //Save the current world in .wub format
 void saveWorld(string lvName);
 

@@ -15,6 +15,9 @@ Entity hotBar[10];
 bool entitySelected;
 Entity currentEntity;
 
+//Name of the level loaded
+string currentLevel = "level1.wub";
+
 //This method loads the level models and initializes the hotbar
 void initLevelLoader() {
    printf("Initializing Level content...\n");
@@ -36,35 +39,39 @@ void initLevelLoader() {
 
    //Load hotbar options
    //Basic Blg
-   Entity entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 0);
+   Entity entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 0);
    hotBar[0] = entity;
    //Shop Bldg
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 1);
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.25, 0.25, 0.25), 0.0, 1);
    hotBar[1] = entity;
    //Cinderblock
    entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 2);
    hotBar[2] = entity;
    //Flower pot
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 3);
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.1, 0.1, 0.1), 0.0, 3);
    hotBar[3] = entity;
    //Medium Blg
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 4);
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 4);
    hotBar[4] = entity;
    //SideWalk
    entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 5);
    hotBar[5] = entity;
    //Street light
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 6);
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5), 0.0, 6);
    hotBar[6] = entity;
    //Table
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 7);
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 7);
    hotBar[7] = entity;
    //Tall blg
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.1, 0.1, 0.1), 0.0, 8);
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.4, 0.4, 0.4), 0.0, 8);
    hotBar[8] = entity;
    //Water tower
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.8, 0.8, 0.8), 0.0, 9);
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 9);
    hotBar[9] = entity;
+
+   //Load into current index to prevent segfault. Doesn't appear.
+   selectAtHotBarIndex(0);
+   entitySelected = false;
 }
 
 //Entity createEntity(glm::vec3 rotate, glm::vec3 scale,
@@ -78,15 +85,18 @@ void loadLevel(string fileName){
 
    //If clean level, load nothing
    if(strcmp(&fileName[0], "clean") == 0) {
+      currentLevel.clear();
       return;
    }
    //If default level, load default
    else if(strcmp(&fileName[0], "default") == 0) {
-      infile.open("level1.wub");
+      infile.open(&currentLevel[0]);
    }
    //Else just load level
    else {
       infile.open(&fileName[0]);
+      //Keep track of file name
+      strcpy(&currentLevel[0], &fileName[0]);
    }
 
    int i;
@@ -115,63 +125,6 @@ void loadLevel(string fileName){
       //Store entity into "entities" vector
       entities.push_back(tempEntity);
    }
-/*
-   while(!infile.eof()) {
-      infile >> i;
-      printf("%d\n", i);
-   }*/
-   
-
-#if 0
-   int tf = 0;
-   for(int strX=-100;strX<100;strX+=30){
-      for(int strZ=-500;strZ<500;strZ+=30){
-       //btRigidBody* createStaticBox(float posX,float posY,float posZ,float scaleX,float scaleY,float scaleZ,btQuaternion rotation,float mass,float ix,float iy,float iz);
-         tf = !tf;
-         if(tf){
-            entities.push_back(createEntity(glm::vec3(strX, 4.5, strZ), glm::vec3(0.3, 0.3, 0.3), 0.0, 9));
-            /*SET COLLISION BOX APPROPRIATELY*/
-            //physSetDisplayObj(createStaticBox(strX,SCALE*3,strZ,SCALE*2,SCALE*3,SCALE*2,btQuaternion(0,0,0,1),0/*INFINITE*/,0,0,0),&mesh[0]);
-         }
-         else{
-            entities.push_back(createEntity(glm::vec3(strX, 3.0, strZ), glm::vec3(0.3, 0.3, 0.3), 0.0, 1));
-           // physSetDisplayObj(createStaticBox(strX,SCALE*1,strZ,SCALE*2.25,SCALE*1.25,SCALE*2,btQuaternion(0,0,0,1),0/*INFINITE*/,0,0,0),&mesh[1]);
-         }
-      }
-   }
-#endif 
- 
-#if 0
-Hard coded physics boxes
-   int tf = 0;
-   for(int strX=-100;strX<100;strX+=30){
-      for(int strZ=-500;strZ<500;strZ+=30){
-       //btRigidBody* createStaticBox(float posX,float posY,float posZ,float scaleX,float scaleY,float scaleZ,btQuaternion rotation,float mass,float ix,float iy,float iz);
-         tf = !tf;
-         if(tf){
-            physSetDisplayObj(createStaticBox(strX,SCALE*3,strZ,SCALE*2,SCALE*3,SCALE*2,btQuaternion(0,0,0,1),0/*INFINITE*/,0,0,0),&mesh[0]);
-         }
-         else{
-            physSetDisplayObj(createStaticBox(strX,SCALE*1,strZ,SCALE*2.25,SCALE*1.25,SCALE*2,btQuaternion(0,0,0,1),0/*INFINITE*/,0,0,0),&mesh[1]);
-         }
-      }
-   }
-#endif
-
-#if 0
-   Code to add all entities to physics code, used after loading from .txt files
-   //Draw each entity in the world
-   for(int i = 0; i < entities.size(); i++) {
-
-      tempEntity = entities.at(i);
-
-      tempPosition = tempEntity.position;
-      tempAngle= tempEntity.angle;
-      tempScale = tempEntity.scale;
-
-      physSetDisplayObj(createStaticBox(tempPosition.x, tempPosition.y, tempPosition.z, tempScale.x, tempScale.y, tempScale.z, btQuaternion(0,0,0,1),0/*INFINITE*/,0,0,0), tempEntity.mesh);
-   }
-#endif
 }
 
 //Creates an entity with the given arguments
@@ -189,6 +142,40 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
 void selectAtHotBarIndex(int index) {
    currentEntity = hotBar[index];
    entitySelected = true;
+
+   //Set distance away from camera for convinience
+   switch(index) {
+      case 0:
+         setDistance(20.0);
+         break;
+      case 1:
+         setDistance(15.0);
+         break;
+      case 2:
+         setDistance(3.0);
+         break;
+      case 3:
+         setDistance(3.0);
+         break;
+      case 4:
+         setDistance(18.0);
+         break;
+      case 5:
+         setDistance(10.0);
+         break;
+      case 6:
+         setDistance(10.0);
+         break;
+      case 7:
+         setDistance(6.0);
+         break;
+      case 8:
+         setDistance(400.0);
+         break;
+      case 9:
+         setDistance(7.0);
+         break;
+    }
 }
  
 //Determines if an entity is currently selected, if false DO NOT draw currentEntity
@@ -213,9 +200,11 @@ void rotateSelectedEntity(float angle) {
 
 //Places the selected entity into the world at lookAtPoint
 void placeSelectedEntity() {
-   currentEntity.position = GetLookAt();
-   entities.push_back(currentEntity);
-   entitySelected = false;
+   if(entitySelected == true) {
+      currentEntity.position = GetLookAt();
+      entities.push_back(currentEntity);
+      entitySelected = false;
+   }
 }
 
 //Make selected entity the one last placed
@@ -252,6 +241,42 @@ void undo() {
    }
 }
 
+//Saves the world to the currentLevel
+void saveWorld() {
+   ofstream file;
+   Entity entityTemp;
+   //Is this is a previously unsaved level, we can't save without
+   //a file name
+   if(currentLevel.empty() == true) {
+      return;
+   }
+   //Else save to file name
+   else {
+      file.open(&currentLevel[0], std::ifstream::out | std::ifstream::trunc);
+
+      //Write number of entities
+      file << entities.size() << "\n";
+      printf("entities: %d\n", (int)entities.size());
+      //For each entitys
+      for(int i = 0; i < entities.size(); i++) {
+         entityTemp = entities.at(i);
+         printf("i: %d\n", i);
+         //Write angle
+         file << entityTemp.angle << " ";
+         //Write position
+         file << entityTemp.position.x << " " << entityTemp.position.y << " " << entityTemp.position.z << " ";
+         //Write scale
+         file << entityTemp.scale.x << " " << entityTemp.scale.y << " " << entityTemp.scale.z << " ";
+         //Write BSRadius
+         file << entityTemp.BSRadius << " ";
+         //Write meshIndex
+         file << entityTemp.meshIndex << "\n";
+      }
+      file.close();
+      printf("%s saved\n", &currentLevel[0]);
+   }
+}
+
 //Save the current world in .wub format
 void saveWorld(string lvName) {
    ofstream file;
@@ -265,7 +290,6 @@ void saveWorld(string lvName) {
    //For each entitys
    for(int i = 0; i < entities.size(); i++) {
       entityTemp = entities.at(i);
-      printf("entity: %d\n", i);
    
       //Write angle
       file << entityTemp.angle << " ";
@@ -281,15 +305,4 @@ void saveWorld(string lvName) {
    file.close();
    printf("%s saved\n", &fileName[0]);
 }
-
-/*
-void writeWubFile(String fileName) {
-   if(entities.size() == 0) {
-      printf("No can do... you need to make something first!\n");
-   }
-}
-
-void readWubFile(String fileName) {
-
-}*/
 

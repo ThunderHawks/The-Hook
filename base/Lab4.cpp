@@ -315,7 +315,7 @@ int main( int argc, char *argv[] )
       glfwSetWindowSize(window,1600,800);
       g_height =800;
       g_width = 1600;
-      setDistance(2);
+      setDistance(7);
       SetEdit(1);
       paused = false;
 

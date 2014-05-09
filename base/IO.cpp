@@ -34,10 +34,11 @@ float endX, endY;
 float alpha = 0.0;
 float beta = -M_PI/2.0;
 
-//Used to adjust the distance of the selected object in edit mode
-float lookAtDistance = 0.0;
-//Can set the lookAtDistance if "R" is pressed
-float previousLookAtDistance = 0.0;
+//Used to load the previous scroll distance for 'R' in edit mode
+float previousLookAtDistance = 3.0;
+
+//Used to increase speed when 'Left Shift' is pressed in edit
+float speed = 1.0;
 
 glm::vec3 gaze;
 glm::vec3 w, u;
@@ -57,8 +58,8 @@ void glfwEditMouse(GLFWwindow *window, int button, int action, int mods) {
       else if(isEntitySelected() == true) {
          placeSelectedEntity();
          //Reset lookAtDistance
-         previousLookAtDistance = lookAtDistance;
-         lookAtDistance = 0.0;
+         previousLookAtDistance = getDistance();
+         setDistance(3.0);
       }
    }
 }
@@ -68,15 +69,15 @@ void glfwEditScroll(GLFWwindow *window, double xOffset, double yOffset) {
 
    //Change scale if F is being held along with scroll wheel
    if(KeysPressed['F'] == 1) {
-      scaleSelectedEntity(glm::vec3(yOffset * 0.1, yOffset * 0.1, yOffset * 0.1));
+      scaleSelectedEntity(glm::vec3(yOffset * 0.05, yOffset * 0.05, yOffset * 0.05));
    }
    //Change rotation if E is being held along with scroll wheel
    else if(KeysPressed['E'] == 1) {
       rotateSelectedEntity(yOffset);
    }
    //If the change will be in range
-   else if(getDistance() + yOffset * 0.1 <= 5.0 && getDistance() + yOffset * 0.1 >= 1.0) {
-      addDistance(0.1 * yOffset);
+   else if(getDistance() + yOffset * 0.1 <= 30.0 && getDistance() + yOffset * 0.1 >= 1.0) {
+      addDistance(0.5 * yOffset);
    }
 }
 
@@ -250,26 +251,26 @@ void glfwEditKeyboard(void) {
 
       printf("Going to save world as: %s\n", &toSave[0]);
       saveWorld(&toSave[0]);
-   } 
+   }
    //GLFW_KEY_S
    else if(KeysPressed['S']) {
-       MoveEye(glm::vec3(0.1 * w.x, 0.1 * w.y, 0.1 * w.z));
+       MoveEye(glm::vec3(speed * 0.15 * w.x, speed * 0.15 * w.y, speed * 0.15 * w.z));
    }
    //GLFW_KEY_W
    if(KeysPressed['W']) {
-       MoveEye(glm::vec3(-0.1 * w.x, -0.1 * w.y, -0.1 * w.z));
+       MoveEye(glm::vec3(speed * -0.15 * w.x, speed * -0.15 * w.y, speed * -0.15 * w.z));
    }
    //GLFW_KEY_D
    if(KeysPressed['D']) {
-       MoveEye(glm::vec3(0.1 * u.x, 0.1 * u.y, 0.1 * u.z));
+       MoveEye(glm::vec3(speed * 0.15 * u.x, speed * 0.15 * u.y, speed * 0.15 * u.z));
    }
    //GLFW_KEY_A
    if(KeysPressed['A']) {
-       MoveEye(glm::vec3(-0.1 * u.x, -0.1 * u.y, -0.1 * u.z));
+       MoveEye(glm::vec3(speed * -0.15 * u.x, speed * -0.15 * u.y, speed * -0.15 * u.z));
    }
    //GLFW_KEY_R
    if(KeysPressed['R']) {
-      lookAtDistance = previousLookAtDistance;
+      setDistance(previousLookAtDistance);
       reselectLastEntity();
    }
    //GLFW_KEY_BACKSPACE
@@ -321,8 +322,13 @@ void glfwEditKeyboard(void) {
    if(KeysPressed['P']) {
       pauseorUnpause();
    }
-   //GLFW_KEY_Q
-   if(KeysPressed['Q']) {
+   //Quit and save
+   if(KeysPressed['Q'] && KeysPressed[341]) {
+      saveWorld();
+      exit( EXIT_SUCCESS );
+   }
+   //Quit and don't save
+   else if(KeysPressed['Q']) {
       exit( EXIT_SUCCESS );
    }
 }
@@ -426,6 +432,11 @@ void glfwEditKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
        case GLFW_KEY_P:
          KeysPressed['P'] = 1;
          break;
+       //Allows for faster movement
+       case GLFW_KEY_LEFT_SHIFT:
+         KeysPressed[340] = 1;
+         speed = 2.0;
+         break;
        //Quit
        case GLFW_KEY_Q:
          KeysPressed['Q'] = 1;
@@ -495,6 +506,10 @@ void glfwEditKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
        //Left control + s = save
        case GLFW_KEY_LEFT_CONTROL:
          KeysPressed[341] = 0;
+         break;
+       case GLFW_KEY_LEFT_SHIFT:
+         KeysPressed[340] = 0;
+         speed = 1.0;
          break;
        case GLFW_KEY_Q:
          KeysPressed['Q'] = 0;
