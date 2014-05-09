@@ -28,6 +28,7 @@
 #include "Camera.h"
 #include "level.h"
 #include "Lab4.h"
+#include "SoundPlayer.h"
 
 float startX, startY;
 float endX, endY;
@@ -227,6 +228,12 @@ void glfwGameKeyboard(void) {
   //    }
       //else physGrapplePoint();
    }
+   if(KeysPressed['M']){
+   	if (KeysPressed['M'] == 1)
+			pauseBackground();
+			
+      KeysPressed['M']=2;
+   }
 }
 
 /*
@@ -362,6 +369,10 @@ void glfwGameKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
          if(!KeysPressed['E'])
             KeysPressed['E'] = 1;
          break;
+     case GLFW_KEY_M:
+         if(!KeysPressed['M'])
+            KeysPressed['M'] = 1;
+         break;
      }
    }   
    else if(action == GLFW_RELEASE) {
@@ -389,6 +400,9 @@ void glfwGameKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
          break;
        case GLFW_KEY_E:
          KeysPressed['E'] = 0;
+         break;
+     case GLFW_KEY_M:
+         KeysPressed['M'] = 0;
          break;
      }
    }
