@@ -1,3 +1,6 @@
+#ifndef IO_H_
+#define IO_H_
+
 extern float g_width, g_height;
 
 //Mouse press callback for Edit Mode
@@ -20,3 +23,5 @@ void glfwEditKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
 void glfwGameKeyPress(GLFWwindow *window, int key, int scan, int action, int mods);
 //Returns bool of char pressed
 int getPressed(char ch);
+
+#endif

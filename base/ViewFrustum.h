@@ -1,3 +1,6 @@
+#ifndef VIEW_FRUSTUM_H_
+#define VIEW_FRUSTUM_H_
+
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
@@ -8,3 +11,5 @@
  *				1 = not in frustum
 */
 int checkViewFrustum (glm::vec3 point, int rad, glm::mat4 mView);
+
+#endif

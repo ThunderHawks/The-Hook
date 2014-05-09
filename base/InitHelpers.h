@@ -1,3 +1,6 @@
+#ifndef INIT_HELPERS_H_
+#define INIT_HELPERS_H_
+
 #include <GLFW/glfw3.h>
 #include "MStackHelp.h"
 
@@ -15,3 +18,5 @@ extern RenderingHelper ModelTrans;
 
 int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName);
 void glInitialize(GLFWwindow *window);
+
+#endif

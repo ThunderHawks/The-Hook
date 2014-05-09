@@ -1,3 +1,6 @@
+#ifndef SHAPES_H_
+#define SHAPES_H_
+
 extern GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine;
 extern int ShadeProg;
 extern GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj;
@@ -10,3 +13,5 @@ void initCube();
 //static void initCubeShadow()
 void InitGeom();
 void SetMaterial(int i);
+
+#endif

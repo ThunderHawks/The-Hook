@@ -1,3 +1,6 @@
+#ifndef CAMERA_H_
+#define CAMERA_H_
+
 #include "glm/glm.hpp"
 
 extern GLint h_uViewMatrix;
@@ -40,3 +43,5 @@ bool checkCollision(glm::vec3 point, float rad);
 void SetSpeed(float speed);
 /*check if you are in edit mode*/
 void SetEdit (int status);
+
+#endif
