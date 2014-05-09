@@ -205,12 +205,13 @@ void glfwDraw (GLFWwindow *window)
       btTransform trans;
       loopable[i]->getMotionState()->getWorldTransform(trans);
       //printf("actual is %f %f %f\n",trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ());
-   
-	if(!i)
-		PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.15*SCALE,-.05*SCALE,.15*SCALE,1);
-	else  
-		PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.1*SCALE,.1*SCALE,.1*SCALE, 0);
-     // SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),2,0,2,2,2);
+   if(loopable[i]->getUserPointer()){
+	   if(!i)
+		   PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.15*SCALE,-.05*SCALE,.15*SCALE,1);
+	   else  
+		   PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.1*SCALE,.1*SCALE,.1*SCALE, 0);
+        // SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),2,0,2,2,2);
+      }
    }
 
 
@@ -360,7 +361,10 @@ int main( int argc, char *argv[] )
       physicsInit();
       InitGeom();
       initLevelLoader();
+      printf("boop\n");
       loadLevel(fileName);
+
+      printf("oop%d\n",      getVecList().size());
       //music
    	SetBackground("../Assets/Sounds/Bastion_From_Wharfs_To_Wilds.ogg");
    }
@@ -392,6 +396,7 @@ int main( int argc, char *argv[] )
             //Keep the cursor centered
             glfwSetCursorPos(window,g_width/2,g_height/2);         
             physStep();
+            //printf("oop%d\n",      getVecList().size());
             //Draw stuff
             renderScene(window, shadowMap);
             glfwGameGetCursorPos(NULL,g_width/2.0,g_height/2.0);

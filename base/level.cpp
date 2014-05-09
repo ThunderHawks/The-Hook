@@ -121,7 +121,8 @@ void loadLevel(string fileName){
       infile >> tempEntity.meshIndex;
       //SetMeshPointer
       tempEntity.mesh = &mesh[tempEntity.meshIndex];
-
+      printf("%f,%f,%f,%f,%f,%f\n",tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,tempEntity.scale.x,tempEntity.scale.y,tempEntity.scale.z);
+      tempEntity.btPhys = createStaticBox(tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,tempEntity.scale.x*3*7,tempEntity.scale.y*3*7,tempEntity.scale.z*3*7,btQuaternion(0,0,0,1),0,0,0,0);
       //Store entity into "entities" vector
       entities.push_back(tempEntity);
    }
@@ -135,6 +136,9 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
    entity.angle = angle;
    entity.mesh = &mesh[meshIndex];
    entity.meshIndex = meshIndex;
+   //printf("a\n");
+   
+   //printf("b\n");
    return entity;
 }
 

@@ -97,6 +97,7 @@ btRigidBody* createStaticBox(float posX,float posY,float posZ,float scaleX,float
    dynamicsWorld->addRigidBody(FRBbox);
    FRBbox->setLinearVelocity(btVector3(ix,iy,iz));
    btobjes.push_back(FRBbox);
+   printf("%d is num\n",btobjes.size());
    return FRBbox;
 }
 /*void physGetPlayerLocation(btTransform *trans){
@@ -194,7 +195,9 @@ void physStep(){
    lookAt = glm::vec3(x,y,z);
    //printf("the h is %d\n",getPressed('E'));
    if(playerGrappleActive) physGrapplePoint();
+   //printf("a\n");
    dynamicsWorld->stepSimulation(1/60.f,10);
+   //printf("b\n");
 
 }
 /*returns a vector that is the speed of the player as a vec3*/

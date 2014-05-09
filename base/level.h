@@ -8,6 +8,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+
+#include <bullet/btBulletDynamicsCommon.h>
 using namespace std;
 
 #define SCALE_MIN 0.0
@@ -25,6 +27,7 @@ struct Entity {
    int meshIndex;
    //"Special Custom Physics Pointer"
    void *physics;
+   btRigidBody *btPhys;
 };
 
 //This method loads the level models and initializes the hotbar
