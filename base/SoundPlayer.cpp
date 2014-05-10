@@ -3,12 +3,12 @@
 Sound bMusic = Sound("../Assets/Sounds/Bastion_From_Wharfs_To_Wilds.ogg", 75, true);
 
 void PlayBackground() {
-	bMusic.playSound();
+	bMusic.playMusic();
 }
 
 void SetBackground(char *path) {
 	bMusic = Sound(path, 75, true);
-	bMusic.playSound();
+	bMusic.playMusic();
 }
 void pauseBackground() {
 	bMusic.pause();

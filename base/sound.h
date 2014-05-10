@@ -1,43 +1,103 @@
-#ifndef SOUNDPLAYER_H_
-#define SOUNDPLAYER_H_
-
+#ifndef SOUND_H
+#define SOUND_H
 #include <iostream>
 #include <irrKlang.h>
 #include <string.h>
 #include <cstdlib>
+#include <algorithm>
 
 class Sound {
 
 	private:
 		irrklang::ISoundEngine* engine;
 		irrklang::ISound* music;
-		int position;
+		char* fileName; //The path to the sound file (ex: ../Sounds/Bastion_Wharfs_To_Wilds.ogg)
+		int position; //The sound file's play position in milliseconds
+		int volume; //The volume
 
-		//Pauses sound
-		void setPause();
+		/**************************
+		 PRIVATE FUNCTIONS
+		 *************************/
+		//Mutes the sound (but still playing in the background)
+		void setMute();
 
-		//Resumes sound
-		void resume();
+		//Unmutes sound (and sets it to what it was previously, or default 50)
+		void unmute();
 
 	public:
-		//The path to the sound file (ex: ../Sounds/Bastion_Wharfs_To_Wilds.ogg)
-		char* fileName;
-		int volume; //The volume (0-100): 0 - mute, 100 - max
-		bool loop; //Whether sound loops: true - loops, false - once through
 
-		Sound(); //default constructor
-		Sound(char* fileName, int volume, bool isLooped); //custom constructor
+		/**************************
+		 CONSTRUCTORS
+		 *************************/
+		Sound(); //Default constructor
+		Sound(char* fileName, int volume, bool isLooped); //Custom constructor
 
-		//Plays a sound (use this if you created a Sound object with the custom constructor)
-		void playSound();
+		/**************************
+		 SETTER/GETTER FUNCTIONS
+		 *************************/
+		//Set the path to the BGM
+		void setMusicPath(char* path);
 
-		/* Plays a sound
+//TODO: changeMusicPath??? autoplay
+
+		//Get the path to the BGM
+		char* getMusicPath();
+
+		//Set the sound file's play position
+		void setPosition(int pos);
+
+		//Get the sound file's play position
+		int getPosition();
+
+		//Set whether the BGM is looped or not
+		void setLoop(bool loop);
+
+		//Get whether the BGM is looped or not
+		bool getLoop();
+
+		//Get whether the BGM is paused or not
+		bool isPaused();
+
+		//Get whether the BGM is playing or not
+		bool isPlaying();
+
+		/**************************
+		 PLAY FUNCTIONS
+		 *************************/
+		//Plays a song (use this if you created a Sound object with the custom constructor)
+		//Return Value: true if successfully played sound
+		bool playMusic();
+
+		/* Plays a song
 		 * path - the path to sound file (ex: ../Sounds/Bastion_Wharfs_To_Wilds.ogg)
 		 * loop - whether or not sound is looped (set to true for looping)
+		 * 
+		 * Return Value: true if successfully played sound
 		 */
-		void playSound(char* path, bool isLoop);
+		bool playMusic(char* path, bool loop);
 
-		//Either pauses or resumes the sound
+		//Plays a sound effect
+		void playSFX(char* path);
+
+		/**************************
+		 VOLUME CONTROL FUNCTIONS
+		 *************************/
+		//Set volume levels (stops at 0 [mute] or 100 [max] automatically)
+		void setVolume(int vol);
+
+		//Increases volume by 5
+		void increaseVolume();
+
+		//Decreases volume by 5
+		void decreaseVolume();
+
+		//Either mutes or unmutes all sounds (volume = 0)
+		void muteAll();
+
+		/**************************
+		 OTHER FUNCTIONS
+		 *************************/
+		//Either pauses or resumes the BGM (SFX still works)
 		void pause();
 
 		//Deletes a sound object
@@ -45,4 +105,6 @@ class Sound {
 
 };
 
-#endif 
+#endif
+
+
