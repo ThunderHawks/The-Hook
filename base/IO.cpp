@@ -55,6 +55,10 @@ void glfwEditMouse(GLFWwindow *window, int button, int action, int mods) {
       if(isPaused()) {
          pauseorUnpause();
       }
+      //If an entity is not selected and shift is held
+      else if(areEntitiesSelected() == false && KeysPressed[340]) {
+         deleteClosest();
+      }
       //If an entity is selected, add it
       else if(areEntitiesSelected() == true) {
          placeSelectedEntity();
@@ -279,8 +283,6 @@ void glfwEditKeyboard(void) {
          printf("Save aborted\n");
          return;
       }
-
-      printf("Going to save world as: %s\n", &toSave[0]);
       saveWorld(&toSave[0]);
    }
    //GLFW_KEY_S
@@ -306,7 +308,15 @@ void glfwEditKeyboard(void) {
    }
    //GLFW_KEY_BACKSPACE
    if(KeysPressed[8]) {
-      undo();
+      //l-shift, redo
+      if(KeysPressed[340]) {
+         redo();
+      }
+      //else undo
+      else
+      {
+         undo();
+      }
       KeysPressed[8] = 0;
    }
    //GLFW_KEY_1
@@ -366,7 +376,7 @@ void glfwEditKeyboard(void) {
       pauseorUnpause();
    }
    //Quit and save
-   if(KeysPressed['Q'] && KeysPressed[341]) {
+   if(KeysPressed['Q'] && KeysPressed[340]) {
       saveWorld();
       exit( EXIT_SUCCESS );
    }

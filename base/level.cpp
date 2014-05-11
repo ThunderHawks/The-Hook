@@ -23,6 +23,8 @@ int lineAngle = 0;
 int dupNum = 0;
 //Amount to undo if undo is done
 int undoAmount = 0;
+//Entities to redo
+vector<Entity> redoEntities;
 
 //Name of the level loaded, else default
 string currentLevel = "level1.wub";
@@ -142,7 +144,6 @@ void loadLevel(string fileName){
       infile >> tempEntity.phyScale.y;
       infile >> tempEntity.phyScale.z;
       //printf("%f,%f,%f,%f,%f,%f\n",tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,tempEntity.scale.x,tempEntity.scale.y,tempEntity.scale.z);
-      printf("%f %f %f boop\n",tempEntity.phyScale.x,tempEntity.phyScale.y,tempEntity.phyScale.z);
 //    createStaticBox(float posX,float posY,float posZ,
                //     float scaleX,float scaleY,float scaleZ,
             //        btQuaternion rotation,float mass,float ix,float iy,float iz)
@@ -435,15 +436,52 @@ void placeEntity(Entity entity){
    entities.push_back(entity);
 }
 
+//Delete the closest object to the eye
+void deleteClosest() {
+   float closestDistance = FLT_MAX;
+   int closestIndex;
+   glm::vec3 editorEye = GetEye();
+
+   //If nothing to delete
+   if(entities.size() == 0) {
+      return;
+   }
+
+   //Find the closest entity
+   for(int i = 0; i < entities.size(); i++) {
+      if(glm::distance(entities[i].position, editorEye) < closestDistance) {
+         closestIndex = i;
+         closestDistance = glm::distance(entities[i].position, editorEye);
+      }
+   }
+   //Add to redo and then remove
+   redoEntities.push_back(entities[closestIndex]);
+   entities.erase(entities.begin() + closestIndex);
+}
+
 //Undo last placement
 void undo() {
    //If there are entities to actually undo
    if(entities.size() > 0) {
       //Undo amount last placed
       while(undoAmount--) {
+         //Put the entity into redo
+         redoEntities.push_back(entities[entities.size() - 1]);
+         //Then pop off
          entities.pop_back();
       }
       undoAmount = 1;
+   }
+}
+
+//Put the entity last removed back into the world
+void redo() {
+   //If there are entities to actually redo
+   if(redoEntities.size() > 0) {
+      //Push the recently removed element back into entities
+      entities.push_back(redoEntities.back());
+      //Then remove from redo
+      redoEntities.pop_back();  
    }
 }
 
@@ -462,11 +500,9 @@ void saveWorld() {
 
       //Write number of entities
       file << entities.size() << "\n";
-      printf("entities: %d\n", (int)entities.size());
       //For each entitys
       for(int i = 0; i < entities.size(); i++) {
          entityTemp = entities.at(i);
-         printf("i: %d\n", i);
          //Write angle
          file << entityTemp.angle << " ";
          //Write position

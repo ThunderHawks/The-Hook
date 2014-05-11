@@ -69,8 +69,12 @@ Entity getEntityAt(int index);
 int getEntityNum();
 //Add this entity to the world
 void placeEntity(Entity entity);
+//Delete the closest object to the eye
+void deleteClosest();
 //Undo last placement
 void undo();
+//Put the entity last removed back into the world
+void redo();
 //Saves the world to the currentLevel
 void saveWorld();
 //Save the current world in .wub format
