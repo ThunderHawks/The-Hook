@@ -74,7 +74,8 @@ void physicsInit() {
 
    //player
 //   printf("%d is pl point\n",player);
-   player = createStaticBox(1,1,1,1,1,1,btQuaternion(0,0,0,1),1,0,0,0);
+   player = createStaticSphere(1,1,1,1,1,1,btQuaternion(0,0,0,1),1,0,0,0);
+   
    player->setSleepingThresholds (0, 0);
    chara = LoadMesh("../Assets/Models/topHatChar.obj");
    physSetDisplayObj(player,&chara);
@@ -90,6 +91,23 @@ void physicsInit() {
 }
 btRigidBody* createStaticBox(float posX,float posY,float posZ,float scaleX,float scaleY,float scaleZ,btQuaternion rotation,float mass,float ix,float iy,float iz){
    btCollisionShape* fallShapeBoxC = new btBoxShape(btVector3(scaleX,scaleY,scaleZ));
+   //box
+   btDefaultMotionState* fallMotionStateb = new btDefaultMotionState(btTransform(rotation,btVector3(posX,posY,posZ)));//50m up
+   btScalar massb = mass;
+   btVector3 fallInertiab(0,0,0);//inital velocity?
+   fallShapeBoxC->calculateLocalInertia(massb,fallInertiab);//i duknow
+
+   btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCIb(massb,fallMotionStateb,fallShapeBoxC,fallInertiab);
+   btRigidBody* FRBbox = new btRigidBody(fallRigidBodyCIb);
+
+   dynamicsWorld->addRigidBody(FRBbox);
+   FRBbox->setLinearVelocity(btVector3(ix,iy,iz));
+   btobjes.push_back(FRBbox);
+   //printf("%d is num\n",btobjes.size());
+   return FRBbox;
+}
+btRigidBody* createStaticSphere(float posX,float posY,float posZ,float scaleX,float scaleY,float scaleZ,btQuaternion rotation,float mass,float ix,float iy,float iz){
+   btCollisionShape* fallShapeBoxC = new btSphereShape(scaleX);
    //box
    btDefaultMotionState* fallMotionStateb = new btDefaultMotionState(btTransform(rotation,btVector3(posX,posY,posZ)));//50m up
    btScalar massb = mass;
