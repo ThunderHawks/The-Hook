@@ -124,12 +124,18 @@ void loadLevel(string fileName){
       infile >> tempEntity.meshIndex;
       //SetMeshPointer
       tempEntity.mesh = &mesh[tempEntity.meshIndex];
-      //printf("%f,%f,%f,%f,%f,%f\n",tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,tempEntity.scale.x,tempEntity.scale.y,tempEntity.scale.z);
-      printf("%f %f %f boop\n",tempEntity.phyScale.x,tempEntity.phyScale.y,tempEntity.phyScale.z);
-      tempEntity.btPhys = createStaticBox(tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,tempEntity.scale.x*tempEntity.phyScale.x,tempEntity.scale.y*tempEntity.phyScale.y,tempEntity.scale.z*tempEntity.phyScale.z,btQuaternion(0,0,0,1),0,0,0,0);
+      //phyScale!
       infile >> tempEntity.phyScale.x;
       infile >> tempEntity.phyScale.y;
       infile >> tempEntity.phyScale.z;
+      //printf("%f,%f,%f,%f,%f,%f\n",tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,tempEntity.scale.x,tempEntity.scale.y,tempEntity.scale.z);
+      printf("%f %f %f boop\n",tempEntity.phyScale.x,tempEntity.phyScale.y,tempEntity.phyScale.z);
+//    createStaticBox(float posX,float posY,float posZ,
+               //     float scaleX,float scaleY,float scaleZ,
+            //        btQuaternion rotation,float mass,float ix,float iy,float iz)
+      tempEntity.btPhys = createStaticBox(tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,
+                                          tempEntity.scale.x*tempEntity.phyScale.x*.5,tempEntity.scale.y*tempEntity.phyScale.y*.55,tempEntity.scale.z*tempEntity.phyScale.z*.5,
+                                          btQuaternion(0,0,0,1),0,0,0,0);
       
       //Store entity into "entities" vector
       entities.push_back(tempEntity);

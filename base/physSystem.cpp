@@ -52,7 +52,8 @@ void physicsInit() {
    btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
    /*btDiscreteDynamicsWorld* */dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,broadphase,solver,collisionConfiguration);
    //end of bullet setup   
-   dynamicsWorld->setGravity(btVector3(0,-15,0));
+//   dynamicsWorld->setGravity(btVector3(0,-15,0));
+   dynamicsWorld->setGravity(btVector3(0,-30,0));
 
    //shapes
    btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0,1,0),1);//1m up (y=1)
@@ -199,6 +200,7 @@ void physStep(){
    x = physGetPlayerX();
    y = physGetPlayerY();
    z = physGetPlayerZ();
+   printf("%f %f %f pos\n",x,y,z);
    lookAt = glm::vec3(x,y,z);
    //printf("the h is %d\n",getPressed('E'));
    if(playerGrappleActive) physGrapplePoint();
