@@ -298,7 +298,61 @@ void unselectEntity() {
    entitiesSelected = false;
 }
 
-//Changes the scale of the selected entity
+//Changes the x scale of the selected entity
+void scaleSelectedEntityX(float scaleX) {
+   Entity temp;
+
+   printf("scaling x\n");
+
+   //If change is within range
+   if(SCALE_MIN < scaleX + currentEntities.at(0).scale.x && scaleX + currentEntities.at(0).scale.x <= SCALE_MAX) { 
+      for(int i = 0; i < currentEntities.size(); i++) {
+         //Get entity at index i
+         temp = currentEntities.at(i);
+         //Uniformly change scale
+         temp.scale += glm::vec3(scaleX, 0.0f, 0.0f);
+         //Replace
+         currentEntities[i] = temp;
+      }
+   }
+}
+
+//Changes the y scale of the selected entity
+void scaleSelectedEntityY(float scaleY) {
+   Entity temp;
+   printf("scaling y\n");
+   //If change is within range
+   if(SCALE_MIN < scaleY + currentEntities.at(0).scale.y && scaleY + currentEntities.at(0).scale.y <= SCALE_MAX) { 
+      for(int i = 0; i < currentEntities.size(); i++) {
+         //Get entity at index i
+         temp = currentEntities.at(i);
+         //Uniformly change scale
+         temp.scale += glm::vec3(0.0f, scaleY, 0.0f);
+         //Replace
+         currentEntities[i] = temp;
+      }
+   }
+}
+
+//Changes the z scale of the selected entity
+void scaleSelectedEntityZ(float scaleZ) {
+   Entity temp;
+   printf("scaling z\n");
+   //If change is within range
+   if(SCALE_MIN < scaleZ + currentEntities.at(0).scale.z && scaleZ + currentEntities.at(0).scale.z <= SCALE_MAX) { 
+      for(int i = 0; i < currentEntities.size(); i++) {
+         //Get entity at index i
+         temp = currentEntities.at(i);
+         //Uniformly change scale
+         temp.scale += glm::vec3(0.0f, 0.0f, scaleZ);
+         //Replace
+         currentEntities[i] = temp;
+      }
+   }
+}
+
+
+//Changes the uniform scale of the selected entity
 void scaleSelectedEntity(glm::vec3 toScale) {
    Entity temp;
 

@@ -46,6 +46,12 @@ void unselectEntity();
 int changeDupNumBy(int toChange);
 //Determines if entities are currently selected, if false DO NOT draw currentEntities
 bool areEntitiesSelected();
+//Changes the x scale of the selected entity
+void scaleSelectedEntityX(float scaleX);
+//Changes the y scale of the selected entity
+void scaleSelectedEntityY(float scaleY);
+//Changes the z scale of the selected entity
+void scaleSelectedEntityZ(float scaleZ);
 //Changes the scale of the selected entity. The object's scale will always be
 //0 < scale <= 2.0
 void scaleSelectedEntity(glm::vec3 toScale);

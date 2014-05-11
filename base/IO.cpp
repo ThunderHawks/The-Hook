@@ -65,6 +65,8 @@ void glfwEditMouse(GLFWwindow *window, int button, int action, int mods) {
          //Reset lookAtDistance
          previousLookAtDistance = getDistance();
          setDistance(3.0);
+         //Set shift to false to avoid undoing object just placed
+         KeysPressed[340] = 0;
       }
    }
    else if(button == GLFW_MOUSE_BUTTON_RIGHT) {
@@ -74,14 +76,28 @@ void glfwEditMouse(GLFWwindow *window, int button, int action, int mods) {
 
 //Mouse scroll callback for Edit Mode
 void glfwEditScroll(GLFWwindow *window, double xOffset, double yOffset) {
-
    //Change dup num if N is pressed
    if(KeysPressed['N'] == 1) {
       changeDupNumBy(yOffset);
    }
    //Change scale if F is being held along with scroll wheel
    if(KeysPressed['F'] == 1) {
-      scaleSelectedEntity(glm::vec3(yOffset * 0.05, yOffset * 0.05, yOffset * 0.05));
+      //Scale in Z
+      if(KeysPressed['Z'] == 1) {
+         scaleSelectedEntityZ(yOffset * 0.05);
+      }
+      //Scale in X
+      else if(KeysPressed['X'] == 1) {
+         scaleSelectedEntityX(yOffset * 0.05);
+      }
+      //Scale in Y
+      else if(KeysPressed['C'] == 1) {
+         scaleSelectedEntityY(yOffset * 0.05);
+      }
+      //Else uniformly scaled
+      else {
+         scaleSelectedEntity(glm::vec3(yOffset * 0.05, yOffset * 0.05, yOffset * 0.05));
+      }
    }
    //Change rotation if E is being held along with scroll wheel
    else if(KeysPressed['E'] == 1) {
@@ -100,8 +116,12 @@ void glfwEditScroll(GLFWwindow *window, double xOffset, double yOffset) {
    }
    //If the change will be in range
    else if(getDistance() + yOffset * 0.1 <= 30.0 && getDistance() + yOffset * 0.1 >= 1.0) {
-      //If all other keys that involve scroll wheel weren't pressed
-      if(!KeysPressed['N'] && !KeysPressed['F'] && !KeysPressed['E']) {
+      //If l-shift increment by a tiny amount
+      if(KeysPressed[340] == 1) {
+         addDistance(0.1 * yOffset);
+      }
+      //else if all other keys that involve scroll wheel weren't pressed
+      else if(!KeysPressed['N'] && !KeysPressed['F'] && !KeysPressed['E']) {
          addDistance(0.5 * yOffset);
       }
    }
@@ -272,8 +292,8 @@ void glfwEditKeyboard(void) {
   w = gaze/magnitude(gaze);
   w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
   u = glm::cross(GetUp(), w)/magnitude(glm::cross(GetUp(), w));
-   //GLFW_KEY_LEFTCONTROL + 'S'
-   if(KeysPressed[341] && KeysPressed['S']) {
+   //GLFW_KEY_LEFTCONTROL + GLFW_KEY_Leftcontrol + 'S'
+   if(KeysPressed[341] && KeysPressed['S'] && KeysPressed[341]) {
       string toSave;
       pauseorUnpause();
       printf("Enter a string to have this world saved (don't include .wub, type 'none' to abort save):\n");
@@ -375,13 +395,13 @@ void glfwEditKeyboard(void) {
    if(KeysPressed['P']) {
       pauseorUnpause();
    }
-   //Quit and save
+   //Quit and don't save
    if(KeysPressed['Q'] && KeysPressed[340]) {
-      saveWorld();
       exit( EXIT_SUCCESS );
    }
-   //Quit and don't save
+   //Quit and Save
    else if(KeysPressed['Q']) {
+      saveWorld();
       exit( EXIT_SUCCESS );
    }
 }
@@ -476,6 +496,18 @@ void glfwEditKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
        case GLFW_KEY_E:
          KeysPressed['E'] = 1;
          break;
+       //Scale in X
+       case GLFW_KEY_X:
+         KeysPressed['X'] = 1;
+         break;
+       //Scale in Y
+       case GLFW_KEY_C:
+         KeysPressed['C'] = 1;
+         break;
+       //Scale in Z
+       case GLFW_KEY_Z:
+         KeysPressed['Z'] = 1;
+         break;
        //Number of feature
        case GLFW_KEY_N:
          KeysPressed['N'] = 1;
@@ -563,6 +595,18 @@ void glfwEditKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
          break;
        case GLFW_KEY_F:
          KeysPressed['F'] = 0;
+         break;
+       //Scale in X
+       case GLFW_KEY_X:
+         KeysPressed['X'] = 0;
+         break;
+       //Scale in Y
+       case GLFW_KEY_C:
+         KeysPressed['C'] = 0;
+         break;
+       //Scale in Z
+       case GLFW_KEY_Z:
+         KeysPressed['Z'] = 0;
          break;
        case GLFW_KEY_E:
          KeysPressed['E'] = 0;
