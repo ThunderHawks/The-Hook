@@ -81,7 +81,18 @@ void glfwEditScroll(GLFWwindow *window, double xOffset, double yOffset) {
    }
    //Change rotation if E is being held along with scroll wheel
    else if(KeysPressed['E'] == 1) {
-      rotateSelectedEntities(yOffset);
+      //If left shift, change line rotation
+      if(KeysPressed[340]) {
+         rotateLineAngle(yOffset);
+      }
+      //If left control, change spacing inbetween each selected entity
+      else if(KeysPressed[341]) {
+         changeCESpacing(yOffset * 0.1);
+      }
+      //else rotate the model selected
+      else {
+         rotateSelectedEntities(yOffset);
+      }
    }
    //If the change will be in range
    else if(getDistance() + yOffset * 0.1 <= 30.0 && getDistance() + yOffset * 0.1 >= 1.0) {

@@ -49,10 +49,14 @@ bool areEntitiesSelected();
 //Changes the scale of the selected entity. The object's scale will always be
 //0 < scale <= 2.0
 void scaleSelectedEntity(glm::vec3 toScale);
+//Change the space inbetween each selected entity by the amount put in
+void changeCESpacing(float space);
 //Call to update positions of selected entities relative to lookAt
 void updateCurrentEntitiesPos();
 //Change the rotation of the selected entities by multiples of 90 degrees
 void rotateSelectedEntities(float angle);
+//Change the lineAngle of the selected entities by a multiple of 90 degrees
+void rotateLineAngle(float angle);
 //Places the selected entity into the world at lookAtPoint
 void placeSelectedEntity();
 //Make selected entity the one last placed

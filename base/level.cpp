@@ -15,6 +15,10 @@ Entity hotBar[12];
 bool entitiesSelected;
 //Selected entities relative to the current lookAt 
 vector<Entity> currentEntities;
+//spacing between each currentEntities
+float CESpacing = 0.0;
+//Line angle. Changing this changes rotates the line of currentEntities
+int lineAngle = 0;
 //Number of selected entities relative to the current lookAt
 int dupNum = 0;
 //Amount to undo if undo is done
@@ -256,7 +260,7 @@ void selectAtHotBarIndex(int index) {
     }
 }
 
-//Change the number of dups for selected entity
+//Change the number of dups for selected entity that is going to be placed
 int changeDupNumBy(int toChange) {
    //No lower than 1
    if(dupNum + toChange < 1) {
@@ -311,6 +315,15 @@ void scaleSelectedEntity(glm::vec3 toScale) {
    }
 }
 
+//Change the space inbetween each selected entity by the amount put in
+void changeCESpacing(float space) 
+{
+   //Check if in range
+   if(0 <= space + CESpacing) { 
+      CESpacing += space;
+   }
+}
+
 //Change the rotation of the selected entities by multiples of 90 degrees
 void rotateSelectedEntities(float angle) {
    //Adjust the current angle by a multiple of 90 degrees
@@ -331,39 +344,46 @@ void rotateSelectedEntities(float angle) {
    //currentEntity.at(0).angle += angle * 90;
 }
 
+//Change the lineAngle of the selected entities by a multiple of 90 degrees
+void rotateLineAngle(float angle) {
+   //If within range of 0 to 270
+   if(angle * 90 + lineAngle >= 0 && angle * 90 + lineAngle <= 270) {
+      lineAngle += 90 * angle;
+   } 
+}
+
 //Call to update positions of selected entities relative to lookAt
 void updateCurrentEntitiesPos() {
-   int angle = currentEntities.at(0).angle;
    glm::vec3 newPos;
    Entity tempEntity;
 
    if(entitiesSelected == true) {
       for(int i = 0; i < currentEntities.size(); i++) {
-      //Determine if x or y depending on the angle
-         if(angle/270 == 1) {
+      //Determine if x or y depending on the lineAngle
+         if(lineAngle/270 == 1) {
             //Store lookAt
             newPos = GetLookAt();
             //Adjust with x offset
-            newPos = glm::vec3(newPos.x - i * currentEntities.at(i).scale.x * currentEntities.at(i).phyScale.x, newPos.y, newPos.z);
+            newPos = glm::vec3(newPos.x - ((i * CESpacing) + i * currentEntities.at(i).scale.x * currentEntities.at(i).phyScale.x), newPos.y, newPos.z);
          }
-         else if(angle/180 == 1) {
+         else if(lineAngle/180 == 1) {
             //Store lookAt
             newPos = GetLookAt();
             //Adjust with x offset
-            newPos = glm::vec3(newPos.x, newPos.y, newPos.z - i * currentEntities.at(i).scale.z * currentEntities.at(i).phyScale.z);
+            newPos = glm::vec3(newPos.x, newPos.y, newPos.z - ((i * CESpacing) + i * currentEntities.at(i).scale.z * currentEntities.at(i).phyScale.z));
          }
-         else if(angle/90 == 1) {
+         else if(lineAngle/90 == 1) {
             //Store lookAt
             newPos = GetLookAt();
             //Adjust with x offset
-            newPos = glm::vec3(newPos.x + i * currentEntities.at(i).scale.x * currentEntities.at(i).phyScale.x, newPos.y, newPos.z);
+            newPos = glm::vec3(newPos.x + ((i * CESpacing) + i * currentEntities.at(i).scale.x * currentEntities.at(i).phyScale.x), newPos.y, newPos.z);
 
          }
          else {
             //Store lookAt
             newPos = GetLookAt();
             //Adjust with z offset
-            newPos = glm::vec3(newPos.x, newPos.y, newPos.z + i * currentEntities.at(i).scale.z * currentEntities.at(i).phyScale.z);
+            newPos = glm::vec3(newPos.x, newPos.y, newPos.z + ((i * CESpacing) + i * currentEntities.at(i).scale.z * currentEntities.at(i).phyScale.z));
          }
          //Get entity to add to world
          tempEntity = currentEntities.at(i);
@@ -473,6 +493,11 @@ void saveWorld(string lvName) {
    Entity entityTemp;
    string fileName = lvName + ".wub";
    file.open(&fileName[0]);
+
+   if(strcmp(&fileName[0], "none.wub") == 0) {
+      printf("Save aborted\n");
+      return;
+   }
 
    //Write number of entities
    file << entities.size() << "\n";
