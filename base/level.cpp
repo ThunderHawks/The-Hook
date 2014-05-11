@@ -296,14 +296,18 @@ void scaleSelectedEntity(glm::vec3 toScale) {
 void rotateSelectedEntities(float angle) {
    //Adjust the current angle by a multiple of 90 degrees
    Entity temp;
-   //Rotate each object
-   for(int i = 0; i < currentEntities.size(); i++) {
-      //Get entitiy
-      temp = currentEntities.at(i);
-      //Change angle
-      temp.angle += 90;
-      //Replace
-      currentEntities[i] = temp;  
+
+   //If within range of 0 to 270
+   if(currentEntities.at(0).angle + 90 * angle >= 0 && currentEntities.at(0).angle + 90 * angle <= 270) {
+      //Rotate each object
+      for(int i = 0; i < currentEntities.size(); i++) {
+         //Get entitiy
+         temp = currentEntities.at(i);
+         //Change angle
+         temp.angle += 90 * angle;
+         //Replace
+         currentEntities[i] = temp;  
+      }
    }
    //currentEntity.at(0).angle += angle * 90;
 }
@@ -317,29 +321,30 @@ void updateCurrentEntitiesPos() {
    if(entitiesSelected == true) {
       for(int i = 0; i < currentEntities.size(); i++) {
       //Determine if x or y depending on the angle
-         if(angle%270 == 0) {
+         if(angle/270 == 1) {
             //Store lookAt
             newPos = GetLookAt();
             //Adjust with x offset
-            newPos = glm::vec3(newPos.x, newPos.y, newPos.z + i * currentEntities.at(i).scale.z);
+            newPos = glm::vec3(newPos.x - i * currentEntities.at(i).scale.x * currentEntities.at(i).phyScale.x, newPos.y, newPos.z);
          }
-         else if(angle%180 == 0) {
+         else if(angle/180 == 1) {
             //Store lookAt
             newPos = GetLookAt();
             //Adjust with x offset
-            newPos = glm::vec3(newPos.x - i * currentEntities.at(i).scale.x, newPos.y, newPos.z);
+            newPos = glm::vec3(newPos.x, newPos.y, newPos.z - i * currentEntities.at(i).scale.z * currentEntities.at(i).phyScale.z);
          }
-         else if(angle%90 == 0) {
+         else if(angle/90 == 1) {
             //Store lookAt
             newPos = GetLookAt();
-            //Adjust with z offset
-            newPos = glm::vec3(newPos.x, newPos.y, newPos.z - i * currentEntities.at(i).scale.z);
+            //Adjust with x offset
+            newPos = glm::vec3(newPos.x + i * currentEntities.at(i).scale.x * currentEntities.at(i).phyScale.x, newPos.y, newPos.z);
+
          }
          else {
             //Store lookAt
             newPos = GetLookAt();
-            //Adjust with x offset
-            newPos = glm::vec3(newPos.x + i * currentEntities.at(i).scale.x, newPos.y, newPos.z);
+            //Adjust with z offset
+            newPos = glm::vec3(newPos.x, newPos.y, newPos.z + i * currentEntities.at(i).scale.z * currentEntities.at(i).phyScale.z);
          }
          //Get entity to add to world
          tempEntity = currentEntities.at(i);

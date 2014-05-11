@@ -220,7 +220,7 @@ void glfwGameKeyboard(void) {
       setPlayerSpeed(0,4,0);
       KeysPressed[' ']=0;
       printf("Space is not implemented!\n");
-      //PlayFX(JUMP_FX);
+      PlayFX(JUMP_FX);
    }
    //GLFW_KEY_Q
    if(KeysPressed['Q']) {
@@ -232,7 +232,7 @@ void glfwGameKeyboard(void) {
       KeysPressed['F']=0;
    }
    if(KeysPressed['E']){
-      //PlayFX(THROW_GRAP_FX);
+      PlayFX(THROW_GRAP_FX);
 //      if(KeysPressed['E']==1){
       physGrapple(w.x,w.y,w.z);
          //KeysPressed['E']=2;
