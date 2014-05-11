@@ -56,29 +56,39 @@ void glfwEditMouse(GLFWwindow *window, int button, int action, int mods) {
          pauseorUnpause();
       }
       //If an entity is selected, add it
-      else if(isEntitySelected() == true) {
+      else if(areEntitiesSelected() == true) {
          placeSelectedEntity();
          //Reset lookAtDistance
          previousLookAtDistance = getDistance();
          setDistance(3.0);
       }
    }
+   else if(button == GLFW_MOUSE_BUTTON_RIGHT) {
+      unselectEntity();
+   }
 }
 
 //Mouse scroll callback for Edit Mode
 void glfwEditScroll(GLFWwindow *window, double xOffset, double yOffset) {
 
+   //Change dup num if N is pressed
+   if(KeysPressed['N'] == 1) {
+      printf("dupNum: %d\n", changeDupNumBy(yOffset));
+   }
    //Change scale if F is being held along with scroll wheel
    if(KeysPressed['F'] == 1) {
       scaleSelectedEntity(glm::vec3(yOffset * 0.05, yOffset * 0.05, yOffset * 0.05));
    }
    //Change rotation if E is being held along with scroll wheel
    else if(KeysPressed['E'] == 1) {
-      rotateSelectedEntity(yOffset);
+      rotateSelectedEntities(yOffset);
    }
    //If the change will be in range
    else if(getDistance() + yOffset * 0.1 <= 30.0 && getDistance() + yOffset * 0.1 >= 1.0) {
-      addDistance(0.5 * yOffset);
+      //If all other keys that involve scroll wheel weren't pressed
+      if(!KeysPressed['N'] && !KeysPressed['F'] && !KeysPressed['E']) {
+         addDistance(0.5 * yOffset);
+      }
    }
 }
 
@@ -210,6 +220,7 @@ void glfwGameKeyboard(void) {
       setPlayerSpeed(0,4,0);
       KeysPressed[' ']=0;
       printf("Space is not implemented!\n");
+      //PlayFX(JUMP_FX);
    }
    //GLFW_KEY_Q
    if(KeysPressed['Q']) {
@@ -221,12 +232,13 @@ void glfwGameKeyboard(void) {
       KeysPressed['F']=0;
    }
    if(KeysPressed['E']){
-   
+      //PlayFX(THROW_GRAP_FX);
 //      if(KeysPressed['E']==1){
       physGrapple(w.x,w.y,w.z);
          //KeysPressed['E']=2;
   //    }
       //else physGrapplePoint();
+
    }
    if(KeysPressed['M']){
    	if (KeysPressed['M'] == 1)
@@ -430,6 +442,10 @@ void glfwEditKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
        case GLFW_KEY_E:
          KeysPressed['E'] = 1;
          break;
+       //Number of feature
+       case GLFW_KEY_N:
+         KeysPressed['N'] = 1;
+         break;
        //Hold and then scroll wheel to scale
        case GLFW_KEY_F:
          KeysPressed['F'] = 1;
@@ -506,6 +522,10 @@ void glfwEditKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
          break;
        case GLFW_KEY_R:
          KeysPressed['R'] = 0;
+         break;
+       //Number of feature
+       case GLFW_KEY_N:
+         KeysPressed['N'] = 0;
          break;
        case GLFW_KEY_F:
          KeysPressed['F'] = 0;

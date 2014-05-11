@@ -28,6 +28,8 @@ struct Entity {
    //"Special Custom Physics Pointer"
    void *physics;
    btRigidBody *btPhys;
+   //Scale of physics Boxes
+   glm::vec3 phyScale;
 };
 
 //This method loads the level models and initializes the hotbar
@@ -38,19 +40,25 @@ void loadLevel(string fileName);
 Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIndex);
 //Use entity at hotbar index as the currently selected entity
 void selectAtHotBarIndex(int index);
-//Determines if an entity is currently selected, if false DO NOT draw currentEntity
-bool isEntitySelected();
+//Unselect the selected Entity
+void unselectEntity();
+//Change the number of dups for selected entity
+int changeDupNumBy(int toChange);
+//Determines if entities are currently selected, if false DO NOT draw currentEntities
+bool areEntitiesSelected();
 //Changes the scale of the selected entity. The object's scale will always be
 //0 < scale <= 2.0
 void scaleSelectedEntity(glm::vec3 toScale);
-//Change the rotation of the selected entity by multiples of 90 degrees
-void rotateSelectedEntity(float angle);
+//Call to update positions of selected entities relative to lookAt
+void updateCurrentEntitiesPos();
+//Change the rotation of the selected entities by multiples of 90 degrees
+void rotateSelectedEntities(float angle);
 //Places the selected entity into the world at lookAtPoint
 void placeSelectedEntity();
 //Make selected entity the one last placed
 void reselectLastEntity();
-//Return the entity that is currently selected
-Entity getSelectedEntity();
+//Return the entities that are currently selected
+vector<Entity> getSelectedEntities();
 //Return the entity inside of the world at index
 Entity getEntityAt(int index);
 //Return the number of entities in the world

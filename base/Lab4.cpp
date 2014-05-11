@@ -21,7 +21,6 @@
 #include <vector>
 #include <string>
 #include "Camera.h"
-#include "ViewFrustum.h"
 #include "Shadows.h"
 #include "SoundPlayer.h"
 
@@ -116,15 +115,18 @@ void SetupCube(float x, float y, float z, int material, float angle, float scale
 }
 
 //Draws the currently selected entity
-void drawSelectedObject() {
-   //Only draw if an entity is selected
-   if(isEntitySelected() == true) {
-      //Get selected entity
-      Entity entityTemp = getSelectedEntity();
-      //Update position to lookAtPoint
-      entityTemp.position = GetLookAt();
-      //Place at that point
-      PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x, entityTemp.scale.y, entityTemp.scale.z, entityTemp.angle);
+void drawSelectedObjects() {
+
+   updateCurrentEntitiesPos();
+   //Only draw if entitie(s) are selected
+   if(areEntitiesSelected() == true) {
+      //Get selected entities
+      vector<Entity> tempEntities = getSelectedEntities();
+
+      //Place each selected objects
+      for(int i = 0; i < tempEntities.size(); i++) {
+         PlaceModel(*tempEntities.at(i).mesh, tempEntities.at(i).position.x, tempEntities.at(i).position.y, tempEntities.at(i).position.z, tempEntities.at(i).scale.x, tempEntities.at(i).scale.y, tempEntities.at(i).scale.z, tempEntities.at(i).angle);
+      }
    }
 }
 
@@ -183,7 +185,7 @@ void glfwDraw (GLFWwindow *window)
    PlaceModel(playerMesh, GetLookAt().x, GetLookAt().y - 1, GetLookAt().z, .25, .1, .25, 1);
    //END OF DANCING CYLINDER CODE HERE!!
    SetMaterial(2);
-   drawSelectedObject();
+   drawSelectedObjects();
    drawEntities();
 
    //Draw Cubes, ??????????
@@ -361,12 +363,10 @@ int main( int argc, char *argv[] )
       physicsInit();
       InitGeom();
       initLevelLoader();
-      printf("boop\n");
       loadLevel(fileName);
 
-      printf("oop%d\n",      getVecList().size());
       //music
-   	SetBackground("../Assets/Sounds/Bastion_From_Wharfs_To_Wilds.ogg");
+      SetBackground("../Assets/Sounds/Bastion_From_Wharfs_To_Wilds.ogg");
    }
 
    ShadowMap *shadowMap = new ShadowMap();

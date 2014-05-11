@@ -11,11 +11,14 @@ Mesh mesh[100];
 vector<Entity> entities;
 //Hotbar of entities
 Entity hotBar[10];
-//Entity at currentLookAt
-bool entitySelected;
-Entity currentEntity;
+//If entities are selected
+bool entitiesSelected;
+//Selected entities relative to the current lookAt 
+vector<Entity> currentEntities;
+//Number of selected entities relative to the current lookAt
+int dupNum = 0;
 
-//Name of the level loaded
+//Name of the level loaded, else default
 string currentLevel = "level1.wub";
 
 //This method loads the level models and initializes the hotbar
@@ -23,13 +26,13 @@ void initLevelLoader() {
    printf("Initializing Level content...\n");
 
    //No entity selected
-   entitySelected = false;
+   entitiesSelected = false;
 
    //Load Meshes
    mesh[0] = LoadMesh("../Assets/ModMBasicBldg.obj");
    mesh[1] = LoadMesh("../Assets/shopBldg.obj");
    mesh[2] = LoadMesh("../Assets/cinderblock.obj");
-   mesh[3] = LoadMesh("../Assets/flowerpot1.obj");
+   mesh[3] = LoadMesh("../Assets/Models/topHatChar.obj");
    mesh[4] = LoadMesh("../Assets/mediumBasicBuilding.obj");
    mesh[5] = LoadMesh("../Assets/sidewalk.obj");
    mesh[6] = LoadMesh("../Assets/streetlight.obj");
@@ -71,7 +74,7 @@ void initLevelLoader() {
 
    //Load into current index to prevent segfault. Doesn't appear.
    selectAtHotBarIndex(0);
-   entitySelected = false;
+   entitiesSelected = false;
 }
 
 //Entity createEntity(glm::vec3 rotate, glm::vec3 scale,
@@ -121,8 +124,12 @@ void loadLevel(string fileName){
       infile >> tempEntity.meshIndex;
       //SetMeshPointer
       tempEntity.mesh = &mesh[tempEntity.meshIndex];
-      printf("%f,%f,%f,%f,%f,%f\n",tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,tempEntity.scale.x,tempEntity.scale.y,tempEntity.scale.z);
+      //printf("%f,%f,%f,%f,%f,%f\n",tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,tempEntity.scale.x,tempEntity.scale.y,tempEntity.scale.z);
       tempEntity.btPhys = createStaticBox(tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,tempEntity.scale.x*3*7,tempEntity.scale.y*3*7,tempEntity.scale.z*3*7,btQuaternion(0,0,0,1),0,0,0,0);
+      infile >> tempEntity.phyScale.x;
+      infile >> tempEntity.phyScale.y;
+      infile >> tempEntity.phyScale.z;
+      
       //Store entity into "entities" vector
       entities.push_back(tempEntity);
    }
@@ -136,16 +143,18 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
    entity.angle = angle;
    entity.mesh = &mesh[meshIndex];
    entity.meshIndex = meshIndex;
-   //printf("a\n");
-   
-   //printf("b\n");
+   //FIRE LORD EDIT HERE
+   entity.phyScale = glm::vec3(0.0f, 0.0f, 0.0f);
    return entity;
 }
 
 //Use entity at hotbar index as the currently selected entity
 void selectAtHotBarIndex(int index) {
-   currentEntity = hotBar[index];
-   entitySelected = true;
+   currentEntities.clear();
+   dupNum = 1;
+   currentEntities.push_back(hotBar[index]);
+   //currentEntity = hotBar[index];
+   entitiesSelected = true;
 
    //Set distance away from camera for convinience
    switch(index) {
@@ -181,44 +190,145 @@ void selectAtHotBarIndex(int index) {
          break;
     }
 }
- 
-//Determines if an entity is currently selected, if false DO NOT draw currentEntity
-bool isEntitySelected() {
-   return entitySelected;
+
+//Change the number of dups for selected entity
+int changeDupNumBy(int toChange) {
+   printf("toChange: %d\n", toChange);
+   //No lower than 1
+   if(dupNum + toChange < 1) {
+      printf("dupNum (%d) + toChange (%d) == %d\n", dupNum, toChange, dupNum + toChange);
+      return 1;
+   }
+   //If no entitiesSelected don't change
+   if(entitiesSelected == false) {
+      return 0;
+   }
+   //Else change
+   else {
+      //If less
+      if(toChange == -1) {
+         //Remove back object
+         currentEntities.pop_back();
+      }
+      //Else if more
+      else if(toChange == 1) {
+         //Add toChange amount
+         currentEntities.push_back(currentEntities.at(0));
+      }
+      //Adjust and return amount
+      return dupNum += toChange;
+   }
+}
+
+//Determines if entities are currently selected, if false DO NOT draw currentEntities
+bool areEntitiesSelected() {
+   return entitiesSelected;
+}
+
+//Unselect the selected Entity
+void unselectEntity() {
+   entitiesSelected = false;
 }
 
 //Changes the scale of the selected entity
 void scaleSelectedEntity(glm::vec3 toScale) {
+   Entity temp;
+
    //If change is within range
    //Currently using x as measure b/c everything is uniformly scaled right now
-   if(SCALE_MIN < toScale.x + currentEntity.scale.x && toScale.x + currentEntity.scale.x <= SCALE_MAX) { 
-      currentEntity.scale += toScale;
+   if(SCALE_MIN < toScale.x + currentEntities.at(0).scale.x && toScale.x + currentEntities.at(0).scale.x <= SCALE_MAX) { 
+      for(int i = 0; i < currentEntities.size(); i++) {
+         //Get entity at index i
+         temp = currentEntities.at(i);
+         //Uniformly change scale
+         temp.scale += toScale;
+         //Replace
+         currentEntities[i] = temp;
+      }
    }
 }
 
-//Change the rotation of the selected entity by multiples of 90 degrees
-void rotateSelectedEntity(float angle) {
-   //adjust the current angle by a multiple of 90 degrees, M_PI/2.0 is the radian equivalent
-   currentEntity.angle += angle * 90;
+//Change the rotation of the selected entities by multiples of 90 degrees
+void rotateSelectedEntities(float angle) {
+   //Adjust the current angle by a multiple of 90 degrees
+   Entity temp;
+   //Rotate each object
+   for(int i = 0; i < currentEntities.size(); i++) {
+      //Get entitiy
+      temp = currentEntities.at(i);
+      //Change angle
+      temp.angle += 90;
+      //Replace
+      currentEntities[i] = temp;  
+   }
+   //currentEntity.at(0).angle += angle * 90;
+}
+
+//Call to update positions of selected entities relative to lookAt
+void updateCurrentEntitiesPos() {
+   int angle = currentEntities.at(0).angle;
+   glm::vec3 newPos;
+   Entity tempEntity;
+
+   if(entitiesSelected == true) {
+      for(int i = 0; i < currentEntities.size(); i++) {
+      //Determine if x or y depending on the angle
+         if(angle%270 == 0) {
+            //Store lookAt
+            newPos = GetLookAt();
+            //Adjust with x offset
+            newPos = glm::vec3(newPos.x, newPos.y, newPos.z + i * currentEntities.at(i).scale.z);
+         }
+         else if(angle%180 == 0) {
+            //Store lookAt
+            newPos = GetLookAt();
+            //Adjust with x offset
+            newPos = glm::vec3(newPos.x - i * currentEntities.at(i).scale.x, newPos.y, newPos.z);
+         }
+         else if(angle%90 == 0) {
+            //Store lookAt
+            newPos = GetLookAt();
+            //Adjust with z offset
+            newPos = glm::vec3(newPos.x, newPos.y, newPos.z - i * currentEntities.at(i).scale.z);
+         }
+         else {
+            //Store lookAt
+            newPos = GetLookAt();
+            //Adjust with x offset
+            newPos = glm::vec3(newPos.x + i * currentEntities.at(i).scale.x, newPos.y, newPos.z);
+         }
+         //Get entity to add to world
+         tempEntity = currentEntities.at(i);
+         //Give new pos
+         tempEntity.position = newPos;
+         //Insert updated entity
+         currentEntities[i] = tempEntity;
+      }
+   }
 }
 
 //Places the selected entity into the world at lookAtPoint
 void placeSelectedEntity() {
-   if(entitySelected == true) {
-      currentEntity.position = GetLookAt();
-      entities.push_back(currentEntity);
-      entitySelected = false;
+   //If 
+   if(entitiesSelected == true) {
+      updateCurrentEntitiesPos();
+
+      for(int i = 0; i < currentEntities.size(); i++) {
+         entities.push_back(currentEntities.at(i));
+      }
    }
+   //No longer selecting entities
+   entitiesSelected = false;
 }
 
 //Make selected entity the one last placed
 void reselectLastEntity() {
-   entitySelected = true;
+   entitiesSelected = true;
 }
 
-//Return the entity that is currently selected
-Entity getSelectedEntity(){
-   return currentEntity;
+//Return the entities that are currently selected
+vector<Entity> getSelectedEntities(){
+   return currentEntities;
 }
 
 //Return the entity inside of the world at index
@@ -304,7 +414,11 @@ void saveWorld(string lvName) {
       //Write BSRadius
       file << entityTemp.BSRadius << " ";
       //Write meshIndex
-      file << entityTemp.meshIndex << "\n";
+      file << entityTemp.meshIndex << " ";
+      //Write phyScale
+      file << entityTemp.phyScale.x << " ";
+      file << entityTemp.phyScale.y << " ";
+      file << entityTemp.phyScale.z << "\n";
    }
    file.close();
    printf("%s saved\n", &fileName[0]);
