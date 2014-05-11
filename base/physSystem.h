@@ -23,5 +23,6 @@ void physGrapplePoint();
 /*returns a vector that is the speed of the player as a vec3*/
 glm::vec3 getPlayerSpeed();
 glm::vec3 grapplingHookLocation();
+int isGrappleActive();
 
 #endif

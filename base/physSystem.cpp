@@ -9,23 +9,25 @@
 #include "Shapes.h"
 #include "Mesh.h"
 #include "physSystem.h"
+//#include <bullet/btCollisionWorld.h>
+#include "SoundPlayer.h"
 #include <vector>
 
 //phys//
 btRigidBody* groundRigidBody;
-//btRigidBody* fallRigidBody;
-//btRigidBody* fallRigidBodyb;
-//btRigidBody* FRBbuilding;
 btRigidBody* player;
 btDiscreteDynamicsWorld* dynamicsWorld;
+//btCollisionShape* ground;
 vector<btRigidBody*> btobjes;
 Mesh chara;
 glm::vec3 lookAt;
 float curXsp,curYsp,curZsp;
 int playerGrappleActive = 0;
+
 vector<btRigidBody*> getVecList(){
    return btobjes;
 }
+
 void setPlayerSpeed(float x, float y, float z){
    curXsp += x;
    curYsp += y;
@@ -34,7 +36,7 @@ void setPlayerSpeed(float x, float y, float z){
 void AsetPlayerSpeed(float x, float y, float z){
 //   printf("%f %f %f speedy\n",30*x,30*y,30*z);
    if(!playerGrappleActive)
-      player->setLinearVelocity(btVector3(3*x+player->getLinearVelocity().getX()/2,3*y+player->getLinearVelocity().getY(),3*z+player->getLinearVelocity().getZ()/2));
+      player->setLinearVelocity(btVector3(2*x+player->getLinearVelocity().getX()*.8,2*y+player->getLinearVelocity().getY(),2*z+player->getLinearVelocity().getZ()*.8));
   // player->clearForces();
 //   player->applyCentralForce(btVector3(x*300,200*y,300*z));
    //btobjes[0]->setLinearVelocity(btVector3(0,1000,0));
@@ -54,6 +56,7 @@ void physicsInit() {
 
    //shapes
    btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0,1,0),1);//1m up (y=1)
+//   ground = groundShape;
    //btCollisionShape* fallShape = new btSphereShape(1);
    //btCollisionShape* fallShapeb = new btSphereShape(1);
    //btCollisionShape* fallShapeBox = new btBoxShape(btVector3(1,1,1));
@@ -74,6 +77,7 @@ void physicsInit() {
    player->setSleepingThresholds (0, 0);
    chara = LoadMesh("../Assets/streetlight.obj");
    physSetDisplayObj(player,&chara);
+
    float x,y,z;
    x = physGetPlayerX();
    y = physGetPlayerY();
@@ -97,7 +101,7 @@ btRigidBody* createStaticBox(float posX,float posY,float posZ,float scaleX,float
    dynamicsWorld->addRigidBody(FRBbox);
    FRBbox->setLinearVelocity(btVector3(ix,iy,iz));
    btobjes.push_back(FRBbox);
-   printf("%d is num\n",btobjes.size());
+   //printf("%d is num\n",btobjes.size());
    return FRBbox;
 }
 /*void physGetPlayerLocation(btTransform *trans){
@@ -130,8 +134,8 @@ void physGrapple(float lx,float ly,float lz){
    /*   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAt.x+.0*dir.x,lookAt.y-.0*dir.y,lookAt.z+.0*dir.z), btVector3(lookAt.x+50*dir.x,lookAt.y-50*dir.y,lookAt.z+50*dir.z));
    dynamicsWorld->rayTest(btVector3(lookAt.x+.0*dir.x,lookAt.y-.0*dir.y,lookAt.z+.0*dir.z), btVector3(lookAt.x+50*dir.x,lookAt.y-50*dir.y,lookAt.z+50*dir.z), RayCallback);
 */
-   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAt.x+0*dir.x,lookAt.y-0*dir.y,lookAt.z+0*dir.z), btVector3(lookAt.x+50*dir.x,lookAt.y-50*dir.y,lookAt.z+50*dir.z));
-   dynamicsWorld->rayTest(btVector3(lookAt.x+0*dir.x,lookAt.y-0*dir.y,lookAt.z+0*dir.z), btVector3(lookAt.x+50*dir.x,lookAt.y-50*dir.y,lookAt.z+50*dir.z), RayCallback);
+   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAt.x+3*dir.x,lookAt.y-3*dir.y,lookAt.z+3*dir.z), btVector3(lookAt.x+150*dir.x,lookAt.y-150*dir.y,lookAt.z+150*dir.z));
+   dynamicsWorld->rayTest(btVector3(lookAt.x+3*dir.x,lookAt.y-3*dir.y,lookAt.z+3*dir.z), btVector3(lookAt.x+150*dir.x,lookAt.y-150*dir.y,lookAt.z+150*dir.z), RayCallback);
    //player->setLinearVelocity(btVector3(dir.x*50,dir.y*50,dir.z*50));
    if(RayCallback.hasHit()&& !playerGrappleActive) {
     //End = RayCallback.m_hitPointWorld;
@@ -146,20 +150,23 @@ void physGrapple(float lx,float ly,float lz){
       playerGrappleActive =1;
    }
 }
+int isGrappleActive(){
+   return playerGrappleActive;
+}
 void physGrapplePoint(){
    glm::vec3 at = glm::vec3(lookAt.x,lookAt.y,lookAt.z);
    glm::vec3 targ = glm::vec3(tmp.getX(),tmp.getY(),tmp.getZ());
    glm::vec3 loc = targ-at;
    float dist = sqrt(loc.x*loc.x+loc.y*loc.y+loc.z*loc.z);
    targ-=at;
-   targ*=5;
+   targ*=7;
    //
    dist/=5;
    dist = dist>1?dist:1;
    dist = targ.y>0?dist:1;
    //
    player->setLinearVelocity(btVector3(targ.x,targ.y/dist,targ.z));
-   if(dist<2 && !getPressed('E')){
+   if(dist<1.1 && !getPressed('E')){
       if(flip==0){
          flip = 1;
          printf("pls rotate camera to normal of building\n");
@@ -197,6 +204,8 @@ void physStep(){
    if(playerGrappleActive) physGrapplePoint();
    //printf("a\n");
    dynamicsWorld->stepSimulation(1/60.f,10);
+   //NOT SURE IF NEEDED
+   //ColCallback.resetDetector();
    //printf("b\n");
 
 }

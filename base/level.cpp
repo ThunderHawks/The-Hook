@@ -29,16 +29,16 @@ void initLevelLoader() {
    entitiesSelected = false;
 
    //Load Meshes
-   mesh[0] = LoadMesh("../Assets/ModMBasicBldg.obj");
-   mesh[1] = LoadMesh("../Assets/shopBldg.obj");
-   mesh[2] = LoadMesh("../Assets/cinderblock.obj");
-   mesh[3] = LoadMesh("../Assets/Models/topHatChar.obj");
-   mesh[4] = LoadMesh("../Assets/mediumBasicBuilding.obj");
-   mesh[5] = LoadMesh("../Assets/sidewalk.obj");
-   mesh[6] = LoadMesh("../Assets/streetlight.obj");
-   mesh[7] = LoadMesh("../Assets/table.obj");
-   mesh[8] = LoadMesh("../Assets/tallBldg.obj");
-   mesh[9] = LoadMesh("../Assets/waterTower.obj");
+   mesh[0] = LoadMesh("../Assets/ModMBasicBldg.obj");//60h 43d 49w
+   mesh[1] = LoadMesh("../Assets/shopBldg.obj");//25h 50d 50w
+   mesh[2] = LoadMesh("../Assets/cinderblock.obj");//4,4,4
+   mesh[3] = LoadMesh("../Assets/Models/topHatChar.obj");//11h 4d 8w
+   mesh[4] = LoadMesh("../Assets/mediumBasicBuilding.obj");//60h 43d 40w
+   mesh[5] = LoadMesh("../Assets/sidewalk.obj");//1h 5d 5w
+   mesh[6] = LoadMesh("../Assets/streetlight.obj");//25h 2d 12w
+   mesh[7] = LoadMesh("../Assets/table.obj");//5h 10d 10w
+   mesh[8] = LoadMesh("../Assets/tallBldg.obj");//1070h 200d 300w
+   mesh[9] = LoadMesh("../Assets/waterTower.obj");//32h 26d 26w
 
    //Load hotbar options
    //Basic Blg
@@ -125,7 +125,8 @@ void loadLevel(string fileName){
       //SetMeshPointer
       tempEntity.mesh = &mesh[tempEntity.meshIndex];
       //printf("%f,%f,%f,%f,%f,%f\n",tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,tempEntity.scale.x,tempEntity.scale.y,tempEntity.scale.z);
-      tempEntity.btPhys = createStaticBox(tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,tempEntity.scale.x*3*7,tempEntity.scale.y*3*7,tempEntity.scale.z*3*7,btQuaternion(0,0,0,1),0,0,0,0);
+      printf("%f %f %f boop\n",tempEntity.phyScale.x,tempEntity.phyScale.y,tempEntity.phyScale.z);
+      tempEntity.btPhys = createStaticBox(tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,tempEntity.scale.x*tempEntity.phyScale.x,tempEntity.scale.y*tempEntity.phyScale.y,tempEntity.scale.z*tempEntity.phyScale.z,btQuaternion(0,0,0,1),0,0,0,0);
       infile >> tempEntity.phyScale.x;
       infile >> tempEntity.phyScale.y;
       infile >> tempEntity.phyScale.z;
@@ -145,6 +146,43 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
    entity.meshIndex = meshIndex;
    //FIRE LORD EDIT HERE
    entity.phyScale = glm::vec3(0.0f, 0.0f, 0.0f);
+   switch(meshIndex){
+      case 0:
+         entity.phyScale = glm::vec3(60,43,49);
+         break;
+      case 1:
+         entity.phyScale = glm::vec3(25,50,50);
+         break;
+      case 2:
+         entity.phyScale = glm::vec3(2,4,2);
+         break;
+      case 3:
+         entity.phyScale = glm::vec3(11,4,8);
+         break;
+      case 4:
+         entity.phyScale = glm::vec3(60,43,40);
+         break;
+      case 5:
+         entity.phyScale = glm::vec3(1,5,5);
+         break;
+      case 6:
+         entity.phyScale = glm::vec3(25,2,12);
+         break;
+      case 7:
+         entity.phyScale = glm::vec3(5,10,10);
+         break;
+      case 8:
+         entity.phyScale = glm::vec3(1070,200,300);
+         break;
+      case 9:
+         entity.phyScale = glm::vec3(32,26,26);
+         break;
+      //h w d
+      //x y z
+   }
+   float temp = entity.phyScale.y;
+   entity.phyScale.y = entity.phyScale.x;
+   entity.phyScale.x = temp;
    return entity;
 }
 
@@ -384,7 +422,11 @@ void saveWorld() {
          //Write BSRadius
          file << entityTemp.BSRadius << " ";
          //Write meshIndex
-         file << entityTemp.meshIndex << "\n";
+         file << entityTemp.meshIndex << " ";
+         //Write phyScale
+         file << entityTemp.phyScale.x << " ";
+         file << entityTemp.phyScale.y << " ";
+         file << entityTemp.phyScale.z << "\n";
       }
       file.close();
       printf("%s saved\n", &currentLevel[0]);
