@@ -76,7 +76,7 @@ void physicsInit() {
 //   printf("%d is pl point\n",player);
    player = createStaticBox(1,1,1,1,1,1,btQuaternion(0,0,0,1),1,0,0,0);
    player->setSleepingThresholds (0, 0);
-   chara = LoadMesh("../Assets/streetlight.obj");
+   chara = LoadMesh("../Assets/Models/topHatChar.obj");
    physSetDisplayObj(player,&chara);
 
    float x,y,z;
@@ -135,8 +135,8 @@ void physGrapple(float lx,float ly,float lz){
    /*   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAt.x+.0*dir.x,lookAt.y-.0*dir.y,lookAt.z+.0*dir.z), btVector3(lookAt.x+50*dir.x,lookAt.y-50*dir.y,lookAt.z+50*dir.z));
    dynamicsWorld->rayTest(btVector3(lookAt.x+.0*dir.x,lookAt.y-.0*dir.y,lookAt.z+.0*dir.z), btVector3(lookAt.x+50*dir.x,lookAt.y-50*dir.y,lookAt.z+50*dir.z), RayCallback);
 */
-   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAt.x+3*dir.x,lookAt.y-3*dir.y,lookAt.z+3*dir.z), btVector3(lookAt.x+150*dir.x,lookAt.y-150*dir.y,lookAt.z+150*dir.z));
-   dynamicsWorld->rayTest(btVector3(lookAt.x+3*dir.x,lookAt.y-3*dir.y,lookAt.z+3*dir.z), btVector3(lookAt.x+150*dir.x,lookAt.y-150*dir.y,lookAt.z+150*dir.z), RayCallback);
+   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAt.x+3*dir.x,lookAt.y-3*dir.y,lookAt.z+3*dir.z), btVector3(lookAt.x+75*dir.x,lookAt.y-75*dir.y,lookAt.z+75*dir.z));
+   dynamicsWorld->rayTest(btVector3(lookAt.x+3*dir.x,lookAt.y-3*dir.y,lookAt.z+3*dir.z), btVector3(lookAt.x+75*dir.x,lookAt.y-75*dir.y,lookAt.z+75*dir.z), RayCallback);
    //player->setLinearVelocity(btVector3(dir.x*50,dir.y*50,dir.z*50));
    if(RayCallback.hasHit()&& !playerGrappleActive) {
     //End = RayCallback.m_hitPointWorld;
