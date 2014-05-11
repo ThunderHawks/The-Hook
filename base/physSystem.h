@@ -24,5 +24,6 @@ void physGrapplePoint();
 glm::vec3 getPlayerSpeed();
 glm::vec3 grapplingHookLocation();
 int isGrappleActive();
+void physJump();
 
 #endif

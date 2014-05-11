@@ -151,6 +151,10 @@ void physGrapple(float lx,float ly,float lz){
       playerGrappleActive =1;
    }
 }
+void physJump(){
+   setPlayerSpeed(0,8,0);
+}
+
 int isGrappleActive(){
    return playerGrappleActive;
 }
