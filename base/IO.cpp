@@ -397,11 +397,21 @@ void glfwEditKeyboard(void) {
    }
    //GLFW_KEY_7
    if(KeysPressed['7']) {
-      selectAtHotBarIndex(7);
+      if(KeysPressed[340]) {
+         selectAtHotBarIndex(16);  
+      }
+      else {
+         selectAtHotBarIndex(7);
+      }
    }
    //GLFW_KEY_8
    if(KeysPressed['8']) {
-      selectAtHotBarIndex(8);
+      if(KeysPressed[340]) {
+         selectAtHotBarIndex(17);  
+      }
+      else {
+         selectAtHotBarIndex(8);
+      }
    }
    //GLFW_KEY_9
    if(KeysPressed['9']) {

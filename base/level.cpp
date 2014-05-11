@@ -53,6 +53,8 @@ void initLevelLoader() {
    mesh[13] = LoadMesh("../Assets/Models/halfSlab.obj"); //1h 5d 5w
    mesh[14] = LoadMesh("../Assets/Models/mart.obj"); //1h 5d 5w
    mesh[15] = LoadMesh("../Assets/Models/flag.obj"); //10h 1d 7w
+   mesh[16] = LoadMesh("../Assets/Models/asymBldg.obj"); //10h 1d 7w
+   mesh[17] = LoadMesh("../Assets/Models/pointyBldg.obj"); //10h 1d 7w
 
    //Load hotbar options
    //Basic Blg
@@ -103,6 +105,12 @@ void initLevelLoader() {
    //Flag
    entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 15);
    hotBar[15] = entity;
+   //AsymbBldg
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.1, 0.1, 0.1), 0.0, 16);
+   hotBar[16] = entity;
+   //PointyBldg
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.1, 0.1, 0.1), 0.0, 17);
+   hotBar[17] = entity;
 
    //Load into current index to prevent segfault. Doesn't appear.
    selectAtHotBarIndex(0);
@@ -232,6 +240,12 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
       case 15:
          entity.phyScale = glm::vec3(10, 1, 7);
          break;
+      case 16:
+         entity.phyScale = glm::vec3(500, 140, 140);
+         break;
+      case 17:
+         entity.phyScale = glm::vec3(825, 150, 150);
+         break;
       //h w d
       //x y z
    }
@@ -298,6 +312,12 @@ void selectAtHotBarIndex(int index) {
          break;
       case 15:
          setDistance(10.0);
+         break;
+      case 16:
+         setDistance(50.0);
+         break;
+      case 17:
+         setDistance(50.0);
          break;
     }
 }
