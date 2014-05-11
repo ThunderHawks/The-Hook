@@ -87,11 +87,11 @@ void glfwEditScroll(GLFWwindow *window, double xOffset, double yOffset) {
          scaleSelectedEntityZ(yOffset * 0.05);
       }
       //Scale in X
-      else if(KeysPressed['X'] == 1) {
+      if(KeysPressed['X'] == 1) {
          scaleSelectedEntityX(yOffset * 0.05);
       }
       //Scale in Y
-      else if(KeysPressed['C'] == 1) {
+      if(KeysPressed['C'] == 1) {
          scaleSelectedEntityY(yOffset * 0.05);
       }
       //Else uniformly scaled
@@ -361,7 +361,12 @@ void glfwEditKeyboard(void) {
    }
    //GLFW_KEY_3
    if(KeysPressed['3']) {
-      selectAtHotBarIndex(3);
+      if(KeysPressed[340]) {
+         selectAtHotBarIndex(12);  
+      }
+      else {
+         selectAtHotBarIndex(3);
+      }
    }
    //GLFW_KEY_4
    if(KeysPressed['4']) {
@@ -401,7 +406,6 @@ void glfwEditKeyboard(void) {
    }
    //Quit and Save
    else if(KeysPressed['Q']) {
-      saveWorld();
       exit( EXIT_SUCCESS );
    }
 }
@@ -531,7 +535,7 @@ void glfwEditKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
        //Allows for faster movement
        case GLFW_KEY_LEFT_SHIFT:
          KeysPressed[340] = 1;
-         speed = 2.0;
+         speed = 5.0;
          break;
        //Quit
        case GLFW_KEY_Q:

@@ -10,7 +10,7 @@ Mesh mesh[100];
 //All entities placed in world
 vector<Entity> entities;
 //Hotbar of entities
-Entity hotBar[12];
+Entity hotBar[20];
 //If entities are selected
 bool entitiesSelected;
 //Selected entities relative to the current lookAt 
@@ -47,8 +47,10 @@ void initLevelLoader() {
    mesh[7] = LoadMesh("../Assets/table.obj");//5h 10d 10w
    mesh[8] = LoadMesh("../Assets/tallBldg.obj");//1070h 200d 300w
    mesh[9] = LoadMesh("../Assets/waterTower.obj");//32h 26d 26w
-   mesh[10] = LoadMesh("../Assets/Models/capitolRecordsBldg.obj");//166h 71d 71w
+   mesh[10] = LoadMesh("../Assets/Models/simpleCRBldg.obj");//166h 71d 71w
    mesh[11] = LoadMesh("../Assets/Models/wall.obj"); //15h 1d 10w
+   mesh[12] = LoadMesh("../Assets/Models/gasStation.obj"); //34h 50d 50w
+   mesh[13] = LoadMesh("../Assets/Models/flag.obj"); //10h 1d 
 
    //Load hotbar options
    //Basic Blg
@@ -87,6 +89,9 @@ void initLevelLoader() {
    //Wall
    entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 11);
    hotBar[11] = entity;
+   //Gas Station
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.7, 0.7, 0.7), 0.0, 12);
+   hotBar[12] = entity;
 
    //Load into current index to prevent segfault. Doesn't appear.
    selectAtHotBarIndex(0);
@@ -104,6 +109,7 @@ void loadLevel(string fileName){
 
    //If clean level, load nothing
    if(strcmp(&fileName[0], "c.wub") == 0) {
+      currentLevel.clear();
       return;
    }
    //If default level, load default
@@ -203,6 +209,9 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
       case 11:
          entity.phyScale = glm::vec3(15, 1, 10);
          break;
+      case 12:
+         entity.phyScale = glm::vec3(34, 50, 50);
+         break;
       //h w d
       //x y z
    }
@@ -258,6 +267,9 @@ void selectAtHotBarIndex(int index) {
       case 11:
          setDistance(7.0);
          break;
+      case 12:
+         setDistance(15.0);
+         break;
     }
 }
 
@@ -302,8 +314,6 @@ void unselectEntity() {
 void scaleSelectedEntityX(float scaleX) {
    Entity temp;
 
-   printf("scaling x\n");
-
    //If change is within range
    if(SCALE_MIN < scaleX + currentEntities.at(0).scale.x && scaleX + currentEntities.at(0).scale.x <= SCALE_MAX) { 
       for(int i = 0; i < currentEntities.size(); i++) {
@@ -320,7 +330,7 @@ void scaleSelectedEntityX(float scaleX) {
 //Changes the y scale of the selected entity
 void scaleSelectedEntityY(float scaleY) {
    Entity temp;
-   printf("scaling y\n");
+
    //If change is within range
    if(SCALE_MIN < scaleY + currentEntities.at(0).scale.y && scaleY + currentEntities.at(0).scale.y <= SCALE_MAX) { 
       for(int i = 0; i < currentEntities.size(); i++) {
@@ -337,7 +347,7 @@ void scaleSelectedEntityY(float scaleY) {
 //Changes the z scale of the selected entity
 void scaleSelectedEntityZ(float scaleZ) {
    Entity temp;
-   printf("scaling z\n");
+
    //If change is within range
    if(SCALE_MIN < scaleZ + currentEntities.at(0).scale.z && scaleZ + currentEntities.at(0).scale.z <= SCALE_MAX) { 
       for(int i = 0; i < currentEntities.size(); i++) {
@@ -460,6 +470,9 @@ void placeSelectedEntity() {
          entities.push_back(currentEntities.at(i));
       }
    }
+   
+   //Change spacing back to zero
+   CESpacing = 0.0;
    undoAmount = currentEntities.size();
    //No longer selecting entities
    entitiesSelected = false;
