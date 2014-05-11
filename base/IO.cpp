@@ -300,11 +300,23 @@ void glfwEditKeyboard(void) {
    }
    //GLFW_KEY_1
    if(KeysPressed['1']) {
-      selectAtHotBarIndex(1);
+      //l-shift
+      if(KeysPressed[340]) {
+         selectAtHotBarIndex(10);  
+      }
+      else {
+         selectAtHotBarIndex(1);
+      }
    }
    //GLFW_KEY_2
    if(KeysPressed['2']) {
-      selectAtHotBarIndex(2);
+      //l-shift
+      if(KeysPressed[340]) {
+         selectAtHotBarIndex(11);  
+      }
+      else {
+         selectAtHotBarIndex(2);
+      }
    }
    //GLFW_KEY_3
    if(KeysPressed['3']) {

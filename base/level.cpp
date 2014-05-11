@@ -10,13 +10,15 @@ Mesh mesh[100];
 //All entities placed in world
 vector<Entity> entities;
 //Hotbar of entities
-Entity hotBar[10];
+Entity hotBar[12];
 //If entities are selected
 bool entitiesSelected;
 //Selected entities relative to the current lookAt 
 vector<Entity> currentEntities;
 //Number of selected entities relative to the current lookAt
 int dupNum = 0;
+//Amount to undo if undo is done
+int undoAmount = 0;
 
 //Name of the level loaded, else default
 string currentLevel = "level1.wub";
@@ -31,14 +33,16 @@ void initLevelLoader() {
    //Load Meshes
    mesh[0] = LoadMesh("../Assets/ModMBasicBldg.obj");//60h 43d 49w
    mesh[1] = LoadMesh("../Assets/shopBldg.obj");//25h 50d 50w
-   mesh[2] = LoadMesh("../Assets/cinderblock.obj");//4,4,4
-   mesh[3] = LoadMesh("../Assets/Models/topHatChar.obj");//11h 4d 8w
-   mesh[4] = LoadMesh("../Assets/mediumBasicBuilding.obj");//60h 43d 40w
+   mesh[2] = LoadMesh("../Assets/cinderblock.obj");//2h,4d,2w
+   mesh[3] = LoadMesh("../Assets/mediumBasicBuilding.obj");//60h 43d 40w 
+   mesh[4] = LoadMesh("../Assets/Models/sidewalkCorner.obj");//1h 5d 5w
    mesh[5] = LoadMesh("../Assets/sidewalk.obj");//1h 5d 5w
    mesh[6] = LoadMesh("../Assets/streetlight.obj");//25h 2d 12w
    mesh[7] = LoadMesh("../Assets/table.obj");//5h 10d 10w
    mesh[8] = LoadMesh("../Assets/tallBldg.obj");//1070h 200d 300w
    mesh[9] = LoadMesh("../Assets/waterTower.obj");//32h 26d 26w
+   mesh[10] = LoadMesh("../Assets/Models/capitolRecordsBldg.obj");//166h 71d 71w
+   mesh[11] = LoadMesh("../Assets/Models/wall.obj"); //15h 1d 10w
 
    //Load hotbar options
    //Basic Blg
@@ -50,11 +54,11 @@ void initLevelLoader() {
    //Cinderblock
    entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 2);
    hotBar[2] = entity;
-   //Flower pot
+   //Medium Blg
    entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.1, 0.1, 0.1), 0.0, 3);
    hotBar[3] = entity;
-   //Medium Blg
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 4);
+   //Side walk corner
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 4);
    hotBar[4] = entity;
    //SideWalk
    entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 5);
@@ -71,6 +75,12 @@ void initLevelLoader() {
    //Water tower
    entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 9);
    hotBar[9] = entity;
+   //Record Building
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 10);
+   hotBar[10] = entity;
+   //Wall
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 11);
+   hotBar[11] = entity;
 
    //Load into current index to prevent segfault. Doesn't appear.
    selectAtHotBarIndex(0);
@@ -87,12 +97,11 @@ void loadLevel(string fileName){
    ifstream infile;
 
    //If clean level, load nothing
-   if(strcmp(&fileName[0], "clean") == 0) {
-      currentLevel.clear();
+   if(strcmp(&fileName[0], "c.wub") == 0) {
       return;
    }
    //If default level, load default
-   else if(strcmp(&fileName[0], "default") == 0) {
+   else if(strcmp(&fileName[0], "d.wub") == 0) {
       infile.open(&currentLevel[0]);
    }
    //Else just load level
@@ -163,10 +172,10 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
          entity.phyScale = glm::vec3(2,4,2);
          break;
       case 3:
-         entity.phyScale = glm::vec3(11,4,8);
+         entity.phyScale = glm::vec3(60,43,40);
          break;
       case 4:
-         entity.phyScale = glm::vec3(60,43,40);
+         entity.phyScale = glm::vec3(1,5,5);
          break;
       case 5:
          entity.phyScale = glm::vec3(1,5,5);
@@ -182,6 +191,12 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
          break;
       case 9:
          entity.phyScale = glm::vec3(32,26,26);
+         break;
+      case 10:
+         entity.phyScale = glm::vec3(166,71,71);
+         break;
+      case 11:
+         entity.phyScale = glm::vec3(15, 1, 10);
          break;
       //h w d
       //x y z
@@ -212,10 +227,10 @@ void selectAtHotBarIndex(int index) {
          setDistance(3.0);
          break;
       case 3:
-         setDistance(3.0);
+         setDistance(7.0);
          break;
       case 4:
-         setDistance(18.0);
+         setDistance(10.0);
          break;
       case 5:
          setDistance(10.0);
@@ -230,6 +245,12 @@ void selectAtHotBarIndex(int index) {
          setDistance(400.0);
          break;
       case 9:
+         setDistance(7.0);
+         break;
+      case 10:
+         setDistance(30.0);
+         break;
+      case 11:
          setDistance(7.0);
          break;
     }
@@ -364,6 +385,7 @@ void placeSelectedEntity() {
          entities.push_back(currentEntities.at(i));
       }
    }
+   undoAmount = currentEntities.size();
    //No longer selecting entities
    entitiesSelected = false;
 }
@@ -397,8 +419,11 @@ void placeEntity(Entity entity){
 void undo() {
    //If there are entities to actually undo
    if(entities.size() > 0) {
-      //Undo one
-      entities.pop_back();
+      //Undo amount last placed
+      while(undoAmount--) {
+         entities.pop_back();
+      }
+      undoAmount = 1;
    }
 }
 

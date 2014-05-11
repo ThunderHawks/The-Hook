@@ -270,20 +270,19 @@ int main( int argc, char *argv[] )
    while(validFile == false) {
       printf("Type the file to load (Special options: 'd' = default, 'c' = clean):\n");
       scanf("%s", &fileName[0]);
+      strcat(&fileName[0], ".wub");
 
       ifstream toLoad(&fileName[0]);
       validFile = toLoad.good();
 
       //If 'c' was entered, then load a clean level
-      if(strcmp(&fileName[0], "c") == 0) {
+      if(strcmp(&fileName[0], "c.wub") == 0) {
          printf("Loading clean level...\n");
-         fileName = "clean";
          validFile = true;
       }
       //If 'd' was entered, then deafult level
-      else if(strcmp(&fileName[0], "d") == 0) {
+      else if(strcmp(&fileName[0], "d.wub") == 0) {
          printf("Loading default level...\n");
-         fileName = "default";
          validFile = true;
       }
       else if(validFile == false){
