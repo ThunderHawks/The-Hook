@@ -50,7 +50,9 @@ void initLevelLoader() {
    mesh[10] = LoadMesh("../Assets/Models/simpleCRBldg.obj");//166h 71d 71w
    mesh[11] = LoadMesh("../Assets/Models/wall.obj"); //15h 1d 10w
    mesh[12] = LoadMesh("../Assets/Models/gasStation.obj"); //34h 50d 50w
-   mesh[13] = LoadMesh("../Assets/Models/flag.obj"); //10h 1d 
+   mesh[13] = LoadMesh("../Assets/Models/halfSlab.obj"); //1h 5d 5w
+   mesh[14] = LoadMesh("../Assets/Models/mart.obj"); //1h 5d 5w
+   mesh[15] = LoadMesh("../Assets/Models/flag.obj"); //10h 1d 7w
 
    //Load hotbar options
    //Basic Blg
@@ -90,8 +92,17 @@ void initLevelLoader() {
    entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 11);
    hotBar[11] = entity;
    //Gas Station
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.7, 0.7, 0.7), 0.0, 12);
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 12);
    hotBar[12] = entity;
+   //Half slab
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 13);
+   hotBar[13] = entity;
+   //Mart
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 14);
+   hotBar[14] = entity;
+   //Flag
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 15);
+   hotBar[15] = entity;
 
    //Load into current index to prevent segfault. Doesn't appear.
    selectAtHotBarIndex(0);
@@ -212,6 +223,15 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
       case 12:
          entity.phyScale = glm::vec3(34, 50, 50);
          break;
+      case 13:
+         entity.phyScale = glm::vec3(1,5,5);
+         break;
+      case 14:
+         entity.phyScale = glm::vec3(40, 60, 60);
+         break;
+      case 15:
+         entity.phyScale = glm::vec3(10, 1, 7);
+         break;
       //h w d
       //x y z
    }
@@ -268,7 +288,16 @@ void selectAtHotBarIndex(int index) {
          setDistance(7.0);
          break;
       case 12:
-         setDistance(15.0);
+         setDistance(20.0);
+         break;
+      case 13:
+         setDistance(10.0);
+         break;
+      case 14:
+         setDistance(20.0);
+         break;
+      case 15:
+         setDistance(10.0);
          break;
     }
 }
