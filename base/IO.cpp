@@ -50,7 +50,7 @@ int KeysPressed[350];
 //Mouse press callback for Edit Mode
 void glfwEditMouse(GLFWwindow *window, int button, int action, int mods) {
    //If the left button is pressed
-   if(button == GLFW_MOUSE_BUTTON_LEFT) {
+   if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
       //If game is paused
       if(isPaused()) {
          pauseorUnpause();
@@ -370,15 +370,30 @@ void glfwEditKeyboard(void) {
    }
    //GLFW_KEY_4
    if(KeysPressed['4']) {
-      selectAtHotBarIndex(4);
+      if(KeysPressed[340]) {
+         selectAtHotBarIndex(13);  
+      }
+      else {
+         selectAtHotBarIndex(4);
+      }
    }
    //GLFW_KEY_5
    if(KeysPressed['5']) {
-      selectAtHotBarIndex(5);
+      if(KeysPressed[340]) {
+         selectAtHotBarIndex(14);  
+      }
+      else {
+         selectAtHotBarIndex(5);
+      }
    }
    //GLFW_KEY_6
    if(KeysPressed['6']) {
-      selectAtHotBarIndex(6);
+      if(KeysPressed[340]) {
+         selectAtHotBarIndex(15);  
+      }
+      else {
+         selectAtHotBarIndex(6);
+      }
    }
    //GLFW_KEY_7
    if(KeysPressed['7']) {
@@ -406,6 +421,7 @@ void glfwEditKeyboard(void) {
    }
    //Quit and Save
    else if(KeysPressed['Q']) {
+      saveWorld();
       exit( EXIT_SUCCESS );
    }
 }
