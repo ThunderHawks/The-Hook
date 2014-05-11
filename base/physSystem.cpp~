@@ -204,7 +204,7 @@ void physStep(){
    x = physGetPlayerX();
    y = physGetPlayerY();
    z = physGetPlayerZ();
-   //printf("%f %f %f pos\n",x,y,z);
+   printf("%f %f %f pos\n",x,y,z);
    lookAt = glm::vec3(x,y,z);
    //printf("the h is %d\n",getPressed('E'));
    if(playerGrappleActive) physGrapplePoint();
@@ -212,7 +212,7 @@ void physStep(){
    dynamicsWorld->stepSimulation(1/60.f,10);
 
    if(physGetPlayerY()-y>-.1 && physGetPlayerY()-y<.1){
-      printf("resetJump!\n");
+
    }
    //NOT SURE IF NEEDED
    //ColCallback.resetDetector();
