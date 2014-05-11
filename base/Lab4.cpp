@@ -162,6 +162,7 @@ void pauseorUnpause() {
 void glfwDraw (GLFWwindow *window)
 {
    ModelTrans.loadIdentity();
+   DrawSkyBox();
    SetModelStat();
 
    safe_glEnableVertexAttribArray(h_aPosition);

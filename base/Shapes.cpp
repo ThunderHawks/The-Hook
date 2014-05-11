@@ -14,6 +14,7 @@
 #include "glm/gtc/type_ptr.hpp" //value_ptr
 
 #include "Shapes.h"
+#include "Camera.h"
 
 float g_groundSize = 10000.0, g_groundY = 0;   // half the ground length, the y of the ground, 
 
@@ -380,6 +381,39 @@ void SetMaterial(int i) {
         safe_glUniform3f(h_uMatSpec, 0.0, 0.0, 0.0);
         safe_glUniform1f(h_uMatShine, 0.0);
         break;
+        
+    //Sky
+    case 14:
+       safe_glUniform3f(h_uMatAmb, 1.2, 1.6, 1.8);
+       safe_glUniform3f(h_uMatDif, 0, 0, 0);
+       safe_glUniform3f(h_uMatSpec, 0, 0, 0);
+       safe_glUniform1f(h_uMatShine, 200.0);
+       break;
 
     }
+}
+
+void DrawSkyBox() {
+	SetMaterial(14);
+	
+	glDepthMask(GL_FALSE);
+	
+	SetModel(GetEye().x, GetEye().y, GetEye().z, 1, 1, 1, 1);
+	
+	safe_glEnableVertexAttribArray(h_aPosition);
+
+   glBindBuffer(GL_ARRAY_BUFFER, CubeBuffObj);
+   safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, CIndxBuffObj);
+
+
+   safe_glEnableVertexAttribArray(h_aNormal);
+   glBindBuffer(GL_ARRAY_BUFFER, NormalBuffObj);
+   safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+   /* draw!*/
+   glDrawElements(GL_TRIANGLES, g_CiboLen, GL_UNSIGNED_SHORT, 0);
+   safe_glDisableVertexAttribArray(h_aPosition);
+   
+   glDepthMask(GL_ALWAYS);
 }
