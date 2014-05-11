@@ -237,10 +237,8 @@ void selectAtHotBarIndex(int index) {
 
 //Change the number of dups for selected entity
 int changeDupNumBy(int toChange) {
-   printf("toChange: %d\n", toChange);
    //No lower than 1
    if(dupNum + toChange < 1) {
-      printf("dupNum (%d) + toChange (%d) == %d\n", dupNum, toChange, dupNum + toChange);
       return 1;
    }
    //If no entitiesSelected don't change

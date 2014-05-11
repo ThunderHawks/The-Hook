@@ -73,7 +73,7 @@ void glfwEditScroll(GLFWwindow *window, double xOffset, double yOffset) {
 
    //Change dup num if N is pressed
    if(KeysPressed['N'] == 1) {
-      printf("dupNum: %d\n", changeDupNumBy(yOffset));
+      changeDupNumBy(yOffset);
    }
    //Change scale if F is being held along with scroll wheel
    if(KeysPressed['F'] == 1) {
@@ -217,9 +217,10 @@ void glfwGameKeyboard(void) {
    ///setPlayerSpeed(newSpeed.x,newSpeed.y,newSpeed.z);
    //GLFW_KEY_SPACE
    if(KeysPressed[' ']&&physGetPlayerY()<1.3) {
-      setPlayerSpeed(0,4,0);
+//      setPlayerSpeed(0,4,0);
       KeysPressed[' ']=0;
       printf("Space is not implemented!\n");
+      physJump();
       PlayFX(JUMP_FX);
    }
    //GLFW_KEY_Q
