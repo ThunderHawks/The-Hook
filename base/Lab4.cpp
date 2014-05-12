@@ -257,7 +257,7 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    SetEye(glm::vec3(origLookAt.x, 20.0, origLookAt.z + 20.0));
    SetLookAt(glm::vec3(origLookAt.x, 0.0, origLookAt.z));
    curView = SetShadowView();
-   curProj = SetOrthoProjectionMatrix(1.4 * 20.0);
+   curProj = SetOrthoProjectionMatrix(1.4 * 20.0);//hahaha
    glUniform3f(h_uCamPos, 0.0, 1.0, 1.0);
    glfwDraw(window);
    shadowMap->UnbindFBO();
