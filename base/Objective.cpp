@@ -80,9 +80,9 @@ void Objective::Update(glm::vec3 playerPos) {
    else {
       time++;
    }
-   printf("dist start %f\n",sqrt((playerPos.x-start.x)*(playerPos.x-start.x) + (playerPos.y-start.y)*(playerPos.y-start.y) + (playerPos.z-start.z)*(playerPos.z-start.z)));
-   printf("dist end   %f\n",sqrt((playerPos.x-end.x)*(playerPos.x-end.x) + (playerPos.y-end.y)*(playerPos.y-end.y) + (playerPos.z-end.z)*(playerPos.z-end.z)));
-   printf("is active %d\n",active);
+   //printf("dist start %f\n",sqrt((playerPos.x-start.x)*(playerPos.x-start.x) + (playerPos.y-start.y)*(playerPos.y-start.y) + (playerPos.z-start.z)*(playerPos.z-start.z)));
+   //printf("dist end   %f\n",sqrt((playerPos.x-end.x)*(playerPos.x-end.x) + (playerPos.y-end.y)*(playerPos.y-end.y) + (playerPos.z-end.z)*(playerPos.z-end.z)));
+   //printf("is active %d\n",active);
 }
 
 

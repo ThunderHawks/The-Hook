@@ -24,6 +24,7 @@
 #include "Shadows.h"
 #include "SoundPlayer.h"
 #include "Objective.h"
+#include "camBox.h"
 
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
@@ -141,13 +142,38 @@ float cool = 0;
 void drawEntities() {
    Entity entityTemp;
    srand(sizer);
+   int hit = 0;
+   printf("num ent rend %d\n",getEntityNum());
    for(int i = 0; i < getEntityNum(); i++) {
       entityTemp = getEntityAt(i);
+      if(pointBox(GetEye(),(camBox*)entityTemp.physics)){//test for camera collision with entities
+         hit = 1;
+         printf("hit!");
+      }
       int mat = rand()%13;
       while(!(mat = rand()%13));
       SetMaterial(mat);
-      PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
+      if(!cool)
+         PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
    }
+   if(hit == 1 && getDistance()<6) addDistance(-.18); //zoom in if hit
+   else if(getDistance()<20 && hit==0) addDistance(.14); //zoom out if not hit and zoomed in
+//   if (getDistance()<6) setDistance(6);//minimum zoom
+   resetVecs();
+   for(int i = 0; i < getEntityNum(); i++) {//antishake zooming
+      entityTemp = getEntityAt(i);
+      camBox* bx = (camBox*)entityTemp.physics;
+      if(pointBox(GetEye(),(camBox*)entityTemp.physics)){
+         hit = 1;
+         printf("hit!");
+         if(cool)   SetupCube(bx->x, bx->y, bx->z, 15, bx->amt, bx->w, bx->h, bx->d);
+      }
+      else{
+         if(cool)   SetupCube(bx->x, bx->y, bx->z, 16, bx->amt, bx->w, bx->h, bx->d);
+      }
+   }
+      if(hit == 1)         addDistance(-.14);//antishake application
+   printf("is dist %f %d\n",getDistance(),hit);
    //printf("cool? %d %d %f\n",cool,getPressed('B'),cos(sizer));
    if(getPressed('B')) cool = 1;
    else{
@@ -443,9 +469,18 @@ int main( int argc, char *argv[] )
       printf("SHADOW MAP FAILED\n");
       exit(EXIT_FAILURE);  
    }
-
-   objectives.push_back(new Objective(-42.0, -379.0, 230.0, 67.0));
-   objectives[objectives.size()-1]->Init();
+   Objective* tObj = new Objective(-42.0, -379.0, 230.0, 67.0);
+   objectives.push_back(tObj);
+   tObj->Init();
+   tObj = new Objective(-42.0, -379.0, 230.0, 67.0);
+   objectives.push_back(tObj);
+   tObj->Init();
+   tObj = new Objective(-42.0, -379.0, 230.0, 67.0);
+   objectives.push_back(tObj);
+   tObj->Init();
+   tObj = new Objective(-42.0, -379.0, 230.0, 67.0);
+   objectives.push_back(tObj);
+   tObj->Init();
 
    // Start the main execution loop.
    while (!glfwWindowShouldClose(window)) {

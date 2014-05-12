@@ -34,7 +34,7 @@ float startX, startY;
 float endX, endY;
 float alpha = 0.0;
 float beta = -M_PI/2.0;
-
+int rTgl = 0;
 //Used to load the previous scroll distance for 'R' in edit mode
 float previousLookAtDistance = 3.0;
 
@@ -74,6 +74,7 @@ void glfwEditMouse(GLFWwindow *window, int button, int action, int mods) {
       unselectEntity();
    }
 }
+
 void glfwPlayMouse(GLFWwindow *window, int button, int action, int mods) {
    //If the left button is pressed
    if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
@@ -82,7 +83,7 @@ void glfwPlayMouse(GLFWwindow *window, int button, int action, int mods) {
       physGrapple(-dir.x,-dir.y,-dir.z);
    }
    else if(button == GLFW_MOUSE_BUTTON_RIGHT) {
-      
+      rTgl = !rTgl;
    }
 }
 
@@ -232,6 +233,8 @@ int getPressed(char ch){
 }
 
 void glfwGameKeyboard(void) {
+   if(rTgl) setDistance(2);
+
   w = gaze/magnitude(gaze);
   w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
   u = glm::cross(GetUp(), w)/magnitude(glm::cross(GetUp(), w));

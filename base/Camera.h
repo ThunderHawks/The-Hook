@@ -46,5 +46,5 @@ bool checkCollision(glm::vec3 point, float rad);
 void SetSpeed(float speed);
 /*check if you are in edit mode*/
 void SetEdit (int status);
-
+void resetVecs();
 #endif
