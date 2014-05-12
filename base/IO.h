@@ -2,6 +2,8 @@
 #define IO_H_
 
 extern float g_width, g_height;
+extern GLint h_uShadeMode;
+extern int ShadeMode;
 
 //Mouse press callback for Edit Mode
 void glfwEditMouse(GLFWwindow *window, int button, int action, int mods);

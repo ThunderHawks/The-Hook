@@ -297,6 +297,14 @@ void glfwGameKeyboard(void) {
 			
       KeysPressed['M']=2;
    }
+
+   if (KeysPressed['N']) {
+      if (++ShadeMode == 2)
+         ShadeMode = 0;
+      printf("SHADEMODE: %d\n", ShadeMode);
+      glUniform1i(h_uShadeMode, ShadeMode);
+      KeysPressed['N'] = 0;
+   }
 }
 
 /*
@@ -488,6 +496,10 @@ void glfwGameKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
          if(!KeysPressed['M'])
             KeysPressed['M'] = 1;
          break;
+     case GLFW_KEY_N:
+         if(!KeysPressed['N'])
+            KeysPressed['N'] = 1;
+         break;
      }
    }   
    else if(action == GLFW_RELEASE) {
@@ -518,6 +530,9 @@ void glfwGameKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
          break;
      case GLFW_KEY_M:
          KeysPressed['M'] = 0;
+         break;
+     case GLFW_KEY_N:
+         KeysPressed['N'] = 0;
          break;
      }
    }
