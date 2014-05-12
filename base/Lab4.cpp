@@ -135,9 +135,10 @@ void drawSelectedObjects() {
 //Draws the entities into the world
 void drawEntities() {
    Entity entityTemp;
-
+   srand(0);
    for(int i = 0; i < getEntityNum(); i++) {
       entityTemp = getEntityAt(i);
+      SetMaterial(rand()%13);
       PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x, entityTemp.scale.y, entityTemp.scale.z, entityTemp.angle, entityTemp.BSRadius);
    }
 }
