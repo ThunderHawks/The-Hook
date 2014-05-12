@@ -160,7 +160,7 @@ void loadLevel(string fileName){
       infile >> tempEntity.scale.z;
       //Read BSRadius
       infile >> tempEntity.BSRadius;
-      printf("the radius is %f\n",tempEntity.BSRadius);
+      //printf("the radius is %f\n",tempEntity.BSRadius);
       //Read meshIndex
       infile >> tempEntity.meshIndex;
       //SetMeshPointer
@@ -170,7 +170,7 @@ void loadLevel(string fileName){
       infile >> tempEntity.phyScale.y;
       infile >> tempEntity.phyScale.z;
       //printf("%f,%f,%f,%f,%f,%f\n",tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,tempEntity.scale.x,tempEntity.scale.y,tempEntity.scale.z);
-//    createStaticBox(float posX,float posY,float posZ,
+//    createStaticBox(float posX,float posY,float posZ, (this is actually rotating)
                //     float scaleX,float scaleY,float scaleZ,
             //        btQuaternion rotation,float mass,float ix,float iy,float iz)
       if(!(tempEntity.angle>-10&&tempEntity.angle<10||tempEntity.angle>170&&tempEntity.angle<190)){
@@ -182,7 +182,7 @@ void loadLevel(string fileName){
          tempEntity.scale.z = tem;
       }
       tempEntity.btPhys = createStaticBox(tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,
-                                          tempEntity.scale.x*tempEntity.phyScale.x*.5,tempEntity.scale.y*tempEntity.phyScale.y*.55,tempEntity.scale.z*tempEntity.phyScale.z*.5,
+                                          tempEntity.scale.x*tempEntity.phyScale.x*.5,tempEntity.scale.y*tempEntity.phyScale.y*.5,tempEntity.scale.z*tempEntity.phyScale.z*.5,
                                           btQuaternion(0,0,0,1),0,0,0,0);
       if(!(tempEntity.angle>-10&&tempEntity.angle<10||tempEntity.angle>170&&tempEntity.angle<190)){
          float tem = tempEntity.phyScale.x;
@@ -269,8 +269,9 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
    float temp = entity.phyScale.y;
    entity.phyScale.y = entity.phyScale.x;
    entity.phyScale.x = temp;
-   entity.BSRadius = 2*sqrt(entity.phyScale.x*entity.phyScale.x+entity.phyScale.y*entity.phyScale.y+entity.phyScale.z*entity.phyScale.z);
-   printf("this is radius %f\n",entity.BSRadius);
+   entity.BSRadius = sqrt( pow(entity.scale.x * entity.phyScale.x, 2.0) + pow(entity.scale.y * entity.phyScale.y, 2.0) + pow(entity.scale.z * entity.phyScale.z, 2.0));
+   //entity.BSRadius = 2*sqrt(entity.phyScale.x*entity.phyScale.x+entity.phyScale.y*entity.phyScale.y+entity.phyScale.z*entity.phyScale.z);
+   //printf("this is radius %f\n", 2*sqrt(entity.phyScale.x*entity.phyScale.x+entity.phyScale.y*entity.phyScale.y+entity.phyScale.z*entity.phyScale.z));
    return entity;
 }
 
@@ -392,6 +393,17 @@ void scaleSelectedEntityX(float scaleX) {
          //Replace
          currentEntities[i] = temp;
       }
+   }
+}
+
+//Force radius changes
+void forceRadius() {
+   Entity temp;
+
+   for(int i = 0; i < entities.size(); i++) {
+      temp = entities[i];
+      temp.BSRadius = sqrt( pow(temp.scale.x * temp.phyScale.x, 2.0) + pow(temp.scale.y * temp.phyScale.y, 2.0) + pow(temp.scale.z * temp.phyScale.z, 2.0));
+      entities[i] = temp;       
    }
 }
 

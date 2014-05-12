@@ -292,8 +292,12 @@ void glfwEditKeyboard(void) {
   w = gaze/magnitude(gaze);
   w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
   u = glm::cross(GetUp(), w)/magnitude(glm::cross(GetUp(), w));
+   //Force radius
+   if(KeysPressed[341] && KeysPressed['Z'] && KeysPressed['S']) {
+      forceRadius();
+   }
    //GLFW_KEY_LEFTCONTROL + GLFW_KEY_Leftcontrol + 'S'
-   if(KeysPressed[341] && KeysPressed['S'] && KeysPressed[341]) {
+   else if(KeysPressed[341] && KeysPressed['S'] && KeysPressed[341]) {
       string toSave;
       pauseorUnpause();
       printf("Enter a string to have this world saved (don't include .wub, type 'none' to abort save):\n");
