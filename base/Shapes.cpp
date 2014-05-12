@@ -289,6 +289,7 @@ void SetMaterial(int i) {
         safe_glUniform3f(h_uMatDif, 0.04, 1.0, 0.1);
         safe_glUniform3f(h_uMatSpec, 0.23, 0.5, 0.3);
         safe_glUniform1f(h_uMatShine, 15.0);
+        safe_glUniform1f(h_uMatAlpha, 1.0);
         break;
     //Dark Green Shadow
     case 1:
@@ -296,6 +297,7 @@ void SetMaterial(int i) {
         safe_glUniform3f(h_uMatDif, 0.0, 0.0, 0.0);
         safe_glUniform3f(h_uMatSpec, 0.0, 0.0, 0.0);
         safe_glUniform1f(h_uMatShine, 192.0);
+        safe_glUniform1f(h_uMatAlpha, 1.0);
         break;
     //Ruby
     case 2:
@@ -303,6 +305,7 @@ void SetMaterial(int i) {
         safe_glUniform3f(h_uMatDif, 0.6, 0.4, 0.4);
         safe_glUniform3f(h_uMatSpec, 0.4, 0.3, 0.3);
         safe_glUniform1f(h_uMatShine, 1.0);
+        safe_glUniform1f(h_uMatAlpha, 1.0);
         break;
     //Sapphire
     case 3:
@@ -310,6 +313,7 @@ void SetMaterial(int i) {
         safe_glUniform3f(h_uMatDif, 0.3, 0.3, 0.4);
         safe_glUniform3f(h_uMatSpec, 0.3, 0.3, 0.4);
         safe_glUniform1f(h_uMatShine, 150.0);
+        safe_glUniform1f(h_uMatAlpha, 1.0);
         break;
     //Marble
     case 4:
@@ -317,6 +321,7 @@ void SetMaterial(int i) {
         safe_glUniform3f(h_uMatDif, 0.7, 0.7, 0.7);
         safe_glUniform3f(h_uMatSpec, 0.4, 0.4, 0.4);
         safe_glUniform1f(h_uMatShine, 100.0);
+        safe_glUniform1f(h_uMatAlpha, 1.0);
         break;
     //Blood Red
     case 5:
@@ -324,6 +329,7 @@ void SetMaterial(int i) {
         safe_glUniform3f(h_uMatDif, 0.7, 0.2, 0.2);
         safe_glUniform3f(h_uMatSpec, 0.7, 0.15, 0.1);
         safe_glUniform1f(h_uMatShine, 10.0);
+        safe_glUniform1f(h_uMatAlpha, 1.0);
         break;
     //Red Clay Steel
     case 6:
@@ -331,6 +337,7 @@ void SetMaterial(int i) {
         safe_glUniform3f(h_uMatDif, 0.8, 0.4, 0.4);
         safe_glUniform3f(h_uMatSpec, 0.4, 0.3, 0.3);
         safe_glUniform1f(h_uMatShine, 1.0);
+        safe_glUniform1f(h_uMatAlpha, 1.0);
         break;
     //Stainless Steel
     case 7:
@@ -338,6 +345,7 @@ void SetMaterial(int i) {
         safe_glUniform3f(h_uMatDif, 0.37, 0.37, 0.37);
         safe_glUniform3f(h_uMatSpec, 0.37, 0.37, 0.37);
         safe_glUniform1f(h_uMatShine, 100.0);
+        safe_glUniform1f(h_uMatAlpha, 1.0);
         break;
     //Dark Orange
     case 8:
@@ -345,6 +353,7 @@ void SetMaterial(int i) {
         safe_glUniform3f(h_uMatDif, 1.0, 0.5, 0.0);
         safe_glUniform3f(h_uMatSpec, 1.0, 0.5, 0.0);
         safe_glUniform1f(h_uMatShine, 75.0);
+        safe_glUniform1f(h_uMatAlpha, 1.0);
         break;
     //Graphite
     case 9:
@@ -352,6 +361,7 @@ void SetMaterial(int i) {
         safe_glUniform3f(h_uMatDif, 0.7, 0.7, 0.7);
         safe_glUniform3f(h_uMatSpec, 0.9, 0.9, 0.9);
         safe_glUniform1f(h_uMatShine, 100.0);
+        safe_glUniform1f(h_uMatAlpha, 1.0);
         break;
     //Ice
     case 10:
@@ -359,6 +369,7 @@ void SetMaterial(int i) {
        safe_glUniform3f(h_uMatDif, 0.2, 0.4, 0.5);
        safe_glUniform3f(h_uMatSpec, 1.0, 1.0, 1.0);
        safe_glUniform1f(h_uMatShine, 200.0);
+        safe_glUniform1f(h_uMatAlpha, 1.0);
        break;
     //Super Shiny Concrete                         
     case 11:
@@ -366,6 +377,7 @@ void SetMaterial(int i) {
         safe_glUniform3f(h_uMatDif, 0.5, 0.5, 0.5);
         safe_glUniform3f(h_uMatSpec, 0.45, 0.45, 0.45);
         safe_glUniform1f(h_uMatShine, 1.0);
+        safe_glUniform1f(h_uMatAlpha, 1.0);
         break;
     //Teal            
     case 12:
@@ -373,6 +385,7 @@ void SetMaterial(int i) {
         safe_glUniform3f(h_uMatDif, 0.453, 1.0, 1.0);
         safe_glUniform3f(h_uMatSpec, 0.453, 1.0, 1.0);
         safe_glUniform1f(h_uMatShine, 50.0);
+        safe_glUniform1f(h_uMatAlpha, 1.0);
         break;
     //Collision Box
     case 13:
@@ -380,6 +393,7 @@ void SetMaterial(int i) {
         safe_glUniform3f(h_uMatDif, 0.0, 0.0, 0.0);
         safe_glUniform3f(h_uMatSpec, 0.0, 0.0, 0.0);
         safe_glUniform1f(h_uMatShine, 0.0);
+        safe_glUniform1f(h_uMatAlpha, 1.0);
         break;
         
     //Sky
@@ -388,6 +402,23 @@ void SetMaterial(int i) {
        safe_glUniform3f(h_uMatDif, 0, 0, 0);
        safe_glUniform3f(h_uMatSpec, 0, 0, 0);
        safe_glUniform1f(h_uMatShine, 200.0);
+       safe_glUniform1f(h_uMatAlpha, 1.0);
+       break;
+   //Start Beacon
+    case 15:
+       safe_glUniform3f(h_uMatAmb, 1.0, 1.0, 0.0);
+       safe_glUniform3f(h_uMatDif, 1.0, 1.0, 0.0);
+       safe_glUniform3f(h_uMatSpec, 1.0, 1.0, 0.0);
+       safe_glUniform1f(h_uMatShine, 0.0);
+       safe_glUniform1f(h_uMatAlpha, 0.4);
+       break;
+    //End Beacon
+    case 16:
+       safe_glUniform3f(h_uMatAmb, 0.0, 1.0, 0.0);
+       safe_glUniform3f(h_uMatDif, 0.0, 1.0, 0.0);
+       safe_glUniform3f(h_uMatSpec, 0.0, 1.0, 0.0);
+       safe_glUniform1f(h_uMatShine, 0.0);
+       safe_glUniform1f(h_uMatAlpha, 0.4);
        break;
 
     }

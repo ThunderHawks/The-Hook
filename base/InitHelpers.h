@@ -7,7 +7,7 @@
 extern GLint h_aPosition, h_aNormal, h_uViewMatrix, h_uProjMatrix;
 extern GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj;
 extern GLuint ShadowCubeBuffObj, SCIndxBuffObj, ShadowNormalBuffObj, RampBuffObj, RIndxBuffObj, RampNormalBuffObj;
-extern GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine;
+extern GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine, h_uMatAlpha;
 extern GLint h_uTexUnit;
 extern GLint h_uLightViewMatrix, h_uLightProjMatrix;
 extern float g_width, g_height, beta, alpha, eyeAtx, eyeAty, eyeAtz;

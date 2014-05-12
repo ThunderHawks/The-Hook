@@ -3,6 +3,7 @@ struct Material {
    vec3 dColor;
    vec3 sColor;
    float shine;
+   float alpha;
 };
 
 uniform vec4 uLightVec;
@@ -66,7 +67,7 @@ void main() {
 
    //color = (uLColor * uMat.dColor) + (uLColor * uMat.sColor * angleVR) + (uLColor * uMat.aColor);   
 
-   gl_FragColor = vec4(color, 1.0);
+   gl_FragColor = vec4(color, uMat.alpha);
    //gl_FragColor = vec4(norm, 1.0);
    //gl_FragColor = vec4(depth, depth, depth, 1.0);
    //gl_FragColor = vec4(dist, dist, dist, 1.0);

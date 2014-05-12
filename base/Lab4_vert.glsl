@@ -3,6 +3,7 @@ struct Material {
    vec3 dColor;
    vec3 sColor;
    float shine;
+   float alpha;
 };
 
 uniform mat4 uProjMatrix;

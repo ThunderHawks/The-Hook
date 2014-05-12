@@ -49,7 +49,7 @@ float g_width, g_height;
 GLint h_uLightVec;
 GLint h_uLightColor;
 GLint h_uCamPos, h_uShadeMode;
-GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine;
+GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine, h_uMatAlpha;
 GLint h_uTexUnit;
 GLint h_uLightViewMatrix, h_uLightProjMatrix;
 
@@ -178,6 +178,10 @@ void pauseorUnpause() {
 /* Main display function */
 void glfwDraw (GLFWwindow *window)
 {
+   //Enable transparency
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
    // Disable backface culling for skybox
    glCullFace(GL_BACK);
    glDisable(GL_CULL_FACE);
@@ -234,18 +238,6 @@ void glfwDraw (GLFWwindow *window)
 
    SetMaterial(2);
 
-   //draw phys cubes
-   for(int i = 0; i < objectives.size();i++){
-      if(objectives[i]->active){
-         PlaceModel(flag,objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 50, 50, 50, 1, 1.7);
-         SetupCube(objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 5, 60, 10, 5000, 10);
-      }
-      else{
-         PlaceModel(flag,objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 50, 50, 50, 1, 1.7);
-         SetupCube(objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 5, 60, 10, 5000, 10);
-      }
-   }
-
    vector<btRigidBody*> loopable = getVecList();
    srand(0);
    for(int i = 0;i<loopable.size();i++){
@@ -258,6 +250,18 @@ void glfwDraw (GLFWwindow *window)
 	   else  
 		   PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.1*SCALE,.1*SCALE,.1*SCALE, 0, 1);
         // SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),2,0,2,2,2);
+      }
+   }
+
+   //draw phys cubes
+   for(int i = 0; i < objectives.size();i++){
+      if(objectives[i]->active){
+         PlaceModel(flag,objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 50, 50, 50, 1, 1.7);
+         SetupCube(objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 16, 60, 10, 5000, 10);
+      }
+      else{
+         PlaceModel(flag,objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 50, 50, 50, 1, 1.7);
+         SetupCube(objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 15, 60, 10, 5000, 10);
       }
    }
 
