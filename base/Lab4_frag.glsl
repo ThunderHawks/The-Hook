@@ -8,71 +8,64 @@ struct Material {
 uniform vec4 uLightVec;
 uniform vec3 uLColor;
 uniform vec3 uCamPos;
+uniform sampler2D uTexUnit;
 uniform Material uMat;
 
 varying vec3 vNorm; 
 varying vec3 vPos;
+varying vec4 vShadowPos;
 
 void main() {
-   float angleNL, angleVR, r, g, b;
+   float angleNL, angleVR, depth, dist;
+   vec4 shadowPos;
+   vec3 color;
 
    vec3 norm = normalize(vNorm);
    vec3 pos = normalize(vPos);
    vec3 light = normalize(vec3(uLightVec.x, uLightVec.y, uLightVec.z));  // Directional light
    vec3 view = normalize(uCamPos - vPos);
-   vec3 refl;
+   vec3 refl = normalize(reflect(-light, norm));
 
    angleNL = clamp(dot(norm, light), 0.0, 1.0);
 
-   refl = normalize(reflect(-light, norm));
    angleVR = dot(refl, view);
    angleVR = angleVR < 0.0 ? 0.0 : pow(clamp(angleVR, 0.0, 1.0), uMat.shine);
 
-   if (angleNL > 0.8) {
-      r = (uLColor.r * uMat.dColor.r);
-      g = (uLColor.g * uMat.dColor.g);
-      b = (uLColor.b * uMat.dColor.b);
-   }
-   else if (angleNL > 0.6) {
-      r = (uLColor.r * uMat.dColor.r * 0.8);
-      g = (uLColor.g * uMat.dColor.g * 0.8);
-      b = (uLColor.b * uMat.dColor.b * 0.8);
-   }
-   else if (angleNL > 0.4) {
-      r = (uLColor.r * uMat.dColor.r * 0.6);
-      g = (uLColor.g * uMat.dColor.g * 0.6);
-      b = (uLColor.b * uMat.dColor.b * 0.6);
-   }
-   else if (angleNL > 0.2) {
-      r = (uLColor.r * uMat.dColor.r * 0.4);
-      g = (uLColor.g * uMat.dColor.g * 0.4);
-      b = (uLColor.b * uMat.dColor.b * 0.4);
-   }
-   else {
-      r = (uLColor.r * uMat.dColor.r * 0.2);
-      g = (uLColor.g * uMat.dColor.g * 0.2);
-      b = (uLColor.b * uMat.dColor.b * 0.2);
-   }
- 
-   if (angleVR > 0.95 && uMat.shine >= 100.0) {
-      r += uLColor.r * uMat.sColor.r * pow(1.0, uMat.shine);
-      g += uLColor.g * uMat.sColor.g * pow(1.0, uMat.shine);
-      b += uLColor.b * uMat.sColor.b * pow(1.0, uMat.shine);
-   }
+   shadowPos = vShadowPos / vShadowPos.w;
+   depth = texture2D(uTexUnit, shadowPos.xy).z; // Shadow map depth
+   dist = vShadowPos.z - 0.005; // Distance from light to fragment
 
-   r += uLColor.r * uMat.aColor.r;
-   g += uLColor.g * uMat.aColor.g;
-   b += uLColor.b * uMat.aColor.b;
+   // Diffuse lighting
+   if (angleNL > 0.8)
+      color = uLColor * uMat.dColor;
+   else if (angleNL > 0.6)
+      color = uLColor * uMat.dColor * 0.8;
+   else if (angleNL > 0.4)
+      color = uLColor * uMat.dColor * 0.6;
+   else if (angleNL > 0.2)
+      color = uLColor * uMat.dColor * 0.4;
+   else
+      color = uLColor * uMat.dColor * 0.2;
+   // Test if the fragment is in a shadow
+   if (depth < dist && dist < 1.0 && angleNL != 0.0)
+      color *= 0.3;
+
+   // Specular lighting
+   if (angleVR > 0.95 && uMat.shine >= 100.0)
+      color += uLColor * uMat.sColor;
+
+   // Ambient lighting
+   color += uLColor * uMat.aColor;
 
    if (dot(view, norm) < 0.3) {
       //r = g = b = 0.0;
    }
 
+   //color = (uLColor * uMat.dColor) + (uLColor * uMat.sColor * angleVR) + (uLColor * uMat.aColor);   
 
-   //r = (uLColor.r * uMat.dColor.r * angleNL) + (uLColor.r * uMat.sColor.r * angleVR) + (uLColor.r * uMat.aColor.r);
-   //g = (uLColor.g * uMat.dColor.g * angleNL) + (uLColor.g * uMat.sColor.g * angleVR) + (uLColor.g * uMat.aColor.g);
-   //b = (uLColor.b * uMat.dColor.b * angleNL) + (uLColor.b * uMat.sColor.b * angleVR) + (uLColor.b * uMat.aColor.b);
-
-   gl_FragColor = vec4(r, g, b, 1.0);
+   gl_FragColor = vec4(color, 1.0);
    //gl_FragColor = vec4(norm, 1.0);
+   //gl_FragColor = vec4(depth, depth, depth, 1.0);
+   //gl_FragColor = vec4(dist, dist, dist, 1.0);
+
 }

@@ -49,6 +49,8 @@ GLint h_uLightVec;
 GLint h_uLightColor;
 GLint h_uCamPos, h_uShadeMode;
 GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine;
+GLint h_uTexUnit;
+GLint h_uLightViewMatrix, h_uLightProjMatrix;
 
 //declare Matrix stack
 RenderingHelper ModelTrans;
@@ -166,6 +168,7 @@ void glfwDraw (GLFWwindow *window)
    SetModelStat();
 
    safe_glEnableVertexAttribArray(h_aPosition);
+   safe_glEnableVertexAttribArray(h_aNormal);
 
    glBindBuffer(GL_ARRAY_BUFFER, GrndBuffObj);
    safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -173,13 +176,15 @@ void glfwDraw (GLFWwindow *window)
 
    SetMaterial(0);
 
-   safe_glEnableVertexAttribArray(h_aNormal);
    glBindBuffer(GL_ARRAY_BUFFER, GNBuffObj);
    safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
    /* draw!*/
    glDrawElements(GL_TRIANGLES, g_GiboLen, GL_UNSIGNED_SHORT, 0);
+
+   // Disable attributes
    safe_glDisableVertexAttribArray(h_aPosition);
+   safe_glDisableVertexAttribArray(h_aNormal);
 
    //DRAW THE DANCING CYLINDER HERE!!
    btTransform pla;
@@ -232,26 +237,44 @@ void glfwDraw (GLFWwindow *window)
 }
 
 void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
+   glm::vec3 origEye = GetEye();
+   glm::vec3 origLookAt = GetLookAt();
+
    glUseProgram(ShadeProg);
 
+   // Specify texture unit
+   safe_glUniform1i(h_uTexUnit, 0);
+   glEnable(GL_TEXTURE_2D);
+   glActiveTexture(GL_TEXTURE0);
+   
+   // Set light uniforms
    glUniform3f(h_uLightColor, 0.4, 0.4, 0.38);
    glUniform4f(h_uLightVec, 0.0, 1.0, 1.0, 0.0);
 
    // Render depth info from light's perspective
    shadowMap->BindFBO();
    glClear(GL_DEPTH_BUFFER_BIT);
-   curView = SetView(); // CHANGE TO LIGHT'S PERSPECTIVE, NOT EYE
-   curProj = SetOrthoProjectionMatrix();
+   SetEye(glm::vec3(origLookAt.x, 20.0, origLookAt.z + 20.0));
+   SetLookAt(glm::vec3(origLookAt.x, 0.0, origLookAt.z));
+   curView = SetShadowView();
+   curProj = SetOrthoProjectionMatrix(1.4 * 20.0);
    glUniform3f(h_uCamPos, 0.0, 1.0, 1.0);
    glfwDraw(window);
+   shadowMap->UnbindFBO();
 
    // Render scene normally and draw
-   shadowMap->UnbindFBO();
+   shadowMap->BindDepthTex();
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   SetEye(origEye);
+   SetLookAt(origLookAt);
    curView = SetView();
    curProj = SetProjectionMatrix();
    glUniform3f(h_uCamPos, GetEye().x, GetEye().y, GetEye().z);
    glfwDraw(window);
+   shadowMap->UnbindDepthTex();
+
+   // Disable textures
+   glDisable(GL_TEXTURE_2D);
 
    // Disable the shaders
    glUseProgram(0);	
