@@ -31,7 +31,7 @@
 
 //Paused/unpause
 bool paused;
-
+   int Edit;
 //position and color data handles
 GLuint triBuffObj, colBuffObj;
 
@@ -155,8 +155,8 @@ void drawEntities() {
       SetMaterial(mat);
       if(!getPressed('V')) PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
    }
-   if(hit == 1 && getDistance()>6) addDistance(-.18); //zoom in if hit
-   else if(getDistance()<20 && hit==0) addDistance(.14); //zoom out if not hit and zoomed in
+   if(hit == 1 && getDistance()>6 && Edit == 0) addDistance(-.18); //zoom in if hit
+   else if(getDistance()<20 && hit==0&& Edit == 0) addDistance(.14); //zoom out if not hit and zoomed in
 //   if (getDistance()<6) setDistance(6);//minimum zoom
    resetVecs();
    for(int i = 0; i < getEntityNum(); i++) {//antishake zooming
@@ -171,7 +171,7 @@ void drawEntities() {
          if(getPressed('V'))   SetupCube(bx->x, bx->y, bx->z, 16, bx->amt, bx->w, bx->h, bx->d);
       }
    }
-      if(hit == 1)         addDistance(-.14);//antishake application
+      if(hit == 1&& Edit == 0)         addDistance(-.14);//antishake application
    printf("is dist %f %d\n",getDistance(),hit);
    //printf("cool? %d %d %f\n",cool,getPressed('B'),cos(sizer));
    if(getPressed('B')) cool = 1;
@@ -180,7 +180,7 @@ void drawEntities() {
     sizer=0;
    }
    if(cool) sizer+=.16;
-   if(getDistance()<2)setDistance(2);
+   if(getDistance()<2&& Edit == 0)setDistance(2);
 }
 
 //Bool that returns true if game is paused
@@ -362,7 +362,6 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
 int main( int argc, char *argv[] )
 {
    GLFWwindow *window;
-   int Edit;
    //File name to load
    string fileName;
    //whether name inputtted is valid
