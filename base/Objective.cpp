@@ -20,6 +20,7 @@
 #include <time.h>
 #include "Objective.h"
 #include "physSystem.h"
+#include "SoundPlayer.h"
 
 int score = 0;
 int seed = rand();
@@ -70,6 +71,7 @@ void Objective::Update(glm::vec3 playerPos) {
       score += 20000-time;
       time = 0;
       this->Init();
+      PlayFX(SUCCESS_FX);
    }
    else if (sqrt((playerPos.x-start.x)*(playerPos.x-start.x) + (playerPos.z-start.z)*(playerPos.z-start.z)) < 7 && !active) {
       active = true;
