@@ -153,8 +153,7 @@ void drawEntities() {
       int mat = rand()%13;
       while(!(mat = rand()%13));
       SetMaterial(mat);
-      if(!cool)
-         PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
+      if(!getPressed('V')) PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
    }
    if(hit == 1 && getDistance()<6) addDistance(-.18); //zoom in if hit
    else if(getDistance()<20 && hit==0) addDistance(.14); //zoom out if not hit and zoomed in
@@ -166,10 +165,10 @@ void drawEntities() {
       if(pointBox(GetEye(),(camBox*)entityTemp.physics)){
          hit = 1;
          printf("hit!");
-         if(cool)   SetupCube(bx->x, bx->y, bx->z, 15, bx->amt, bx->w, bx->h, bx->d);
+         if(getPressed('V'))   SetupCube(bx->x, bx->y, bx->z, 15, bx->amt, bx->w, bx->h, bx->d);
       }
       else{
-         if(cool)   SetupCube(bx->x, bx->y, bx->z, 16, bx->amt, bx->w, bx->h, bx->d);
+         if(getPressed('V'))   SetupCube(bx->x, bx->y, bx->z, 16, bx->amt, bx->w, bx->h, bx->d);
       }
    }
       if(hit == 1)         addDistance(-.14);//antishake application
