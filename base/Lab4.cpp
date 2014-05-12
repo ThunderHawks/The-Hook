@@ -163,9 +163,18 @@ void pauseorUnpause() {
 /* Main display function */
 void glfwDraw (GLFWwindow *window)
 {
+   // Disable backface culling for skybox
+   glCullFace(GL_BACK);
+   glDisable(GL_CULL_FACE);
+
+   // Draw skybox
    ModelTrans.loadIdentity();
    DrawSkyBox();
    SetModelStat();
+
+   // Enable backface culling
+   glCullFace(GL_BACK);
+   glEnable(GL_CULL_FACE);
 
    safe_glEnableVertexAttribArray(h_aPosition);
    safe_glEnableVertexAttribArray(h_aNormal);
