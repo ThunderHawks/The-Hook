@@ -38,7 +38,7 @@ void setPlayerSpeed(float x, float y, float z){
 void AsetPlayerSpeed(float x, float y, float z){
 //   printf("%f %f %f speedy\n",30*x,30*y,30*z);
    if(!playerGrappleActive)
-      player->setLinearVelocity(btVector3(2*x+player->getLinearVelocity().getX()*(playerJump?.8:1),2*y+player->getLinearVelocity().getY(),2*z+player->getLinearVelocity().getZ()*(playerJump?.8:1)));
+      player->setLinearVelocity(btVector3(2*x+player->getLinearVelocity().getX()*(playerJump?.8:.8),2*y+player->getLinearVelocity().getY(),2*z+player->getLinearVelocity().getZ()*(playerJump?.8:.8)));
   // player->clearForces();
 //   player->applyCentralForce(btVector3(x*300,200*y,300*z));
    //btobjes[0]->setLinearVelocity(btVector3(0,1000,0));
