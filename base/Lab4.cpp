@@ -238,11 +238,11 @@ void glfwDraw (GLFWwindow *window)
    for(int i = 0; i < objectives.size();i++){
       if(objectives[i]->active){
          PlaceModel(flag,objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 50, 50, 50, 1, 1.7);
-         SetupCube(objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 5, 60, 10, 50, 10);
+         SetupCube(objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 5, 60, 10, 5000, 10);
       }
       else{
          PlaceModel(flag,objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 50, 50, 50, 1, 1.7);
-         SetupCube(objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 5, 60, 10, 50, 10);
+         SetupCube(objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 5, 60, 10, 5000, 10);
       }
    }
 
