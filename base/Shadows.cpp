@@ -79,7 +79,7 @@ void ShadowMap::UnbindDepthTex() {
 }
 
 glm::mat4 SetOrthoProjectionMatrix(float dist) {
-   glm::mat4 orthoProj = glm::ortho(-50.f, 50.f, -50.f, 30.f, dist - 50.f, dist + 50.f);
+   glm::mat4 orthoProj = glm::ortho(-100.f, 100.f, -50.f, 100.f, dist - 50.f, dist + 100.f);
    safe_glUniformMatrix4fv(h_uProjMatrix, glm::value_ptr(orthoProj));
    safe_glUniformMatrix4fv(h_uLightProjMatrix, glm::value_ptr(orthoProj));
    return orthoProj;
