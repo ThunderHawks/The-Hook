@@ -293,7 +293,7 @@ void glfwGameKeyboard(void) {
    }
    if(KeysPressed['M']){
    	if (KeysPressed['M'] == 1)
-			pauseBackground();
+			MuteAll();
 			
       KeysPressed['M']=2;
    }
@@ -498,6 +498,9 @@ void glfwGameKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
          if(!KeysPressed['N'])
             KeysPressed['N'] = 1;
          break;
+    case GLFW_KEY_B:
+      KeysPressed['B'] = 1;
+      break;
      }
    }   
    else if(action == GLFW_RELEASE) {
@@ -532,6 +535,9 @@ void glfwGameKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
      case GLFW_KEY_N:
          KeysPressed['N'] = 0;
          break;
+    case GLFW_KEY_B:
+      KeysPressed['B'] = 0;
+      break;
      }
    }
 }
@@ -672,6 +678,9 @@ void glfwEditKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
          break;
        case GLFW_KEY_E:
          KeysPressed['E'] = 0;
+         break;
+       case GLFW_KEY_B:
+         KeysPressed['B'] = 0;
          break;
        //Undo
        case GLFW_KEY_BACKSPACE:

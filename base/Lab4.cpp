@@ -131,16 +131,26 @@ void drawSelectedObjects() {
       }
    }
 }
-
+float sizer = 45;
+float cool = 0;
 //Draws the entities into the world
 void drawEntities() {
    Entity entityTemp;
    srand(0);
    for(int i = 0; i < getEntityNum(); i++) {
       entityTemp = getEntityAt(i);
-      SetMaterial(rand()%13);
-      PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x, entityTemp.scale.y, entityTemp.scale.z, entityTemp.angle, entityTemp.BSRadius);
+      int mat = rand()%13;
+      while(!(mat = rand()%13));
+      SetMaterial(mat);
+      PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
    }
+   printf("cool? %d %d %f\n",cool,getPressed('B'),cos(sizer));
+   if(getPressed('B')) cool = 1;
+   else{
+    cool = 0;
+    sizer=0;
+   }
+   if(cool) sizer+=.16;
 }
 
 //Bool that returns true if game is paused
