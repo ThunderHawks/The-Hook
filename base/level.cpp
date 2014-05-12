@@ -268,7 +268,7 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
    float temp = entity.phyScale.y;
    entity.phyScale.y = entity.phyScale.x;
    entity.phyScale.x = temp;
-   entity.BSRadius = sqrt(entity.phyScale.x*entity.phyScale.x+entity.phyScale.y*entity.phyScale.y+entity.phyScale.z*entity.phyScale.z);
+   entity.BSRadius = 2*sqrt(entity.phyScale.x*entity.phyScale.x+entity.phyScale.y*entity.phyScale.y+entity.phyScale.z*entity.phyScale.z);
    printf("this is radius %f\n",entity.BSRadius);
    return entity;
 }

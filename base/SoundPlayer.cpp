@@ -1,7 +1,7 @@
 #include "SoundPlayer.h"
 #include "sound.h"
 
-Sound bMusic = Sound("../Assets/Sounds/Bastion_From_Wharfs_To_Wilds.ogg", 75, true);
+Sound bMusic = Sound("../Assets/Sounds/cityMain.mp3", 75, true);
 int trackNumber = 0;
 int trackCount = 0;
 bool isMuted = false;

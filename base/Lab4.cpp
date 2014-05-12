@@ -366,7 +366,7 @@ int main( int argc, char *argv[] )
       loadLevel(fileName);
 
       //music
-      SetBackground("../Assets/Sounds/Bastion_From_Wharfs_To_Wilds.ogg");
+      SetBackground("../Assets/Sounds/cityMain.mp3");
    }
 
    ShadowMap *shadowMap = new ShadowMap();
