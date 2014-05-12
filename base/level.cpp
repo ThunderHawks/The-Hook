@@ -160,6 +160,7 @@ void loadLevel(string fileName){
       infile >> tempEntity.scale.z;
       //Read BSRadius
       infile >> tempEntity.BSRadius;
+      printf("the radius is %f\n",tempEntity.BSRadius);
       //Read meshIndex
       infile >> tempEntity.meshIndex;
       //SetMeshPointer
