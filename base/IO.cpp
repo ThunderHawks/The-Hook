@@ -595,7 +595,7 @@ void glfwEditKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
        //Allows for faster movement
        case GLFW_KEY_LEFT_SHIFT:
          KeysPressed[340] = 1;
-         speed = 5.0;
+         speed = 10.0;
          break;
        //Quit
        case GLFW_KEY_Q:
