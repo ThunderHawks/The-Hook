@@ -78,7 +78,8 @@ void glfwPlayMouse(GLFWwindow *window, int button, int action, int mods) {
    //If the left button is pressed
    if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
       PlayFX(THROW_GRAP_FX);
-      physGrapple(w.x,w.y,w.z);
+      glm::vec3 dir = GetLookAt()-GetEye();
+      physGrapple(-dir.x,-dir.y,-dir.z);
    }
    else if(button == GLFW_MOUSE_BUTTON_RIGHT) {
       
