@@ -387,7 +387,7 @@ void scaleSelectedEntityX(float scaleX) {
    Entity temp;
 
    //If change is within range
-   if(SCALE_MIN < scaleX + currentEntities.at(0).scale.x && scaleX + currentEntities.at(0).scale.x <= SCALE_MAX) { 
+   if(SCALE_MIN < scaleX + currentEntities.at(0).scale.x && scaleX) { 
       for(int i = 0; i < currentEntities.size(); i++) {
          //Get entity at index i
          temp = currentEntities.at(i);
@@ -415,7 +415,7 @@ void scaleSelectedEntityY(float scaleY) {
    Entity temp;
 
    //If change is within range
-   if(SCALE_MIN < scaleY + currentEntities.at(0).scale.y && scaleY + currentEntities.at(0).scale.y <= SCALE_MAX) { 
+   if(SCALE_MIN < scaleY + currentEntities.at(0).scale.y) { 
       for(int i = 0; i < currentEntities.size(); i++) {
          //Get entity at index i
          temp = currentEntities.at(i);
@@ -432,7 +432,7 @@ void scaleSelectedEntityZ(float scaleZ) {
    Entity temp;
 
    //If change is within range
-   if(SCALE_MIN < scaleZ + currentEntities.at(0).scale.z && scaleZ + currentEntities.at(0).scale.z <= SCALE_MAX) { 
+   if(SCALE_MIN < scaleZ + currentEntities.at(0).scale.z) { 
       for(int i = 0; i < currentEntities.size(); i++) {
          //Get entity at index i
          temp = currentEntities.at(i);
@@ -451,7 +451,7 @@ void scaleSelectedEntity(glm::vec3 toScale) {
 
    //If change is within range
    //Currently using x as measure b/c everything is uniformly scaled right now
-   if(SCALE_MIN < toScale.x + currentEntities.at(0).scale.x && toScale.x + currentEntities.at(0).scale.x <= SCALE_MAX) { 
+   if(SCALE_MIN < toScale.x + currentEntities.at(0).scale.x) { 
       for(int i = 0; i < currentEntities.size(); i++) {
          //Get entity at index i
          temp = currentEntities.at(i);
