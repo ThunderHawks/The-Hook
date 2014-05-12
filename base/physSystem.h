@@ -28,5 +28,6 @@ int isGrappleActive();
 void physJump();
 int canMove();
 float physGetHeight(float x, float y);
+void holdGrapple(int i);
 
 #endif

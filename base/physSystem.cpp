@@ -25,6 +25,7 @@ float curXsp,curYsp,curZsp;
 int playerGrappleActive = 0;
 int playerFall = 1;
 int playerJump = 1;
+int hold = 0;
 
 vector<btRigidBody*> getVecList(){
    return btobjes;
@@ -209,16 +210,20 @@ void physGrapplePoint(){
    dist = targ.y>0?dist:dist/1.4;
    //
    player->setLinearVelocity(btVector3(targ.x,targ.y/dist,targ.z));
-   if(dist<1.1 && !getPressed('E')){
+   if(dist<1.1 && !hold){
       if(flip==0){
          flip = 1;
          printf("pls rotate camera to normal of building\n");
 //         rotateCamera(pi);
       }
+      playerJump = 1;
       playerGrappleActive=0;
-      setPlayerSpeed(0,10,0);
+      //setPlayerSpeed(0,10,0);
       printf("reset\n");
    }
+}
+void holdGrapple(int h){
+   hold = h;
 }
 void physSetDisplayObj(btRigidBody* phys, void *obj){
    phys->setUserPointer(obj);

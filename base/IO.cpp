@@ -81,6 +81,10 @@ void glfwPlayMouse(GLFWwindow *window, int button, int action, int mods) {
       PlayFX(THROW_GRAP_FX);
       glm::vec3 dir = GetLookAt()-GetEye();
       physGrapple(-dir.x,-dir.y,-dir.z);
+      holdGrapple(1);
+   }
+   if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
+      holdGrapple(0);
    }
    else if(button == GLFW_MOUSE_BUTTON_RIGHT) {
       rTgl = !rTgl;

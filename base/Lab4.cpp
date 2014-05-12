@@ -155,7 +155,7 @@ void drawEntities() {
       SetMaterial(mat);
       if(!getPressed('V')) PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
    }
-   if(hit == 1 && getDistance()<6) addDistance(-.18); //zoom in if hit
+   if(hit == 1 && getDistance()>6) addDistance(-.18); //zoom in if hit
    else if(getDistance()<20 && hit==0) addDistance(.14); //zoom out if not hit and zoomed in
 //   if (getDistance()<6) setDistance(6);//minimum zoom
    resetVecs();
@@ -180,6 +180,7 @@ void drawEntities() {
     sizer=0;
    }
    if(cool) sizer+=.16;
+   if(getDistance()<2)setDistance(2);
 }
 
 //Bool that returns true if game is paused
@@ -252,15 +253,22 @@ void glfwDraw (GLFWwindow *window)
    glDisable(GL_CULL_FACE);
 
    //Draw Cubes, ??????????
-   SetupCube(plsRndr().getX(),plsRndr().getY(),plsRndr().getZ(),5,60,1,1,1);
-   for(float i=.05;i<1;i+=.0075){
-      srand(physGetPlayerX());
-      float x = physGetPlayerX()*(1-i)+grapplingHookLocation().x*i;
-      float y = physGetPlayerY()*(1-i)*(1-i)+grapplingHookLocation().y*i*i;
-      float z = physGetPlayerZ()*(1-i)+grapplingHookLocation().z*i;
-      SetupCube(x,y,z,5,rand()/300.0,.15,.15,.15);
+   if(isGrappleActive()){
+      SetupCube(plsRndr().getX(),plsRndr().getY(),plsRndr().getZ(),5,60,1,1,1);
+      for(float i=.05;i<1;i+=.0075){
+         srand(physGetPlayerX());
+         float y;
+         if(physGetPlayerY()>grapplingHookLocation().y){
+            y = physGetPlayerY()*(1-i)+grapplingHookLocation().y*(i);
+         }
+         else{
+            y = physGetPlayerY()*(1-i*i)+grapplingHookLocation().y*i*i;
+         }
+         float x = physGetPlayerX()*(1-i)+grapplingHookLocation().x*i;
+         float z = physGetPlayerZ()*(1-i)+grapplingHookLocation().z*i;
+         SetupCube(x,y,z,5,rand()/300.0,.15,.15,.15);
+      }
    }
-
    SetMaterial(2);
 
    vector<btRigidBody*> loopable = getVecList();
