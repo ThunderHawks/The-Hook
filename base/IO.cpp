@@ -261,16 +261,14 @@ void glfwGameKeyboard(void) {
    }
    //GLFW_KEY_D
    if(KeysPressed['D']) {
-       if(canMove()==1) setPlayerSpeed(u.x*3,0,u.z*3);
-       else setPlayerSpeed(u.x*3,0,u.z*3);
+       incrementYaw(.08);
 
        //newSpeed.x=newSpeed.x+u.x*3;
        //newSpeed.z=newSpeed.z+u.z*3;
    }
    //GLFW_KEY_A
    if(KeysPressed['A']) {
-        if(canMove()==1) setPlayerSpeed(-u.x*3,0,-u.z*3);
-        else setPlayerSpeed(-u.x*3,0,-u.z*3);
+        incrementYaw(-.08);
        //newSpeed.x=newSpeed.x-u.x*3;
        //newSpeed.z=newSpeed.z-u.z*3;
    }
