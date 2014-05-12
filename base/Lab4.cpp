@@ -380,6 +380,7 @@ int main( int argc, char *argv[] )
 
       glfwSetKeyCallback(window, glfwGameKeyPress);
       glfwSetCursorPosCallback( window, glfwGameGetCursorPos );
+      glfwSetMouseButtonCallback( window, glfwPlayMouse );
 
       glewInit();
       glInitialize(window);

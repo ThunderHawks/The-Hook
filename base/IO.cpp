@@ -70,7 +70,18 @@ void glfwEditMouse(GLFWwindow *window, int button, int action, int mods) {
       }
    }
    else if(button == GLFW_MOUSE_BUTTON_RIGHT) {
+      
       unselectEntity();
+   }
+}
+void glfwPlayMouse(GLFWwindow *window, int button, int action, int mods) {
+   //If the left button is pressed
+   if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+      PlayFX(THROW_GRAP_FX);
+      physGrapple(w.x,w.y,w.z);
+   }
+   else if(button == GLFW_MOUSE_BUTTON_RIGHT) {
+      
    }
 }
 
@@ -268,9 +279,7 @@ void glfwGameKeyboard(void) {
       KeysPressed['F']=0;
    }
    if(KeysPressed['E']){
-      PlayFX(THROW_GRAP_FX);
-//      if(KeysPressed['E']==1){
-      physGrapple(w.x,w.y,w.z);
+      
          //KeysPressed['E']=2;
   //    }
       //else physGrapplePoint();

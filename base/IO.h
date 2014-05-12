@@ -24,4 +24,5 @@ void glfwGameKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
 //Returns bool of char pressed
 int getPressed(char ch);
 
+void glfwPlayMouse(GLFWwindow *window, int button, int action, int mods);
 #endif
