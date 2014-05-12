@@ -196,7 +196,7 @@ void physGrapplePoint(){
    //
    dist/=5;
    dist = dist>1?dist:1;
-   dist = targ.y>0?dist:1;
+   dist = targ.y>0?dist:dist/1.4;
    //
    player->setLinearVelocity(btVector3(targ.x,targ.y/dist,targ.z));
    if(dist<1.1 && !getPressed('E')){
