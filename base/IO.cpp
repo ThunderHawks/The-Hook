@@ -95,7 +95,7 @@ void glfwEditScroll(GLFWwindow *window, double xOffset, double yOffset) {
          scaleSelectedEntityY(yOffset * 0.05);
       }
       //Else uniformly scaled
-      else {
+      else if(!KeysPressed['Z'] && !KeysPressed['X'] && !KeysPressed['C']){
          scaleSelectedEntity(glm::vec3(yOffset * 0.05, yOffset * 0.05, yOffset * 0.05));
       }
    }
@@ -115,7 +115,7 @@ void glfwEditScroll(GLFWwindow *window, double xOffset, double yOffset) {
       }
    }
    //If the change will be in range
-   else if(getDistance() + yOffset * 0.1 <= 30.0 && getDistance() + yOffset * 0.1 >= 1.0) {
+   else if(getDistance() + yOffset * 0.1 <= 70.0 && getDistance() + yOffset * 0.1 >= 1.0) {
       //If l-shift increment by a tiny amount
       if(KeysPressed[340] == 1) {
          addDistance(0.1 * yOffset);
