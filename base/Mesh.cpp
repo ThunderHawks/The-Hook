@@ -47,10 +47,13 @@ draws the model :D AWW YEAH!
 
 Output: YOU GET NOTHING!
 ******************************************************************************/
-void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle) {
+void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle, float rad) {
    mat4 Mod = SetModel(locx, locy, locz, sx, sy, sz, angle);
    
-   if (checkViewFrustum (glm::vec3 (0,0,0), 0, curProj*curView*Mod) == 0) {
+   if (rad < 0)
+   	printf("rad: %f\n", rad);
+   
+   if (checkViewFrustum (glm::vec3 (0,0,0), rad, curProj*curView*Mod) == 0) {
 		//safe_glEnableVertexAttribArray(h_aPosition);
 		glEnableVertexAttribArray(h_aPosition);
 		glBindBuffer(GL_ARRAY_BUFFER, mesh.PositionHandle);
