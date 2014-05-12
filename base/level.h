@@ -13,7 +13,7 @@
 using namespace std;
 
 #define SCALE_MIN 0.0
-#define SCALE_MAX 15.0
+#define SCALE_MAX 30.0
 
 //Structure used to represent models in the world
 struct Entity {
@@ -46,6 +46,8 @@ void unselectEntity();
 int changeDupNumBy(int toChange);
 //Determines if entities are currently selected, if false DO NOT draw currentEntities
 bool areEntitiesSelected();
+//Force radius changes
+void forceRadius();
 //Changes the x scale of the selected entity
 void scaleSelectedEntityX(float scaleX);
 //Changes the y scale of the selected entity

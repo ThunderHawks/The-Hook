@@ -53,6 +53,8 @@ void initLevelLoader() {
    mesh[13] = LoadMesh("../Assets/Models/halfSlab.obj"); //1h 5d 5w
    mesh[14] = LoadMesh("../Assets/Models/mart.obj"); //1h 5d 5w
    mesh[15] = LoadMesh("../Assets/Models/flag.obj"); //10h 1d 7w
+   mesh[16] = LoadMesh("../Assets/Models/asymBldg.obj"); //10h 1d 7w
+   mesh[17] = LoadMesh("../Assets/Models/pointyBldg.obj"); //10h 1d 7w
 
    //Load hotbar options
    //Basic Blg
@@ -103,6 +105,12 @@ void initLevelLoader() {
    //Flag
    entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 15);
    hotBar[15] = entity;
+   //AsymbBldg
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.1, 0.1, 0.1), 0.0, 16);
+   hotBar[16] = entity;
+   //PointyBldg
+   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.1, 0.1, 0.1), 0.0, 17);
+   hotBar[17] = entity;
 
    //Load into current index to prevent segfault. Doesn't appear.
    selectAtHotBarIndex(0);
@@ -152,6 +160,7 @@ void loadLevel(string fileName){
       infile >> tempEntity.scale.z;
       //Read BSRadius
       infile >> tempEntity.BSRadius;
+      //printf("the radius is %f\n",tempEntity.BSRadius);
       //Read meshIndex
       infile >> tempEntity.meshIndex;
       //SetMeshPointer
@@ -161,12 +170,28 @@ void loadLevel(string fileName){
       infile >> tempEntity.phyScale.y;
       infile >> tempEntity.phyScale.z;
       //printf("%f,%f,%f,%f,%f,%f\n",tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,tempEntity.scale.x,tempEntity.scale.y,tempEntity.scale.z);
-//    createStaticBox(float posX,float posY,float posZ,
+//    createStaticBox(float posX,float posY,float posZ, (this is actually rotating)
                //     float scaleX,float scaleY,float scaleZ,
             //        btQuaternion rotation,float mass,float ix,float iy,float iz)
+      if(!(tempEntity.angle>-10&&tempEntity.angle<10||tempEntity.angle>170&&tempEntity.angle<190)){
+         float tem = tempEntity.phyScale.x;
+         tempEntity.phyScale.x = tempEntity.phyScale.z;
+         tempEntity.phyScale.z = tem;
+         tem = tempEntity.scale.x;
+         tempEntity.scale.x = tempEntity.scale.z;
+         tempEntity.scale.z = tem;
+      }
       tempEntity.btPhys = createStaticBox(tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,
-                                          tempEntity.scale.x*tempEntity.phyScale.x*.5,tempEntity.scale.y*tempEntity.phyScale.y*.55,tempEntity.scale.z*tempEntity.phyScale.z*.5,
+                                          tempEntity.scale.x*tempEntity.phyScale.x*.5,tempEntity.scale.y*tempEntity.phyScale.y*.5,tempEntity.scale.z*tempEntity.phyScale.z*.5,
                                           btQuaternion(0,0,0,1),0,0,0,0);
+      if(!(tempEntity.angle>-10&&tempEntity.angle<10||tempEntity.angle>170&&tempEntity.angle<190)){
+         float tem = tempEntity.phyScale.x;
+         tempEntity.phyScale.x = tempEntity.phyScale.z;
+         tempEntity.phyScale.z = tem;
+         tem = tempEntity.scale.x;
+         tempEntity.scale.x = tempEntity.scale.z;
+         tempEntity.scale.z = tem;
+      }
       
       //Store entity into "entities" vector
       entities.push_back(tempEntity);
@@ -232,12 +257,21 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
       case 15:
          entity.phyScale = glm::vec3(10, 1, 7);
          break;
+      case 16:
+         entity.phyScale = glm::vec3(500, 140, 140);
+         break;
+      case 17:
+         entity.phyScale = glm::vec3(825, 150, 150);
+         break;
       //h w d
       //x y z
    }
    float temp = entity.phyScale.y;
    entity.phyScale.y = entity.phyScale.x;
    entity.phyScale.x = temp;
+   entity.BSRadius = sqrt( pow(entity.scale.x * entity.phyScale.x, 2.0) + pow(entity.scale.y * entity.phyScale.y, 2.0) + pow(entity.scale.z * entity.phyScale.z, 2.0));
+   //entity.BSRadius = 2*sqrt(entity.phyScale.x*entity.phyScale.x+entity.phyScale.y*entity.phyScale.y+entity.phyScale.z*entity.phyScale.z);
+   //printf("this is radius %f\n", 2*sqrt(entity.phyScale.x*entity.phyScale.x+entity.phyScale.y*entity.phyScale.y+entity.phyScale.z*entity.phyScale.z));
    return entity;
 }
 
@@ -299,6 +333,12 @@ void selectAtHotBarIndex(int index) {
       case 15:
          setDistance(10.0);
          break;
+      case 16:
+         setDistance(50.0);
+         break;
+      case 17:
+         setDistance(50.0);
+         break;
     }
 }
 
@@ -353,6 +393,17 @@ void scaleSelectedEntityX(float scaleX) {
          //Replace
          currentEntities[i] = temp;
       }
+   }
+}
+
+//Force radius changes
+void forceRadius() {
+   Entity temp;
+
+   for(int i = 0; i < entities.size(); i++) {
+      temp = entities[i];
+      temp.BSRadius = sqrt( pow(temp.scale.x * temp.phyScale.x, 2.0) + pow(temp.scale.y * temp.phyScale.y, 2.0) + pow(temp.scale.z * temp.phyScale.z, 2.0));
+      entities[i] = temp;       
    }
 }
 

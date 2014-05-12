@@ -4,9 +4,12 @@
 #include "glm/glm.hpp"
 
 extern GLint h_uViewMatrix;
+extern GLint h_uLightViewMatrix;
 
 /*Sends the view matrix to the shader and returns it*/
 glm::mat4 SetView();
+/*Set the view matrix and light's view matrix to the shader and returns it*/
+glm::mat4 SetShadowView();
 /*Returns the a vec3 of the Eye*/
 glm::vec3 GetEye();
 /*Sets the eye to a new vec3 and returns it's new location*/

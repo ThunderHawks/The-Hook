@@ -95,7 +95,7 @@ void glfwEditScroll(GLFWwindow *window, double xOffset, double yOffset) {
          scaleSelectedEntityY(yOffset * 0.05);
       }
       //Else uniformly scaled
-      else {
+      else if(!KeysPressed['Z'] && !KeysPressed['X'] && !KeysPressed['C']){
          scaleSelectedEntity(glm::vec3(yOffset * 0.05, yOffset * 0.05, yOffset * 0.05));
       }
    }
@@ -115,7 +115,7 @@ void glfwEditScroll(GLFWwindow *window, double xOffset, double yOffset) {
       }
    }
    //If the change will be in range
-   else if(getDistance() + yOffset * 0.1 <= 30.0 && getDistance() + yOffset * 0.1 >= 1.0) {
+   else if(getDistance() + yOffset * 0.1 <= 70.0 && getDistance() + yOffset * 0.1 >= 1.0) {
       //If l-shift increment by a tiny amount
       if(KeysPressed[340] == 1) {
          addDistance(0.1 * yOffset);
@@ -251,12 +251,12 @@ void glfwGameKeyboard(void) {
    }
    ///setPlayerSpeed(newSpeed.x,newSpeed.y,newSpeed.z);
    //GLFW_KEY_SPACE
-   if(KeysPressed[' ']&&physGetPlayerY()<1.3) {
+   if(KeysPressed[' ']) {
 //      setPlayerSpeed(0,4,0);
-      KeysPressed[' ']=0;
-      printf("Space is not implemented!\n");
+      //KeysPressed[' ']=0;
+      //printf("Space is not implemented!\n");
       physJump();
-      PlayFX(JUMP_FX);
+      //PlayFX(JUMP_FX);
    }
    //GLFW_KEY_Q
    if(KeysPressed['Q']) {
@@ -292,8 +292,12 @@ void glfwEditKeyboard(void) {
   w = gaze/magnitude(gaze);
   w = glm::vec3(-1.0 * w.x, -1.0 * w.y, -1.0 * w.z);
   u = glm::cross(GetUp(), w)/magnitude(glm::cross(GetUp(), w));
+   //Force radius
+   if(KeysPressed[341] && KeysPressed['Z'] && KeysPressed['S']) {
+      forceRadius();
+   }
    //GLFW_KEY_LEFTCONTROL + GLFW_KEY_Leftcontrol + 'S'
-   if(KeysPressed[341] && KeysPressed['S'] && KeysPressed[341]) {
+   else if(KeysPressed[341] && KeysPressed['S'] && KeysPressed[341]) {
       string toSave;
       pauseorUnpause();
       printf("Enter a string to have this world saved (don't include .wub, type 'none' to abort save):\n");
@@ -397,11 +401,21 @@ void glfwEditKeyboard(void) {
    }
    //GLFW_KEY_7
    if(KeysPressed['7']) {
-      selectAtHotBarIndex(7);
+      if(KeysPressed[340]) {
+         selectAtHotBarIndex(16);  
+      }
+      else {
+         selectAtHotBarIndex(7);
+      }
    }
    //GLFW_KEY_8
    if(KeysPressed['8']) {
-      selectAtHotBarIndex(8);
+      if(KeysPressed[340]) {
+         selectAtHotBarIndex(17);  
+      }
+      else {
+         selectAtHotBarIndex(8);
+      }
    }
    //GLFW_KEY_9
    if(KeysPressed['9']) {
