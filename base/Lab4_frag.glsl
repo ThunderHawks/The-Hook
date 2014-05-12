@@ -47,8 +47,10 @@ void main() {
    else
       color = uLColor * uMat.dColor * 0.2;
    // Test if the fragment is in a shadow
-   if (depth < dist && dist < 1.0 && angleNL != 0.0)
+   if (depth < dist && dist < 1.0 && abs(angleNL) >= 0.01)
       color *= 0.3;
+   else if (abs(angleNL) < 0.01)
+      color *= 0.65;
 
    // Specular lighting
    if (angleVR > 0.95 && uMat.shine >= 100.0)
