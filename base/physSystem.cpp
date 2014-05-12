@@ -23,6 +23,8 @@ Mesh chara;
 glm::vec3 lookAt;
 float curXsp,curYsp,curZsp;
 int playerGrappleActive = 0;
+int playerFall = 1;
+int playerJump = 1;
 
 vector<btRigidBody*> getVecList(){
    return btobjes;
@@ -74,7 +76,7 @@ void physicsInit() {
 
    //player
 //   printf("%d is pl point\n",player);
-   player = createStaticSphere(1,1,1,1,1,1,btQuaternion(0,0,0,1),1,0,0,0);
+   player = createStaticSphere(1,1,1,1.7,1,1,btQuaternion(0,0,0,1),1,0,0,0);
    
    player->setSleepingThresholds (0, 0);
    chara = LoadMesh("../Assets/Models/topHatChar.obj");
@@ -170,7 +172,13 @@ void physGrapple(float lx,float ly,float lz){
    }
 }
 void physJump(){
-   setPlayerSpeed(0,8,0);
+   printf("boing!\n");
+   if(playerJump==1){
+      setPlayerSpeed(0,8,0);
+      printf("boing!!!\n");
+      playerJump=0;
+      playerFall = 0;
+   }
 }
 
 int isGrappleActive(){
@@ -218,6 +226,8 @@ void physStep(){
    AsetPlayerSpeed(curXsp,curYsp,curZsp);
    //printf("%f %f %f speeds\n",curXsp,curYsp,curZsp);
    curXsp=curYsp=curZsp=0;
+   btVector3 pVec = player->getLinearVelocity();
+   float fspeed = pVec.getY();
    float x,y,z;
    x = physGetPlayerX();
    y = physGetPlayerY();
@@ -228,10 +238,16 @@ void physStep(){
    if(playerGrappleActive) physGrapplePoint();
    //printf("a\n");
    dynamicsWorld->stepSimulation(1/60.f,10);
-
-   if(physGetPlayerY()-y>-.1 && physGetPlayerY()-y<.1){
-      printf("resetJump!\n");
+   printf("fall %f %f\n",fspeed,player->getLinearVelocity().getY());
+   if(fspeed<-8 && player->getLinearVelocity().getY()<-8){
+      playerFall = 1;
    }
+   if(player->getLinearVelocity().getY()*player->getLinearVelocity().getY()<.0001 &&
+      fspeed*fspeed>.0001 && playerFall==1){
+      playerJump = 1;
+      printf("can boing\n");
+   }
+   
    //NOT SURE IF NEEDED
    //ColCallback.resetDetector();
    //printf("b\n");

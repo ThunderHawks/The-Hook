@@ -251,12 +251,12 @@ void glfwGameKeyboard(void) {
    }
    ///setPlayerSpeed(newSpeed.x,newSpeed.y,newSpeed.z);
    //GLFW_KEY_SPACE
-   if(KeysPressed[' ']&&physGetPlayerY()<1.3) {
+   if(KeysPressed[' ']) {
 //      setPlayerSpeed(0,4,0);
-      KeysPressed[' ']=0;
-      printf("Space is not implemented!\n");
+      //KeysPressed[' ']=0;
+      //printf("Space is not implemented!\n");
       physJump();
-      PlayFX(JUMP_FX);
+      //PlayFX(JUMP_FX);
    }
    //GLFW_KEY_Q
    if(KeysPressed['Q']) {
