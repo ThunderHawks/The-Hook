@@ -30,15 +30,17 @@ ShadowMap::~ShadowMap() {
 
 int ShadowMap::MakeShadowMap(int width, int height) {
    int isSuccessful = 0;
-
+   float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  
    // Create the depth texture
    glGenTextures(1, &DepthTex);
    glBindTexture(GL_TEXTURE_2D, DepthTex);
-   glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+   glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
    // Create a frame buffer and attach the depth texture to it
    glGenFramebuffersEXT(1, &FrameBuf);
@@ -64,18 +66,22 @@ void ShadowMap::BindFBO() {
    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER, FrameBuf);
 }
 
-void ShadowMap::BindDepthTex(int texUnit) {
-   glActiveTexture(texUnit);
+void ShadowMap::UnbindFBO() {
+   glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER, 0);
+}
+
+void ShadowMap::BindDepthTex() {
    glBindTexture(GL_TEXTURE_2D, DepthTex);
 }
 
-void ShadowMap::UnbindFBO() {
-   glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
+void ShadowMap::UnbindDepthTex() {
+   glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-glm::mat4 SetOrthoProjectionMatrix() {
-   glm::mat4 orthoProj = glm::ortho(-10.f, 10.f, -10.f, 10.f, -10.f, 20.f);
+glm::mat4 SetOrthoProjectionMatrix(float dist) {
+   glm::mat4 orthoProj = glm::ortho(-50.f, 50.f, -50.f, 30.f, dist - 50.f, dist + 50.f);
    safe_glUniformMatrix4fv(h_uProjMatrix, glm::value_ptr(orthoProj));
+   safe_glUniformMatrix4fv(h_uLightProjMatrix, glm::value_ptr(orthoProj));
    return orthoProj;
 }
 

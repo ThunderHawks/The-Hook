@@ -50,8 +50,8 @@ Output: YOU GET NOTHING!
 void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle, float rad) {
    mat4 Mod = SetModel(locx, locy, locz, sx, sy, sz, angle);
    
-   if (rad < 0)
-   	printf("rad: %f\n", rad);
+   //if (rad < 0)
+   	//printf("rad: %f\n", rad);
    
    if (checkViewFrustum (glm::vec3 (0,0,0), rad, curProj*curView*Mod) == 0) {
 		//safe_glEnableVertexAttribArray(h_aPosition);

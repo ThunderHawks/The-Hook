@@ -51,6 +51,14 @@ glm::mat4 SetView() {
    return view;
 }
 
+/* Set the view matrix and light's view matrix to the shader */
+glm::mat4 SetShadowView() {
+   glm::mat4 view = glm::lookAt(eye, lookAtPoint, up);
+   safe_glUniformMatrix4fv(h_uViewMatrix, glm::value_ptr(view));
+   safe_glUniformMatrix4fv(h_uLightViewMatrix, glm::value_ptr(view));
+   return view;
+}
+
 /*Returns the a vec3 of the Eye*/
 glm::vec3 GetEye() {
 	return eye;

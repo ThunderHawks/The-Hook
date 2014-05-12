@@ -16,6 +16,7 @@ extern GLint h_uCamPos, h_uShadeMode;
 extern GLint h_uModelMatrix;
 extern RenderingHelper ModelTrans;
 extern GLint h_aTexCoord, h_uTexUnit;  
+extern GLint h_uLightViewMatrix, h_uLightProjMatrix;
 
 class ShadowMap {
 public:
@@ -23,12 +24,13 @@ public:
    ~ShadowMap();
    int MakeShadowMap(int width, int height);
    void BindFBO();
-   void BindDepthTex(int texUnit);
    void UnbindFBO();
+   void BindDepthTex();
+   void UnbindDepthTex();
 
 private:
    GLuint FrameBuf;
    GLuint DepthTex;
 };
 
-glm::mat4 SetOrthoProjectionMatrix();
+glm::mat4 SetOrthoProjectionMatrix(float dist);

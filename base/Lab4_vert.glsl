@@ -8,24 +8,29 @@ struct Material {
 uniform mat4 uProjMatrix;
 uniform mat4 uViewMatrix;
 uniform mat4 uModelMatrix;
-uniform vec4 uLightVec;
-uniform vec3 uLColor;
-uniform Material uMat;
+uniform mat4 uLightProjMatrix;
+uniform mat4 uLightViewMatrix;
 
 attribute vec3 aPosition;
 attribute vec3 aNormal;
 
 varying vec3 vNorm;
 varying vec3 vPos;
+varying vec4 vShadowPos;
 
 void main() {
-   vec4 vPosition;
    vec4 transPos, transNormal;
+   mat4 VMNDCtoTex = mat4(0.38, 0.0, 0.0, 0.0,
+                          0.0, 0.485, 0.0, 0.0,
+                          0.0, 0.0, 0.5, 0.0,
+                          0.38, 0.485, 0.5, 1.0);
+   mat4 NDCtoTex = mat4(0.5, 0.0, 0.0, 0.0,
+                        0.0, 0.5, 0.0, 0.0,
+                        0.0, 0.0, 0.5, 0.0,
+                        0.5, 0.5, 0.5, 1.0);
 
    /* First model transforms */
-   vPosition = uModelMatrix * vec4(aPosition.x, aPosition.y, aPosition.z, 1);
-   vPosition = uViewMatrix * vPosition;
-   gl_Position = uProjMatrix * vPosition;
+   gl_Position = uProjMatrix * uViewMatrix * uModelMatrix * vec4(aPosition, 1);;
   
    /* Calculating transformed position and normal */
    transPos = uModelMatrix * vec4(aPosition, 1);
@@ -34,4 +39,6 @@ void main() {
    /* Interpolate the position and normal and send to the fragment shader */
    vNorm = vec3(transNormal.x, transNormal.y, transNormal.z);
    vPos = vec3(transPos.x, transPos.y, transPos.z);
+   /* Vertex location in light space */
+   vShadowPos = NDCtoTex * uLightProjMatrix * uLightViewMatrix * transPos;
 }

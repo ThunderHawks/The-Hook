@@ -55,7 +55,8 @@ void physicsInit() {
    /*btDiscreteDynamicsWorld* */dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,broadphase,solver,collisionConfiguration);
    //end of bullet setup   
 //   dynamicsWorld->setGravity(btVector3(0,-15,0));
-   dynamicsWorld->setGravity(btVector3(0,-30,0));
+//   dynamicsWorld->setGravity(btVector3(0,-30,0));
+   dynamicsWorld->setGravity(btVector3(0,-90,0));
 
    //shapes
    btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0,1,0),1);//1m up (y=1)
@@ -174,7 +175,7 @@ void physGrapple(float lx,float ly,float lz){
 void physJump(){
    printf("boing!\n");
    if(playerJump==1){
-      setPlayerSpeed(0,8,0);
+      setPlayerSpeed(0,16,0);
       printf("boing!!!\n");
       playerJump=0;
       playerFall = 0;
