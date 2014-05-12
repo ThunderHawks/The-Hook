@@ -13,7 +13,6 @@
 using namespace std;
 
 #define SCALE_MIN 0.0
-#define SCALE_MAX 30.0
 
 //Structure used to represent models in the world
 struct Entity {

@@ -10,6 +10,7 @@ uniform vec3 uLColor;
 uniform vec3 uCamPos;
 uniform sampler2D uTexUnit;
 uniform Material uMat;
+uniform int uShadeMode;
 
 varying vec3 vNorm; 
 varying vec3 vPos;
@@ -47,8 +48,10 @@ void main() {
    else
       color = uLColor * uMat.dColor * 0.2;
    // Test if the fragment is in a shadow
-   if (depth < dist && dist < 1.0 && angleNL != 0.0)
-      color *= 0.3;
+   if (uShadeMode == 0) {
+      if (depth < dist && dist < 1.0 && abs(angleNL) >= 0.01)
+         color *= 0.3;
+   }
 
    // Specular lighting
    if (angleVR > 0.95 && uMat.shine >= 100.0)
@@ -64,6 +67,7 @@ void main() {
    //color = (uLColor * uMat.dColor) + (uLColor * uMat.sColor * angleVR) + (uLColor * uMat.aColor);   
 
    gl_FragColor = vec4(color, 1.0);
+//   gl_FragColor = vec4(uShadeMode,uShadeMode,0, 1.0);
    //gl_FragColor = vec4(norm, 1.0);
    //gl_FragColor = vec4(depth, depth, depth, 1.0);
    //gl_FragColor = vec4(dist, dist, dist, 1.0);

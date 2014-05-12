@@ -70,7 +70,19 @@ void glfwEditMouse(GLFWwindow *window, int button, int action, int mods) {
       }
    }
    else if(button == GLFW_MOUSE_BUTTON_RIGHT) {
+      
       unselectEntity();
+   }
+}
+void glfwPlayMouse(GLFWwindow *window, int button, int action, int mods) {
+   //If the left button is pressed
+   if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+      PlayFX(THROW_GRAP_FX);
+      glm::vec3 dir = GetLookAt()-GetEye();
+      physGrapple(-dir.x,-dir.y,-dir.z);
+   }
+   else if(button == GLFW_MOUSE_BUTTON_RIGHT) {
+      
    }
 }
 
@@ -225,27 +237,32 @@ void glfwGameKeyboard(void) {
   u = glm::cross(GetUp(), w)/magnitude(glm::cross(GetUp(), w));
    //GLFW_KEY_S
    if(KeysPressed['S']) {
-       setPlayerSpeed(w.x*3,0,w.z*3);
+       if(canMove()==1) setPlayerSpeed(w.x*3,0,w.z*3);
+       else setPlayerSpeed(w.x*1,0,w.z*1);
        //newSpeed.x=newSpeed.x+w.x*3;
        //newSpeed.z=newSpeed.z+w.z*3;
    }
    //GLFW_KEY_W
    if(KeysPressed['W']) {
    	 printf("%lf %lf %lf\n", GetEye().x, GetEye().y, GetEye().z);
-       setPlayerSpeed(-w.x*3,0,-w.z*3);
+       if(canMove()==1) setPlayerSpeed(-w.x*3,0,-w.z*3);
+       else setPlayerSpeed(-w.x*1,0,-w.z*1);
        //newSpeed.x=newSpeed.x-w.x*3;
        //newSpeed.z=newSpeed.z-w.z*3;
        printf("%lf %lf %lf\n", GetEye().x, GetEye().y, GetEye().z);
    }
    //GLFW_KEY_D
    if(KeysPressed['D']) {
-       setPlayerSpeed(u.x*3,0,u.z*3);
+       if(canMove()==1) setPlayerSpeed(u.x*3,0,u.z*3);
+       else setPlayerSpeed(u.x*1,0,u.z*1);
+
        //newSpeed.x=newSpeed.x+u.x*3;
        //newSpeed.z=newSpeed.z+u.z*3;
    }
    //GLFW_KEY_A
    if(KeysPressed['A']) {
-        setPlayerSpeed(-u.x*3,0,-u.z*3);
+        if(canMove()==1) setPlayerSpeed(-u.x*3,0,-u.z*3);
+        else setPlayerSpeed(-u.x*3,0,-u.z*3);
        //newSpeed.x=newSpeed.x-u.x*3;
        //newSpeed.z=newSpeed.z-u.z*3;
    }
@@ -268,9 +285,7 @@ void glfwGameKeyboard(void) {
       KeysPressed['F']=0;
    }
    if(KeysPressed['E']){
-      PlayFX(THROW_GRAP_FX);
-//      if(KeysPressed['E']==1){
-      physGrapple(w.x,w.y,w.z);
+      
          //KeysPressed['E']=2;
   //    }
       //else physGrapplePoint();
@@ -281,6 +296,14 @@ void glfwGameKeyboard(void) {
 			pauseBackground();
 			
       KeysPressed['M']=2;
+   }
+
+   if (KeysPressed['N']) {
+      if (++ShadeMode == 2)
+         ShadeMode = 0;
+      printf("SHADEMODE: %d\n", ShadeMode);
+      glUniform1i(h_uShadeMode, ShadeMode);
+      KeysPressed['N'] = 0;
    }
 }
 
@@ -473,6 +496,10 @@ void glfwGameKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
          if(!KeysPressed['M'])
             KeysPressed['M'] = 1;
          break;
+     case GLFW_KEY_N:
+         if(!KeysPressed['N'])
+            KeysPressed['N'] = 1;
+         break;
      }
    }   
    else if(action == GLFW_RELEASE) {
@@ -503,6 +530,9 @@ void glfwGameKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
          break;
      case GLFW_KEY_M:
          KeysPressed['M'] = 0;
+         break;
+     case GLFW_KEY_N:
+         KeysPressed['N'] = 0;
          break;
      }
    }

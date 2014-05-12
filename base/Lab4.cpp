@@ -163,9 +163,18 @@ void pauseorUnpause() {
 /* Main display function */
 void glfwDraw (GLFWwindow *window)
 {
+   // Disable backface culling for skybox
+   glCullFace(GL_BACK);
+   glDisable(GL_CULL_FACE);
+
+   // Draw skybox
    ModelTrans.loadIdentity();
    DrawSkyBox();
    SetModelStat();
+
+   // Enable backface culling
+   glCullFace(GL_BACK);
+   glEnable(GL_CULL_FACE);
 
    safe_glEnableVertexAttribArray(h_aPosition);
    safe_glEnableVertexAttribArray(h_aNormal);
@@ -239,7 +248,14 @@ void glfwDraw (GLFWwindow *window)
 void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    glm::vec3 origEye = GetEye();
    glm::vec3 origLookAt = GetLookAt();
-
+   /*
+   static int count = 0;
+   if (++count > 1000) {
+      if (++ShadeMode == 2)
+         ShadeMode = 0;
+      glUniform1i(h_uShadeMode, ShadeMode);
+   }
+*/
    glUseProgram(ShadeProg);
 
    // Specify texture unit
@@ -249,16 +265,16 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    
    // Set light uniforms
    glUniform3f(h_uLightColor, 0.4, 0.4, 0.38);
-   glUniform4f(h_uLightVec, 0.0, 1.0, 1.0, 0.0);
+   glUniform4f(h_uLightVec, 0.0, 3.0, 4.0, 0.0);
 
    // Render depth info from light's perspective
    shadowMap->BindFBO();
    glClear(GL_DEPTH_BUFFER_BIT);
-   SetEye(glm::vec3(origLookAt.x, 20.0, origLookAt.z + 20.0));
+   SetEye(glm::vec3(origLookAt.x, 6.0, origLookAt.z + 8.0));
    SetLookAt(glm::vec3(origLookAt.x, 0.0, origLookAt.z));
    curView = SetShadowView();
-   curProj = SetOrthoProjectionMatrix(1.4 * 20.0);
-   glUniform3f(h_uCamPos, 0.0, 1.0, 1.0);
+   curProj = SetOrthoProjectionMatrix(10.0);
+   glUniform3f(h_uCamPos, 0.0, 3.0, 4.0);
    glfwDraw(window);
    shadowMap->UnbindFBO();
 
@@ -380,6 +396,7 @@ int main( int argc, char *argv[] )
 
       glfwSetKeyCallback(window, glfwGameKeyPress);
       glfwSetCursorPosCallback( window, glfwGameGetCursorPos );
+      glfwSetMouseButtonCallback( window, glfwPlayMouse );
 
       glewInit();
       glInitialize(window);
@@ -391,6 +408,8 @@ int main( int argc, char *argv[] )
       //music
       SetBackground("../Assets/Sounds/cityMain.mp3");
    }
+
+   glUniform1i(h_uShadeMode, 0);
 
    ShadowMap *shadowMap = new ShadowMap();
    if (shadowMap->MakeShadowMap(g_width, g_height) == -1) {

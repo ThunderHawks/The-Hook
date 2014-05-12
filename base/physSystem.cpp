@@ -38,7 +38,7 @@ void setPlayerSpeed(float x, float y, float z){
 void AsetPlayerSpeed(float x, float y, float z){
 //   printf("%f %f %f speedy\n",30*x,30*y,30*z);
    if(!playerGrappleActive)
-      player->setLinearVelocity(btVector3(2*x+player->getLinearVelocity().getX()*.8,2*y+player->getLinearVelocity().getY(),2*z+player->getLinearVelocity().getZ()*.8));
+      player->setLinearVelocity(btVector3(2*x+player->getLinearVelocity().getX()*(playerJump?.8:.8),2*y+player->getLinearVelocity().getY(),2*z+player->getLinearVelocity().getZ()*(playerJump?.8:.8)));
   // player->clearForces();
 //   player->applyCentralForce(btVector3(x*300,200*y,300*z));
    //btobjes[0]->setLinearVelocity(btVector3(0,1000,0));
@@ -160,6 +160,7 @@ void physGrapple(float lx,float ly,float lz){
    dynamicsWorld->rayTest(btVector3(lookAt.x+3*dir.x,lookAt.y-3*dir.y,lookAt.z+3*dir.z), btVector3(lookAt.x+75*dir.x,lookAt.y-75*dir.y,lookAt.z+75*dir.z), RayCallback);
    //player->setLinearVelocity(btVector3(dir.x*50,dir.y*50,dir.z*50));
    if(RayCallback.hasHit()&& !playerGrappleActive) {
+      playerJump=0;
     //End = RayCallback.m_hitPointWorld;
     //Normal = RayCallback.m_hitNormalWorld;
       //printf("hit!\n");
@@ -195,7 +196,7 @@ void physGrapplePoint(){
    //
    dist/=5;
    dist = dist>1?dist:1;
-   dist = targ.y>0?dist:1;
+   dist = targ.y>0?dist:dist/1.4;
    //
    player->setLinearVelocity(btVector3(targ.x,targ.y/dist,targ.z));
    if(dist<1.1 && !getPressed('E')){
@@ -205,6 +206,7 @@ void physGrapplePoint(){
 //         rotateCamera(pi);
       }
       playerGrappleActive=0;
+      setPlayerSpeed(0,10,0);
       printf("reset\n");
    }
 }
@@ -220,7 +222,9 @@ glm::vec3 grapplingHookLocation(){
    return glm::vec3(tmp.getX(),tmp.getY(),tmp.getZ());
    //return btVector3(lookAt.x+3*dir.x,lookAt.y-3*dir.y,lookAt.z+3*dir.z);
 }
-
+int canMove(){
+   return playerJump;
+}
 void physStep(){
    //player->getX();
    //setPlayerSpeed(2,2,2);
