@@ -58,25 +58,29 @@ void Objective::Init() {
       eZ = rand() % (int)(maxZ - minZ) + minZ;
    } while ((eY = physGetHeight(eX, eZ)) == -1);
    
-   start = glm::vec3(sX, sY, sZ);
-   end = glm::vec3(eX, eY, eZ);
+   start = glm::vec3(sX, sY, sZ+1.7);
+   end = glm::vec3(eX, eY, eZ+1.7);
+   printf("objective starts as %f %f %f",sX,sY,sZ);
+   printf("%f %f %f \n",physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
 }
 
 void Objective::Update(glm::vec3 playerPos) {
-   if (sqrt((playerPos.x-end.x)*(playerPos.x-end.x) + (playerPos.y-end.y)*(playerPos.y-end.y) + (playerPos.z-end.z)*(playerPos.z-end.z)) < 1) {
+   if (sqrt((playerPos.x-end.x)*(playerPos.x-end.x) + (playerPos.z-end.z)*(playerPos.z-end.z)) < 7) {
       active = false;
       score += 20000-time;
       time = 0;
       this->Init();
    }
-   else if (sqrt((playerPos.x-start.x)*(playerPos.x-start.x) + (playerPos.y-start.y)*(playerPos.y-start.y) + (playerPos.z-start.z)*(playerPos.z-start.z)) < 1 && !active) {
+   else if (sqrt((playerPos.x-start.x)*(playerPos.x-start.x) + (playerPos.z-start.z)*(playerPos.z-start.z)) < 7 && !active) {
       active = true;
       time = 0;
    }
    else {
       time++;
    }
-
+   printf("dist start %f\n",sqrt((playerPos.x-start.x)*(playerPos.x-start.x) + (playerPos.y-start.y)*(playerPos.y-start.y) + (playerPos.z-start.z)*(playerPos.z-start.z)));
+   printf("dist end   %f\n",sqrt((playerPos.x-end.x)*(playerPos.x-end.x) + (playerPos.y-end.y)*(playerPos.y-end.y) + (playerPos.z-end.z)*(playerPos.z-end.z)));
+   printf("is active %d\n",active);
 }
 
 

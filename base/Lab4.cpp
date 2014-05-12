@@ -62,9 +62,12 @@ GLuint MeshBuffObj, MeshIndxBuffObj;
 
 //The assimp mesh stuff
 Mesh playerMesh;
+Mesh flag;
 
 /*Do something better with this later. I don't like that it is a global but oh well for now.*/
 glm::mat4 curProj, curView;
+
+vector<Objective*> objectives;
 
 /* projection matrix  - do not change */
 glm::mat4 SetProjectionMatrix() {
@@ -145,7 +148,7 @@ void drawEntities() {
       SetMaterial(mat);
       PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
    }
-   printf("cool? %d %d %f\n",cool,getPressed('B'),cos(sizer));
+   //printf("cool? %d %d %f\n",cool,getPressed('B'),cos(sizer));
    if(getPressed('B')) cool = 1;
    else{
     cool = 0;
@@ -209,7 +212,7 @@ void glfwDraw (GLFWwindow *window)
 
    //DRAW THE DANCING CYLINDER HERE!!
    btTransform pla;
-   PlaceModel(playerMesh, GetLookAt().x, GetLookAt().y - 1, GetLookAt().z, .25, .1, .25, 1, 1.7);
+   //PlaceModel(playerMesh, GetLookAt().x, GetLookAt().y - 1, GetLookAt().z, .25, .1, .25, 1, 1.7);
    //END OF DANCING CYLINDER CODE HERE!!
    SetMaterial(2);
    drawSelectedObjects();
@@ -232,6 +235,17 @@ void glfwDraw (GLFWwindow *window)
    SetMaterial(2);
 
    //draw phys cubes
+   for(int i = 0; i < objectives.size();i++){
+      if(objectives[i]->active){
+         PlaceModel(flag,objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 50, 50, 50, 1, 1.7);
+         SetupCube(objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 5, 60, 10, 50, 10);
+      }
+      else{
+         PlaceModel(flag,objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 50, 50, 50, 1, 1.7);
+         SetupCube(objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 5, 60, 10, 50, 10);
+      }
+   }
+
    vector<btRigidBody*> loopable = getVecList();
    srand(0);
    for(int i = 0;i<loopable.size();i++){
@@ -419,14 +433,15 @@ int main( int argc, char *argv[] )
       //music
       SetBackground("../Assets/Sounds/cityMain.mp3");
    }
-
+   LoadMesh("../Assets/Models/topHatChar.obj");
    ShadowMap *shadowMap = new ShadowMap();
    if (shadowMap->MakeShadowMap(g_width, g_height) == -1) {
       printf("SHADOW MAP FAILED\n");
       exit(EXIT_FAILURE);  
    }
 
-   Objective *objective = new Objective(-42.0, -379.0, 230.0, 67.0);
+   objectives.push_back(new Objective(-42.0, -379.0, 230.0, 67.0));
+   objectives[objectives.size()-1]->Init();
 
    // Start the main execution loop.
    while (!glfwWindowShouldClose(window)) {
@@ -449,6 +464,7 @@ int main( int argc, char *argv[] )
             //Keep the cursor centered
             glfwSetCursorPos(window,g_width/2,g_height/2);         
             physStep();
+            for(int i=0;i<objectives.size();i++) objectives[i]->Update(glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ()));
             //printf("oop%d\n",      getVecList().size());
             //Draw stuff
             renderScene(window, shadowMap);

@@ -8,12 +8,12 @@ public:
    ~Objective();
    void Init();
    void Update(glm::vec3 playerPos);
-   
+
+   bool active;
    glm::vec3 start;
    glm::vec3 end;
    
 private:
    float minX, minZ, maxX, maxZ;
    int time;
-   bool active;
 };

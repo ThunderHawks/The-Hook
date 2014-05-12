@@ -8,8 +8,10 @@ using namespace std;
 
 //All of the meshes
 Mesh mesh[100];
+
 //All entities placed in world
 vector<Entity> entities;
+
 //Hotbar of entities
 Entity hotBar[20];
 //If entities are selected
@@ -118,7 +120,6 @@ void initLevelLoader() {
    entitiesSelected = false;
 }
 
-//Entity createEntity(glm::vec3 rotate, glm::vec3 scale,
 
 //The entities are loaded into the physics engine
 void loadLevel(string fileName){

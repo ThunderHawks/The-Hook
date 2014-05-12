@@ -244,12 +244,13 @@ void glfwGameKeyboard(void) {
    }
    //GLFW_KEY_W
    if(KeysPressed['W']) {
-   	 printf("%lf %lf %lf\n", GetEye().x, GetEye().y, GetEye().z);
+   	 //printf("%lf %lf %lf\n", GetEye().x, GetEye().y, GetEye().z);
+       //printf("%f player X %f player Y\n",physGetPlayerX(),physGetPlayerZ());
        if(canMove()==1) setPlayerSpeed(-w.x*3,0,-w.z*3);
        else setPlayerSpeed(-w.x*3,0,-w.z*3);
        //newSpeed.x=newSpeed.x-w.x*3;
        //newSpeed.z=newSpeed.z-w.z*3;
-       printf("%lf %lf %lf\n", GetEye().x, GetEye().y, GetEye().z);
+       //printf("%lf %lf %lf\n", GetEye().x, GetEye().y, GetEye().z);
    }
    //GLFW_KEY_D
    if(KeysPressed['D']) {
