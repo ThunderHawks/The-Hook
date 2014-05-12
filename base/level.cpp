@@ -2,6 +2,7 @@
 #include "physSystem.h"
 #include "Mesh.h"
 #include "Helper.h"
+#include "camBox.h"
 #include <vector>
 using namespace std;
 
@@ -182,8 +183,10 @@ void loadLevel(string fileName){
          tempEntity.scale.z = tem;
       }
       tempEntity.btPhys = createStaticBox(tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,
-                                          tempEntity.scale.x*tempEntity.phyScale.x*.5,tempEntity.scale.y*tempEntity.phyScale.y*.5,tempEntity.scale.z*tempEntity.phyScale.z*.5,
-                                          btQuaternion(0,0,0,1),0,0,0,0);
+       tempEntity.scale.x*tempEntity.phyScale.x*.5,tempEntity.scale.y*tempEntity.phyScale.y*.5,tempEntity.scale.z*tempEntity.phyScale.z*.5,
+       btQuaternion(0,0,0,1),0,0,0,0);
+      tempEntity.physics = createCameraBox(tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,
+       tempEntity.scale.x*tempEntity.phyScale.x*.5,tempEntity.scale.y*tempEntity.phyScale.y*.5,tempEntity.scale.z*tempEntity.phyScale.z*.5);
       if(!(tempEntity.angle>-10&&tempEntity.angle<10||tempEntity.angle>170&&tempEntity.angle<190)){
          float tem = tempEntity.phyScale.x;
          tempEntity.phyScale.x = tempEntity.phyScale.z;

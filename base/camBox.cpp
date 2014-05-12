@@ -10,7 +10,7 @@ struct camBox{
   float amt;//rotation amount
 }*/
 vector<camBox*> boxes;
-void createCameraBox(float x,float y,float z,float h,float w,float d){//no rotation yet because no rotation in phys render (gota work on that)
+void* createCameraBox(float x,float y,float z,float h,float w,float d){//no rotation yet because no rotation in phys render (gota work on that)
   camBox* bx = (camBox*)malloc(sizeof(camBox));
   bx->x=x;
   bx->y=y;
@@ -24,6 +24,7 @@ void createCameraBox(float x,float y,float z,float h,float w,float d){//no rotat
   bx->amt = 0;
   
   boxes.push_back(bx);
+  return bx;
 }
 int pointBox(glm::vec3 vc, camBox* bx){
   glm::mat4 point = glm::mat4(0);
