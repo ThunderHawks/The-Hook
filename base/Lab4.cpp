@@ -136,7 +136,7 @@ float cool = 0;
 //Draws the entities into the world
 void drawEntities() {
    Entity entityTemp;
-   srand(0);
+   srand(sizer);
    for(int i = 0; i < getEntityNum(); i++) {
       entityTemp = getEntityAt(i);
       int mat = rand()%13;

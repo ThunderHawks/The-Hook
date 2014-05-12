@@ -182,6 +182,14 @@ void physJump(){
       playerFall = 0;
    }
 }
+float physGetHeight(float x, float y){
+   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(x,1050,y), btVector3(x,y,1100));
+   dynamicsWorld->rayTest(btVector3(x,1050,y), btVector3(x,y,1100), RayCallback);
+   if(RayCallback.hasHit()){
+      return RayCallback.m_hitPointWorld.getY();
+   }
+   return -1.0;
+}
 
 int isGrappleActive(){
    return playerGrappleActive;

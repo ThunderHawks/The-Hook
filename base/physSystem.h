@@ -27,5 +27,6 @@ glm::vec3 grapplingHookLocation();
 int isGrappleActive();
 void physJump();
 int canMove();
+float physGetHeight(float x, float y);
 
 #endif
