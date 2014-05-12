@@ -225,27 +225,27 @@ void glfwGameKeyboard(void) {
   u = glm::cross(GetUp(), w)/magnitude(glm::cross(GetUp(), w));
    //GLFW_KEY_S
    if(KeysPressed['S']) {
-       setPlayerSpeed(w.x*3,0,w.z*3);
+       if(canMove()==1) setPlayerSpeed(w.x*3,0,w.z*3);
        //newSpeed.x=newSpeed.x+w.x*3;
        //newSpeed.z=newSpeed.z+w.z*3;
    }
    //GLFW_KEY_W
    if(KeysPressed['W']) {
    	 printf("%lf %lf %lf\n", GetEye().x, GetEye().y, GetEye().z);
-       setPlayerSpeed(-w.x*3,0,-w.z*3);
+       if(canMove()==1) setPlayerSpeed(-w.x*3,0,-w.z*3);
        //newSpeed.x=newSpeed.x-w.x*3;
        //newSpeed.z=newSpeed.z-w.z*3;
        printf("%lf %lf %lf\n", GetEye().x, GetEye().y, GetEye().z);
    }
    //GLFW_KEY_D
    if(KeysPressed['D']) {
-       setPlayerSpeed(u.x*3,0,u.z*3);
+       if(canMove()==1) setPlayerSpeed(u.x*3,0,u.z*3);
        //newSpeed.x=newSpeed.x+u.x*3;
        //newSpeed.z=newSpeed.z+u.z*3;
    }
    //GLFW_KEY_A
    if(KeysPressed['A']) {
-        setPlayerSpeed(-u.x*3,0,-u.z*3);
+        if(canMove()==1) setPlayerSpeed(-u.x*3,0,-u.z*3);
        //newSpeed.x=newSpeed.x-u.x*3;
        //newSpeed.z=newSpeed.z-u.z*3;
    }
