@@ -203,6 +203,10 @@ void glfwDraw (GLFWwindow *window)
    drawSelectedObjects();
    drawEntities();
 
+   // Disable backface culling for skybox
+   glCullFace(GL_BACK);
+   glDisable(GL_CULL_FACE);
+
    //Draw Cubes, ??????????
    SetupCube(plsRndr().getX(),plsRndr().getY(),plsRndr().getZ(),5,60,1,1,1);
    for(float i=.05;i<1;i+=.0075){
@@ -265,8 +269,8 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    // Render depth info from light's perspective
    shadowMap->BindFBO();
    glClear(GL_DEPTH_BUFFER_BIT);
-   SetEye(glm::vec3(origLookAt.x, 6.0, origLookAt.z + 8.0));
-   SetLookAt(glm::vec3(origLookAt.x, 0.0, origLookAt.z));
+   SetEye(glm::vec3(origLookAt.x, origLookAt.y + 6.0, origLookAt.z + 8.0));
+   SetLookAt(origLookAt);
    curView = SetShadowView();
    curProj = SetOrthoProjectionMatrix(10.0);
    glUniform3f(h_uCamPos, 0.0, 3.0, 4.0);
