@@ -23,6 +23,7 @@
 #include "Camera.h"
 #include "Shadows.h"
 #include "SoundPlayer.h"
+#include "Objective.h"
 
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
@@ -424,6 +425,8 @@ int main( int argc, char *argv[] )
       printf("SHADOW MAP FAILED\n");
       exit(EXIT_FAILURE);  
    }
+
+   Objective *objective = new Objective(-42.0, -379.0, 230.0, 67.0);
 
    // Start the main execution loop.
    while (!glfwWindowShouldClose(window)) {
