@@ -67,7 +67,7 @@ void main() {
    //color = (uLColor * uMat.dColor) + (uLColor * uMat.sColor * angleVR) + (uLColor * uMat.aColor);   
 
    gl_FragColor = vec4(color, 1.0);
-//   gl_FragColor = vec4(uShadeMode,uShadeMode,0, 1.0);
+   //gl_FragColor = vec4(uShadeMode,color.g,color.b, 1.0);
    //gl_FragColor = vec4(norm, 1.0);
    //gl_FragColor = vec4(depth, depth, depth, 1.0);
    //gl_FragColor = vec4(dist, dist, dist, 1.0);

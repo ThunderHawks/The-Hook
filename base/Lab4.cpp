@@ -248,15 +248,10 @@ void glfwDraw (GLFWwindow *window)
 void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    glm::vec3 origEye = GetEye();
    glm::vec3 origLookAt = GetLookAt();
-   /*
-   static int count = 0;
-   if (++count > 1000) {
-      if (++ShadeMode == 2)
-         ShadeMode = 0;
-      glUniform1i(h_uShadeMode, ShadeMode);
-   }
-*/
+   
    glUseProgram(ShadeProg);
+
+   glUniform1i(h_uShadeMode, ShadeMode);
 
    // Specify texture unit
    safe_glUniform1i(h_uTexUnit, 0);
@@ -408,8 +403,6 @@ int main( int argc, char *argv[] )
       //music
       SetBackground("../Assets/Sounds/cityMain.mp3");
    }
-
-   glUniform1i(h_uShadeMode, 0);
 
    ShadowMap *shadowMap = new ShadowMap();
    if (shadowMap->MakeShadowMap(g_width, g_height) == -1) {

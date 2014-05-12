@@ -301,8 +301,6 @@ void glfwGameKeyboard(void) {
    if (KeysPressed['N']) {
       if (++ShadeMode == 2)
          ShadeMode = 0;
-      printf("SHADEMODE: %d\n", ShadeMode);
-      glUniform1i(h_uShadeMode, ShadeMode);
       KeysPressed['N'] = 0;
    }
 }
