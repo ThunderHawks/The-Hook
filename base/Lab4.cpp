@@ -156,7 +156,7 @@ void drawEntities() {
       if(!getPressed('V')) PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
    }
    if(hit == 1 && getDistance()>6 && Edit == 0) addDistance(-.18); //zoom in if hit
-   else if(getDistance()<20 && hit==0&& Edit == 0) addDistance(.14); //zoom out if not hit and zoomed in
+   else if(getDistance()<10 && hit==0&& Edit == 0) addDistance(.14); //zoom out if not hit and zoomed in
 //   if (getDistance()<6) setDistance(6);//minimum zoom
    resetVecs();
    for(int i = 0; i < getEntityNum(); i++) {//antishake zooming
@@ -344,7 +344,7 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    shadowMap->BindDepthTex();
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    SetEye(origEye);
-   SetLookAt(origLookAt);
+   SetLookAt(origLookAt + vec3(0, 2, 0));
    curView = SetView();
    curProj = SetProjectionMatrix();
    glUniform3f(h_uCamPos, GetEye().x, GetEye().y, GetEye().z);
