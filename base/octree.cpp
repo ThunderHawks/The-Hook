@@ -2,35 +2,35 @@
 
 //Adds a bounding sphere to or removes one from the children of
 //current octree
-void Octree::handleOctree(BS* bs, glm::vec3 pos, bool addBS) {
+void Octree::handleOctree(Entity* bs, glm::vec3 pos, bool addBS) {
 	//Figure out in which child(ren) the bs belongs
 	for(int x = 0; x < 2; x++) {
 		if (x == 0) {
-			if (pos[0] - bs->radius > center[0]) {
+			if (pos[0] - bs->BSRadius > center[0]) {
 				continue;
 			}
 		}
-		else if (pos[0] + bs->radius < center[0]) {
+		else if (pos[0] + bs->BSRadius < center[0]) {
 			continue;
 		}
 		
 		for(int y = 0; y < 2; y++) {
 			if (y == 0) {
-				if (pos[1] - bs->radius > center[1]) {
+				if (pos[1] - bs->BSRadius > center[1]) {
 					continue;
 				}
 			}
-			else if (pos[1] + bs->radius < center[1]) {
+			else if (pos[1] + bs->BSRadius < center[1]) {
 				continue;
 			}
 			
 			for(int z = 0; z < 2; z++) {
 				if (z == 0) {
-					if (pos[2] - bs->radius > center[2]) {
+					if (pos[2] - bs->BSRadius > center[2]) {
 						continue;
 					}
 				}
-				else if (pos[2] + bs->radius < center[2]) {
+				else if (pos[2] + bs->BSRadius < center[2]) {
 					continue;
 				}
 						
@@ -93,10 +93,10 @@ void Octree::makeChildren() {
 	}
 			
 	//Remove all bses from "bsSet" and add them to the new children
-	for(set<BS*>::iterator it = bsSet.begin(); it != bsSet.end();
+	for(set<Entity*>::iterator it = bsSet.begin(); it != bsSet.end();
 			it++) {
-		BS* bs = *it;
-		handleOctree(bs, bs->pos, true);
+		Entity* bs = *it;
+		handleOctree(bs, bs->position, true);
 	}
 	bsSet.clear();
 	
@@ -104,7 +104,7 @@ void Octree::makeChildren() {
 }
 		
 //Adds all bses in this or one of its descendants to the specified set
-void Octree::collectBS(set<BS*> &bsSet) {
+void Octree::collectBS(set<Entity*> &bsSet) {
 	if (hasChildren) {
 		for(int x = 0; x < 2; x++) {
 			for(int y = 0; y < 2; y++) {
@@ -115,9 +115,9 @@ void Octree::collectBS(set<BS*> &bsSet) {
 		}
 	}
 	else {
-		for(set<BS*>::iterator it = bsSet.begin(); it != bsSet.end();
+		for(set<Entity*>::iterator it = bsSet.begin(); it != bsSet.end();
 				it++) {
-			BS* bs = *it;
+			Entity* bs = *it;
 			bsSet.insert(bs);
 		}
 	}
@@ -141,7 +141,7 @@ void Octree::destroyChildren() {
 }
 	
 //Removes the specified bounding sphere at the indicated position
-void Octree::removeBS(BS* bs, glm::vec3 pos) {
+void Octree::removeBS(Entity* bs, glm::vec3 pos) {
 	numBS--;
 	
 	if (hasChildren && numBS < MIN_BS_PER_OCTREE) {
@@ -192,9 +192,9 @@ void Octree::BSWallCollision(vector<BS_Wall> &cs, Wall w,
 	}
 	else {
 		//Add (bs, w) for all bounding spheres in current octree
-		for(set<BS*>::iterator it = bsSet.begin(); it != bsSet.end();
+		for(set<Entity*>::iterator it = bsSet.begin(); it != bsSet.end();
 				it++) {
-			BS* bs = *it;
+			Entity* bs = *it;
 			BS_Wall bwp;
 			bwp.bs = bs;
 			bwp.wall = w;
@@ -222,7 +222,7 @@ Octree::~Octree() {
 }
 		
 //Adds a bouding sphere
-void Octree::add(BS* bs) {
+void Octree::add(Entity* bs) {
 	numBS++;
 	if (!hasChildren && depth < MAX_OCTREE_DEPTH &&
 		numBS > MAX_BS_PER_OCTREE) {
@@ -230,7 +230,7 @@ void Octree::add(BS* bs) {
 	}
 	
 	if (hasChildren) {
-		handleOctree(bs, bs->pos, true);
+		handleOctree(bs, bs->position, true);
 	}
 	else {
 		bsSet.insert(bs);
@@ -238,12 +238,12 @@ void Octree::add(BS* bs) {
 }
 		
 //Removes a bounding sphere
-void Octree::remove(BS* bs) {
-	removeBS(bs, bs->pos);
+void Octree::remove(Entity* bs) {
+	removeBS(bs, bs->position);
 }
 
 //Changes the position of a bs in this from oldPos to bs->pos
-void Octree::bsMoved(BS* bs, glm::vec3 oldPos) {
+void Octree::bsMoved(Entity* bs, glm::vec3 oldPos) {
 	removeBS(bs, oldPos);
 	add(bs);
 }
@@ -261,10 +261,10 @@ void Octree::BSBSCollision(vector<BS_BS> &col) {
 	}
 	else {
 		//Add all pairs (bs1, bs2) from bsSet
-		for(set<BS*>::iterator it = bsSet.begin(); it != bsSet.end(); it++) {
-			BS* bs1 = *it;
-			for(set<BS*>::iterator it2 = bsSet.begin();	it2 != bsSet.end(); it2++) {
-				BS* bs2 = *it2;
+		for(set<Entity*>::iterator it = bsSet.begin(); it != bsSet.end(); it++) {
+			Entity* bs1 = *it;
+			for(set<Entity*>::iterator it2 = bsSet.begin();	it2 != bsSet.end(); it2++) {
+				Entity* bs2 = *it2;
 				//This test makes sure that we only add each pair once
 				if (bs1 < bs2) {
 					BS_BS bp;

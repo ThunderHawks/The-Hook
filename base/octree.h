@@ -23,7 +23,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-#include "bounding_sphere.h"
+#include "level.h"
 
 using namespace std;
 
@@ -31,13 +31,13 @@ enum Wall {WALL_LEFT, WALL_RIGHT, WALL_FAR, WALL_NEAR, WALL_TOP, WALL_BOTTOM};
 
 //Stores a pair of balls
 struct BS_BS {
-	BS* bs1;
-	BS* bs2;
+	Entity* bs1;
+	Entity* bs2;
 };
 
 //Stores a ball and a wall
 struct BS_Wall {
-	BS* bs;
+	Entity* bs;
 	Wall wall;
 };
 
@@ -56,28 +56,28 @@ private:
 
 	bool hasChildren;  //check to see if current cube has children
 
-	set<BS*> bsSet;   //'bs' stands for bounding sphere
+	set<Entity*> bsSet;   //'bs' stands for bounding sphere
 
 	int depth;
 	int numBS;
 
 	//Adds a bounding sphere to or removes one from the children of
 	//current octree
-	void handleOctree(BS* bs, glm::vec3 pos, bool addBS);
+	void handleOctree(Entity* bs, glm::vec3 pos, bool addBS);
 
 	//Creates children of current octree, and moves the
 	//bounding spheres in this octree to the children tree
 	void makeChildren();
 
 	//Adds all bses in this or one of its descendants to the specified set
-	void collectBS(set<BS*> &bsSet);
+	void collectBS(set<Entity*> &bsSet);
 
 	//Destroys the children of current octree, and moves all bsess in its descendants
 	//to the "bsSet"
 	void destroyChildren();
 	
 	//Removes the specified bounding sphere at the indicated position
-	void removeBS(BS* bs, glm::vec3 pos);
+	void removeBS(Entity* bs, glm::vec3 pos);
 
 	/* Function to check potential collision between a bounding sphere
 	 * and a wall.
@@ -96,13 +96,13 @@ public:
 	~Octree();
 
 	//Adds a bouding sphere
-	void add(BS* bs);
+	void add(Entity* bs);
 
 	//Removes a bounding sphere
-	void remove(BS* bs);
+	void remove(Entity* bs);
 
 	//Changes the position of a ball in this from oldPos to bs->pos
-	void bsMoved(BS* bs, glm::vec3 oldPos);
+	void bsMoved(Entity* bs, glm::vec3 oldPos);
 
 	//Adds potential bs-bs collisions to the specified set
 	void BSBSCollision(vector<BS_BS> &col);
