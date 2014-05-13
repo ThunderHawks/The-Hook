@@ -253,8 +253,8 @@ void glfwGameKeyboard(void) {
    if(KeysPressed['W']) {
    	 //printf("%lf %lf %lf\n", GetEye().x, GetEye().y, GetEye().z);
        //printf("%f player X %f player Y\n",physGetPlayerX(),physGetPlayerZ());
-       if(canMove()==1) setPlayerSpeed(-w.x*3,0,-w.z*3);
-       else setPlayerSpeed(-w.x*3,0,-w.z*3);
+       //if(canMove()==1) setPlayerSpeed(-w.x*3,0,-w.z*3);
+       /*else */setPlayerSpeed(-w.x*3,0,-w.z*3);
        //newSpeed.x=newSpeed.x-w.x*3;
        //newSpeed.z=newSpeed.z-w.z*3;
        //printf("%lf %lf %lf\n", GetEye().x, GetEye().y, GetEye().z);
@@ -262,15 +262,17 @@ void glfwGameKeyboard(void) {
    //GLFW_KEY_D
    if(KeysPressed['D']) {
        if(canMove()==1) setPlayerSpeed(u.x*3,0,u.z*3);
- -       else setPlayerSpeed(u.x*3,0,u.z*3);
+        else setPlayerSpeed(u.x*3,0,u.z*3);
 
        //newSpeed.x=newSpeed.x+u.x*3;
        //newSpeed.z=newSpeed.z+u.z*3;
    }
    //GLFW_KEY_A
    if(KeysPressed['A']) {
-        if(canMove()==1) setPlayerSpeed(-u.x*3,0,-u.z*3);
- -        else setPlayerSpeed(-u.x*3,0,-u.z*3);
+        if(canMove()==1) 
+        		setPlayerSpeed(-u.x*3,0,-u.z*3);
+       else 
+ 				setPlayerSpeed(-u.x*3,0,-u.z*3);
        //newSpeed.x=newSpeed.x-u.x*3;
        //newSpeed.z=newSpeed.z-u.z*3;
    }
