@@ -6,7 +6,7 @@
 struct camBox{
   float x,y,z;//center
   float h,w,d;//"radius"
-  glm::vec3 ax;//rotation axis
+  glm::vec3 ax;//rotatioion axis
   float amt;//rotation amount
 }*/
 vector<camBox*> boxes;
