@@ -40,16 +40,16 @@ void initLevelLoader() {
    entitiesSelected = false;
 
    //Load Meshes
-   mesh[0] = LoadMesh("../Assets/ModMBasicBldg.obj");//60h 43d 49w
-   mesh[1] = LoadMesh("../Assets/shopBldg.obj");//25h 50d 50w
-   mesh[2] = LoadMesh("../Assets/cinderblock.obj");//2h,4d,2w
-   mesh[3] = LoadMesh("../Assets/mediumBasicBuilding.obj");//60h 43d 40w 
+   mesh[0] = LoadMesh("../Assets/Models/ModMBasicBldg.obj");//60h 43d 49w
+   mesh[1] = LoadMesh("../Assets/Models/shopBldg.obj");//25h 50d 50w
+   mesh[2] = LoadMesh("../Assets/Models/cinderblock.obj");//2h,4d,2w
+   mesh[3] = LoadMesh("../Assets/Models/mediumBasicBuilding.obj");//60h 43d 40w 
    mesh[4] = LoadMesh("../Assets/Models/sidewalkCorner.obj");//1h 5d 5w
-   mesh[5] = LoadMesh("../Assets/sidewalk.obj");//1h 5d 5w
-   mesh[6] = LoadMesh("../Assets/streetlight.obj");//25h 2d 12w
-   mesh[7] = LoadMesh("../Assets/table.obj");//5h 10d 10w
-   mesh[8] = LoadMesh("../Assets/tallBldg.obj");//1070h 200d 300w
-   mesh[9] = LoadMesh("../Assets/waterTower.obj");//32h 26d 26w
+   mesh[5] = LoadMesh("../Assets/Models/sidewalk.obj");//1h 5d 5w
+   mesh[6] = LoadMesh("../Assets/Models/streetlight.obj");//25h 2d 12w
+   mesh[7] = LoadMesh("../Assets/Models/table.obj");//5h 10d 10w
+   mesh[8] = LoadMesh("../Assets/Models/tallBldg.obj");//1070h 200d 300w
+   mesh[9] = LoadMesh("../Assets/Models/waterTower.obj");//32h 26d 26w
    mesh[10] = LoadMesh("../Assets/Models/simpleCRBldg.obj");//166h 71d 71w
    mesh[11] = LoadMesh("../Assets/Models/wall.obj"); //15h 1d 10w
    mesh[12] = LoadMesh("../Assets/Models/gasStation.obj"); //34h 50d 50w
