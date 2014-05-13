@@ -169,7 +169,7 @@ void glfwGameGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    }
    else if(startX > endX){
       diff = startX - endX;
-      beta = incrementYaw((diff * M_PI)/g_width);
+      beta = incrementYaw(-(diff * M_PI)/g_width);
    }
 
    //Calculate change in Y
