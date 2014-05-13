@@ -169,7 +169,7 @@ void glfwGameGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    }
    else if(startX > endX){
       diff = startX - endX;
-      beta = incrementYaw(-(diff * M_PI)/g_width);
+      beta = incrementYaw((diff * M_PI)/g_width);
    }
 
    //Calculate change in Y
@@ -261,14 +261,16 @@ void glfwGameKeyboard(void) {
    }
    //GLFW_KEY_D
    if(KeysPressed['D']) {
-       incrementYaw(.08);
+       if(canMove()==1) setPlayerSpeed(u.x*3,0,u.z*3);
+ -       else setPlayerSpeed(u.x*3,0,u.z*3);
 
        //newSpeed.x=newSpeed.x+u.x*3;
        //newSpeed.z=newSpeed.z+u.z*3;
    }
    //GLFW_KEY_A
    if(KeysPressed['A']) {
-        incrementYaw(-.08);
+        if(canMove()==1) setPlayerSpeed(-u.x*3,0,-u.z*3);
+ -        else setPlayerSpeed(-u.x*3,0,-u.z*3);
        //newSpeed.x=newSpeed.x-u.x*3;
        //newSpeed.z=newSpeed.z-u.z*3;
    }
