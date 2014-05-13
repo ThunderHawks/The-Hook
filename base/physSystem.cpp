@@ -5,8 +5,9 @@
 #include "Lab4.h"
 #include "InitHelpers.h"
 #include "Helper.h"
-#include "IO.h"
 #include "Shapes.h"
+#include "IOGame.h"
+#include "IOEdit.h"
 #include "Mesh.h"
 #include "physSystem.h"
 //#include <bullet/btCollisionWorld.h>

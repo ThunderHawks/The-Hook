@@ -21,7 +21,7 @@
 #include <time.h>
 
 #include "Helper.h"
-#include "IO.h"
+#include "IOEdit.h"
 #include "physSystem.h"
 #include "Camera.h"
 #include "level.h"
