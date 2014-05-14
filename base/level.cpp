@@ -546,6 +546,7 @@ void updateCurrentEntitiesPos() {
 
 //Places the selected entity into the world at lookAtPoint
 void placeSelectedEntity() {
+
    //If 
    if(entitiesSelected == true) {
       updateCurrentEntitiesPos();
