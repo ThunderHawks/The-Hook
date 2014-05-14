@@ -141,49 +141,35 @@ float sizer = 45;
 float cool = 0;
 //Draws the entities into the world
 void drawEntities() {
-int dbg = 0;
-printf("1\n");
-
    Entity entityTemp;
    srand(sizer);
    int hit = 0;
-printf("2\n");
    printf("num ent rend %d\n",getEntityNum());
    for(int i = 0; i < getEntityNum(); i++) {
       entityTemp = getEntityAt(i);
-printf("3\n");
       if(!Edit && pointBox(GetEye(),(camBox*)entityTemp.physics)){//test for camera collision with entities
          hit = 1;
          printf("hit!");
       }
-printf("4\n");
       int mat = rand()%13;
       while(!(mat = rand()%13));
       SetMaterial(mat);
-printf("5\n");
       if(!getPressed('V')) PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
          entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
    }
-printf("5\n");
    if(hit == 1 && getDistance()>6 && Edit == 0) addDistance(-.18); //zoom in if hit
    else if(getDistance()<10 && hit==0&& Edit == 0) addDistance(.14); //zoom out if not hit and zoomed in
-printf("6\n");
 //   if (getDistance()<6) setDistance(6);//minimum zoom
    resetVecs();
-printf("7\n");
    for(int i = 0; i < getEntityNum(); i++) {//antishake zooming
-printf("8\n");
       entityTemp = getEntityAt(i);
       camBox* bx = (camBox*)entityTemp.physics;
-printf("9\n");
       if(!Edit && pointBox(GetEye(),(camBox*)entityTemp.physics)){
          hit = 1;
          printf("hit!");
-printf("10\n");
          if(getPressed('V'))   SetupCube(bx->x, bx->y, bx->z, 15, bx->amt, bx->w, bx->h, bx->d);
       }
       else{
-printf("11\n");
          if(getPressed('V'))   SetupCube(bx->x, bx->y, bx->z, 16, bx->amt, bx->w, bx->h, bx->d);
       }
    }
@@ -197,7 +183,6 @@ printf("11\n");
    }
    if(cool) sizer+=.16;
    if(getDistance()<2&& Edit == 0)setDistance(2);
-   printf("end\n");
 }
 
 //Bool that returns true if game is paused
