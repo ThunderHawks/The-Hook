@@ -1,10 +1,67 @@
 #include "SoundPlayer.h"
-#include "sound.h"
+
+using namespace std;
 
 Sound bMusic = Sound("../Assets/Sounds/cityMain.mp3", 75, true);
-int trackNumber = 0;
-int trackCount = 0;
 bool isMuted = false;
+
+SoundPlayer::SoundPlayer() {
+	BGM = Sound();
+}
+
+char* SoundPlayer::getTrackPath(int trackNum) {
+	return playList[trackNum].track;
+}
+
+int SoundPlayer::getTrackId(char* trackFile) {
+	for(int i = 0; i < playList.size(); i++)
+		if(strcmp(trackFile, playList[i].track) == 0)
+			return i;
+
+	return -1;
+}
+
+void SoundPlayer::CreatePlayList(char* musicFile) {
+	ParsePlayList(musicFile);
+
+	if(playList.size() > 0)
+		BGM.playMusic(getTrackPath(0), true);
+}
+
+void SoundPlayer::ParsePlayList(char* musicFile) {
+	ifstream mFile(musicFile);
+	string line;
+	char* trackPath;
+
+	while(getline(mFile, line)) {
+		trackPath = new char[line.length()+1];
+		strcpy(trackPath, line.c_str());
+		playList.push_back(Track(playList.size(), trackPath));
+	}
+}
+
+void SoundPlayer::nextSong() {
+	int trackNum = getTrackId(BGM.getMusicPath()) + 1;
+
+	if(trackNum >= playList.size())
+		trackNum = 0;
+
+	BGM.stopSong();
+cout << playList.size() << endl;
+	BGM.playMusic(getTrackPath(trackNum), true);
+cout <<"HIHIHI"<<endl;
+}
+
+void SoundPlayer::prevSong() {
+	int trackNum = getTrackId(BGM.getMusicPath()) - 1;
+
+	if(trackNum < 0)
+		trackNum = playList.size() - 1;
+
+	BGM.stopSong();
+	BGM.playMusic(getTrackPath(trackNum), true);
+}
+/******************************************************************************/
 
 void PlayBackground() {
 	bMusic.playMusic();
@@ -24,7 +81,7 @@ void MuteAll() {
 	bMusic.muteAll();
 }
 /*Changes the Background music the song number. Returns the song number*/
-int SwapSong(int inc) {
+int SwapSong(int songNum) {
 	return 0;
 }
 /*increment the song number. returns the new song number*/

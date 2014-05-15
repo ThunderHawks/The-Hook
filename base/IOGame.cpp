@@ -172,11 +172,21 @@ void glfwGameKeyboard(void) {
       //else physGrapplePoint();
 
    }
+	if(gKeysPressed['K']){
+   	if (gKeysPressed['K'] == 1)
+			musicPlayer.prevSong();
+      gKeysPressed['K'] = 2;
+   }
+	if(gKeysPressed['L']){
+   	if (gKeysPressed['L'] == 1)
+			musicPlayer.nextSong();
+      gKeysPressed['L'] = 2;
+   }
    if(gKeysPressed['M']){
    	if (gKeysPressed['M'] == 1)
-			MuteAll();
+			musicPlayer.nextSong();
 			
-      gKeysPressed['M']=2;
+      gKeysPressed['M'] = 2;
    }
 
    if (gKeysPressed['N']) {
@@ -212,24 +222,32 @@ void glfwGameKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
        case GLFW_KEY_F:
          gKeysPressed['F'] = 1;
          break;
-      case GLFW_KEY_E:
+		 case GLFW_KEY_E:
          if(!gKeysPressed['E'])
             gKeysPressed['E'] = 1;
-         break;
-     case GLFW_KEY_M:
+				break;
+		 case GLFW_KEY_K:
+         if(!gKeysPressed['K'])
+            gKeysPressed['K'] = 1;
+				break;
+		 case GLFW_KEY_L:
+         if(!gKeysPressed['L'])
+            gKeysPressed['L'] = 1;
+				break;
+		 case GLFW_KEY_M:
          if(!gKeysPressed['M'])
             gKeysPressed['M'] = 1;
-         break;
-     case GLFW_KEY_N:
+				break;
+		 case GLFW_KEY_N:
          if(!gKeysPressed['N'])
             gKeysPressed['N'] = 1;
-         break;
-    case GLFW_KEY_B:
-      gKeysPressed['B'] = 1;
-      break;
-    case GLFW_KEY_V:
-      gKeysPressed['V'] = 1;
-      break;
+         	break;
+		 case GLFW_KEY_B:
+      	gKeysPressed['B'] = 1;
+     			break;
+   	 case GLFW_KEY_V:
+      	gKeysPressed['V'] = 1;
+     			break;
      }
    }   
    else if(action == GLFW_RELEASE) {
@@ -258,18 +276,24 @@ void glfwGameKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
        case GLFW_KEY_E:
          gKeysPressed['E'] = 0;
          break;
-     case GLFW_KEY_M:
+		 case GLFW_KEY_K:
+         gKeysPressed['K'] = 0;
+         break;
+		 case GLFW_KEY_L:
+         gKeysPressed['L'] = 0;
+         break;
+		 case GLFW_KEY_M:
          gKeysPressed['M'] = 0;
          break;
-     case GLFW_KEY_N:
+		 case GLFW_KEY_N:
          gKeysPressed['N'] = 0;
          break;
-    case GLFW_KEY_B:
-      gKeysPressed['B'] = 0;
-      break;
-    case GLFW_KEY_V:
-      gKeysPressed['V'] = 0;
-      break;
+		 case GLFW_KEY_B:
+			gKeysPressed['B'] = 0;
+			break;
+		 case GLFW_KEY_V:
+			gKeysPressed['V'] = 0;
+			break;
      }
    }
 }

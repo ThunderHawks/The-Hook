@@ -38,8 +38,6 @@ class Sound {
 		//Set the path to the BGM
 		void setMusicPath(char* path);
 
-//TODO: changeMusicPath??? autoplay
-
 		//Get the path to the BGM
 		char* getMusicPath();
 
@@ -99,6 +97,8 @@ class Sound {
 		 *************************/
 		//Either pauses or resumes the BGM (SFX still works)
 		void pause();
+
+		void stopSong();
 
 		//Deletes a sound object
 		int deleteSound();

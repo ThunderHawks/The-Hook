@@ -30,6 +30,8 @@
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
 
+
+SoundPlayer musicPlayer;
 //Paused/unpause
 bool paused;
    int Edit;
@@ -469,7 +471,8 @@ int main( int argc, char *argv[] )
       loadLevel(fileName);
 
       //music
-      SetBackground("../Assets/Sounds/cityMain.mp3");
+      musicPlayer = SoundPlayer();
+		musicPlayer.CreatePlayList("./playList.txt");
    }
    LoadMesh("../Assets/Models/topHatChar.obj");
    ShadowMap *shadowMap = new ShadowMap();

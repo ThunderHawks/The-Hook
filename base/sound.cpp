@@ -113,9 +113,8 @@ bool Sound::playMusic() {
 
 bool Sound::playMusic(char* path, bool loop) {
 	fileName = path;
-	setLoop(loop);
-
 	music = engine->play2D(path, loop, false, true);
+	setLoop(loop);
 
 	if(!music) {
 		cout << "Error: Could not play music" << endl;
@@ -156,6 +155,11 @@ void Sound::muteAll() {
  *************************/
 void Sound::pause() {
 	engine->setAllSoundsPaused(!isPaused());
+}
+
+void Sound::stopSong() {
+	music->stop();
+	music->drop();
 }
 
 int Sound::deleteSound() {

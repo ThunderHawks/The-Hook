@@ -1,8 +1,11 @@
 #ifndef IOGAME_H_
 #define IOGAME_H_
 
+#include "SoundPlayer.h"
+
 extern float g_width, g_height;
 extern int ShadeMode;
+extern SoundPlayer musicPlayer;
 
 //Keyboard callback for Game Mode
 void glfwGameKeyboard(void);
