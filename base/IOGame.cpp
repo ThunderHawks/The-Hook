@@ -103,7 +103,7 @@ void glfwGameGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
 *  returns bool of character pressed
 *  takes the character for a given key
 */
-int getPressed(char ch){
+int getGPressed(char ch){
    return gKeysPressed[ch];
 }
 

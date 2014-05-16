@@ -28,6 +28,15 @@
 
 using namespace std;
 
+extern GLint h_uLightVec;
+extern GLint h_uLightColor;
+extern GLint h_uCamPos, h_uShadeMode;
+extern GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine, h_uMatAlpha;
+extern GLint h_uTexUnit, h_uTexUnit2;
+extern GLint h_uLightViewMatrix, h_uLightProjMatrix;
+extern GLint h_aTexCoord;
+extern GLuint TexBuffObj;
+
 typedef struct Node {
    glm::vec3 Position;
    int modelType;
@@ -181,6 +190,7 @@ public:
 
 };
 
+void SetupCube(float x, float y, float z, int material, float angle, float scaleX, float scaleY, float scaleZ);
 void Add_Entry(glm::vec3 Position);
 int Table_Size();
 void Set_ModelType(int index, int type);

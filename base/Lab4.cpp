@@ -26,6 +26,10 @@
 #include "SoundPlayer.h"
 #include "Objective.h"
 #include "camBox.h"
+#include "Gui.h"
+
+#include "types.h"
+#include "Image.h"
 
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
@@ -50,12 +54,15 @@ GLuint ShadowCubeBuffObj, SCIndxBuffObj, ShadowNormalBuffObj, RampBuffObj, RIndx
 int g_CiboLen, g_GiboLen, g_RiboLen, g_SCiboLen;
 
 float g_width, g_height;
+
 GLint h_uLightVec;
 GLint h_uLightColor;
 GLint h_uCamPos, h_uShadeMode;
 GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine, h_uMatAlpha;
-GLint h_uTexUnit;
+GLint h_uTexUnit, h_uTexUnit2;
 GLint h_uLightViewMatrix, h_uLightProjMatrix;
+GLint h_aTexCoord;
+GLuint TexBuffObj;
 
 //declare Matrix stack
 RenderingHelper ModelTrans;
@@ -160,7 +167,7 @@ void drawEntities(int passNum) {
          while(!(mat = rand()%13));
          SetMaterial(mat);
       }
-      if(!getPressed('V')) PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
+      if(!getGPressed('V')) PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
          entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
    }
    if(hit == 1 && getDistance()>6 && Edit == 0) addDistance(-.18); //zoom in if hit
@@ -173,16 +180,16 @@ void drawEntities(int passNum) {
       if(!Edit && pointBox(GetEye(),(camBox*)entityTemp.physics)){
          hit = 1;
          printf("hit!");
-         if(getPressed('V'))   SetupCube(bx->x, bx->y, bx->z, 15, bx->amt, bx->w, bx->h, bx->d);
+         if(getGPressed('V'))   SetupCube(bx->x, bx->y, bx->z, 15, bx->amt, bx->w, bx->h, bx->d);
       }
       else{
-         if(getPressed('V'))   SetupCube(bx->x, bx->y, bx->z, 16, bx->amt, bx->w, bx->h, bx->d);
+         if(getGPressed('V'))   SetupCube(bx->x, bx->y, bx->z, 16, bx->amt, bx->w, bx->h, bx->d);
       }
    }
       if(hit == 1&& Edit == 0)         addDistance(-.14);//antishake application
    printf("is dist %f %d\n",getDistance(),hit);
-   //printf("cool? %d %d %f\n",cool,getPressed('B'),cos(sizer));
-   if(getPressed('B')) cool = 1;
+   //printf("cool? %d %d %f\n",cool,getGPressed('B'),cos(sizer));
+   if(getGPressed('B')) cool = 1;
    else{
     cool = 0;
     sizer=0;
@@ -209,6 +216,21 @@ void pauseorUnpause() {
    }
 }
 
+void SetupAndDrawSkyBox() {
+   // Disable backface culling for skybox
+   glCullFace(GL_BACK);
+   glDisable(GL_CULL_FACE);
+
+   // Draw skybox
+   ModelTrans.loadIdentity();
+   DrawSkyBox();
+   SetModelStat();
+
+   // Enable backface culling
+   glCullFace(GL_BACK);
+   glEnable(GL_CULL_FACE);
+}
+
 /* Main display function 
  * passNum: 0 = Create shadow map
  *          1 = Draw scene normally
@@ -217,18 +239,8 @@ void pauseorUnpause() {
 void glfwDraw (GLFWwindow *window, int passNum)
 {
    if (passNum != 2) {
-      // Disable backface culling for skybox
-      glCullFace(GL_BACK);
-      glDisable(GL_CULL_FACE);
-
-      // Draw skybox
-      ModelTrans.loadIdentity();
-      DrawSkyBox();
-      SetModelStat();
-
-      // Enable backface culling
-      glCullFace(GL_BACK);
-      glEnable(GL_CULL_FACE);
+      //Setup and draw Sky Box
+      SetupAndDrawSkyBox();
 
       safe_glEnableVertexAttribArray(h_aPosition);
       safe_glEnableVertexAttribArray(h_aNormal);
@@ -248,6 +260,8 @@ void glfwDraw (GLFWwindow *window, int passNum)
       // Disable attributes
       safe_glDisableVertexAttribArray(h_aPosition);
       safe_glDisableVertexAttribArray(h_aNormal);
+      //Draw any gui elements that should be on the screen
+      DrawGui();
 
       SetMaterial(2);
    }
@@ -566,3 +580,5 @@ int main( int argc, char *argv[] )
    glfwTerminate();
    exit(EXIT_SUCCESS);
 }
+
+

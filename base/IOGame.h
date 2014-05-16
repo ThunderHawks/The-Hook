@@ -7,6 +7,11 @@ extern float g_width, g_height;
 extern int ShadeMode;
 extern SoundPlayer musicPlayer;
 
+/*
+*  returns bool of character pressed
+*  takes the character for a given key
+*/
+int getGPressed(char ch);
 //Keyboard callback for Game Mode
 void glfwGameKeyboard(void);
 //Mousemove callback for Game Mode

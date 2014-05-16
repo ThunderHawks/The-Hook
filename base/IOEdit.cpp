@@ -46,6 +46,14 @@ glm::vec3 ew, eu;
 //Change size to increase amount of keys input
 int eKeysPressed[350];
 
+/*
+*  returns bool of character pressed
+*  takes the character for a given key
+*/
+int getEPressed(char ch){
+   return eKeysPressed[ch];
+}
+
 //Mouse press callback for Edit Mode
 void glfwEditMouse(GLFWwindow *window, int button, int action, int mods) {
    //If the left button is pressed
@@ -383,6 +391,10 @@ void glfwEditKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
          eKeysPressed[340] = 1;
          speed = 5.0;
          break;
+       //Gui
+       case GLFW_KEY_G:
+         eKeysPressed['G'] = 1;
+         break;
        //Quit
        case GLFW_KEY_Q:
          eKeysPressed['Q'] = 1;
@@ -463,6 +475,10 @@ void glfwEditKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
          break;
        case GLFW_KEY_B:
          eKeysPressed['B'] = 0;
+         break;
+       //Gui
+       case GLFW_KEY_G:
+         eKeysPressed['G'] = 0;
          break;
        //Undo
        case GLFW_KEY_BACKSPACE:
