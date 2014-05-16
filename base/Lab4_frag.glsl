@@ -57,7 +57,6 @@ void main() {
    else
       color = uLColor * uMat.dColor * 0.2;
 
-   
    // Test if the fragment is in a shadow
    if (uShadeMode == 0) {
       if (depth < dist && dist < 1.0 && abs(angleNL) >= 0.01)

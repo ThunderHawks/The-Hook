@@ -1,22 +1,9 @@
-#include <GLFW/glfw3.h>
-#include "MStackHelp.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp" //perspective, trans etc
-#include "glm/gtc/type_ptr.hpp" //value_ptr
+#ifndef SHADOWS_H_
+#define SHADOWS_H_
 
-extern GLint h_aPosition, h_aNormal, h_uViewMatrix, h_uProjMatrix;
-extern GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj;
-extern GLuint ShadowCubeBuffObj, SCIndxBuffObj, ShadowNormalBuffObj, RampBuffObj, RIndxBuffObj, RampNormalBuffObj;
-extern GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine;
-extern float g_width, g_height, beta, alpha, eyeAtx, eyeAty, eyeAtz;
-extern int ShadeProg;
-extern GLint h_uLightVec;
-extern GLint h_uLightColor;
-extern GLint h_uCamPos, h_uShadeMode;
-extern GLint h_uModelMatrix;
-extern RenderingHelper ModelTrans;
-extern GLint h_aTexCoord, h_uTexUnit;  
-extern GLint h_uLightViewMatrix, h_uLightProjMatrix;
+#include "glm/glm.hpp"
+
+extern GLint h_uProjMatrix, h_uLightProjMatrix;
 
 class ShadowMap {
 public:
@@ -34,3 +21,5 @@ private:
 };
 
 glm::mat4 SetOrthoProjectionMatrix(float dist);
+
+#endif

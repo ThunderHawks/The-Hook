@@ -142,7 +142,7 @@ void drawSelectedObjects() {
 float sizer = 45;
 float cool = 0;
 //Draws the entities into the world
-void drawEntities() {
+void drawEntities(int passNum) {
    Entity entityTemp;
    srand(sizer);
    int hit = 0;
@@ -153,9 +153,13 @@ void drawEntities() {
          hit = 1;
          printf("hit!");
       }
-      int mat = rand()%13;
-      while(!(mat = rand()%13));
-      SetMaterial(mat);
+      if (passNum == 2)
+         SetMaterial(17);
+      else {
+         int mat = rand()%13;
+         while(!(mat = rand()%13));
+         SetMaterial(mat);
+      }
       if(!getPressed('V')) PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
          entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
    }
@@ -205,52 +209,63 @@ void pauseorUnpause() {
    }
 }
 
-/* Main display function */
-void glfwDraw (GLFWwindow *window, bool shadowPass)
+/* Main display function 
+ * passNum: 0 = Create shadow map
+ *          1 = Draw scene normally
+ *          2 = Draw outlines around objects
+ */
+void glfwDraw (GLFWwindow *window, int passNum)
 {
-   //Enable transparency
-   glEnable(GL_BLEND);
-   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+   if (passNum != 2) {
+      // Disable backface culling for skybox
+      glCullFace(GL_BACK);
+      glDisable(GL_CULL_FACE);
 
-   // Disable backface culling for skybox
-   glCullFace(GL_BACK);
-   glDisable(GL_CULL_FACE);
+      // Draw skybox
+      ModelTrans.loadIdentity();
+      DrawSkyBox();
+      SetModelStat();
 
-   // Draw skybox
-   ModelTrans.loadIdentity();
-   DrawSkyBox();
-   SetModelStat();
+      // Enable backface culling
+      glCullFace(GL_BACK);
+      glEnable(GL_CULL_FACE);
 
-   // Enable backface culling
-   glCullFace(GL_BACK);
-   glEnable(GL_CULL_FACE);
+      safe_glEnableVertexAttribArray(h_aPosition);
+      safe_glEnableVertexAttribArray(h_aNormal);
 
-   safe_glEnableVertexAttribArray(h_aPosition);
-   safe_glEnableVertexAttribArray(h_aNormal);
+      glBindBuffer(GL_ARRAY_BUFFER, GrndBuffObj);
+      safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GIndxBuffObj);
 
-   glBindBuffer(GL_ARRAY_BUFFER, GrndBuffObj);
-   safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GIndxBuffObj);
+      SetMaterial(0);
 
-   SetMaterial(0);
+      glBindBuffer(GL_ARRAY_BUFFER, GNBuffObj);
+      safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-   glBindBuffer(GL_ARRAY_BUFFER, GNBuffObj);
-   safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+      /* draw!*/
+      glDrawElements(GL_TRIANGLES, g_GiboLen, GL_UNSIGNED_SHORT, 0);
 
-   /* draw!*/
-   glDrawElements(GL_TRIANGLES, g_GiboLen, GL_UNSIGNED_SHORT, 0);
+      // Disable attributes
+      safe_glDisableVertexAttribArray(h_aPosition);
+      safe_glDisableVertexAttribArray(h_aNormal);
 
-   // Disable attributes
-   safe_glDisableVertexAttribArray(h_aPosition);
-   safe_glDisableVertexAttribArray(h_aNormal);
+      SetMaterial(2);
+   }
+   else {
+      // Enable front face culling for object outlines
+      glCullFace(GL_FRONT);
+      glEnable(GL_CULL_FACE);
+
+      SetMaterial(17);
+   }
 
    //DRAW THE DANCING CYLINDER HERE!!
    btTransform pla;
    //PlaceModel(playerMesh, GetLookAt().x, GetLookAt().y - 1, GetLookAt().z, .25, .1, .25, 1, 1.7);
    //END OF DANCING CYLINDER CODE HERE!!
-   SetMaterial(2);
+
    drawSelectedObjects();
-   drawEntities();
+   drawEntities(passNum);
 
    // Disable backface culling for grapple
    glCullFace(GL_BACK);
@@ -273,7 +288,14 @@ void glfwDraw (GLFWwindow *window, bool shadowPass)
          SetupCube(x,y,z,5,rand()/300.0,.15,.15,.15);
       }
    }
-   SetMaterial(2);
+
+   if (passNum != 2)
+      SetMaterial(2);
+   else {
+      SetMaterial(17);
+      glCullFace(GL_FRONT);
+      glEnable(GL_CULL_FACE);
+   }
 
    vector<btRigidBody*> loopable = getVecList();
    srand(0);
@@ -290,7 +312,7 @@ void glfwDraw (GLFWwindow *window, bool shadowPass)
       }
    }
 
-   if (!shadowPass) {
+   if (passNum == 1) {
       //draw objectives
       for(int i = 0; i < objectives.size();i++){
          if(objectives[i]->active){
@@ -315,6 +337,8 @@ void glfwDraw (GLFWwindow *window, bool shadowPass)
    FRBbuilding->getMotionState()->getWorldTransform(trans);
    SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),3,0,2,2,2);
 */
+
+   glDisable(GL_CULL_FACE);
 }
 
 void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
@@ -324,6 +348,10 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    glUseProgram(ShadeProg);
 
    glUniform1i(h_uShadeMode, ShadeMode);
+
+   //Enable transparency
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
    // Specify texture unit
    safe_glUniform1i(h_uTexUnit, 0);
@@ -342,7 +370,7 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    curView = SetShadowView();
    curProj = SetOrthoProjectionMatrix(10.0);
    glUniform3f(h_uCamPos, 0.0, 3.0, 4.0);
-   glfwDraw(window, true);
+   glfwDraw(window, 0);
    shadowMap->UnbindFBO();
 
    // Render scene normally and draw
@@ -353,8 +381,14 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    curView = SetView();
    curProj = SetProjectionMatrix();
    glUniform3f(h_uCamPos, GetEye().x, GetEye().y, GetEye().z);
-   glfwDraw(window, false);
+   glfwDraw(window, 1);
    shadowMap->UnbindDepthTex();
+
+   // Draw outlines
+   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+   glLineWidth(3.0);
+   glfwDraw(window, 2);
+   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
    // Disable textures
    glDisable(GL_TEXTURE_2D);
