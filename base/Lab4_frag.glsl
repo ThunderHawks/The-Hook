@@ -38,6 +38,14 @@ void main() {
    dist = vShadowPos.z - 0.005; // Distance from light to fragment
 
    // Diffuse lighting
+/*
+   if (angleNL > 0.7)
+      color = uLColor * uMat.dColor * 0.85;
+   else if (angleNL > 0.3)
+      color = uLColor * uMat.dColor * 0.5;
+   else
+      color = uLColor * uMat.dColor * 0.15;
+*/
    if (angleNL > 0.8)
       color = uLColor * uMat.dColor;
    else if (angleNL > 0.6)
@@ -48,6 +56,8 @@ void main() {
       color = uLColor * uMat.dColor * 0.4;
    else
       color = uLColor * uMat.dColor * 0.2;
+
+   
    // Test if the fragment is in a shadow
    if (uShadeMode == 0) {
       if (depth < dist && dist < 1.0 && abs(angleNL) >= 0.01)
@@ -55,8 +65,8 @@ void main() {
    }
 
    // Specular lighting
-   if (angleVR > 0.95 && uMat.shine >= 100.0)
-      color += uLColor * uMat.sColor;
+   //if (angleVR > 0.95 && uMat.shine >= 100.0)
+      //color += uLColor * uMat.sColor;
 
    // Ambient lighting
    color += uLColor * uMat.aColor;

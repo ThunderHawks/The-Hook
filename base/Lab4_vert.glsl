@@ -40,6 +40,6 @@ void main() {
    /* Interpolate the position and normal and send to the fragment shader */
    vNorm = vec3(transNormal.x, transNormal.y, transNormal.z);
    vPos = vec3(transPos.x, transPos.y, transPos.z);
-   /* Vertex location in light space */
+   /* Vertex location in texture coordinates */
    vShadowPos = NDCtoTex * uLightProjMatrix * uLightViewMatrix * transPos;
 }

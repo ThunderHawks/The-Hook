@@ -206,7 +206,7 @@ void pauseorUnpause() {
 }
 
 /* Main display function */
-void glfwDraw (GLFWwindow *window)
+void glfwDraw (GLFWwindow *window, bool shadowPass)
 {
    //Enable transparency
    glEnable(GL_BLEND);
@@ -252,7 +252,7 @@ void glfwDraw (GLFWwindow *window)
    drawSelectedObjects();
    drawEntities();
 
-   // Disable backface culling for skybox
+   // Disable backface culling for grapple
    glCullFace(GL_BACK);
    glDisable(GL_CULL_FACE);
 
@@ -290,18 +290,19 @@ void glfwDraw (GLFWwindow *window)
       }
    }
 
-   //draw phys cubes
-   for(int i = 0; i < objectives.size();i++){
-      if(objectives[i]->active){
-         PlaceModel(flag,objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 50, 50, 50, 1, 1.7);
-         SetupCube(objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 16, 60, 10, 5000, 10);
-      }
-      else{
-         PlaceModel(flag,objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 50, 50, 50, 1, 1.7);
-         SetupCube(objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 15, 60, 10, 5000, 10);
+   if (!shadowPass) {
+      //draw objectives
+      for(int i = 0; i < objectives.size();i++){
+         if(objectives[i]->active){
+            PlaceModel(flag,objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 50, 50, 50, 1, 1.7);
+            SetupCube(objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 16, 60, 10, 5000, 10);
+         }
+         else{
+            PlaceModel(flag,objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 50, 50, 50, 1, 1.7);
+            SetupCube(objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 15, 60, 10, 5000, 10);
+         }
       }
    }
-
 
    ///render spherse
 /*
@@ -341,7 +342,7 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    curView = SetShadowView();
    curProj = SetOrthoProjectionMatrix(10.0);
    glUniform3f(h_uCamPos, 0.0, 3.0, 4.0);
-   glfwDraw(window);
+   glfwDraw(window, true);
    shadowMap->UnbindFBO();
 
    // Render scene normally and draw
@@ -352,7 +353,7 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    curView = SetView();
    curProj = SetProjectionMatrix();
    glUniform3f(h_uCamPos, GetEye().x, GetEye().y, GetEye().z);
-   glfwDraw(window);
+   glfwDraw(window, false);
    shadowMap->UnbindDepthTex();
 
    // Disable textures
