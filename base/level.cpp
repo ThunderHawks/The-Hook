@@ -3,6 +3,7 @@
 #include "Mesh.h"
 #include "Helper.h"
 #include "camBox.h"
+#include "octree.h"
 #include <vector>
 using namespace std;
 
@@ -120,6 +121,7 @@ void initLevelLoader() {
    entitiesSelected = false;
 }
 
+Octree* octLevel = new Octree(glm::vec3(-42,-100,67),glm::vec3(230,2000,379),3);
 
 //The entities are loaded into the physics engine
 void loadLevel(string fileName){
@@ -127,6 +129,8 @@ void loadLevel(string fileName){
    Entity tempEntity;
    int numOfEntities;
    ifstream infile;
+   //-42x, 67z
+   //230x, -379z
 
    //If clean level, load nothing
    if(strcmp(&fileName[0], "c.wub") == 0) {
@@ -188,6 +192,7 @@ void loadLevel(string fileName){
        btQuaternion(0,0,0,1),0,0,0,0);
       tempEntity.physics = createCameraBox(tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,
        tempEntity.scale.y*tempEntity.phyScale.y*.6,tempEntity.scale.x*tempEntity.phyScale.x*.6,tempEntity.scale.z*tempEntity.phyScale.z*.6);
+
       if(!(tempEntity.angle>-10&&tempEntity.angle<10||tempEntity.angle>170&&tempEntity.angle<190)){
          float tem = tempEntity.phyScale.x;
          tempEntity.phyScale.x = tempEntity.phyScale.z;
@@ -199,6 +204,7 @@ void loadLevel(string fileName){
       
       //Store entity into "entities" vector
       entities.push_back(tempEntity);
+      octLevel->add(&entities[entities.size()-1]);
    }
 }
 

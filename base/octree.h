@@ -109,6 +109,9 @@ public:
 
 	//Adds potential bs-wall collisions to the specified set
 	void BSWallCollision(vector<BS_Wall> &col);
+
+   //art
+   vector<Entity*> askPoint(glm::vec3 point);
 	
 };
 

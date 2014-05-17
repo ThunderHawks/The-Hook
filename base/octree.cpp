@@ -277,6 +277,27 @@ void Octree::BSBSCollision(vector<BS_BS> &col) {
 	}
 }
 
+
+
+vector<Entity*> Octree::askPoint(glm::vec3 point){
+   vector<Entity*> r;//result vector with all entitys that it can collide
+	Entity* bs;
+   
+   if(this->hasChildren){//if octree has a sub octree
+      r = this->children[point.x>center.x?1:0][point.y>center.y?1:0][point.z>center.z?1:0]->askPoint(point);//recurse into the correct octree
+   }
+
+   for(set<Entity*>::iterator it = bsSet.begin(); it != bsSet.end(); it++){//for verything in the current octree
+      bs = *it;
+      if((bs->position-point).length() < bs->BSRadius){//if the point is in the bounding sphere
+         r.push_back(bs);//add to results
+      }
+   }
+
+   return r;//return results
+}
+
+
 //Adds potential bs-wall collisions to the specified set
 void Octree::BSWallCollision(vector<BS_Wall> &col) {
 	BSWallCollision(col, WALL_LEFT, 'x', 0);
