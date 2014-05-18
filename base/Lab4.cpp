@@ -149,17 +149,44 @@ void drawSelectedObjects() {
 float sizer = 45;
 float cool = 0;
 //Draws the entities into the world
+void cameraColision(){
+   vector<Entity*> posible = pointLevelTest(GetEye());
+   int hit = 0;
+   for(int i =0;!hit && i<posible.size();i++){
+      camBox* boxCast = (camBox*)posible[i]->physics;
+      if ( pointBox(GetEye(),(camBox*)posible[i]->physics)){//test for camera collision with entities
+         hit = 1;
+      }
+   }
+   if(hit)addDistance(-.15);
+   else addDistance(.15);
+   resetVecs();
+   posible = pointLevelTest(GetEye());
+   hit = 0;
+   for(int i =0;!hit && i<posible.size();i++){
+      camBox* boxCast = (camBox*)posible[i]->physics;
+      if(pointBox(GetEye(),(camBox*)posible[i]->physics)){//test for camera collision with entities
+         hit = 1;
+      }
+   }
+   if(hit) addDistance(-.15);
+   resetVecs();
+   //addDistance(-.2);//antishake application
+   if(getDistance()<2)  setDistance(2);
+   if(getDistance()>20)  setDistance(20);
+
+  // resetVecs();
+   printf("test\n");
+}
 void drawEntities(int passNum) {
+   if(!Edit) cameraColision();
    Entity entityTemp;
    srand(sizer);
    int hit = 0;
    printf("num ent rend %d\n",getEntityNum());
    for(int i = 0; i < getEntityNum(); i++) {
       entityTemp = getEntityAt(i);
-      if(!Edit && pointBox(GetEye(),(camBox*)entityTemp.physics)){//test for camera collision with entities
-         hit = 1;
-         printf("hit!");
-      }
+      
       if (passNum == 2)
          SetMaterial(17);
       else {
@@ -170,32 +197,13 @@ void drawEntities(int passNum) {
       if(!getGPressed('V')) PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
          entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
    }
-   if(hit == 1 && getDistance()>6 && Edit == 0) addDistance(-.18); //zoom in if hit
-   else if(getDistance()<10 && hit==0&& Edit == 0) addDistance(.14); //zoom out if not hit and zoomed in
-//   if (getDistance()<6) setDistance(6);//minimum zoom
-   resetVecs();
-   for(int i = 0; i < getEntityNum(); i++) {//antishake zooming
-      entityTemp = getEntityAt(i);
-      camBox* bx = (camBox*)entityTemp.physics;
-      if(!Edit && pointBox(GetEye(),(camBox*)entityTemp.physics)){
-         hit = 1;
-         printf("hit!");
-         if(getGPressed('V'))   SetupCube(bx->x, bx->y, bx->z, 15, bx->amt, bx->w, bx->h, bx->d);
-      }
-      else{
-         if(getGPressed('V'))   SetupCube(bx->x, bx->y, bx->z, 16, bx->amt, bx->w, bx->h, bx->d);
-      }
-   }
-      if(hit == 1&& Edit == 0)         addDistance(-.14);//antishake application
-   printf("is dist %f %d\n",getDistance(),hit);
-   //printf("cool? %d %d %f\n",cool,getGPressed('B'),cos(sizer));
+
    if(getGPressed('B')) cool = 1;
    else{
     cool = 0;
     sizer=0;
    }
    if(cool) sizer+=.16;
-   if(getDistance()<2&& Edit == 0)setDistance(2);
 }
 
 //Bool that returns true if game is paused

@@ -122,6 +122,14 @@ void initLevelLoader() {
 }
 
 Octree* octLevel = new Octree(glm::vec3(-42,-100,67),glm::vec3(230,2000,379),3);
+void loadOctTree(){
+   for(int i = 0;i<entities.size();i++){
+      octLevel->add(&entities[i]);
+   }
+}
+vector<Entity*> pointLevelTest(glm::vec3 point){
+   return octLevel->askPoint(point);//dont wana mess with .h files
+}
 
 //The entities are loaded into the physics engine
 void loadLevel(string fileName){
@@ -204,9 +212,10 @@ void loadLevel(string fileName){
       
       //Store entity into "entities" vector
       entities.push_back(tempEntity);
-      octLevel->add(&entities[entities.size()-1]);
    }
+   loadOctTree();
 }
+
 
 //Creates an entity with the given arguments
 Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIndex) {

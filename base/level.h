@@ -86,5 +86,7 @@ void redo();
 void saveWorld();
 //Save the current world in .wub format
 void saveWorld(string lvName);
+//askPoint translation
+vector<Entity*> pointLevelTest(glm::vec3 point);
 
 #endif
