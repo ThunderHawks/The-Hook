@@ -58,7 +58,7 @@ void physicsInit() {
    //end of bullet setup   
 //   dynamicsWorld->setGravity(btVector3(0,-15,0));
 //   dynamicsWorld->setGravity(btVector3(0,-30,0));
-   dynamicsWorld->setGravity(btVector3(0,-90,0));
+   dynamicsWorld->setGravity(btVector3(0,-190,0));
 
    //shapes
    btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0,1,0),1);//1m up (y=1)
@@ -204,7 +204,7 @@ void physGrapplePoint(){
    glm::vec3 loc = targ-at;
    float dist = sqrt(loc.x*loc.x+loc.y*loc.y+loc.z*loc.z);
    targ-=at;
-   targ*=7;
+   targ*=10;
    //
    dist/=5;
    dist = dist>1?dist:1;
