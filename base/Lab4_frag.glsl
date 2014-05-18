@@ -58,9 +58,28 @@ void main() {
       color = uLColor * uMat.dColor * 0.2;
 
    // Test if the fragment is in a shadow
-   if (uShadeMode == 0) {
-      if (depth < dist && dist < 1.0 && abs(angleNL) >= 0.01)
+   if (uShadeMode == 1) {
+      if (depth < dist && dist < 1.0 && abs(angleNL) >= 0.01) {
          color *= 0.3;
+      }
+   }
+   else {
+      float multiplier = 0.0;
+      float offsetX, offsetY;
+
+      // Blur the shadow by averaging the surrounding shadow map values in a 7x7 texel square
+      for (offsetX = -3.0; offsetX <= 3.0; offsetX++) {
+         for (offsetY = -3.0; offsetY <= 3.0; offsetY++) {
+            // Get the shadow map depth at a neighboring texel
+            depth = texture2D(uTexUnit, vec2(shadowPos.x + offsetX / 1600.0, shadowPos.y + offsetY / 800.0)).z;
+            // If the area is not shadowed, increase the multiplier (make brighter)
+            if (!(depth < dist && dist < 1.0 && abs(angleNL) >= 0.01))
+               multiplier += 1.0;
+         }
+      }
+      // Only darken the pixel if the shadow isn't negligible
+      if (multiplier / 49.0 <= 0.8)
+         color *= multiplier / 49.0;
    }
 
    // Specular lighting
