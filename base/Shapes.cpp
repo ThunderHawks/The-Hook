@@ -154,7 +154,28 @@ unsigned short idx[] = {0, 1, 2,
     glBindBuffer(GL_ARRAY_BUFFER, NormalBuffObj);
     glBufferData(GL_ARRAY_BUFFER, sizeof(CubeNormal), CubeNormal, GL_STATIC_DRAW);
 }
+void SetupCube(float x, float y, float z, int material, float angle, float scaleX, float scaleY, float scaleZ) {
+   /*First Cube*/
+   SetModel(x, y, z, scaleX, scaleY, scaleZ, angle);
+   SetMaterial(material);
+   safe_glEnableVertexAttribArray(h_aPosition);
+   glBindBuffer(GL_ARRAY_BUFFER, CubeBuffObj);
+   safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
+   safe_glEnableVertexAttribArray(h_aNormal);
+   glBindBuffer(GL_ARRAY_BUFFER, NormalBuffObj);
+   safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+   /* draw!*/
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, CIndxBuffObj);
+
+   glDrawElements(GL_TRIANGLES, g_CiboLen, GL_UNSIGNED_SHORT, 0);
+
+   /* Disable the attributes used by our shader*/
+   safe_glDisableVertexAttribArray(h_aPosition);
+   safe_glDisableVertexAttribArray(h_aNormal);
+//   DrawShadow(x, z + 0.6, scaleX, scaleY, scaleZ + 0.4, angle);
+}
 /*static void initRamp() {
    float RampPos[] = {
       //Slanted face, 4 verts
@@ -433,6 +454,10 @@ void SetMaterial(int i) {
 }
 
 void DrawSkyBox() {
+	// Disable backface culling for skybox
+   glCullFace(GL_BACK);
+   glDisable(GL_CULL_FACE);
+   
 	SetMaterial(14);
 	
 	glDepthMask(GL_FALSE);
@@ -455,4 +480,8 @@ void DrawSkyBox() {
    safe_glDisableVertexAttribArray(h_aPosition);
    
    glDepthMask(GL_ALWAYS);
+   
+   // Enable backface culling
+   glCullFace(GL_BACK);
+   glEnable(GL_CULL_FACE);
 }

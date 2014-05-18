@@ -14,9 +14,14 @@ glm::vec3 wVec, uVec, vVec;
 float pitch = 0, yaw = -M_PI/2.0, distance = 10;
 float inSpeed = 0;
 int inEdit = 0;
+glm::vec3 ideal;
+float idealYaw = 0, idealPitch = 0;
 
 void resetVecs() {
 	if (inEdit == 0) {
+		yaw += (idealYaw - yaw)/20 + (idealYaw - yaw)/40;
+		pitch += (idealPitch - pitch)/20 + (idealYaw - yaw)/40;
+		
 		//Update lookAt
 	   eye.x = cos(pitch) * cos(yaw);
 	   eye.y = sin(pitch);
@@ -35,6 +40,8 @@ void resetVecs() {
 	   eye.z += lookAtPoint.z;
 	}
 	else {
+		pitch = idealPitch;
+		yaw = idealYaw;
 		lookAtPoint.x = cos(pitch) * cos(yaw);
 	   	lookAtPoint.y = sin(pitch);
 	   	lookAtPoint.z = cos(pitch) * cos(M_PI/2.0 - yaw);
@@ -99,22 +106,22 @@ glm::vec3 SetUp(glm::vec3 newUp) {
 }
 /*Sets the pitch and returns it*/
 float setPitch (float newPitch) {
-	pitch = newPitch;
+	idealPitch = pitch = newPitch;
 	return pitch;
 }
 /*Increment the pitch by the input and return its new location*/
 float incrementPitch(float toAdd) {
-	pitch += toAdd;
+	idealPitch += toAdd;
 	return pitch;
 }
 /*Sets the yaw and returns it*/
 float setYaw (float newYaw) {
-	yaw = newYaw;
+	idealYaw = yaw = newYaw;
 	return yaw;
 }
 /*Increment the yaw by the input and return its new location*/
 float incrementYaw(float toAdd) {
-	yaw += toAdd;
+	idealYaw += toAdd;
 	return yaw;
 }
 /*Sets the distance and returns it*/

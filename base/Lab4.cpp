@@ -87,50 +87,6 @@ glm::mat4 SetProjectionMatrix() {
    return Projection;
 }
 
-void DrawShadow(float x, float z, float Sx, float Sy, float Sz, float angle) {
-   /*Shadow*/
-   SetModel(x, -0.5, z, Sx, Sy, Sz, angle);
-   SetMaterial(1);
-   safe_glEnableVertexAttribArray(h_aPosition);
-   glBindBuffer(GL_ARRAY_BUFFER, ShadowCubeBuffObj);
-   safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-   safe_glEnableVertexAttribArray(h_aNormal);
-   glBindBuffer(GL_ARRAY_BUFFER, ShadowNormalBuffObj);
-   safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-   /* draw!*/
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, SCIndxBuffObj);
-   glDrawElements(GL_TRIANGLES, g_SCiboLen, GL_UNSIGNED_SHORT, 0);
-
-   /* Disable the attributes used by our shader*/
-   safe_glDisableVertexAttribArray(h_aPosition);
-   safe_glDisableVertexAttribArray(h_aNormal);
-}
-
-void SetupCube(float x, float y, float z, int material, float angle, float scaleX, float scaleY, float scaleZ) {
-   /*First Cube*/
-   SetModel(x, y, z, scaleX, scaleY, scaleZ, angle);
-   SetMaterial(material);
-   safe_glEnableVertexAttribArray(h_aPosition);
-   glBindBuffer(GL_ARRAY_BUFFER, CubeBuffObj);
-   safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-   safe_glEnableVertexAttribArray(h_aNormal);
-   glBindBuffer(GL_ARRAY_BUFFER, NormalBuffObj);
-   safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-   /* draw!*/
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, CIndxBuffObj);
-
-   glDrawElements(GL_TRIANGLES, g_CiboLen, GL_UNSIGNED_SHORT, 0);
-
-   /* Disable the attributes used by our shader*/
-   safe_glDisableVertexAttribArray(h_aPosition);
-   safe_glDisableVertexAttribArray(h_aNormal);
-//   DrawShadow(x, z + 0.6, scaleX, scaleY, scaleZ + 0.4, angle);
-}
-
 //Draws the currently selected entity
 void drawSelectedObjects() {
 
@@ -224,21 +180,6 @@ void pauseorUnpause() {
    }
 }
 
-void SetupAndDrawSkyBox() {
-   // Disable backface culling for skybox
-   glCullFace(GL_BACK);
-   glDisable(GL_CULL_FACE);
-
-   // Draw skybox
-   ModelTrans.loadIdentity();
-   DrawSkyBox();
-   SetModelStat();
-
-   // Enable backface culling
-   glCullFace(GL_BACK);
-   glEnable(GL_CULL_FACE);
-}
-
 /* Main display function 
  * passNum: 0 = Create shadow map
  *          1 = Draw scene normally
@@ -247,8 +188,9 @@ void SetupAndDrawSkyBox() {
 void glfwDraw (GLFWwindow *window, int passNum)
 {
    if (passNum != 2) {
-      //Setup and draw Sky Box
-      SetupAndDrawSkyBox();
+      //Draw skybox
+   	DrawSkyBox();
+   	SetModelStat();
 
       safe_glEnableVertexAttribArray(h_aPosition);
       safe_glEnableVertexAttribArray(h_aNormal);
