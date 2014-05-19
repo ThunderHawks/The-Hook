@@ -107,22 +107,22 @@ glm::vec3 SetUp(glm::vec3 newUp) {
 /*Sets the pitch and returns it*/
 float setPitch (float newPitch) {
 	idealPitch = pitch = newPitch;
-	return pitch;
+	return idealPitch;
 }
 /*Increment the pitch by the input and return its new location*/
 float incrementPitch(float toAdd) {
 	idealPitch += toAdd;
-	return pitch;
+	return idealPitch;
 }
 /*Sets the yaw and returns it*/
 float setYaw (float newYaw) {
 	idealYaw = yaw = newYaw;
-	return yaw;
+	return idealYaw;
 }
 /*Increment the yaw by the input and return its new location*/
 float incrementYaw(float toAdd) {
 	idealYaw += toAdd;
-	return yaw;
+	return idealYaw;
 }
 /*Sets the distance and returns it*/
 float setDistance(float newDist) {
