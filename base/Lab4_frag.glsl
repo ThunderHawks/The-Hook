@@ -26,7 +26,6 @@ void main() {
    vec3 pos = normalize(vPos);
    vec3 light = normalize(vec3(uLightVec.x, uLightVec.y, uLightVec.z));  // Directional light
    vec3 view = normalize(uCamPos - vPos);
-   vec3 refl = normalize(reflect(-light, norm));
 
    angleNL = clamp(dot(norm, light), 0.0, 1.0);
 
@@ -69,9 +68,9 @@ void main() {
       float multiplier = 0.0;
       float offsetX, offsetY;
 
-      // Blur the shadow by averaging the surrounding shadow map values in a 7x7 texel square
-      for (offsetX = -3.0; offsetX <= 3.0; offsetX++) {
-         for (offsetY = -3.0; offsetY <= 3.0; offsetY++) {
+      // Blur the shadow by averaging the surrounding shadow map values in a 3x3 texel square
+      for (offsetX = -1.0; offsetX <= 1.0; offsetX++) {
+         for (offsetY = -1.0; offsetY <= 1.0; offsetY++) {
             // Get the shadow map depth at a neighboring texel
             depth = texture2D(uTexUnit, vec2(shadowPos.x + offsetX / 1600.0, shadowPos.y + offsetY / 800.0)).z;
             // If the area is not shadowed, increase the multiplier (make brighter)
@@ -80,8 +79,8 @@ void main() {
          }
       }
       // Only darken the pixel if the shadow isn't negligible. Otherwise, add specular
-      if (multiplier / 49.0 <= 0.8)
-         color *= multiplier / 49.0;
+      if (multiplier / 9.0 <= 0.8)
+         color *= multiplier / 9.0;
       else if (uMat.alpha == 1.0)
          color += uLColor * uMat.sColor * angleNH;
    }
