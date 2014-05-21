@@ -163,11 +163,11 @@ void glfwEditGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    }
 
    //Calculate change in Y
-   if(eendY > estartY && ealpha <= 1.1) {
+   if(eendY > estartY && ealpha <= 0.98) {
       diff = eendY - estartY;
       ealpha = incrementPitch((diff * M_PI)/g_width);
    }
-   else if(eendY < estartY && ealpha >= -1.1) {
+   else if(eendY < estartY && ealpha >= -0.98) {
       diff = estartY - eendY;
       ealpha = incrementPitch(-(diff * M_PI)/g_width);
    }
