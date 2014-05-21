@@ -53,24 +53,24 @@ void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float s
    //if (rad < 0)
    	//printf("rad: %f\n", rad);
    
-   if (checkViewFrustum (glm::vec3 (0,0,0), rad, curProj*curView*Mod) == 0) {
-		//safe_glEnableVertexAttribArray(h_aPosition);
-		glEnableVertexAttribArray(h_aPosition);
-		glBindBuffer(GL_ARRAY_BUFFER, mesh.PositionHandle);
-		//safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
-		glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  if (checkViewFrustum (glm::vec3 (0,0,0), rad, curProj*curView*Mod) == 0) {
+    //safe_glEnableVertexAttribArray(h_aPosition);
+    glEnableVertexAttribArray(h_aPosition);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh.PositionHandle);
+    //safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-		//safe_glEnableVertexAttribArray(h_aNormal);
-		glEnableVertexAttribArray(h_aNormal);
-		glBindBuffer(GL_ARRAY_BUFFER, mesh.NormalHandle);
-		//safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
-		glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    //safe_glEnableVertexAttribArray(h_aNormal);
+    glEnableVertexAttribArray(h_aNormal);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh.NormalHandle);
+    //safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-		/* draw!*/
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndexHandle);
+    /* draw!*/
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndexHandle);
 
-		glDrawElements(GL_TRIANGLES, mesh.IndexBufferLength, GL_UNSIGNED_SHORT, 0);
-   }
+    glDrawElements(GL_TRIANGLES, mesh.IndexBufferLength, GL_UNSIGNED_SHORT, 0);
+  }
 }
 
 /*******************************************************************************

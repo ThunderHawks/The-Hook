@@ -10,6 +10,7 @@
 #include "IOEdit.h"
 #include "Mesh.h"
 #include "physSystem.h"
+#include "Camera.h"
 //#include <bullet/btCollisionWorld.h>
 #include "SoundPlayer.h"
 #include <vector>
@@ -199,6 +200,7 @@ int isGrappleActive(){
    return playerGrappleActive;
 }
 void physGrapplePoint(){
+	lookAt = GetLookAt();
    glm::vec3 at = glm::vec3(lookAt.x,lookAt.y,lookAt.z);
    glm::vec3 targ = glm::vec3(tmp.getX(),tmp.getY(),tmp.getZ());
    glm::vec3 loc = targ-at;

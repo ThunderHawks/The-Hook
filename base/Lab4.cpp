@@ -107,26 +107,41 @@ float cool = 0;
 //Draws the entities into the world
 void cameraColision(){
    vector<Entity*> posible = pointLevelTest(GetEye());
+   glm::vec3 tempEye;
    int hit = 0;
+
+   //check to see if it is currently collided
    for(int i =0;!hit && i<posible.size();i++){
       camBox* boxCast = (camBox*)posible[i]->physics;
       if ( pointBox(GetEye(),(camBox*)posible[i]->physics)){//test for camera collision with entities
          hit = 1;
       }
    }
-   if(hit)addDistance(-.15);
-   else addDistance(.15);
-   resetVecs();
-   posible = pointLevelTest(GetEye());
-   hit = 0;
-   for(int i =0;!hit && i<posible.size();i++){
-      camBox* boxCast = (camBox*)posible[i]->physics;
-      if(pointBox(GetEye(),(camBox*)posible[i]->physics)){//test for camera collision with entities
-         hit = 1;
+   //check to see if it is hit. if so, you decrement distance unless it hits the minimum distance
+   if(hit && getDistance() >= 2.15)
+      addDistance(-.15);
+   //if it did not hit, then check to see if it is safe to move it back
+   else if (!hit  && getDistance() <= 19.85) {
+      //get an eye at the new distance
+      addDistance(.15);
+      tempEye = GetEye();
+      //gather all the possible objects it may hit
+      posible = pointLevelTest(tempEye);
+      //set our flag to 0
+      hit = 0;
+      
+      //go through all of the objects it may have hit and check them for collision
+      for(int i =0;!hit && i<posible.size();i++){
+         camBox* boxCast = (camBox*)posible[i]->physics;
+         //if they hit, set our flag to true
+         if(pointBox(tempEye,(camBox*)posible[i]->physics)){//test for camera collision with entities
+            hit = 1;
+         }
       }
+      //if it did collide after moving, we set it back
+      if(hit)
+         addDistance(.15);
    }
-   if(hit) addDistance(-.15);
-   resetVecs();
    //addDistance(-.2);//antishake application
    if(getDistance()<2)  setDistance(2);
    if(getDistance()>20)  setDistance(20);
@@ -263,16 +278,13 @@ void glfwDraw (GLFWwindow *window, int passNum)
 
    vector<btRigidBody*> loopable = getVecList();
    srand(0);
+
    for(int i = 0;i<loopable.size();i++){
       btTransform trans;
       loopable[i]->getMotionState()->getWorldTransform(trans);
-      //printf("actual is %f %f %f\n",trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ());
-   if(loopable[i]->getUserPointer()){
-	   if(!i)
-		   PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.1*SCALE,.1*SCALE,.1*SCALE,1, 1.7);
-	   else  
-		   PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.1*SCALE,.1*SCALE,.1*SCALE, 0, 1);
-        // SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),2,0,2,2,2);
+      if(loopable[i]->getUserPointer()){
+         if(!i)
+		       PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.1*SCALE,.1*SCALE,.1*SCALE, getYaw(), 1.7);
       }
    }
 
@@ -290,24 +302,17 @@ void glfwDraw (GLFWwindow *window, int passNum)
       }
    }
 
-   ///render spherse
-/*
-   btTransform trans;
-   fallRigidBody->getMotionState()->getWorldTransform(trans);
-   std::cout << "sphere height: " << trans.getOrigin().getY() << " sphere x:"<<trans.getOrigin().getX()<< " sphere z:"<< trans.getOrigin().getZ() <<std::endl;
-   SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),2,60,2,2,2);
-   fallRigidBodyb->getMotionState()->getWorldTransform(trans);
-   SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),2,60,2,2,2);
-   FRBbuilding->getMotionState()->getWorldTransform(trans);
-   SetupCube(trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),3,0,2,2,2);
-*/
-
    glDisable(GL_CULL_FACE);
 }
 
 void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    glm::vec3 origEye = GetEye();
    glm::vec3 origLookAt = GetLookAt();
+   
+   glm::vec3 ggaze = GetLookAt() - GetEye();
+   glm::vec3 gw = ggaze/magnitude(ggaze);
+  	gw = glm::vec3(-1.0 * gw.x, -1.0 * gw.y, -1.0 * gw.z);
+  	glm::vec3 gu = glm::cross(GetUp(), gw)/magnitude(glm::cross(GetUp(), gw));
    
    glUseProgram(ShadeProg);
 
@@ -341,7 +346,7 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    shadowMap->BindDepthTex();
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    SetEye(origEye);
-   SetLookAt(origLookAt + vec3(0, 2, 0));
+   SetLookAt(origLookAt + vec3(0, 2, 0) - 2.f*vec3(gu.x, 0, gu.z));
    curView = SetView();
    curProj = SetProjectionMatrix();
    glUniform3f(h_uCamPos, GetEye().x, GetEye().y, GetEye().z);

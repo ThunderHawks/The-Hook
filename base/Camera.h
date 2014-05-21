@@ -34,6 +34,8 @@ float incrementPitch(float toAdd);
 float setYaw (float newYaw);
 /*Increment the yaw by the input and return its new location*/
 float incrementYaw(float toAdd);
+/*Gets the yaw and returns in*/
+float getYaw();
 /*Sets the distance and returns it*/
 float setDistance(float newDist);
 /*Increment the distance by the input and return its new location*/

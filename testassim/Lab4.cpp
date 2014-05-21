@@ -137,14 +137,15 @@ void glfwDraw (GLFWwindow *window)
    SetProjectionMatrix();
    SetView();
 
-   glUniform3f(h_uLightColor, 0.4, 0.4, 0.38);
-   glUniform4f(h_uLightVec, 0.0, -1.0, 1.0, 0.0);
+   glUniform3f(h_uLightColor, 1.0, 1.0, 1.0);
+   glUniform4f(h_uLightVec, 0.0, -1.0, -10.0, 0.0);
    glUniform3f(h_uCamPos, 0, 0, 0);
 
    ModelTrans.loadIdentity();
    SetModelStat();
 
-	SetupCube(0, 0, -2, 10, spin, 1, 1, 1);
+	PlaceModel(damesh, 0, -5, -10, 1, 1, 1, spin);
+	//SetupCube(0, 0, -2, 10, spin, 1, 1, 1);
 
    //Disable the shader
    glUseProgram(0);	
@@ -182,6 +183,8 @@ int main( int argc, char *argv[] )
    glewInit();
    glInitialize(window);
    InitGeom();
+   
+   damesh = LoadMesh("../Assets/Models/charWaving.dae");
 
    // Start the main execution loop.
    while (!glfwWindowShouldClose(window)) {
