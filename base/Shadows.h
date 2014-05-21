@@ -18,6 +18,7 @@ public:
 private:
    GLuint FrameBuf;
    GLuint DepthTex;
+   int texWidth, texHeight;
 };
 
 glm::mat4 SetOrthoProjectionMatrix(float dist);
