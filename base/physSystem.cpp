@@ -21,7 +21,7 @@ btRigidBody* player;
 btDiscreteDynamicsWorld* dynamicsWorld;
 //btCollisionShape* ground;
 vector<btRigidBody*> btobjes;
-Mesh chara;
+//Mesh chara;
 glm::vec3 lookAt;
 float curXsp,curYsp,curZsp;
 int playerGrappleActive = 0;
@@ -83,8 +83,8 @@ void physicsInit() {
    player = createStaticSphere(1,1,1,1.7,1,1,btQuaternion(0,0,0,1),1,0,0,0);
    
    player->setSleepingThresholds (0, 0);
-   chara = LoadMesh("../Assets/Models/topHatChar.obj");
-   physSetDisplayObj(player,&chara);
+   //chara = LoadMesh("../Assets/Models/topHatChar.obj");
+   //physSetDisplayObj(player,&chara);
 
    float x,y,z;
    x = physGetPlayerX();

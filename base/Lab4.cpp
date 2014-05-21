@@ -240,6 +240,7 @@ void glfwDraw (GLFWwindow *window, int passNum)
 
    //DRAW THE DANCING CYLINDER HERE!!
    btTransform pla;
+   PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY(), physGetPlayerZ(), .25, .25, .25, 0, 1.7);
    //PlaceModel(playerMesh, GetLookAt().x, GetLookAt().y - 1, GetLookAt().z, .25, .1, .25, 1, 1.7);
    //END OF DANCING CYLINDER CODE HERE!!
 
@@ -276,17 +277,17 @@ void glfwDraw (GLFWwindow *window, int passNum)
       glEnable(GL_CULL_FACE);
    }
 
-   vector<btRigidBody*> loopable = getVecList();
    srand(0);
+   /*vector<btRigidBody*> loopable = getVecList();
 
    for(int i = 0;i<loopable.size();i++){
       btTransform trans;
       loopable[i]->getMotionState()->getWorldTransform(trans);
       if(loopable[i]->getUserPointer()){
          if(!i)
-		       PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.1*SCALE,.1*SCALE,.1*SCALE, getYaw(), 1.7);
+		       PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.1*SCALE,.1*SCALE,.1*SCALE, 0, 1.7);
       }
-   }
+   }*/
 
    if (passNum == 1) {
       //draw objectives
@@ -478,7 +479,7 @@ int main( int argc, char *argv[] )
       musicPlayer = SoundPlayer();
 		musicPlayer.CreatePlayList("./playList.txt");
    }
-   LoadMesh("../Assets/Models/topHatChar.obj");
+   playerMesh = LoadMesh("../Assets/Models/topHatChar.obj");
    ShadowMap *shadowMap = new ShadowMap();
    if (shadowMap->MakeShadowMap(g_width, g_height) == -1) {
       printf("SHADOW MAP FAILED\n");
