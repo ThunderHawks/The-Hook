@@ -55,21 +55,23 @@ glm::mat4 SetShadowView() {
 glm::vec3 GetEye() {
 	float tempDist;
 
-	eye.x = cos(pitch) * cos(yaw);
-	eye.y = sin(pitch);
-	eye.z = cos(pitch) * cos(M_PI/2.0 - yaw);
+	if (inEdit == 0) {
+		eye.x = cos(pitch) * cos(yaw);
+		eye.y = sin(pitch);
+		eye.z = cos(pitch) * cos(M_PI/2.0 - yaw);
 
-	eye *= glm::vec3(distance + inSpeed, distance + inSpeed, distance + inSpeed);
-   
-	while (eye.y + lookAtPoint.y < .1 && distance > 1) {
-   		eye.x -= .2*cos(pitch) * cos(yaw);
-   		eye.y -= .2*sin(pitch);
-   		eye.z -= .2*cos(pitch) * cos(M_PI/2.0 - yaw);
+		eye *= glm::vec3(distance + inSpeed, distance + inSpeed, distance + inSpeed);
+		
+		while (eye.y + lookAtPoint.y < .1 && distance > 1) {
+				eye.x -= .2*cos(pitch) * cos(yaw);
+				eye.y -= .2*sin(pitch);
+				eye.z -= .2*cos(pitch) * cos(M_PI/2.0 - yaw);
+		}
+		
+		eye.x += lookAtPoint.x;
+		eye.y += lookAtPoint.y;
+		eye.z += lookAtPoint.z;
 	}
-   
-	eye.x += lookAtPoint.x;
-	eye.y += lookAtPoint.y;
-	eye.z += lookAtPoint.z;
 
 	return eye;
 }
