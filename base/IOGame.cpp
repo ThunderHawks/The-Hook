@@ -33,7 +33,7 @@ float gstartX, gstartY;
 float gendX, gendY;
 float galpha = 0.0;
 float gbeta = -M_PI/2.0;
-int grTgl = 0;
+int zoomed = 0;
 
 glm::vec3 ggaze;
 glm::vec3 gw, gu;
@@ -44,16 +44,21 @@ int gKeysPressed[255];
 void glfwPlayMouse(GLFWwindow *window, int button, int action, int mods) {
    //If the left button is pressed
    if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-      PlayFX(THROW_GRAP_FX);
+   	//find the direction to throw the grappling hook
       glm::vec3 dir = GetLookAt()-GetEye();
-      physGrapple(-dir.x,-dir.y,-dir.z);
+      //check to see if the grappling hook hit. If it did, play a sound
+      if (physGrapple(-dir.x,-dir.y,-dir.z))
+      	PlayFX(THROW_GRAP_FX);
+      
+      //pull on the grapple
       holdGrapple(1);
    }
    if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
       holdGrapple(0);
    }
    else if(button == GLFW_MOUSE_BUTTON_RIGHT) {
-      grTgl = !grTgl;
+   	//zoom in
+      zoomed = !zoomed;
    }
 }
 
@@ -108,7 +113,7 @@ int getGPressed(char ch){
 }
 
 void glfwGameKeyboard(void) {
-   if(grTgl) setDistance(2);
+   if(zoomed) setDistance(2);
 
   gw = ggaze/magnitude(ggaze);
   gw = glm::vec3(-1.0 * gw.x, -1.0 * gw.y, -1.0 * gw.z);

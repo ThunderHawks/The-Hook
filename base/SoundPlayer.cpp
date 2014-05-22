@@ -49,7 +49,7 @@ void SoundPlayer::nextSong() {
 	BGM.stopSong();
 cout << playList.size() << endl;
 	BGM.playMusic(getTrackPath(trackNum), true);
-cout <<"HIHIHI"<<endl;
+
 }
 
 void SoundPlayer::prevSong() {

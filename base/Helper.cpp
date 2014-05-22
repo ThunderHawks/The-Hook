@@ -13,7 +13,6 @@
 #include "glm/gtc/matrix_transform.hpp" //perspective, trans etc
 #include "glm/gtc/type_ptr.hpp" //value_ptr
 #include <list>
-#include <math.h>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -28,7 +27,7 @@
 *	Summary: finds the magnitude of a vec3 
 */ 
 float magnitude(glm::vec3 vector) {
-   return sqrt(pow(vector.x, 2.0) + pow(vector.y, 2.0) + pow(vector.z, 2.0));
+   return sqrt(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
 }
 
 // GLFW callback for any detected errors.

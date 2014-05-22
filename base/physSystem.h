@@ -6,7 +6,7 @@
 #include <vector>
 #include "glm/glm.hpp"
 
-void physGrapple(float lx, float ly, float lz);
+bool physGrapple(float lx, float ly, float lz);
 std::vector<btRigidBody*> getVecList();
 void physicsInit();
 void physGetPlayerLocation(btTransform);

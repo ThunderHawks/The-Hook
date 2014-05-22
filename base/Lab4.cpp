@@ -97,7 +97,7 @@ void drawSelectedObjects() {
       vector<Entity> tempEntities = getSelectedEntities();
 
       //Place each selected objects
-      for(int i = 0; i < tempEntities.size(); i++) {
+      for(int i = 0; i < tempEntities.size(); ++i) {
          PlaceModel(*tempEntities.at(i).mesh, tempEntities.at(i).position.x, tempEntities.at(i).position.y, tempEntities.at(i).position.z, tempEntities.at(i).scale.x, tempEntities.at(i).scale.y, tempEntities.at(i).scale.z, tempEntities.at(i).angle, tempEntities.at(i).BSRadius);
       }
    }
@@ -112,7 +112,7 @@ void cameraColision(){
    glm::vec3 tempEye = GetEye();
    
    //check to see if it collides with anything
-   for(int i =0;!hit && i<posible.size();i++){
+   for(int i =0;!hit && i<posible.size();++i){
       camBox* boxCast = (camBox*)posible[i]->physics;
       if ( pointBox(tempEye,(camBox*)posible[i]->physics)){//test for camera collision with entities
          hit = 1;
@@ -131,7 +131,7 @@ void cameraColision(){
    hit = 0;
    
    //check to see if the new location is colliding
-   for(int i =0;!hit && i<posible.size();i++){
+   for(int i =0;!hit && i<posible.size();++i){
       camBox* boxCast = (camBox*)posible[i]->physics;
       if(pointBox(tempEye,(camBox*)posible[i]->physics)){//test for camera collision with entities
          hit = 1;
@@ -154,7 +154,7 @@ void drawEntities(int passNum) {
    srand(sizer);
    int hit = 0;
    printf("num ent rend %d\n",getEntityNum());
-   for(int i = 0; i < getEntityNum(); i++) {
+   for(int i = 0; i < getEntityNum(); ++i) {
       entityTemp = getEntityAt(i);
       
       if (passNum == 2)
@@ -276,20 +276,10 @@ void glfwDraw (GLFWwindow *window, int passNum)
    }
 
    srand(0);
-   /*vector<btRigidBody*> loopable = getVecList();
-
-   for(int i = 0;i<loopable.size();i++){
-      btTransform trans;
-      loopable[i]->getMotionState()->getWorldTransform(trans);
-      if(loopable[i]->getUserPointer()){
-         if(!i)
-		       PlaceModel(*(Mesh*)(loopable[i]->getUserPointer()), trans.getOrigin().getX(),trans.getOrigin().getY(),trans.getOrigin().getZ(),.1*SCALE,.1*SCALE,.1*SCALE, 0, 1.7);
-      }
-   }*/
 
    if (passNum == 1) {
       //draw objectives
-      for(int i = 0; i < objectives.size();i++){
+      for(int i = 0; i < objectives.size();++i){
          if(objectives[i]->active){
             PlaceModel(flag,objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 50, 50, 50, 1, 1.7);
             SetupCube(objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 16, 60, 10, 5000, 10);
@@ -526,7 +516,7 @@ int main( int argc, char *argv[] )
             //Keep the cursor centered
             glfwSetCursorPos(window,g_width/2,g_height/2);         
             physStep();
-            for(int i=0;i<objectives.size();i++) objectives[i]->Update(glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ()));
+            for(int i=0;i<objectives.size();++i) objectives[i]->Update(glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ()));
             //printf("oop%d\n",      getVecList().size());
             //Draw stuff
             renderScene(window, shadowMap);

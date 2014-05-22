@@ -151,7 +151,8 @@ float physGetPlayerZ(){
 glm::vec3 dir;
 btVector3 tmp;
 int flip;
-void physGrapple(float lx,float ly,float lz){
+bool physGrapple(float lx,float ly,float lz){
+	bool ret = false;
    flip = 0;
    dir = glm::normalize(glm::vec3(-lx,ly,-lz));
    //printf("grapple in dir %f %f %f\n",dir.x,dir.y,dir.z);
@@ -176,7 +177,11 @@ void physGrapple(float lx,float ly,float lz){
       tmp = RayCallback.m_hitPointWorld;
     // Do some clever stuff here
       playerGrappleActive =1;
+      
+      ret = true;
    }
+   
+   return ret;
 }
 void physJump(){
    printf("boing!\n");
