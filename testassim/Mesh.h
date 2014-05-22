@@ -5,6 +5,9 @@
  *      Author: Ian Dunn
  */
 
+#ifndef MESH__H_
+#define MESH__H_
+
 #ifdef __APPLE__
 #include "GLUT/glut.h"
 #include <OPENGL/gl.h>
@@ -45,3 +48,4 @@ struct Mesh
 Mesh LoadMesh(std::string file);
 void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle);
 
+#endif
