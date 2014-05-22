@@ -55,6 +55,7 @@ void glfwPlayMouse(GLFWwindow *window, int button, int action, int mods) {
    }
    if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
       holdGrapple(0);
+      physJump();
    }
    else if(button == GLFW_MOUSE_BUTTON_RIGHT) {
    	//zoom in
@@ -91,7 +92,7 @@ void glfwGameGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
    }
 
    //Calculate change in Y
-   if(gendY < gstartY && galpha <= 0.8) {
+   if(gendY < gstartY && galpha <= 1.3) {
       diff = gstartY - gendY;
       galpha = incrementPitch((diff * M_PI)/g_width);
    }

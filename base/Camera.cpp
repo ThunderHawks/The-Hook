@@ -19,8 +19,8 @@ float idealYaw = 0, idealPitch = 0;
 
 void resetVecs() {
 	if (inEdit == 0) {
-		yaw += (idealYaw - yaw)/8 + (idealYaw - yaw)/20;
-		pitch += (idealPitch - pitch)/8 + (idealYaw - yaw)/20;
+		yaw += (idealYaw - yaw)/2 + (idealYaw - yaw)/20;
+		pitch += (idealPitch - pitch)/2 + (idealYaw - yaw)/20;
 		
 		GetEye();
 	}
