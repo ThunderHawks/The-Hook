@@ -119,6 +119,7 @@ void initLevelLoader() {
    //Load into current index to prevent segfault. Doesn't appear.
    selectAtHotBarIndex(0);
    entitiesSelected = false;
+   //printf("done\n");
 }
 
 Octree* octLevel = new Octree(glm::vec3(-42,-100,67),glm::vec3(230,2000,379),3);
