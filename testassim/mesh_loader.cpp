@@ -40,6 +40,7 @@ AssimpMesh loadMesh(const std::string& path) {
 /******************************************************************************/
 	int i, j;
 	ret.skeleton_vertices = (vertexInfo *)calloc(sizeof(vertexInfo), mesh.mNumVertices);
+	ret.numVerts = mesh.mNumVertices;
 		
 	//fill all the positions for the skeleton_vertices
 	for (i = 0; i < mesh.mNumVertices; i++) {
@@ -78,7 +79,7 @@ AssimpMesh loadMesh(const std::string& path) {
 			//TODO: NOT REALLY SURE IF THIS WORKS CONSIDERING THIS IS PUSHING IN THE BONE ARRAY BEFORE WE CREATE THE HIERARCHY???
 			//fill our array of vertices with bones and weights
 			/*for (i = 0; i < mesh.mBones[j]->mNumWeights; i++) {
-				//ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].bone_array.push_back(*(mesh.mBones[j]));
+				ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].bone_array.push_back(*(mesh.mBones[j]));
 				ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].weight_array.push_back(mesh.mBones[j]->mWeights[i].mWeight);
 			}*/
 		}
@@ -92,7 +93,7 @@ AssimpMesh loadMesh(const std::string& path) {
 			for (i = 0; i < mesh.mBones[j]->mNumWeights; i++) {
 				for (int k = 0; k < ret.boneCt; ++k) {
 					if(mesh.mBones[j]->mName == ret.bone_array[k].name) {
-						ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].bone_array.push_back(ret.bone_array[k]);
+						ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].bone_array.push_back(ret.bone_array + k);
 						//printf("actually made it inside?\n");
 					}
 				}
@@ -100,22 +101,67 @@ AssimpMesh loadMesh(const std::string& path) {
 			}
 		}
 		/*****************END**MODIFIED**********************/
+		
+		/*****************GRAB KEY FRAMES******************/
+		for (i = 0; i < scene->mNumAnimations; i++) {
+			for (j = 0; j < scene->mAnimations[i]->mNumChannels; j++) {
+				for(int k = 0; k < ret.boneCt; k++) {
+					if (ret.bone_array[k].name == scene->mAnimations[i]->mChannels[j]->mNodeName) {
+						aiNodeAnim *nodeHold = scene->mAnimations[i]->mChannels[j];
+						
+						ret.bone_array[k].numRotKeyFrames = nodeHold->mNumRotationKeys;
+						ret.bone_array[k].numPosKeyFrames = nodeHold->mNumPositionKeys;
+						ret.bone_array[k].numScaleKeyFrames = nodeHold->mNumScalingKeys;
+						
+						ret.bone_array[k].posKeys = (aiVectorKey *)calloc(sizeof(aiVectorKey), nodeHold->mNumPositionKeys);
+						ret.bone_array[k].rotKeys = (aiQuatKey *)calloc(sizeof(aiQuatKey), nodeHold->mNumRotationKeys);
+						ret.bone_array[k].scaleKeys = (aiVectorKey *)calloc(sizeof(aiVectorKey), nodeHold->mNumScalingKeys);
+						
+						for (int l = 0; l < nodeHold->mNumPositionKeys; l++)
+							ret.bone_array[k].posKeys[l] = nodeHold->mPositionKeys[l];
+							
+						for (int l = 0; l < nodeHold->mNumRotationKeys; l++)
+							ret.bone_array[k].rotKeys[l] = nodeHold->mRotationKeys[l];
+							
+						for (int l = 0; l < nodeHold->mNumScalingKeys; l++)
+							ret.bone_array[k].scaleKeys[l] = nodeHold->mScalingKeys[l];
+						
+						k = ret.boneCt;
+					}
+				}
+			}
+		}
+		
+		Bone *parent;
+		aiMatrix4x4t<float> translateM, rotateM, scaleM;
+		for (i = 0; i < ret.boneCt; i++) {
+			parent = ret.bone_array[i].parent;
+			ret.bone_array[i].transformations = (aiMatrix4x4 *)calloc(sizeof(aiMatrix4x4), ret.bone_array[i].numPosKeyFrames);
+			for (j = 0; j < ret.bone_array[i].numPosKeyFrames; j++) {
+				aiMatrix4x4::Translation(ret.bone_array[i].posKeys[j].mValue, translateM);
+				aiMatrix4x4::Scaling(ret.bone_array[i].scaleKeys[j].mValue, scaleM);
+			}
+		}
+		/**************************************************/
 		printf("anim name: %s\n", scene->mAnimations[0]->mName.C_Str());
 		for(i = 0; i < scene->mAnimations[0]->mNumChannels; i++) {
 			printf("name of %d's aiNodeAnim: %s; numPositionKeys: %d; numRotationKeys: %d; numScalingKeys: %d\n",i, scene->mAnimations[0]->mChannels[i]->mNodeName.C_Str(), 
 			 scene->mAnimations[0]->mChannels[i]->mNumPositionKeys, scene->mAnimations[0]->mChannels[i]->mNumRotationKeys, scene->mAnimations[0]->mChannels[i]->mNumScalingKeys);
 		}
 
-/*		//check the vertices data
+	//check the vertices data
 		for (i = 0; i < mesh.mNumVertices; i++) {
 			if (i%100 == 0) {
-				std::cout << "The position for verex " << i << " is ("<< ret.skeleton_vertices[i].position.x << ", " << ret.skeleton_vertices[i].position.y << ", " << ret.skeleton_vertices[i].position.z << ")" << std::endl;
+				std::cout << "The position for vertex " << i << " is ("<< ret.skeleton_vertices[i].position.x << ", " << ret.skeleton_vertices[i].position.y << ", " << ret.skeleton_vertices[i].position.z << ")" << std::endl;
 				for (j = 0; j < ret.skeleton_vertices[i].weight_array.size(); j++) {
-					printf("    Bone %s has the weight of %lf\n", ret.skeleton_vertices[i].bone_array[j].mName.C_Str(), ret.skeleton_vertices[i].weight_array[j]);
+					printf("    Bone %s has the weight of %lf\n", ret.skeleton_vertices[i].bone_array[j]->name.C_Str(), ret.skeleton_vertices[i].weight_array[j]);
 				}
 			}
-		}*/
+		}
 	}
+	
+	//checking vertex counts
+	printf("Vertex Count~ In Bone Array: %d, in Mesh: %d\n", ret.vertex_array.size()/3, ret.numVerts);
 	/*
 	for(i = 0; i < ret.boneCt; ++i) {
 		printf("Bone Name: %s\n", mesh.mBones[i]->mName.C_Str());

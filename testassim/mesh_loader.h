@@ -18,10 +18,13 @@ struct Bone {
 	Bone *parent;					//parent in hierarchy
 	aiMatrix4x4 offset;			//bone offset matrix
 	
-	int numKeyFrames;
+	int numPosKeyFrames;
+	int numRotKeyFrames;
+	int numScaleKeyFrames;
 	aiVectorKey *posKeys;
 	aiQuatKey *rotKeys;
 	aiVectorKey *scaleKeys;
+	aiMatrix4x4 *transformations;
 	
 	//aiMatrix4x4 meshTrans;		//mesh matrix
 	//aiString parentName;			//name of parent
@@ -31,7 +34,7 @@ struct Bone {
 
 struct vertexInfo {
 	aiVector3D position;
-	std::vector<Bone> bone_array; //Switched from aiBone to Bone -- hopefully correct
+	std::vector<Bone *> bone_array; //Switched from aiBone to Bone -- hopefully correct
 	std::vector<float> weight_array;
 };
 
@@ -41,6 +44,7 @@ struct AssimpMesh {
    std::vector<float> uv_array;
    std::vector<unsigned short> index_array;
 	vertexInfo *skeleton_vertices;
+	int numVerts;
 	Bone *bone_array;
 	int boneCt;
 	bool hasBones;
