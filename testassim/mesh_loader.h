@@ -25,6 +25,7 @@ struct Bone {
 	aiQuatKey *rotKeys;
 	aiVectorKey *scaleKeys;
 	aiMatrix4x4 *transformations;
+	aiMatrix4x4 *personalTrans;
 	
 	//aiMatrix4x4 meshTrans;		//mesh matrix
 	//aiString parentName;			//name of parent
