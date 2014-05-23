@@ -353,7 +353,7 @@ void InitGeom() {
   //initRamp();
   initGround();
   initCube();
-  initSquare();
+  //initSquare();
   /*initCubeShadow();
   initMesh();*/
 }

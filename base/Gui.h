@@ -22,8 +22,9 @@ typedef struct RGB {
 } RGB;
 
 void DrawCrosshair();
-//Master call that will draw all gui elements if any
-void DrawGui();
+//Master call that will draw all gui elements if any depending on
+//game mode
+void DrawGui(int editMode);
 //Draw in 2D
 void ready2D();
 //Draw in 3D
