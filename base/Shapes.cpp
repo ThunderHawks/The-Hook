@@ -154,6 +154,39 @@ unsigned short idx[] = {0, 1, 2,
     glBindBuffer(GL_ARRAY_BUFFER, NormalBuffObj);
     glBufferData(GL_ARRAY_BUFFER, sizeof(CubeNormal), CubeNormal, GL_STATIC_DRAW);
 }
+
+void initSquare() {
+
+  float SqPos[] = {
+    -0.5, -0.5, 0.0, //Point0
+    -0.5, 0.5, 0.0,  //Point1
+    0.5, 0.5, 0.0,   //Point2
+    0.5, -0.5, 0.0,  //Point3
+
+  };
+  float SqNormal[] = {
+     0.0, 0.0, 1.0,
+     0.0, 0.0, 1.0,
+     0.0, 0.0, 1.0,
+     0.0, 0.0, 1.0,
+  };
+unsigned short idx[] = {0, 1, 2,
+                        0, 2, 3,
+                               };
+    g_CiboLen = 6;
+    glGenBuffers(1, &CubeBuffObj);
+    glBindBuffer(GL_ARRAY_BUFFER, CubeBuffObj);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(SqPos), SqPos, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &CIndxBuffObj);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, CIndxBuffObj);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idx), idx, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &NormalBuffObj);
+    glBindBuffer(GL_ARRAY_BUFFER, NormalBuffObj);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(SqNormal), SqNormal, GL_STATIC_DRAW);
+}
+
 void SetupCube(float x, float y, float z, int material, float angle, float scaleX, float scaleY, float scaleZ) {
    /*First Cube*/
    SetModel(x, y, z, scaleX, scaleY, scaleZ, angle);
@@ -174,8 +207,32 @@ void SetupCube(float x, float y, float z, int material, float angle, float scale
    /* Disable the attributes used by our shader*/
    safe_glDisableVertexAttribArray(h_aPosition);
    safe_glDisableVertexAttribArray(h_aNormal);
-//   DrawShadow(x, z + 0.6, scaleX, scaleY, scaleZ + 0.4, angle);
 }
+#if 0
+void SetupSq(float x, float y, int material, float scaleX, float scaleY) {
+   /*First Cube*/
+   SetModel(x, y, scaleX, scaleY);
+   SetMaterial(material);
+   safe_glEnableVertexAttribArray(h_aPosition);
+   glBindBuffer(GL_ARRAY_BUFFER, CubeBuffObj);
+   safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+   safe_glEnableVertexAttribArray(h_aNormal);
+   glBindBuffer(GL_ARRAY_BUFFER, NormalBuffObj);
+   safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+   /* draw!*/
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, CIndxBuffObj);
+
+   glDrawElements(GL_TRIANGLES, g_CiboLen, GL_UNSIGNED_SHORT, 0);
+
+   /* Disable the attributes used by our shader*/
+   safe_glDisableVertexAttribArray(h_aPosition);
+   safe_glDisableVertexAttribArray(h_aNormal);
+}
+#endif
+
+
 /*static void initRamp() {
    float RampPos[] = {
       //Slanted face, 4 verts
@@ -296,6 +353,7 @@ void InitGeom() {
   //initRamp();
   initGround();
   initCube();
+  initSquare();
   /*initCubeShadow();
   initMesh();*/
 }

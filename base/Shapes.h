@@ -12,6 +12,7 @@ extern GLuint NormalBuffObj;
 void initGround();
 void initCube();
 void SetupCube(float x, float y, float z, int material, float angle, float scaleX, float scaleY, float scaleZ);
+void SetupSq(float x, float y, int material, float scaleX, float scaleY);
 //void initRamp()
 //static void initCubeShadow()
 void InitGeom();

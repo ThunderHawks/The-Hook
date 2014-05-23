@@ -426,6 +426,11 @@ void forceRadius() {
    }
 }
 
+//Grab selected entity at index 0
+Entity getSelectedEntity() {
+   return currentEntities.at(0);
+}
+
 //Changes the y scale of the selected entity
 void scaleSelectedEntityY(float scaleY) {
    Entity temp;
