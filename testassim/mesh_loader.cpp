@@ -2,6 +2,7 @@
 #include "Mesh.h"
 
 int CreateHierarchy(std::vector<aiBone *> *boneNames, aiNode *root, Bone *parent, int *iter, Bone *array);
+void CopyaiMat(const aiMatrix4x4 *from, glm::mat4 &to);
 
 AssimpMesh loadMesh(const std::string& path) {
 	Assimp::Importer importer;
@@ -161,9 +162,10 @@ AssimpMesh loadMesh(const std::string& path) {
 		for (i = 0; i < ret.boneCt; i++) {
 			//allocate space for their total transforms (their personal transform combined with their parents full transform
 			ret.bone_array[i].transformations = (aiMatrix4x4 *)calloc(sizeof(aiMatrix4x4), ret.bone_array[i].numPosKeyFrames);
-			//Go through all of the keyframes and initialize them to their personal transform
+			ret.bone_array[i].glmTransforms = (glm::mat4 *)calloc(sizeof(glm::mat4), ret.bone_array[i].numPosKeyFrames);
+			//Go through all of the keyframes and initialize them to their personal transform * offset
 			for (j = 0; j < ret.bone_array[i].numPosKeyFrames; j++) {
-				ret.bone_array[i].transformations[j] = ret.bone_array[i].personalTrans[j];
+				ret.bone_array[i].transformations[j] = ret.bone_array[i].personalTrans[j] * ret.bone_array[i].offset;
 			}
 			//combine the transforms for all the parents and store it in the full transform
 			for (parent = ret.bone_array[i].parent; parent != NULL; parent = parent->parent) {
@@ -171,9 +173,17 @@ AssimpMesh loadMesh(const std::string& path) {
 					ret.bone_array[i].transformations[j] *= parent->personalTrans[j];
 				}
 			}
+			
+			for (j = 0; j < ret.bone_array[i].numPosKeyFrames; j++) {
+				CopyaiMat(ret.bone_array[i].transformations + j, ret.bone_array[i].glmTransforms[j]);
+			}
 		}
 		
+		
+		
 		/**************************************************/
+
+		/****************DEBUGGING*************************/
 		printf("anim name: %s\n", scene->mAnimations[0]->mName.C_Str());
 		for(i = 0; i < scene->mAnimations[0]->mNumChannels; i++) {
 			printf("name of %d's aiNodeAnim: %s; numPositionKeys: %d; numRotationKeys: %d; numScalingKeys: %d\n",i, scene->mAnimations[0]->mChannels[i]->mNodeName.C_Str(), 
@@ -192,7 +202,7 @@ AssimpMesh loadMesh(const std::string& path) {
 	}
 	
 	//checking vertex counts
-	printf("Vertex Count~ In Bone Array: %d, in Mesh: %d\n", ret.vertex_array.size()/3, ret.numVerts);
+	//printf("Vertex Count~ In Bone Array: %d, in Mesh: %d\n", ret.vertex_array.size()/3, ret.numVerts);
 	/*
 	for(i = 0; i < ret.boneCt; ++i) {
 		printf("Bone Name: %s\n", mesh.mBones[i]->mName.C_Str());
@@ -205,6 +215,7 @@ AssimpMesh loadMesh(const std::string& path) {
 			printf("Bone %s has the parent %s\n", ret.bone_array[i].name.C_Str(), ret.bone_array[i].parent->name.C_Str());
 		}
 	}*/
+		/**************************************************/
 
     return ret;
 }
@@ -239,4 +250,17 @@ int CreateHierarchy(std::vector<aiBone *> *boneNames, aiNode *root, Bone *parent
 	}
 	
 	return 1;
+}
+
+//Borrowed from http://ephenationopengl.blogspot.com/2012/06/doing-animations-in-opengl.html
+//Since Assimp stores matrices in row major and glm stores matrices in column major, we need to do some converting
+void CopyaiMat(const aiMatrix4x4 *from, glm::mat4 &to) {
+	to[0][0] = from->a1; to[1][0] = from->a2;
+	to[2][0] = from->a3; to[3][0] = from->a4;
+	to[0][1] = from->b1; to[1][1] = from->b2;
+	to[2][1] = from->b3; to[3][1] = from->b4;
+	to[0][2] = from->c1; to[1][2] = from->c2;
+	to[2][2] = from->c3; to[3][2] = from->c4;
+	to[0][3] = from->d1; to[1][3] = from->d2;
+	to[2][3] = from->d3; to[3][3] = from->d4;
 }

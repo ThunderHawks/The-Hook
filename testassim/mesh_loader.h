@@ -5,6 +5,9 @@
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp" //perspective, trans etc
+#include "glm/gtc/type_ptr.hpp" 			 //value_ptr
 
 #include <iostream>
 #include <cstdio>
@@ -24,6 +27,7 @@ struct Bone {
 	aiVectorKey *posKeys;
 	aiQuatKey *rotKeys;
 	aiVectorKey *scaleKeys;
+	glm::mat4 *glmTransforms;
 	aiMatrix4x4 *transformations;
 	aiMatrix4x4 *personalTrans;
 	

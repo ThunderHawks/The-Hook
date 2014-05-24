@@ -52,6 +52,10 @@ Mesh::Mesh(AssimpMesh aMesh)
 	glGenBuffers(1, & IndexHandle);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexHandle);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, aMesh.index_array.size() * sizeof(unsigned short), & aMesh.index_array.front(), GL_STATIC_DRAW);
+
+//
+	
+//
 }
 
 /*******************************************************************************

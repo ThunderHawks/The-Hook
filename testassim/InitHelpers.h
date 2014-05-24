@@ -12,6 +12,12 @@ extern GLint h_uLightVec;
 extern GLint h_uLightColor;
 extern GLint h_uCamPos, h_uShadeMode;
 extern GLint h_uModelMatrix;
+//
+extern GLint h_uAnimFlag;
+extern GLint h_uBoneMatrix;
+extern GLint h_uWeights;
+extern GLint h_uJoints;
+//
 extern RenderingHelper ModelTrans;
 
 extern void SetModel(float x, float y, float z, float Sx, float Sy, float Sz, float angle);

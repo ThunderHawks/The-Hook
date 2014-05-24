@@ -82,6 +82,12 @@ int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName) {
         h_uMatShine = safe_glGetUniformLocation(ShadeProg, "uMat.shine");
         h_uCamPos = safe_glGetUniformLocation(ShadeProg, "uCamPos");
         h_uShadeMode = safe_glGetUniformLocation(ShadeProg, "uShadeMode");
+        //
+        h_uAnimFlag = safe_glGetUniformLocation(ShadeProg, "animFlag");
+        h_uBoneMatrix = safe_glGetUniformLocation(ShadeProg, "boneMatrix");
+		  h_uWeights = safe_glGetUniformLocation(ShadeProg, "weights");
+		  h_uJoints = safe_glGetUniformLocation(ShadeProg, "joints");
+		  //
 
    printf("sucessfully installed shader %d\n", ShadeProg);
    return 1;

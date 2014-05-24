@@ -43,6 +43,9 @@ vector<btRigidBody> objectVectorList;// = new vector<btRigidBody>();
 */
 //Handles to the shader data
 GLint h_aPosition, h_aNormal, h_uViewMatrix, h_uProjMatrix;
+//
+GLint h_uAnimFlag, h_uBoneMatrix, h_uWeights, h_uJoints;
+//
 GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj;
 GLuint ShadowCubeBuffObj, SCIndxBuffObj, ShadowNormalBuffObj, RampBuffObj, RIndxBuffObj, RampNormalBuffObj;
 int g_CiboLen, g_GiboLen, g_RiboLen, g_SCiboLen;
@@ -140,7 +143,9 @@ void glfwDraw (GLFWwindow *window)
    glUniform3f(h_uLightColor, 1.0, 1.0, 1.0);
    glUniform4f(h_uLightVec, 0.0, -1.0, -10.0, 0.0);
    glUniform3f(h_uCamPos, 0, 0, 0);
-
+   //
+  	glUniform1i(h_uAnimFlag, (damesh.hasAss ? 1 : 0));
+   //
    ModelTrans.loadIdentity();
    SetModelStat();
 
