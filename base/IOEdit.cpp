@@ -181,9 +181,10 @@ void glfwEditGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
 * that are kept track of inside of the array
 */
 void glfwEditKeyboard(void) {
-  ew = egaze/magnitude(egaze);
-  ew = glm::vec3(-1.0 * ew.x, -1.0 * ew.y, -1.0 * ew.z);
-  eu = glm::cross(GetUp(), ew)/magnitude(glm::cross(GetUp(), ew));
+   ew = egaze/magnitude(egaze);
+   ew = glm::vec3(-1.0 * ew.x, -1.0 * ew.y, -1.0 * ew.z);
+   eu = glm::cross(GetUp(), ew)/magnitude(glm::cross(GetUp(), ew));
+
    //Force radius
    if(eKeysPressed[341] && eKeysPressed['Z'] && eKeysPressed['S']) {
       forceRadius();
@@ -321,8 +322,8 @@ void glfwEditKeyboard(void) {
    if(eKeysPressed['P']) {
       pauseorUnpause();
    }
-   //Quit and don't save
-   if(eKeysPressed['Q'] && eKeysPressed[340]) {
+   //Quit and don't save if 'Q' + lShift/lctrl
+   if(eKeysPressed['Q'] && eKeysPressed[340] || eKeysPressed['Q'] && eKeysPressed[341]) {
       exit( EXIT_SUCCESS );
    }
    //Quit and Save

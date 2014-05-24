@@ -43,7 +43,7 @@ void initLevelLoader() {
    //Load Meshes
    mesh[0] = LoadMesh("../Assets/Models/ModMBasicBldg.obj");//60h 43d 49w
    mesh[1] = LoadMesh("../Assets/Models/shopBldg.obj");//25h 50d 50w
-   mesh[2] = LoadMesh("../Assets/Models/cinderblock.obj");//2h,4d,2w
+   mesh[2] = LoadMesh("../Assets/Models/cinderblock.obj");//0.5h,1d,0.5w
    mesh[3] = LoadMesh("../Assets/Models/mediumBasicBuilding.obj");//60h 43d 40w 
    mesh[4] = LoadMesh("../Assets/Models/sidewalkCorner.obj");//1h 5d 5w
    mesh[5] = LoadMesh("../Assets/Models/sidewalk.obj");//1h 5d 5w
@@ -183,10 +183,64 @@ void loadLevel(string fileName){
       infile >> tempEntity.phyScale.x;
       infile >> tempEntity.phyScale.y;
       infile >> tempEntity.phyScale.z;
-      //printf("%f,%f,%f,%f,%f,%f\n",tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,tempEntity.scale.x,tempEntity.scale.y,tempEntity.scale.z);
-//    createStaticBox(float posX,float posY,float posZ, (this is actually rotating)
-               //     float scaleX,float scaleY,float scaleZ,
-            //        btQuaternion rotation,float mass,float ix,float iy,float iz)
+
+      switch(tempEntity.meshIndex){
+         case 0:
+            tempEntity.phyScale = glm::vec3(43,60,49);
+            break;
+         case 1:
+            tempEntity.phyScale = glm::vec3(50,25,50);
+            break;
+         case 2:
+            tempEntity.phyScale = glm::vec3(1, 0.5, 0.5);
+            break;
+         case 3:
+            tempEntity.phyScale = glm::vec3(43,60,40);
+            break;
+         case 4:
+            tempEntity.phyScale = glm::vec3(5,1,5);
+            break;
+        case 5:
+            tempEntity.phyScale = glm::vec3(5,1,5);
+            break;
+         case 6:
+            tempEntity.phyScale = glm::vec3(3, 25,2);
+            break;
+         case 7:
+            tempEntity.phyScale = glm::vec3(10,5,10);
+            break;
+         case 8:
+            tempEntity.phyScale = glm::vec3(200,1070,300);
+            break;
+         case 9:
+            tempEntity.phyScale = glm::vec3(26,32,26);
+            break;
+         case 10:
+            tempEntity.phyScale = glm::vec3(71,166,71);
+            break;
+         case 11:
+            tempEntity.phyScale = glm::vec3(10, 15, 1);
+            break;
+         case 12:
+            tempEntity.phyScale = glm::vec3(50, 34, 50);
+            break;
+         case 13:
+            tempEntity.phyScale = glm::vec3(5,1,5);
+            break;
+         case 14:
+            tempEntity.phyScale = glm::vec3(60, 40, 60);
+            break;
+         case 15:
+            tempEntity.phyScale = glm::vec3(1, 10, 7);
+            break;
+         case 16:
+            tempEntity.phyScale = glm::vec3(140, 500, 140);
+            break;  
+         case 17:
+            tempEntity.phyScale = glm::vec3(150, 825, 150);
+            break;
+        }
+
       if(!(tempEntity.angle>-10&&tempEntity.angle<10||tempEntity.angle>170&&tempEntity.angle<190)){
          float tem = tempEntity.phyScale.x;
          tempEntity.phyScale.x = tempEntity.phyScale.z;
@@ -225,72 +279,66 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
    entity.angle = angle;
    entity.mesh = &mesh[meshIndex];
    entity.meshIndex = meshIndex;
-   //FIRE LORD EDIT HERE
    entity.phyScale = glm::vec3(0.0f, 0.0f, 0.0f);
-   switch(meshIndex){
-      case 0:
-         entity.phyScale = glm::vec3(60,43,49);
-         break;
-      case 1:
-         entity.phyScale = glm::vec3(25,50,50);
-         break;
-      case 2:
-         entity.phyScale = glm::vec3(2,4,2);
-         break;
-      case 3:
-         entity.phyScale = glm::vec3(60,43,40);
-         break;
-      case 4:
-         entity.phyScale = glm::vec3(1,5,5);
-         break;
-      case 5:
-         entity.phyScale = glm::vec3(1,5,5);
-         break;
-      case 6:
-         entity.phyScale = glm::vec3(25,2,12);
-         break;
-      case 7:
-         entity.phyScale = glm::vec3(5,10,10);
-         break;
-      case 8:
-         entity.phyScale = glm::vec3(1070,200,300);
-         break;
-      case 9:
-         entity.phyScale = glm::vec3(32,26,26);
-         break;
-      case 10:
-         entity.phyScale = glm::vec3(166,71,71);
-         break;
-      case 11:
-         entity.phyScale = glm::vec3(15, 1, 10);
-         break;
-      case 12:
-         entity.phyScale = glm::vec3(34, 50, 50);
-         break;
-      case 13:
-         entity.phyScale = glm::vec3(1,5,5);
-         break;
-      case 14:
-         entity.phyScale = glm::vec3(40, 60, 60);
-         break;
-      case 15:
-         entity.phyScale = glm::vec3(10, 1, 7);
-         break;
-      case 16:
-         entity.phyScale = glm::vec3(500, 140, 140);
-         break;
-      case 17:
-         entity.phyScale = glm::vec3(825, 150, 150);
-         break;
-      //h w d
-      //x y z
-   }
-   float temp = entity.phyScale.y;
-   entity.phyScale.y = entity.phyScale.x;
-   entity.phyScale.x = temp;
-   entity.BSRadius = sqrt( pow(entity.scale.x * entity.phyScale.x, 2.0) + pow(entity.scale.y * entity.phyScale.y, 2.0) + pow(entity.scale.z * entity.phyScale.z, 2.0));
-   //entity.BSRadius = 2*sqrt(entity.phyScale.x*entity.phyScale.x+entity.phyScale.y*entity.phyScale.y+entity.phyScale.z*entity.phyScale.z);
-   //printf("this is radius %f\n", 2*sqrt(entity.phyScale.x*entity.phyScale.x+entity.phyScale.y*entity.phyScale.y+entity.phyScale.z*entity.phyScale.z));
+      switch(meshIndex){
+         case 0:
+            entity.phyScale = glm::vec3(43,60,49);
+            break;
+         case 1:
+            entity.phyScale = glm::vec3(50,25,50);
+            break;
+         case 2:
+            entity.phyScale = glm::vec3(1, 0.5, 0.5);
+            break;
+         case 3:
+            entity.phyScale = glm::vec3(43,60,40);
+            break;
+         case 4:
+            entity.phyScale = glm::vec3(5,1,5);
+            break;
+        case 5:
+            entity.phyScale = glm::vec3(5,1,5);
+            break;
+         case 6:
+            entity.phyScale = glm::vec3(3, 25,2);
+            break;
+         case 7:
+            entity.phyScale = glm::vec3(10,5,10);
+            break;
+         case 8:
+            entity.phyScale = glm::vec3(200,1070,300);
+            break;
+         case 9:
+            entity.phyScale = glm::vec3(26,32,26);
+            break;
+         case 10:
+            entity.phyScale = glm::vec3(71,166,71);
+            break;
+         case 11:
+            entity.phyScale = glm::vec3(10, 15, 1);
+            break;
+         case 12:
+            entity.phyScale = glm::vec3(50, 34, 50);
+            break;
+         case 13:
+            entity.phyScale = glm::vec3(5,1,5);
+            break;
+         case 14:
+            entity.phyScale = glm::vec3(60, 40, 60);
+            break;
+         case 15:
+            entity.phyScale = glm::vec3(1, 10, 7);
+            break;
+         case 16:
+            entity.phyScale = glm::vec3(140, 500, 140);
+            break;  
+         case 17:
+            entity.phyScale = glm::vec3(150, 825, 150);
+            break;
+        }
+
+       entity.BSRadius = sqrt( pow(entity.scale.x * entity.phyScale.x, 2.0) + pow(entity.scale.y * entity.phyScale.y, 2.0) + pow(entity.scale.z * entity.phyScale.z, 2.0));
+
    return entity;
 }
 

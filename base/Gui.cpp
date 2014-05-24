@@ -6,8 +6,6 @@ RGB* g_pixel;
 
 
 void DrawCrosshair() {
-   printf("Draw hair\n");
-   //SetupSq(0, 0, 5, 1.0, 1.0);
    SetupSq(0, 0, -5, 0.01, 0.04);
    SetupSq(0, 0, -5, 0.03, 0.01);
    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -50,16 +48,12 @@ void DrawHotBar() {
 }
 
 void DrawSelection() {
-   //printf("Drawing Selection\n");
-   //SetupCube(0, 0, 0, 5, 0, 1, 1, 1);
    SetupSq(0, 0, 5, 1.0, 1.0);
 }
 
 void DrawGui(int editMode) {
 
    ready2D();
-
-   printf("%d\n", editMode);
 
    if(editMode) {
       DrawHotBar();
