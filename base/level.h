@@ -47,6 +47,8 @@ int changeDupNumBy(int toChange);
 bool areEntitiesSelected();
 //Force radius changes
 void forceRadius();
+//Grab selected entity at index 0
+Entity getSelectedEntity();
 //Changes the x scale of the selected entity
 void scaleSelectedEntityX(float scaleX);
 //Changes the y scale of the selected entity

@@ -3,6 +3,8 @@
 
 #include "Lab4.h"
 #include "IOEdit.h"
+#include "Shapes.h"
+#include "Camera.h"
 
 /*TEXTURING*/
 
@@ -19,8 +21,14 @@ typedef struct RGB {
    GLubyte b;
 } RGB;
 
-//Master call that will draw all gui elements if any
-void DrawGui();
+void DrawCrosshair();
+//Master call that will draw all gui elements if any depending on
+//game mode
+void DrawGui(int editMode);
+//Draw in 2D
+void ready2D();
+//Draw in 3D
+void ready3D();
 int ImageLoad(char *filename, TexImage *image);
 GLvoid LoadTexture(char *image_file, int tex_id);
 #endif

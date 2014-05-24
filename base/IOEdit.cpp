@@ -393,7 +393,12 @@ void glfwEditKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
          break;
        //Gui
        case GLFW_KEY_G:
-         eKeysPressed['G'] = 1;
+         if(eKeysPressed['G'] == 1) {
+            eKeysPressed['G'] = 0;
+         }
+         else if(eKeysPressed['G'] == 0) {
+            eKeysPressed['G'] = 1;
+         }
          break;
        //Quit
        case GLFW_KEY_Q:
@@ -475,10 +480,6 @@ void glfwEditKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
          break;
        case GLFW_KEY_B:
          eKeysPressed['B'] = 0;
-         break;
-       //Gui
-       case GLFW_KEY_G:
-         eKeysPressed['G'] = 0;
          break;
        //Undo
        case GLFW_KEY_BACKSPACE:

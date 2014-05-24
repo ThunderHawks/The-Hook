@@ -28,6 +28,7 @@
 
 using namespace std;
 
+extern float g_width, g_height;
 extern GLint h_uLightVec;
 extern GLint h_uLightColor;
 extern GLint h_uCamPos, h_uShadeMode;
@@ -36,6 +37,8 @@ extern GLint h_uTexUnit, h_uTexUnit2;
 extern GLint h_uLightViewMatrix, h_uLightProjMatrix;
 extern GLint h_aTexCoord;
 extern GLuint TexBuffObj;
+extern RenderingHelper ModelTrans;
+
 
 typedef struct Node {
    glm::vec3 Position;
@@ -190,7 +193,6 @@ public:
 
 };
 
-void SetupCube(float x, float y, float z, int material, float angle, float scaleX, float scaleY, float scaleZ);
 void Add_Entry(glm::vec3 Position);
 int Table_Size();
 void Set_ModelType(int index, int type);
@@ -201,6 +203,8 @@ bool isPaused();
 //Pauses/unpasses game
 void pauseorUnpause();
 glm::vec3 computeWeightedNormal(int vertex);
+/* projection matrix  - do not change */
+glm::mat4 SetProjectionMatrix();
 int RandomInt(int one, int two);
 
 // Macro used to obtain relative offset of a field within a struct

@@ -119,7 +119,6 @@ void initLevelLoader() {
    //Load into current index to prevent segfault. Doesn't appear.
    selectAtHotBarIndex(0);
    entitiesSelected = false;
-   //printf("done\n");
 }
 
 Octree* octLevel = new Octree(glm::vec3(-42,-100,67),glm::vec3(230,2000,379),3);
@@ -425,6 +424,11 @@ void forceRadius() {
       temp.BSRadius = sqrt( pow(temp.scale.x * temp.phyScale.x, 2.0) + pow(temp.scale.y * temp.phyScale.y, 2.0) + pow(temp.scale.z * temp.phyScale.z, 2.0));
       entities[i] = temp;       
    }
+}
+
+//Grab selected entity at index 0
+Entity getSelectedEntity() {
+   return currentEntities.at(0);
 }
 
 //Changes the y scale of the selected entity

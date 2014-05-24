@@ -49,9 +49,9 @@ int ShadeProg;
 
 //Handles to the shader data
 GLint h_aPosition, h_aNormal, h_uViewMatrix, h_uProjMatrix;
-GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj;
+GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj, SqIndxBuffObj, SqBuffObj, SqNormalObj;
 GLuint ShadowCubeBuffObj, SCIndxBuffObj, ShadowNormalBuffObj, RampBuffObj, RIndxBuffObj, RampNormalBuffObj;
-int g_CiboLen, g_GiboLen, g_RiboLen, g_SCiboLen;
+int g_CiboLen, g_GiboLen, g_RiboLen, g_SCiboLen, g_SqiboLen;
 
 float g_width, g_height;
 
@@ -224,8 +224,6 @@ void glfwDraw (GLFWwindow *window, int passNum)
       // Disable attributes
       safe_glDisableVertexAttribArray(h_aPosition);
       safe_glDisableVertexAttribArray(h_aNormal);
-      //Draw any gui elements that should be on the screen
-      DrawGui();
 
       SetMaterial(2);
    }
@@ -356,6 +354,9 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    glLineWidth(3.0);
    glfwDraw(window, 2);
    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+   //Draw any gui elements that should be on the screen
+   DrawGui(Edit);
 
    // Disable textures
    glDisable(GL_TEXTURE_2D);

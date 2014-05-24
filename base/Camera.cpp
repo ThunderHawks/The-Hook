@@ -5,13 +5,14 @@
 #include "glm/gtc/type_ptr.hpp" //value_ptr
 
 #include "Camera.h"
+#include "level.h"
 
 #define RADIUS 1
 
 glm::vec3 eye = glm::vec3(0, 1, 0), lookAtPoint = glm::vec3(0, 0, 1);
 glm::vec3 up = glm::vec3(0, 1, 0);
 glm::vec3 wVec, uVec, vVec;
-float pitch = 0, yaw = -M_PI/2.0, distance = 10;
+float pitch = 0, yaw = -M_PI/2.0, dist = 10;
 float inSpeed = 0;
 int inEdit = 0;
 glm::vec3 ideal;
@@ -30,8 +31,16 @@ void resetVecs() {
 		lookAtPoint.x = cos(pitch) * cos(yaw);
 	   	lookAtPoint.y = sin(pitch);
 	   	lookAtPoint.z = cos(pitch) * cos(M_PI/2.0 - yaw);
-		lookAtPoint *= glm::vec3(distance, distance, distance);
+		lookAtPoint *= glm::vec3(dist, dist, dist);
 		lookAtPoint += eye;
+
+                //Ground Collision logic
+                if(areEntitiesSelected() == true) {
+                   Entity selected = getSelectedEntity();
+                   if(lookAtPoint.y - (selected.scale.y * selected.phyScale.y)/2.0 < 0.0) {
+                      lookAtPoint.y = (selected.scale.y * selected.phyScale.y)/2.0;
+                   }
+                }
 	}
 }
 
@@ -60,9 +69,9 @@ glm::vec3 GetEye() {
 		eye.y = sin(pitch);
 		eye.z = cos(pitch) * cos(M_PI/2.0 - yaw);
 
-		eye *= glm::vec3(distance + inSpeed, distance + inSpeed, distance + inSpeed);
+		eye *= glm::vec3(dist + inSpeed, dist + inSpeed, dist + inSpeed);
 		
-		while (eye.y + lookAtPoint.y < .1 && distance > 1) {
+		while (eye.y + lookAtPoint.y < .1 && dist > 1) {
 				eye.x -= .2*cos(pitch) * cos(yaw);
 				eye.y -= .2*sin(pitch);
 				eye.z -= .2*cos(pitch) * cos(M_PI/2.0 - yaw);
@@ -135,17 +144,17 @@ float getYaw() {
 }
 /*Sets the distance and returns it*/
 float setDistance(float newDist) {
-	distance = newDist;
-	return distance;
+	dist = newDist;
+	return dist;
 }
 /*Increment the distance by the input and return its new location*/
 float addDistance(float toAdd) {
-	distance += toAdd;
-	return distance;
+	dist += toAdd;
+	return dist;
 }
 /*gets the distance*/
 float getDistance() {
-	return distance;
+	return dist;
 }
 /*Check to see if the camera has collided with a bounding sphere*/
 bool checkCollision(glm::vec3 point, float rad) {

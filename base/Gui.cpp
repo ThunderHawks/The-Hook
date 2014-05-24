@@ -4,23 +4,75 @@ TexImage *TextureImage;
 RGB myImage[64][64];
 RGB* g_pixel;
 
+
+void DrawCrosshair() {
+   printf("Draw hair\n");
+   //SetupSq(0, 0, 5, 1.0, 1.0);
+   SetupSq(0, 0, -5, 0.01, 0.04);
+   SetupSq(0, 0, -5, 0.03, 0.01);
+   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+   //glLineWidth(3.0);
+   //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
+void ready2D() {
+   //glCullFace(GL_BACK);
+   glDisable(GL_CULL_FACE);
+
+   glMatrixMode(GL_PROJECTION);
+   ModelTrans.loadIdentity();
+   safe_glUniformMatrix4fv(h_uProjMatrix, glm::value_ptr(glm::mat4(1)));
+
+   ModelTrans.loadIdentity();
+   glMatrixMode(GL_MODELVIEW);
+   glm::ortho(0.0f, g_width, 0.0f, g_height, -1.0f, 1.0f);
+   safe_glUniformMatrix4fv(h_uViewMatrix, glm::value_ptr(glm::mat4(1)));
+
+   glDisable(GL_DEPTH_TEST);
+}
+
+void ready3D() {
+    glViewport(0, 0, g_width, g_height);
+    glMatrixMode(GL_PROJECTION);
+
+    ModelTrans.loadIdentity();
+    safe_glUniformMatrix4fv(h_uProjMatrix, glm::value_ptr(glm::perspective(80.0f, (float)g_width/g_height, 0.1f, 500.0f)));
+
+    glMatrixMode(GL_MODELVIEW);
+    ModelTrans.loadIdentity();
+    SetView();
+
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_DEPTH_TEST);
+}
+
 void DrawHotBar() {
 }
 
 void DrawSelection() {
-   printf("Drawing Selection\n");
-   //glDisable(GL_DEPTH_TEST);
-   SetupCube(0, 0, 0, 5, 0, 40, 40, 40);
-   //glEnable(GL_DEPTH_TEST);
+   //printf("Drawing Selection\n");
+   //SetupCube(0, 0, 0, 5, 0, 1, 1, 1);
+   SetupSq(0, 0, 5, 1.0, 1.0);
 }
 
-void DrawGui() {
-   DrawHotBar();
+void DrawGui(int editMode) {
 
-   //Display gui with all of the models to edit hotbar
-   if(getEPressed('G')) {
-      DrawSelection();
+   ready2D();
+
+   printf("%d\n", editMode);
+
+   if(editMode) {
+      DrawHotBar();
+      //Display gui with all of the models to edit hotbar
+      if(getEPressed('G')) {
+         DrawSelection();
+      }
    }
+   else {
+      DrawCrosshair();
+   }
+
+   ready3D();
 }
 
 GLvoid LoadTexture(char* image_file, int texID) {

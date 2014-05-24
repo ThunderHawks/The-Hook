@@ -121,6 +121,22 @@ glm::mat4 SetModelStat() {
 }
 
 /*******************************************************************************
+Input: translation x, y. Scaling x, y.
+
+Sends the model view matrix to GLSL. The model view matrix is made off the inputs. order of scale, Rotate, then translate.
+
+Output: The model matrix you set
+******************************************************************************/
+glm::mat4 SetModel(float x, float y, float Sx, float Sy) {
+   glm::mat4 Trans = glm::translate( glm::mat4(1.0f), glm::vec3(x, y, -1.0));
+   glm::mat4 Scale = glm::scale(glm::mat4(1.0f), glm::vec3(Sx, Sy, 1.0));
+   glm::mat4 ctm = Trans * Scale;
+   safe_glUniformMatrix4fv(h_uModelMatrix, glm::value_ptr(ctm));
+
+   return ctm;
+}
+
+/*******************************************************************************
 Input: translation x, y, z. Scaling x, y, z. And an angle of rotation arond the y axis
 
 Sends the model view matrix to GLSL. The model view matrix is made off the inputs. order of scale, Rotate, then translate.
