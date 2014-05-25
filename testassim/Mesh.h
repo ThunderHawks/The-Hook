@@ -38,6 +38,8 @@ struct Mesh
     GLuint PositionHandle;
     GLuint NormalHandle;
     GLuint IndexHandle;
+    GLuint JointHandle;
+    GLuint WeightHandle;
     AssimpMesh Assimp;
     bool hasAss;
 
@@ -50,5 +52,6 @@ struct Mesh
 
 Mesh LoadMesh(std::string file);
 void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle);
+void PlaceAnimatedModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle, int frame);
 
 #endif

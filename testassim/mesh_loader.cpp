@@ -97,7 +97,7 @@ AssimpMesh loadMesh(const std::string& path) {
 				for (int k = 0; k < ret.boneCt; ++k) {
 					//fill with bones
 					if(mesh.mBones[j]->mName == ret.bone_array[k].name) {
-						ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].bone_array.push_back(ret.bone_array + k);
+						ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].bone_array.push_back(k);
 					}
 				}
 				//fill the weights. There is a max of 4 weights
@@ -176,6 +176,7 @@ AssimpMesh loadMesh(const std::string& path) {
 			
 			for (j = 0; j < ret.bone_array[i].numPosKeyFrames; j++) {
 				CopyaiMat(ret.bone_array[i].transformations + j, ret.bone_array[i].glmTransforms[j]);
+				glm::mat4 tsdfds = ret.bone_array[i].glmTransforms[j];
 			}
 		}
 		
@@ -184,7 +185,7 @@ AssimpMesh loadMesh(const std::string& path) {
 		/**************************************************/
 
 		/****************DEBUGGING*************************/
-		printf("anim name: %s\n", scene->mAnimations[0]->mName.C_Str());
+		/*printf("anim name: %s\n", scene->mAnimations[0]->mName.C_Str());
 		for(i = 0; i < scene->mAnimations[0]->mNumChannels; i++) {
 			printf("name of %d's aiNodeAnim: %s; numPositionKeys: %d; numRotationKeys: %d; numScalingKeys: %d\n",i, scene->mAnimations[0]->mChannels[i]->mNodeName.C_Str(), 
 			 scene->mAnimations[0]->mChannels[i]->mNumPositionKeys, scene->mAnimations[0]->mChannels[i]->mNumRotationKeys, scene->mAnimations[0]->mChannels[i]->mNumScalingKeys);
@@ -194,11 +195,8 @@ AssimpMesh loadMesh(const std::string& path) {
 		for (i = 0; i < mesh.mNumVertices; i++) {
 			if (i%100 == 0) {
 				std::cout << "The position for vertex " << i << " is ("<< ret.skeleton_vertices[i].position.x << ", " << ret.skeleton_vertices[i].position.y << ", " << ret.skeleton_vertices[i].position.z << ")" << std::endl;
-				for (j = 0; j < ret.skeleton_vertices[i].weight_array.size(); j++) {
-					printf("    Bone %s has the weight of %lf\n", ret.skeleton_vertices[i].bone_array[j]->name.C_Str(), ret.skeleton_vertices[i].weight_array[j]);
-				}
 			}
-		}
+		}*/
 	}
 	
 	//checking vertex counts

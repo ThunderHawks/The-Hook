@@ -39,7 +39,7 @@ struct Bone {
 
 struct vertexInfo {
 	aiVector3D position;
-	std::vector<Bone *> bone_array; //Switched from aiBone to Bone -- hopefully correct
+	std::vector<float> bone_array; //Switched from aiBone to Bone -- hopefully correct
 	std::vector<float> weight_array;
 };
 

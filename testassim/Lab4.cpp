@@ -134,6 +134,9 @@ void SetupCube(float x, float y, float z, int material, float angle, float scale
 /* Main display function */
 void glfwDraw (GLFWwindow *window)
 {
+	static unsigned int ctr = 0;
+	static unsigned int frm = 0;
+	
    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    /*Start our shader      */
    glUseProgram(ShadeProg);
@@ -143,13 +146,14 @@ void glfwDraw (GLFWwindow *window)
    glUniform3f(h_uLightColor, 1.0, 1.0, 1.0);
    glUniform4f(h_uLightVec, 0.0, -1.0, -10.0, 0.0);
    glUniform3f(h_uCamPos, 0, 0, 0);
-   //
-  	glUniform1i(h_uAnimFlag, (damesh.hasAss ? 1 : 0));
-   //
+
    ModelTrans.loadIdentity();
    SetModelStat();
 
-	PlaceModel(damesh, 0, -5, -10, 1, 1, 1, spin);
+	if (ctr++%50 == 0)
+		frm++;
+
+	PlaceAnimatedModel(damesh, 0, -5, -10, 1, 1, 1, spin, frm%24);
 	//SetupCube(0, 0, -2, 10, spin, 1, 1, 1);
 
    //Disable the shader

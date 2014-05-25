@@ -85,8 +85,8 @@ int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName) {
         //
         h_uAnimFlag = safe_glGetUniformLocation(ShadeProg, "animFlag");
         h_uBoneMatrix = safe_glGetUniformLocation(ShadeProg, "boneMatrix");
-		  h_uWeights = safe_glGetUniformLocation(ShadeProg, "weights");
-		  h_uJoints = safe_glGetUniformLocation(ShadeProg, "joints");
+		  h_uWeights = safe_glGetAttribLocation(ShadeProg, "weights");
+		  h_uJoints = safe_glGetAttribLocation(ShadeProg, "joints");
 		  //
 
    printf("sucessfully installed shader %d\n", ShadeProg);

@@ -33,8 +33,8 @@ uniform mat4 uModelMatrix1;
 //
 uniform int animFlag;
 uniform mat4 bonesMatrix[30];
-uniform vec3 weights;
-uniform vec3 joints;
+attribute vec3 weights;
+attribute vec3 joints;
 //
 uniform float uShadeMode;
 uniform Material uMat;
@@ -58,16 +58,16 @@ uniform vec3 uColor;
 void main() {
   vec4 R, V, L, N, T; //reflection, view, light, normal, temp
 //
-  mat4 animationMatrix(1);
-  if (animFlag) {
-	   animationMatrix =
+  //mat4 animationMatrix(1);
+  //if (animFlag) {
+	   /*animationMatrix =
 		 weights[0] * bonesMatrix[int(joints[0])] +
 		 weights[1] * bonesMatrix[int(joints[1])] +
-		 weights[2] * bonesMatrix[int(joints[2])];
-  }
+		 weights[2] * bonesMatrix[int(joints[2])];*/
+  //}
 //
   /* First model transforms */
-  vPosition = uModelMatrix1 * animationMatrix * vec4(aPosition, 1.0);
+  vPosition = uModelMatrix1 */* animationMatrix */ vec4(aPosition, 1.0);
 
   //Transform light space
   vec4 tempLight = uViewMatrix * aLightVec;
