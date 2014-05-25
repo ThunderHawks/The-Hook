@@ -67,7 +67,7 @@ void main() {
   }
 //
   /* First model transforms */
-  vPosition = uModelMatrix1 */* animationMatrix */ vec4(aPosition, 1.0);
+  vPosition = uModelMatrix1 * animationMatrix * vec4(aPosition, 1.0);
 
   //Transform light space
   vec4 tempLight = uViewMatrix * aLightVec;

@@ -150,10 +150,13 @@ void glfwDraw (GLFWwindow *window)
    ModelTrans.loadIdentity();
    SetModelStat();
 
-	if (ctr++%50 == 0)
-		frm++;
+	if (ctr%500 == 0)
+		frm = ++frm%24;
 
-	PlaceAnimatedModel(damesh, 0, -5, -10, 1, 1, 1, spin, frm%24);
+	SetMaterial(0); 
+	PlaceAnimatedModel(damesh, 0, -5, -10, 1, 1, 1, 0, 0);
+	ctr++;
+	SetMaterial(5);
 	//SetupCube(0, 0, -2, 10, spin, 1, 1, 1);
 
    //Disable the shader
