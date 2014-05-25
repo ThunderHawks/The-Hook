@@ -55,7 +55,7 @@ struct AssimpMesh {
 	bool hasBones;
 };
 
-AssimpMesh loadMesh(const std::string& path);
+AssimpMesh *loadMesh(const std::string& path);
 
 #endif // MESH_LOADER_H_
 

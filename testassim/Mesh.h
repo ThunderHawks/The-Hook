@@ -40,13 +40,13 @@ struct Mesh
     GLuint IndexHandle;
     GLuint JointHandle;
     GLuint WeightHandle;
-    AssimpMesh Assimp;
+    AssimpMesh *Assimp;
     bool hasAss;
 
     unsigned int IndexBufferLength;
 
     Mesh();
-    Mesh(AssimpMesh aMesh);
+    Mesh(AssimpMesh *aMesh);
     Mesh(std::vector<float> const & Positions, std::vector<float> const & Normals, std::vector<unsigned short> const & Indices);
 };
 
