@@ -87,7 +87,7 @@ AssimpMesh loadMesh(const std::string& path) {
 			}*/
 		}
 		
-		//construct the hierarchy of bones,starting with the root node. It will go to each of the childeren adding any bone its finds to the hierarchy
+		//construct the hierarchy of bones,starting with the root node. It will go to each of the children adding any bone its finds to the hierarchy
 		for (i = 0; i < root->mNumChildren; ++i) {
 			CreateHierarchy(&boneNames, root->mChildren[i], NULL, &iter, ret.bone_array);
 		}
@@ -103,6 +103,16 @@ AssimpMesh loadMesh(const std::string& path) {
 				}
 				//fill the weights. There is a max of 4 weights
 				ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].weight_array.push_back(mesh.mBones[j]->mWeights[i].mWeight);
+				
+				//for (int p = 0; p < ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].weight_array.size(); p++)
+					//printf("weight for vertex %d: %lf\n", mesh.mBones[j]->mWeights[i].mVertexId, ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].weight_array[p]);
+			}
+		}
+		
+		for (i = 0; i < mesh.mNumVertices; i++) {
+			while (ret.skeleton_vertices[i].weight_array.size() < 4) {
+				ret.skeleton_vertices[i].weight_array.push_back(0);
+				ret.skeleton_vertices[i].bone_array.push_back(0);
 			}
 		}
 		/*****************END**MODIFIED**********************/
@@ -217,7 +227,7 @@ AssimpMesh loadMesh(const std::string& path) {
 }
 
 int setupTrans(Bone *array, Bone *parent, Bone *cur) {
-	int i, j;
+	int i;
 	
 	//setup the transforms hierarchically. Starting with the root and going down
 	//allocate the space for the transforms first
