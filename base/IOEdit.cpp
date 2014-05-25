@@ -27,6 +27,7 @@
 #include "level.h"
 #include "Lab4.h"
 #include "SoundPlayer.h"
+#include "Gui.h"
 
 //e = edit
 float estartX, estartY;
@@ -43,6 +44,9 @@ float speed = 1.0;
 glm::vec3 egaze;
 glm::vec3 ew, eu;
 
+//Last cursor position
+glm::vec2 lastCurPos;
+
 //Change size to increase amount of keys input
 int eKeysPressed[350];
 
@@ -56,18 +60,23 @@ int getEPressed(char ch){
 
 //Mouse press callback for Edit Mode
 void glfwEditMouse(GLFWwindow *window, int button, int action, int mods) {
+   
    //If the left button is pressed
    if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
       //If game is paused
       if(isPaused()) {
          pauseorUnpause();
       }
+      //If in gui mode, call button presses
+      if(eKeysPressed['G']) {
+         GuiPressing(lastCurPos.x, lastCurPos.y);
+      }
       //If an entity is not selected and shift is held
-      else if(areEntitiesSelected() == false && eKeysPressed[340]) {
+      else if(areEntitiesSelected() == false && eKeysPressed[340] && eKeysPressed['G'] == 0) {
          deleteClosest();
       }
       //If an entity is selected, add it
-      else if(areEntitiesSelected() == true) {
+      else if(areEntitiesSelected() == true && eKeysPressed['G'] == 0) {
          placeSelectedEntity();
          //Reset lookAtDistance
          previousLookAtDistance = getDistance();
@@ -76,7 +85,7 @@ void glfwEditMouse(GLFWwindow *window, int button, int action, int mods) {
          eKeysPressed[340] = 0;
       }
    }
-   else if(button == GLFW_MOUSE_BUTTON_RIGHT) {
+   else if(button == GLFW_MOUSE_BUTTON_RIGHT && eKeysPressed['G'] == 0) {
       unselectEntity();
    }
 }
@@ -136,44 +145,52 @@ void glfwEditScroll(GLFWwindow *window, double xOffset, double yOffset) {
 
 void glfwEditGetCursorPos(GLFWwindow *window, double xpos, double ypos) {
 
-   if(xpos > g_width || xpos < 0 || ypos < 0 || ypos > g_height) {
-      return;
+   //printf("%f %f\n", xpos, g_height - ypos);
+   lastCurPos = glm::vec2(xpos, g_height - ypos - 1);
+
+   //If in GUI Selection, disable pitch and yaw
+   if(eKeysPressed['G'] == 0) {
+
+      if(xpos > g_width || xpos < 0 || ypos < 0 || ypos > g_height) {
+         return;
+      }
+
+      //Get rid of if unneeded
+      egaze = GetLookAt() - GetEye();
+      ew = glm::vec3(-1.0 * ew.x, -1.0 * ew.y, -1.0 * ew.z);
+      ew = glm::normalize(ew);
+      eu = glm::cross(GetUp(), ew)/magnitude(glm::cross(GetUp(), ew));
+      eu = glm::normalize(eu);
+
+      eendX = xpos;
+      eendY = g_height-ypos-1;
+
+      float diff;
+
+      //Calculate change in X
+      if(estartX < eendX) {
+         diff = eendX - estartX;
+         ebeta = incrementYaw((diff * M_PI)/g_width);
+      }
+      else if(estartX > eendX){
+         diff = estartX - eendX;
+         ebeta = incrementYaw((-diff * M_PI)/g_width);
+      }
+
+      //Calculate change in Y
+      if(eendY > estartY && ealpha <= 0.98) {
+         diff = eendY - estartY;
+         ealpha = incrementPitch((diff * M_PI)/g_width);
+      }
+      else if(eendY < estartY && ealpha >= -0.98) {
+         diff = estartY - eendY;
+         ealpha = incrementPitch(-(diff * M_PI)/g_width);
+      }
+
+      estartX = g_width/2.0;// = endX;
+      estartY = g_height/2.0-1;// endY;
    }
 
-   //Get rid of if unneeded
-   egaze = GetLookAt() - GetEye();
-   ew = glm::vec3(-1.0 * ew.x, -1.0 * ew.y, -1.0 * ew.z);
-   ew = glm::normalize(ew);
-   eu = glm::cross(GetUp(), ew)/magnitude(glm::cross(GetUp(), ew));
-   eu = glm::normalize(eu);
-
-   eendX = xpos;
-   eendY = g_height-ypos-1;
-
-   float diff;
-
-   //Calculate change in X
-   if(estartX < eendX) {
-      diff = eendX - estartX;
-      ebeta = incrementYaw((diff * M_PI)/g_width);
-   }
-   else if(estartX > eendX){
-      diff = estartX - eendX;
-      ebeta = incrementYaw((-diff * M_PI)/g_width);
-   }
-
-   //Calculate change in Y
-   if(eendY > estartY && ealpha <= 0.98) {
-      diff = eendY - estartY;
-      ealpha = incrementPitch((diff * M_PI)/g_width);
-   }
-   else if(eendY < estartY && ealpha >= -0.98) {
-      diff = estartY - eendY;
-      ealpha = incrementPitch(-(diff * M_PI)/g_width);
-   }
-
-   estartX = g_width/2.0;// = endX;
-   estartY = g_height/2.0-1;// endY;
 }
 
 /*
@@ -185,138 +202,92 @@ void glfwEditKeyboard(void) {
    ew = glm::vec3(-1.0 * ew.x, -1.0 * ew.y, -1.0 * ew.z);
    eu = glm::cross(GetUp(), ew)/magnitude(glm::cross(GetUp(), ew));
 
-   //Force radius
-   if(eKeysPressed[341] && eKeysPressed['Z'] && eKeysPressed['S']) {
-      forceRadius();
-   }
-   //GLFW_KEY_LEFTCONTROL + GLFW_KEY_Leftcontrol + 'S'
-   else if(eKeysPressed[341] && eKeysPressed['S'] && eKeysPressed[341]) {
-      string toSave;
-      pauseorUnpause();
-      printf("Enter a string to have this world saved (don't include .wub, type 'none' to abort save):\n");
-      scanf("%s", &toSave[0]);
+   //If in GUI Selection, disable all other actions
+   if(eKeysPressed['G'] == 0) {
 
-      if(strcmp(&toSave[0], "abort") == 0) {
-         printf("Save aborted\n");
-         return;
+      //GLFW_KEY_LEFTCONTROL + GLFW_KEY_Leftcontrol + 'S'
+      if(eKeysPressed[341] && eKeysPressed['S'] && eKeysPressed[341]) {
+         string toSave;
+         pauseorUnpause();
+         printf("Enter a string to have this world saved (don't include .wub, type 'none' to abort save):\n");
+         scanf("%s", &toSave[0]);
+
+         if(strcmp(&toSave[0], "abort") == 0) {
+            printf("Save aborted\n");
+            return;
+         }
+         saveWorld(&toSave[0]);
       }
-      saveWorld(&toSave[0]);
-   }
-   //GLFW_KEY_S
-   else if(eKeysPressed['S']) {
-       MoveEye(glm::vec3(speed * 0.15 * ew.x, speed * 0.15 * ew.y, speed * 0.15 * ew.z));
-   }
-   //GLFW_KEY_W
-   if(eKeysPressed['W']) {
-       MoveEye(glm::vec3(speed * -0.15 * ew.x, speed * -0.15 * ew.y, speed * -0.15 * ew.z));
-   }
-   //GLFW_KEY_D
-   if(eKeysPressed['D']) {
-       MoveEye(glm::vec3(speed * 0.15 * eu.x, speed * 0.15 * eu.y, speed * 0.15 * eu.z));
-   }
-   //GLFW_KEY_A
-   if(eKeysPressed['A']) {
-       MoveEye(glm::vec3(speed * -0.15 * eu.x, speed * -0.15 * eu.y, speed * -0.15 * eu.z));
-   }
-   //GLFW_KEY_R
-   if(eKeysPressed['R']) {
-      setDistance(previousLookAtDistance);
-      reselectLastEntity();
-   }
-   //GLFW_KEY_BACKSPACE
-   if(eKeysPressed[8]) {
-      //l-shift, redo
-      if(eKeysPressed[340]) {
-         redo();
+      //GLFW_KEY_S
+      else if(eKeysPressed['S']) {
+          MoveEye(glm::vec3(speed * 0.15 * ew.x, speed * 0.15 * ew.y, speed * 0.15 * ew.z));
       }
-      //else undo
-      else
-      {
-         undo();
+      //GLFW_KEY_W
+      if(eKeysPressed['W']) {
+          MoveEye(glm::vec3(speed * -0.15 * ew.x, speed * -0.15 * ew.y, speed * -0.15 * ew.z));
       }
-      eKeysPressed[8] = 0;
-   }
-   //GLFW_KEY_1
-   if(eKeysPressed['1']) {
-      //l-shift
-      if(eKeysPressed[340]) {
-         selectAtHotBarIndex(10);  
+      //GLFW_KEY_D
+      if(eKeysPressed['D']) {
+          MoveEye(glm::vec3(speed * 0.15 * eu.x, speed * 0.15 * eu.y, speed * 0.15 * eu.z));
       }
-      else {
+      //GLFW_KEY_A
+      if(eKeysPressed['A']) {
+          MoveEye(glm::vec3(speed * -0.15 * eu.x, speed * -0.15 * eu.y, speed * -0.15 * eu.z));
+      }
+      //GLFW_KEY_R
+      if(eKeysPressed['R']) {
+         setDistance(previousLookAtDistance);
+         reselectLastEntity();
+      }
+      //GLFW_KEY_BACKSPACE
+       if(eKeysPressed[8]) {
+         //l-shift, redo
+         if(eKeysPressed[340]) {
+            redo();
+         }
+         //else undo
+         else
+         {
+            undo();
+         }
+         eKeysPressed[8] = 0;
+      }
+      //GLFW_KEY_1
+      if(eKeysPressed['1']) {
          selectAtHotBarIndex(1);
       }
-   }
-   //GLFW_KEY_2
-   if(eKeysPressed['2']) {
-      //l-shift
-      if(eKeysPressed[340]) {
-         selectAtHotBarIndex(11);  
-      }
-      else {
+      //GLFW_KEY_2
+      if(eKeysPressed['2']) {
          selectAtHotBarIndex(2);
       }
-   }
-   //GLFW_KEY_3
-   if(eKeysPressed['3']) {
-      if(eKeysPressed[340]) {
-         selectAtHotBarIndex(12);  
-      }
-      else {
+      //GLFW_KEY_3
+      if(eKeysPressed['3']) {
          selectAtHotBarIndex(3);
       }
-   }
-   //GLFW_KEY_4
-   if(eKeysPressed['4']) {
-      if(eKeysPressed[340]) {
-         selectAtHotBarIndex(13);  
-      }
-      else {
+      //GLFW_KEY_4
+      if(eKeysPressed['4']) {
          selectAtHotBarIndex(4);
       }
-   }
-   //GLFW_KEY_5
-   if(eKeysPressed['5']) {
-      if(eKeysPressed[340]) {
-         selectAtHotBarIndex(14);  
-      }
-      else {
+      //GLFW_KEY_5
+      if(eKeysPressed['5']) {
          selectAtHotBarIndex(5);
       }
-   }
-   //GLFW_KEY_6
-   if(eKeysPressed['6']) {
-      if(eKeysPressed[340]) {
-         selectAtHotBarIndex(15);  
-      }
-      else {
+      //GLFW_KEY_6
+      if(eKeysPressed['6']) {
          selectAtHotBarIndex(6);
       }
-   }
-   //GLFW_KEY_7
-   if(eKeysPressed['7']) {
-      if(eKeysPressed[340]) {
-         selectAtHotBarIndex(16);  
-      }
-      else {
+      //GLFW_KEY_7
+      if(eKeysPressed['7']) {
          selectAtHotBarIndex(7);
       }
-   }
-   //GLFW_KEY_8
-   if(eKeysPressed['8']) {
-      if(eKeysPressed[340]) {
-         selectAtHotBarIndex(17);  
-      }
-      else {
+      //GLFW_KEY_8
+      if(eKeysPressed['8']) {
          selectAtHotBarIndex(8);
       }
-   }
-   //GLFW_KEY_9
-   if(eKeysPressed['9']) {
-      selectAtHotBarIndex(9);
-   }
-   //GLFW_KEY_0
-   if(eKeysPressed['0']) {
-      selectAtHotBarIndex(0);
+      //GLFW_KEY_9
+      if(eKeysPressed['9']) {
+         selectAtHotBarIndex(9);
+      }
    }
    //GLFW_KEY_P
    if(eKeysPressed['P']) {
@@ -331,6 +302,7 @@ void glfwEditKeyboard(void) {
       saveWorld();
       exit( EXIT_SUCCESS );
    }
+   
 }
 
 //the keyboard callback that will alter the array based on key pressed/released

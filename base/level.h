@@ -33,22 +33,25 @@ struct Entity {
 
 //This method loads the level models and initializes the hotbar
 void initLevelLoader();
+//Allows the Hotbar Index to be set to the Selection Screen Index
+void SetHotBarIndex(int HBIndex, int SSIndex);
 //The entities are loaded into the physics engine
 void loadLevel(string fileName);
 //Creates an entity with the given arguments
 Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIndex);
 //Use entity at hotbar index as the currently selected entity
 void selectAtHotBarIndex(int index);
+//Access Entity at index from entire pool of entities
+Entity GetEntityPool(int index);
 //Unselect the selected Entity
 void unselectEntity();
 //Change the number of dups for selected entity
 int changeDupNumBy(int toChange);
 //Determines if entities are currently selected, if false DO NOT draw currentEntities
 bool areEntitiesSelected();
-//Force radius changes
-void forceRadius();
 //Grab selected entity at index 0
 Entity getSelectedEntity();
+
 //Changes the x scale of the selected entity
 void scaleSelectedEntityX(float scaleX);
 //Changes the y scale of the selected entity
@@ -59,6 +62,7 @@ void scaleSelectedEntityZ(float scaleZ);
 //0 < scale <= 2.0
 void scaleSelectedEntity(glm::vec3 toScale);
 //Change the space inbetween each selected entity by the amount put in
+
 void changeCESpacing(float space);
 //Call to update positions of selected entities relative to lookAt
 void updateCurrentEntitiesPos();

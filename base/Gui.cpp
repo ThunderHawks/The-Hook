@@ -4,13 +4,34 @@ TexImage *TextureImage;
 RGB myImage[64][64];
 RGB* g_pixel;
 
+//Location of each HotBar Icon Index
+vector<glm::vec2> HBIndices;
+
+//Location of each Selection Screen Icon Index
+vector<glm::vec2> SSIndices;
+
+//Last selection index pressed
+int lastSelectionIndex = -1;
+
+void initGui(int EditMode) {
+   if(EditMode) {
+      //Initialize HotBar icon indices
+      for(int i = 0; i < 9; i++) {
+         HBIndices.push_back(glm::vec2(0.15 * i - 0.6, -0.88));
+      }
+
+     //Initialize Selection screen icon indicies
+     for(int j = 3; j >= 0; j--) {
+         for(int i = 0; i < 9; i++) {
+            SSIndices.push_back(glm::vec2(0.15 * i - 0.6 , 0.3 * j - 0.2));
+         }
+      }
+   }
+}
 
 void DrawCrosshair() {
-   SetupSq(0, 0, -5, 0.01, 0.04);
-   SetupSq(0, 0, -5, 0.03, 0.01);
-   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-   //glLineWidth(3.0);
-   //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+   SetupSq(0, 0, 5, 0.01, 0.04);
+   SetupSq(0, 0, 5, 0.03, 0.01);
 }
 
 void ready2D() {
@@ -45,10 +66,77 @@ void ready3D() {
 }
 
 void DrawHotBar() {
+   glm::vec2 tempPos;
+
+   //Draw background
+   SetupSq(0, -0.9, 5, 1.4, 0.3);
+
+   //Draw Icons
+   for(int i = 0; i < HBIndices.size(); i++) {
+      tempPos = HBIndices[i];
+      SetupSq(tempPos.x, tempPos.y, 4, ICON_WIDTH, ICON_HEIGHT);      
+   }
 }
 
 void DrawSelection() {
-   SetupSq(0, 0, 5, 1.0, 1.0);
+   glm::vec2 tempPos;
+
+   //Draw background
+   SetupSq(0, 0.25, 5, 1.4, 1.3);
+
+   //Draw icons
+   for(int i = 0; i < SSIndices.size(); i++) {
+      tempPos = SSIndices[i];
+      SetupSq(tempPos.x, tempPos.y, 4, ICON_WIDTH, ICON_HEIGHT);      
+   }
+}
+
+
+bool iconPressed(glm::vec2 iconPos, int xPos, int yPos) {
+
+   float worldX = p2i_x(xPos);
+   float worldY = p2i_y(yPos);
+
+   //printf("iconPos: %f %f, mouse: %f %f\n", iconPos.x, iconPos.y, worldX, worldY);
+   //printf("mouse: %d %d, p2w: %f %f, p2i: %f %f\n", xPos, yPos, worldX, worldY, p2i_x(xPos), p2i_y(yPos));
+   //printf("width/height: %f %f\n\n", p2i_x(ICON_WIDTH), p2i_y(ICON_HEIGHT));
+   //printf("world: %f %f, icon: %f %f\n", worldX, worldY, iconPos.x, iconPos.y);
+   //printf("x: %f <= %f <= %f\n", iconPos.x - ICON_WIDTH/2.0, worldX, iconPos.x + ICON_WIDTH/2.0);
+   //printf("y: %f <= %f <= %f\n", iconPos.y - ICON_HEIGHT/2.0, worldY, iconPos.y + ICON_HEIGHT/2.0);
+
+   if(iconPos.x - ICON_WIDTH/2.0 <= worldX && worldX <= iconPos.x + ICON_WIDTH/2.0) {
+      if(iconPos.y - ICON_HEIGHT/2.0 <= worldY && worldY <= iconPos.y + ICON_HEIGHT/2.0) {
+         return true;
+      }
+   }
+
+   return false;
+}
+
+void GuiPressing(int xPos, int yPos) {
+   //printf("Tried to press button at %d %d\n", xPos, yPos);
+
+   //Test HB icons
+   for(int i = 0; i < HBIndices.size(); i++) {
+
+      if(iconPressed(HBIndices[i], xPos, yPos) == true) {
+         printf("~~~~Icon %d Pressed on hotbar\n", i);
+         if(lastSelectionIndex != -1) {
+            SetHotBarIndex(i + 1, lastSelectionIndex);
+            lastSelectionIndex = -1;
+         }
+         return;
+      }
+   }
+
+   //Test SS icons
+   for(int i = 0; i < SSIndices.size(); i++) {
+      if(iconPressed(SSIndices[i], xPos, yPos) == true) {
+         printf("~~~~Icon %d Pressed on selection\n", i);
+         lastSelectionIndex = i;
+         return; 
+      }
+   }
 }
 
 void DrawGui(int editMode) {

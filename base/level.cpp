@@ -14,7 +14,7 @@ Mesh mesh[100];
 vector<Entity> entities;
 
 //Hotbar of entities
-Entity hotBar[20];
+Entity hotBar[10];
 //If entities are selected
 bool entitiesSelected;
 //Selected entities relative to the current lookAt 
@@ -37,9 +37,6 @@ string currentLevel = "level1.wub";
 void initLevelLoader() {
    printf("Initializing Level content...\n");
 
-   //No entity selected
-   entitiesSelected = false;
-
    //Load Meshes
    mesh[0] = LoadMesh("../Assets/Models/ModMBasicBldg.obj");//60h 43d 49w
    mesh[1] = LoadMesh("../Assets/Models/shopBldg.obj");//25h 50d 50w
@@ -61,64 +58,102 @@ void initLevelLoader() {
    mesh[17] = LoadMesh("../Assets/Models/pointyBldg.obj"); //10h 1d 7w
 
    //Load hotbar options
-   //Basic Blg
-   Entity entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 0);
-   hotBar[0] = entity;
-   //Shop Bldg
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.25, 0.25, 0.25), 0.0, 1);
-   hotBar[1] = entity;
-   //Cinderblock
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 2);
-   hotBar[2] = entity;
-   //Medium Blg
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.1, 0.1, 0.1), 0.0, 3);
-   hotBar[3] = entity;
-   //Side walk corner
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 4);
-   hotBar[4] = entity;
-   //SideWalk
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 5);
-   hotBar[5] = entity;
-   //Street light
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5), 0.0, 6);
-   hotBar[6] = entity;
-   //Table
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 7);
-   hotBar[7] = entity;
-   //Tall blg
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.4, 0.4, 0.4), 0.0, 8);
-   hotBar[8] = entity;
-   //Water tower
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 9);
-   hotBar[9] = entity;
-   //Record Building
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 10);
-   hotBar[10] = entity;
-   //Wall
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 11);
-   hotBar[11] = entity;
-   //Gas Station
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 12);
-   hotBar[12] = entity;
-   //Half slab
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 13);
-   hotBar[13] = entity;
-   //Mart
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 14);
-   hotBar[14] = entity;
-   //Flag
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 15);
-   hotBar[15] = entity;
-   //AsymbBldg
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.1, 0.1, 0.1), 0.0, 16);
-   hotBar[16] = entity;
-   //PointyBldg
-   entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.1, 0.1, 0.1), 0.0, 17);
-   hotBar[17] = entity;
+   SetHotBarIndex(1, 0);
+   SetHotBarIndex(2, 1);
+   SetHotBarIndex(3, 2);
+   SetHotBarIndex(4, 3);
+   SetHotBarIndex(5, 4);
+   SetHotBarIndex(6, 5);
+   SetHotBarIndex(7, 6);
+   SetHotBarIndex(8, 7);
+   SetHotBarIndex(9, 8);
 
    //Load into current index to prevent segfault. Doesn't appear.
    selectAtHotBarIndex(0);
    entitiesSelected = false;
+}
+
+void SetHotBarIndex(int HBIndex, int SSIndex) {
+
+   printf("SetHotBarIndex %d to %d\n", HBIndex, SSIndex);
+
+   switch(SSIndex) {
+      case 0:
+         printf("0\n");
+         //Basic Blg
+         hotBar[HBIndex] = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 0);
+         break;
+      case 1:
+         //Shop Bldg
+         printf("1\n");
+         hotBar[HBIndex] = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.25, 0.25, 0.25), 0.0, 1);
+         break;
+      case 2:
+         //Cinderblock
+         printf("2\n");
+         hotBar[HBIndex] = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 2);
+         break;
+      case 3:
+         //Medium Blg
+         hotBar[HBIndex] = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.1, 0.1, 0.1), 0.0, 3);
+         break;
+      case 4:
+         //Side walk corner
+         hotBar[HBIndex] = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 4);
+         break;
+      case 5:
+         //SideWalk
+         hotBar[HBIndex] = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 5);
+         break;
+      case 6:
+         //Street light
+         hotBar[HBIndex] = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5), 0.0, 6);
+         break;
+      case 7:
+         //Table
+         hotBar[HBIndex] = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 7);
+         break;
+      case 8:
+         //Tall blg
+         hotBar[HBIndex] = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.4, 0.4, 0.4), 0.0, 8);
+         break;
+      case 9:
+         //Water tower
+         hotBar[HBIndex] = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 9);
+         break;
+      case 10:
+         //Record Building
+         hotBar[HBIndex] = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 10);
+         break;
+      case 11:
+         //Wall
+         hotBar[HBIndex] = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 11);
+         break;
+      case 12:
+         //Gas Station
+         hotBar[HBIndex] = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 12);
+         break;
+      case 13:
+         //Half slab
+         hotBar[HBIndex] = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 13);
+         break;
+      case 14:
+         //Mart
+         hotBar[HBIndex] = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 14);
+         break;
+      case 15:
+         //Flag
+         hotBar[HBIndex] = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 15);
+         break;
+      case 16:
+         //AsymbBldg
+         hotBar[HBIndex] = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.1, 0.1, 0.1), 0.0, 16);
+         break;
+      case 17:
+         //PointyBldg
+         hotBar[HBIndex] = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.1, 0.1, 0.1), 0.0, 17);
+         break;
+   }
 }
 
 Octree* octLevel = new Octree(glm::vec3(-42,-100,67),glm::vec3(230,2000,379),3);
@@ -135,7 +170,7 @@ vector<Entity*> pointLevelTest(glm::vec3 point){
 void loadLevel(string fileName){
    printf("Loading Level...\n");
    Entity tempEntity;
-   int numOfEntities;
+   int numOfEntities, i;
    ifstream infile;
    //-42x, 67z
    //230x, -379z
@@ -155,8 +190,6 @@ void loadLevel(string fileName){
       //Keep track of file name
       strcpy(&currentLevel[0], &fileName[0]);
    }
-
-   int i;
 
    cout << "Opened file " << fileName << endl;
    infile >> numOfEntities;
@@ -342,6 +375,12 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
    return entity;
 }
 
+//Access Entity at index from entire pool of entities
+Entity GetEntityPool(int index) {
+   return entities[index];
+
+}
+
 //Use entity at hotbar index as the currently selected entity
 void selectAtHotBarIndex(int index) {
    currentEntities.clear();
@@ -352,9 +391,6 @@ void selectAtHotBarIndex(int index) {
 
    //Set distance away from camera for convinience
    switch(index) {
-      case 0:
-         setDistance(20.0);
-         break;
       case 1:
          setDistance(15.0);
          break;
@@ -381,30 +417,6 @@ void selectAtHotBarIndex(int index) {
          break;
       case 9:
          setDistance(7.0);
-         break;
-      case 10:
-         setDistance(30.0);
-         break;
-      case 11:
-         setDistance(7.0);
-         break;
-      case 12:
-         setDistance(20.0);
-         break;
-      case 13:
-         setDistance(10.0);
-         break;
-      case 14:
-         setDistance(20.0);
-         break;
-      case 15:
-         setDistance(10.0);
-         break;
-      case 16:
-         setDistance(50.0);
-         break;
-      case 17:
-         setDistance(50.0);
          break;
     }
 }
@@ -460,17 +472,6 @@ void scaleSelectedEntityX(float scaleX) {
          //Replace
          currentEntities[i] = temp;
       }
-   }
-}
-
-//Force radius changes
-void forceRadius() {
-   Entity temp;
-
-   for(int i = 0; i < entities.size(); i++) {
-      temp = entities[i];
-      temp.BSRadius = sqrt( pow(temp.scale.x * temp.phyScale.x, 2.0) + pow(temp.scale.y * temp.phyScale.y, 2.0) + pow(temp.scale.z * temp.phyScale.z, 2.0));
-      entities[i] = temp;       
    }
 }
 

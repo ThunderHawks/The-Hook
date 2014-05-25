@@ -153,7 +153,7 @@ void drawEntities(int passNum) {
    Entity entityTemp;
    srand(sizer);
    int hit = 0;
-   printf("num ent rend %d\n",getEntityNum());
+   //printf("num ent rend %d\n",getEntityNum());
    for(int i = 0; i < getEntityNum(); ++i) {
       entityTemp = getEntityAt(i);
       
@@ -439,6 +439,7 @@ int main( int argc, char *argv[] )
       glInitialize(window);
       physicsInit();
       InitGeom();
+      initGui(Edit);
       initLevelLoader();
       loadLevel(fileName);
    }
@@ -470,6 +471,7 @@ int main( int argc, char *argv[] )
       glInitialize(window);
       physicsInit();
       InitGeom();
+      initGui(Edit);
       initLevelLoader();
       loadLevel(fileName);
 
@@ -501,10 +503,16 @@ int main( int argc, char *argv[] )
       glfwPollEvents();
       if(Edit) {
          if(paused == false) {
-            //Keep the cursor centered
-            glfwSetCursorPos(window,g_width/2,g_height/2);  
+            //Keep the cursor centered if gui is not displayed
+            if(getEPressed('G') == 0) {
+               glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+               glfwSetCursorPos(window,g_width/2,g_height/2);
+               glfwEditGetCursorPos(NULL,g_width/2.0,g_height/2.0);
+            }  
+            else {
+               glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            }
             renderScene(window, shadowMap);
-            glfwEditGetCursorPos(NULL,g_width/2.0,g_height/2.0);
             //glfw Game Keyboard
             glfwEditKeyboard();
          }
