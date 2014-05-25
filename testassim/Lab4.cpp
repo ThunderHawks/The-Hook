@@ -44,7 +44,7 @@ vector<btRigidBody> objectVectorList;// = new vector<btRigidBody>();
 //Handles to the shader data
 GLint h_aPosition, h_aNormal, h_uViewMatrix, h_uProjMatrix;
 //
-GLint h_uAnimFlag, h_uBoneMatrix, h_uWeights, h_uJoints;
+GLint h_uAnimFlag, h_uNumWeights, h_uBoneMatrix, h_uWeights, h_uJoints;
 //
 GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj;
 GLuint ShadowCubeBuffObj, SCIndxBuffObj, ShadowNormalBuffObj, RampBuffObj, RIndxBuffObj, RampNormalBuffObj;
@@ -150,13 +150,10 @@ void glfwDraw (GLFWwindow *window)
    ModelTrans.loadIdentity();
    SetModelStat();
 
-	if (ctr%500 == 0)
-		frm = ++frm%24;
-
-	SetMaterial(0); 
-	PlaceAnimatedModel(damesh, 0, -5, -10, 1, 1, 1, 0, 0);
-	ctr++;
-	SetMaterial(5);
+	if (ctr++%50 == 0)
+		frm++;
+		
+	PlaceAnimatedModel(damesh, 0, -5, -10, 1, 1, 1, 0, frm%24);
 	//SetupCube(0, 0, -2, 10, spin, 1, 1, 1);
 
    //Disable the shader

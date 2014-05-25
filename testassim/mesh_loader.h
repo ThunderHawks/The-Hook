@@ -30,7 +30,6 @@ struct Bone {
 	glm::mat4 *glmTransforms;
 	aiMatrix4x4 *transformations;
 	aiMatrix4x4 *personalTrans;
-	std::vector<Bone *> childs;
 	
 	//aiMatrix4x4 meshTrans;					//mesh matrix
 	//aiString parentName;						//name of parent
@@ -52,7 +51,6 @@ struct AssimpMesh {
 	vertexInfo *skeleton_vertices;
 	int numVerts;
 	Bone *bone_array;
-	Bone *root;
 	int boneCt;
 	bool hasBones;
 };

@@ -36,16 +36,14 @@ Mesh::Mesh(AssimpMesh aMesh)
 		pos.push_back((float) aMesh.skeleton_vertices[i].position.x);
 		pos.push_back((float) aMesh.skeleton_vertices[i].position.y);
 		pos.push_back((float) aMesh.skeleton_vertices[i].position.z);
-	
-		weights.push_back(aMesh.skeleton_vertices[i].weight_array[i*3 + 0]);
-		weights.push_back(aMesh.skeleton_vertices[i].weight_array[i*3 + 1]);
-		weights.push_back(aMesh.skeleton_vertices[i].weight_array[i*3 + 2]);
+		//printf("vertex %d: ", i);
+		for (int j = 0; j < aMesh.skeleton_vertices[i].weight_array.size(); j++) {
+			weights.push_back((float) aMesh.skeleton_vertices[i].weight_array[j]);
+			//printf("weight %d: %lf ", j, aMesh.skeleton_vertices[i].weight_array[i*3 + j]);
+		}//printf("\n");
 		
-		printf("weight data: %lf %lf %lf\n", weights[i*3 + 0], weights[i*3 + 1], weights[i*3 + 2]);
-		
-		joints.push_back((float) aMesh.skeleton_vertices[i].bone_array[i*3 + 0]);
-		joints.push_back((float) aMesh.skeleton_vertices[i].bone_array[i*3 + 1]);
-		joints.push_back((float) aMesh.skeleton_vertices[i].bone_array[i*3 + 2]);
+		for (int j = 0; j < aMesh.skeleton_vertices[i].bone_array.size(); j++)
+			joints.push_back((float) aMesh.skeleton_vertices[i].bone_array[j]);
 	}
 		
 	hasAss = true;
@@ -86,6 +84,14 @@ Output: a Mesh of the model you want
 ******************************************************************************/
 Mesh LoadMesh(std::string file) {
 	AssimpMesh AssimpModel = loadMesh(file);
+		/*for (int i = 0; i < AssimpModel.numVerts; ++i) {
+		printf("vertex %d: ", i);
+		for (int j = 0; j < AssimpModel.skeleton_vertices[i].weight_array.size(); j++) {
+			//weights.push_back((float) AssimpModel.skeleton_vertices[i].weight_array[j]);
+			printf("weight %d: %lf ", j, AssimpModel.skeleton_vertices[i].weight_array[j]);
+		}printf("\n");
+		}*/
+	
 	std::vector<float> temp;
 	Mesh ret;
 	
@@ -107,15 +113,25 @@ Output: YOU GET NOTHING!
 void PlaceAnimatedModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle, int frame) {
 	
 	if (mesh.hasAss) {
-		static glm::mat4 anims[30];
+		glm::mat4 anims;
+		static GLfloat boneArr[30*16];
 		int ctr = 0;
 		
-		for (int i = 0; i < mesh.Assimp.boneCt; i++)
-			anims[i] = mesh.Assimp.bone_array[i].glmTransforms[frame];
+		anims = mesh.Assimp.bone_array[3].glmTransforms[0];
 		
-		glUniformMatrix4fv(h_uBoneMatrix, 30, GL_FALSE, (float *)anims);
+		for (int i = 0; i < mesh.Assimp.boneCt; i++) {
+			anims = mesh.Assimp.bone_array[i].glmTransforms[frame];
+			
+			for (int j = 0; j < 4; j++)
+				for (int k = 0; k < 4; k++) {
+					boneArr[ctr++] = anims[j][k];
+				}
+		}
+		
+		glUniformMatrix4fv(h_uBoneMatrix, 30, GL_FALSE, boneArr);
 		
 		glUniform1i(h_uAnimFlag, 1);
+		glUniform1i(h_uNumWeights, mesh.Assimp.skeleton_vertices->weight_array.size());
 		
 		glEnableVertexAttribArray(h_uJoints);
 		glBindBuffer(GL_ARRAY_BUFFER, mesh.JointHandle);

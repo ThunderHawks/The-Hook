@@ -32,6 +32,7 @@ uniform mat4 uViewMatrix;
 uniform mat4 uModelMatrix1;
 //
 uniform int animFlag;
+uniform int numWeights;
 uniform mat4 bonesMatrix[30];
 attribute vec3 weights;
 attribute vec3 joints;
@@ -60,10 +61,13 @@ void main() {
 //
   mat4 animationMatrix = mat4(1.0);
   if (animFlag == 1) {
-	   animationMatrix =
+  		for (int i = 0; i < numWeights; i++) {
+  			animationMatrix += weights[i] * bonesMatrix[int(joints[i])];
+  		}
+	   /*animationMatrix =
 		 weights[0] * bonesMatrix[int(joints[0])] +
 		 weights[1] * bonesMatrix[int(joints[1])] +
-		 weights[2] * bonesMatrix[int(joints[2])];
+		 weights[2] * bonesMatrix[int(joints[2])];*/
   }
 //
   /* First model transforms */
