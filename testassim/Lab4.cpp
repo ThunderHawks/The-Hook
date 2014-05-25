@@ -193,6 +193,7 @@ int main( int argc, char *argv[] )
    glInitialize(window);
    InitGeom();
    
+   SetMaterial(1);
    damesh = LoadMesh("../Assets/Models/charWaving.dae");
 
    // Start the main execution loop.

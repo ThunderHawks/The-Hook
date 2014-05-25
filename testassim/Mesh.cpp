@@ -36,11 +36,11 @@ Mesh::Mesh(AssimpMesh aMesh)
 		pos.push_back((float) aMesh.skeleton_vertices[i].position.x);
 		pos.push_back((float) aMesh.skeleton_vertices[i].position.y);
 		pos.push_back((float) aMesh.skeleton_vertices[i].position.z);
-		//printf("vertex %d: ", i);
+		printf("vertex %d: ", i);
 		for (int j = 0; j < aMesh.skeleton_vertices[i].weight_array.size(); j++) {
 			weights.push_back((float) aMesh.skeleton_vertices[i].weight_array[j]);
-			//printf("weight %d: %lf ", j, aMesh.skeleton_vertices[i].weight_array[i*3 + j]);
-		}//printf("\n");
+			printf("weight %d: %lf ", j, aMesh.skeleton_vertices[i].weight_array[j]);
+		}printf("\n");
 		
 		for (int j = 0; j < aMesh.skeleton_vertices[i].bone_array.size(); j++)
 			joints.push_back((float) aMesh.skeleton_vertices[i].bone_array[j]);

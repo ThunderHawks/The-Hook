@@ -1,6 +1,7 @@
 #include "mesh_loader.h"
 #include "Mesh.h"
 
+int setupTrans(Bone *array, Bone *parent, Bone *cur);
 int CreateHierarchy(std::vector<aiBone *> *boneNames, aiNode *root, Bone *parent, int *iter, Bone *array);
 void CopyaiMat(const aiMatrix4x4 *from, glm::mat4 &to);
 
@@ -100,10 +101,14 @@ AssimpMesh loadMesh(const std::string& path) {
 						ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].bone_array.push_back(k);
 					}
 				}
-				//fill the weights.
+				//fill the weights. There is a max of 4 weights
 				ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].weight_array.push_back(mesh.mBones[j]->mWeights[i].mWeight);
+				
+				//for (int p = 0; p < ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].weight_array.size(); p++)
+					//printf("weight for vertex %d: %lf\n", mesh.mBones[j]->mWeights[i].mVertexId, ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].weight_array[p]);
 			}
 		}
+		
 		/*****************END**MODIFIED**********************/
 		
 		/*****************GRAB KEY FRAMES******************/
@@ -160,58 +165,29 @@ AssimpMesh loadMesh(const std::string& path) {
 		
 		//go through each bone again
 		for (i = 0; i < ret.boneCt; i++) {
-			//allocate space for their total transforms (their personal transform combined with their parents full transform
-			ret.bone_array[i].transformations = (aiMatrix4x4 *)calloc(sizeof(aiMatrix4x4), ret.bone_array[i].numPosKeyFrames);
-			ret.bone_array[i].glmTransforms = (glm::mat4 *)calloc(sizeof(glm::mat4), ret.bone_array[i].numPosKeyFrames);
-			//Go through all of the keyframes and initialize them to their personal transform * offset
-			for (j = 0; j < ret.bone_array[i].numPosKeyFrames; j++) {
-				ret.bone_array[i].transformations[j] = ret.bone_array[i].personalTrans[j] * ret.bone_array[i].offset;
-			}
-			//combine the transforms for all the parents and store it in the full transform
-			for (parent = ret.bone_array[i].parent; parent != NULL; parent = parent->parent) {
-				for (j = 0; j < ret.bone_array[i].numPosKeyFrames; j++) {
-					ret.bone_array[i].transformations[j] *= parent->personalTrans[j];
-				}
-			}
 			
-			for (j = 0; j < ret.bone_array[i].numPosKeyFrames; j++) {
-				CopyaiMat(ret.bone_array[i].transformations + j, ret.bone_array[i].glmTransforms[j]);
-			}
+			//store the root bone
+			if (ret.bone_array[i].parent == NULL)
+				ret.root = ret.bone_array +i;
 		}
 		
+		//setup the transforms hierarchically. Starting with the root and going down
+		setupTrans(ret.bone_array, NULL, ret.root);		
 		
 		
 		/**************************************************/
 
 		/****************DEBUGGING*************************/
-			for (i = 0; i < mesh.mNumVertices; i++) {
-			/* FOUND OUT THERE COULD BE MORE THAN 3 WEIGHTS PER VERTEX
-			if (ret.skeleton_vertices[i].weight_array.size() > 3) {
-			 printf("in while loop: %d vert and weight arr size %d", i, ret.skeleton_vertices[i].weight_array.size());
-				 for (int asdf = 0; asdf < ret.skeleton_vertices[i].weight_array.size(); asdf++) {
-				  	printf(" weight %d: %lf", asdf, ret.skeleton_vertices[i].weight_array[asdf]);
-				 } printf("\n");
-			}*/
-			
-			// CHECKING WEIGHTS
-			/*for (int k = 0; k < ret.skeleton_vertices[i].weight_array.size(); k++) {
-				if (ret.skeleton_vertices[i].weight_array[k] < 0 || ret.skeleton_vertices[i].weight_array[k] > 1) {
-					printf("vertex %d, weight index %d, weight: %lf\n", i, k, ret.skeleton_vertices[i].weight_array[k]);
-				}
-									printf("vertex %d, weight index %d, weight: %lf\n", i, k, ret.skeleton_vertices[i].weight_array[k]);
-			}*/
+		/*
 		
-			/* CHECKING WEIGHT TOTAL. SHOULD BE AROUND 1.0
-			double weightTotal = 0;
-				for(int asdf = 0; asdf < ret.skeleton_vertices[i].weight_array.size(); asdf++) {
-				 	weightTotal += ret.skeleton_vertices[i].weight_array[asdf];
-				}
-			printf("vertex %d's weight total: %lf\n", i, weightTotal);*/
+		for (i = 0; i < mesh.mNumVertices; i++) {
+			for (j = 0; j < ret.skeleton_vertices[i].weight_array.size(); j++) {
+				if (ret.skeleton_vertices[i].weight_array[j] > 1 || ret.skeleton_vertices[i].weight_array[j] < 0)
+					printf("Bad weight at %d\n", i);
+			}
+		}
 		
-		//printf("vert %d : %lf %lf %lf\n", i, ret.skeleton_vertices[i].weight_array[0], ret.skeleton_vertices[i].weight_array[1], ret.skeleton_vertices[i].weight_array[2]);
-	  }
-		
-		/*printf("anim name: %s\n", scene->mAnimations[0]->mName.C_Str());
+		printf("anim name: %s\n", scene->mAnimations[0]->mName.C_Str());
 		for(i = 0; i < scene->mAnimations[0]->mNumChannels; i++) {
 			printf("name of %d's aiNodeAnim: %s; numPositionKeys: %d; numRotationKeys: %d; numScalingKeys: %d\n",i, scene->mAnimations[0]->mChannels[i]->mNodeName.C_Str(), 
 			 scene->mAnimations[0]->mChannels[i]->mNumPositionKeys, scene->mAnimations[0]->mChannels[i]->mNumRotationKeys, scene->mAnimations[0]->mChannels[i]->mNumScalingKeys);
@@ -238,10 +214,47 @@ AssimpMesh loadMesh(const std::string& path) {
 		} else {	
 			printf("Bone %s has the parent %s\n", ret.bone_array[i].name.C_Str(), ret.bone_array[i].parent->name.C_Str());
 		}
+	}
+	
+	for (i = 0; i < ret.boneCt; ++i) {
+		if (ret.bone_array[i].childs.size() == 0)
+			printf("Bone %s has no childeren\n", ret.bone_array[i].name.C_Str());
+			
+		for (j = 0; j < ret.bone_array[i].childs.size(); j++)
+			printf("Bone %s has the child %s\n", ret.bone_array[i].name.C_Str(), ret.bone_array[i].childs[j]->name.C_Str());
 	}*/
+	
 		/**************************************************/
 
     return ret;
+}
+
+int setupTrans(Bone *array, Bone *parent, Bone *cur) {
+	int i;
+	
+	//setup the transforms hierarchically. Starting with the root and going down
+	//allocate the space for the transforms first
+	cur->transformations = (aiMatrix4x4 *)calloc(sizeof(aiMatrix4x4), cur->numPosKeyFrames);
+	cur->glmTransforms = (glm::mat4 *)calloc(sizeof(glm::mat4), cur->numPosKeyFrames);
+	
+	//set the bone's transformation to its parent's transformation (without the bone offset) * it's own transformation (without the bone offset) * the bone offset
+	for (i = 0; i < cur->numPosKeyFrames; i++) {
+		//a check to make sure we aren't the root
+		if (parent == NULL)
+			cur->transformations[i] = cur->personalTrans[i] * cur->offset;
+		else
+			cur->transformations[i] = cur->parent->personalTrans[i] * cur->personalTrans[i] * cur->offset;
+		
+		//store the matrix as a glm mat4	
+		CopyaiMat(cur->transformations + i, cur->glmTransforms[i]);
+	
+	}
+	
+	//call setup transform on all the children
+	for (i = 0; i < cur->childs.size(); i++)
+		setupTrans(array, cur, cur->childs[i]);
+		
+	return 0;
 }
 
 int CreateHierarchy(std::vector<aiBone *> *boneNames, aiNode *root, Bone *parent, int *iter, Bone *array) {
@@ -255,6 +268,10 @@ int CreateHierarchy(std::vector<aiBone *> *boneNames, aiNode *root, Bone *parent
 			array[hold].offset = (*it)->mOffsetMatrix;
 			array[hold].parent = parent;
 			array[hold].name = (*it)->mName;
+			//give the parent the child
+			if (parent != NULL) {
+				parent->childs.push_back(array + hold);
+			}
 			//increment the spot in the array
 			++(*iter);
 			//then try to add any bones below it to the hierarchy
@@ -279,12 +296,8 @@ int CreateHierarchy(std::vector<aiBone *> *boneNames, aiNode *root, Bone *parent
 //Borrowed from http://ephenationopengl.blogspot.com/2012/06/doing-animations-in-opengl.html
 //Since Assimp stores matrices in row major and glm stores matrices in column major, we need to do some converting
 void CopyaiMat(const aiMatrix4x4 *from, glm::mat4 &to) {
-	to[0][0] = from->a1; to[1][0] = from->a2;
-	to[2][0] = from->a3; to[3][0] = from->a4;
-	to[0][1] = from->b1; to[1][1] = from->b2;
-	to[2][1] = from->b3; to[3][1] = from->b4;
-	to[0][2] = from->c1; to[1][2] = from->c2;
-	to[2][2] = from->c3; to[3][2] = from->c4;
-	to[0][3] = from->d1; to[1][3] = from->d2;
-	to[2][3] = from->d3; to[3][3] = from->d4;
+	to[0][0] = from->a1; to[1][0] = from->a2; to[2][0] = from->a3; to[3][0] = from->a4;
+	to[0][1] = from->b1; to[1][1] = from->b2; to[2][1] = from->b3; to[3][1] = from->b4;
+	to[0][2] = from->c1; to[1][2] = from->c2; to[2][2] = from->c3; to[3][2] = from->c4;
+	to[0][3] = from->d1; to[1][3] = from->d2; to[2][3] = from->d3; to[3][3] = from->d4;
 }
