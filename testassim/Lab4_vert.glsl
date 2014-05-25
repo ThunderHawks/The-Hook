@@ -58,16 +58,16 @@ uniform vec3 uColor;
 void main() {
   vec4 R, V, L, N, T; //reflection, view, light, normal, temp
 //
-  //mat4 animationMatrix(1);
-  //if (animFlag) {
-	   /*animationMatrix =
+  mat4 animationMatrix = mat4(1.0);
+  if (animFlag == 1) {
+	   animationMatrix =
 		 weights[0] * bonesMatrix[int(joints[0])] +
 		 weights[1] * bonesMatrix[int(joints[1])] +
-		 weights[2] * bonesMatrix[int(joints[2])];*/
-  //}
-//
-  /* First model transforms */
-  vPosition = uModelMatrix1 */* animationMatrix */ vec4(aPosition, 1.0);
+		 weights[2] * bonesMatrix[int(joints[2])];
+  }
+
+	/* First model transforms */
+	vPosition = uModelMatrix1 * animationMatrix * vec4(aPosition, 1.0);
 
   //Transform light space
   vec4 tempLight = uViewMatrix * aLightVec;
