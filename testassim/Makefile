@@ -5,7 +5,7 @@ OBJECT = Lab4.o GLSL_helper.o Helper.o InitHelpers.o Mesh.o mesh_loader.o MStack
 OPTS =  -I"../include" -L"/usr/lib" ../bin/linux-gcc-64/libIrrKlang.so -pthread
 
 all: $(OBJECT)
-	g++ -g $(OBJECT) $(LIBS) $(OPTS)
+	g++ $(OBJECT) $(LIBS) $(OPTS)
 
 testmusic:
 	g++ test.cpp sound.cpp -o testmusic $(OPTS)

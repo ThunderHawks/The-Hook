@@ -65,9 +65,9 @@ void main() {
 		 weights[1] * bonesMatrix[int(joints[1])] +
 		 weights[2] * bonesMatrix[int(joints[2])];
   }
-
-	/* First model transforms */
-	vPosition = uModelMatrix1 * animationMatrix * vec4(aPosition, 1.0);
+//
+  /* First model transforms */
+  vPosition = uModelMatrix1 */* animationMatrix */ vec4(aPosition, 1.0);
 
   //Transform light space
   vec4 tempLight = uViewMatrix * aLightVec;

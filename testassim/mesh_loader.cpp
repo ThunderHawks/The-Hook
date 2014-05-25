@@ -4,7 +4,7 @@
 int CreateHierarchy(std::vector<aiBone *> *boneNames, aiNode *root, Bone *parent, int *iter, Bone *array);
 void CopyaiMat(const aiMatrix4x4 *from, glm::mat4 &to);
 
-AssimpMesh *loadMesh(const std::string& path) {
+AssimpMesh loadMesh(const std::string& path) {
 	Assimp::Importer importer;
 
 	const aiScene* scene = importer.ReadFile(path,
@@ -16,53 +16,53 @@ AssimpMesh *loadMesh(const std::string& path) {
 		std::cerr << "Failed to load: " << path << std::endl;
 		exit(EXIT_FAILURE);
 	}
-printf("merp\n");
+
 	/*this part sets up the mesh like a normal, non-animated mesh*/
 	const size_t kNumAxes = 3;
 	aiMesh& mesh = *scene->mMeshes[0];
-	AssimpMesh *ret = (AssimpMesh *)malloc(sizeof(AssimpMesh));
-	ret->vertex_array = std::vector<float>(
+	AssimpMesh ret;
+	ret.vertex_array = std::vector<float>(
           (float*)(mesh.mVertices),
           (float*)(mesh.mVertices) + mesh.mNumVertices * kNumAxes);
 
-    ret->uv_array = std::vector<float>(
+    ret.uv_array = std::vector<float>(
           (float*)(mesh.mTextureCoords),
           (float*)(mesh.mTextureCoords) + mesh.mNumVertices * kNumAxes);
 
-    ret->normal_array = std::vector<float>(
+    ret.normal_array = std::vector<float>(
           (float*)(mesh.mNormals),
           (float*)(mesh.mNormals) + mesh.mNumVertices * kNumAxes);
 
     for (unsigned int i = 0; i < mesh.mNumFaces; ++i) {
-       ret->index_array.insert(
-             ret->index_array.end(),
+       ret.index_array.insert(
+             ret.index_array.end(),
              mesh.mFaces[i].mIndices,
              mesh.mFaces[i].mIndices + kNumAxes);
     }
 /**********************We*Get*Animating*Here***********************************/
 	int i, j;
-	ret->skeleton_vertices = (vertexInfo *)calloc(sizeof(vertexInfo), mesh.mNumVertices);
-	ret->numVerts = mesh.mNumVertices;
+	ret.skeleton_vertices = (vertexInfo *)calloc(sizeof(vertexInfo), mesh.mNumVertices);
+	ret.numVerts = mesh.mNumVertices;
 		
 	//fill all the positions for the skeleton_vertices with the actual vertices
 	for (i = 0; i < mesh.mNumVertices; i++) {
-		ret->skeleton_vertices[i].position = mesh.mVertices[i];
+		ret.skeleton_vertices[i].position = mesh.mVertices[i];
 		/*other option if we ues vec3*/
 		/*
-		ret->skeleton_verticies[i*3].position.x = ret->vertex_array[i];
-		ret->skeleton_verticies[i*3 + 1].position.y = ret->vertex_array[i + 1];
-		ret->skeleton_verticies[i*3 + 2].position.z = ret->vertex_array[i + 2];
+		ret.skeleton_verticies[i*3].position.x = ret.vertex_array[i];
+		ret.skeleton_verticies[i*3 + 1].position.y = ret.vertex_array[i + 1];
+		ret.skeleton_verticies[i*3 + 2].position.z = ret.vertex_array[i + 2];
 		*/
 	}
 
 	//store whether it has bones or not. If it does, then we are dealing with an animated model and we go in the if
-	ret->hasBones = mesh.HasBones();
-	if(ret->hasBones) {
+	ret.hasBones = mesh.HasBones();
+	if(ret.hasBones) {
 		//create a vector to hold all the names of the bones
 		std::vector<aiBone *> boneNames;
 		//intialize the array of bones
-		ret->boneCt = mesh.mNumBones;
-		ret->bone_array = (Bone *)calloc(sizeof(Bone), mesh.mNumBones);
+		ret.boneCt = mesh.mNumBones;
+		ret.bone_array = (Bone *)calloc(sizeof(Bone), mesh.mNumBones);
 		
 		int smallest = 100;
 		int iter = 0;
@@ -81,26 +81,27 @@ printf("merp\n");
 			}
 			//fill our array of vertices with bones and weights. This code is depricated and can be removed when desired
 			/*for (i = 0; i < mesh.mBones[j]->mNumWeights; i++) {
-				ret->skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].bone_array.push_back(*(mesh.mBones[j]));
-				ret->skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].weight_array.push_back(mesh.mBones[j]->mWeights[i].mWeight);
+				ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].bone_array.push_back(*(mesh.mBones[j]));
+				ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].weight_array.push_back(mesh.mBones[j]->mWeights[i].mWeight);
 			}*/
 		}
+		
 		//construct the hierarchy of bones,starting with the root node. It will go to each of the childeren adding any bone its finds to the hierarchy
 		for (i = 0; i < root->mNumChildren; ++i) {
-			CreateHierarchy(&boneNames, root->mChildren[i], NULL, &iter, ret->bone_array);
+			CreateHierarchy(&boneNames, root->mChildren[i], NULL, &iter, ret.bone_array);
 		}
 		/**********************MODIFIED**********************/
 		/*Here is where we actually fill our array of vertices with bones and weights*/
 		for(j = 0; j < mesh.mNumBones; j++) {
 			for (i = 0; i < mesh.mBones[j]->mNumWeights; i++) {
-				for (int k = 0; k < ret->boneCt; ++k) {
+				for (int k = 0; k < ret.boneCt; ++k) {
 					//fill with bones
-					if(mesh.mBones[j]->mName == ret->bone_array[k].name) {
-						ret->skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].bone_array.push_back(k);
+					if(mesh.mBones[j]->mName == ret.bone_array[k].name) {
+						ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].bone_array.push_back(k);
 					}
 				}
 				//fill the weights. There is a max of 4 weights
-				ret->skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].weight_array.push_back(mesh.mBones[j]->mWeights[i].mWeight);
+				ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].weight_array.push_back(mesh.mBones[j]->mWeights[i].mWeight);
 			}
 		}
 		/*****************END**MODIFIED**********************/
@@ -111,32 +112,32 @@ printf("merp\n");
 			//go through each channel of each animation
 			for (j = 0; j < scene->mAnimations[i]->mNumChannels; j++) {
 				//go through each bone and see if it matches the node in the animation
-				for(int k = 0; k < ret->boneCt; k++) {
+				for(int k = 0; k < ret.boneCt; k++) {
 					//if there is a bone whos name matches a node in the animation, then we must give it the key frames
-					if (ret->bone_array[k].name == scene->mAnimations[i]->mChannels[j]->mNodeName) {
+					if (ret.bone_array[k].name == scene->mAnimations[i]->mChannels[j]->mNodeName) {
 						//this variable is a sanity check :D
 						aiNodeAnim *nodeHold = scene->mAnimations[i]->mChannels[j];
 						
 						//set up the number of key frames per transform. Though they should all be the same or badness ensues in our code
-						ret->bone_array[k].numRotKeyFrames = nodeHold->mNumRotationKeys;
-						ret->bone_array[k].numPosKeyFrames = nodeHold->mNumPositionKeys;
-						ret->bone_array[k].numScaleKeyFrames = nodeHold->mNumScalingKeys;
+						ret.bone_array[k].numRotKeyFrames = nodeHold->mNumRotationKeys;
+						ret.bone_array[k].numPosKeyFrames = nodeHold->mNumPositionKeys;
+						ret.bone_array[k].numScaleKeyFrames = nodeHold->mNumScalingKeys;
 						//allocate space to hold the keyframe transforms
-						ret->bone_array[k].posKeys = (aiVectorKey *)calloc(sizeof(aiVectorKey), nodeHold->mNumPositionKeys);
-						ret->bone_array[k].rotKeys = (aiQuatKey *)calloc(sizeof(aiQuatKey), nodeHold->mNumRotationKeys);
-						ret->bone_array[k].scaleKeys = (aiVectorKey *)calloc(sizeof(aiVectorKey), nodeHold->mNumScalingKeys);
+						ret.bone_array[k].posKeys = (aiVectorKey *)calloc(sizeof(aiVectorKey), nodeHold->mNumPositionKeys);
+						ret.bone_array[k].rotKeys = (aiQuatKey *)calloc(sizeof(aiQuatKey), nodeHold->mNumRotationKeys);
+						ret.bone_array[k].scaleKeys = (aiVectorKey *)calloc(sizeof(aiVectorKey), nodeHold->mNumScalingKeys);
 						//get all the position transforms
 						for (int l = 0; l < nodeHold->mNumPositionKeys; l++)
-							ret->bone_array[k].posKeys[l] = nodeHold->mPositionKeys[l];
+							ret.bone_array[k].posKeys[l] = nodeHold->mPositionKeys[l];
 						//get all the rotation transforms
 						for (int l = 0; l < nodeHold->mNumRotationKeys; l++)
-							ret->bone_array[k].rotKeys[l] = nodeHold->mRotationKeys[l];
+							ret.bone_array[k].rotKeys[l] = nodeHold->mRotationKeys[l];
 						//get all the scaling transforms	
 						for (int l = 0; l < nodeHold->mNumScalingKeys; l++)
-							ret->bone_array[k].scaleKeys[l] = nodeHold->mScalingKeys[l];
+							ret.bone_array[k].scaleKeys[l] = nodeHold->mScalingKeys[l];
 						
 						//get out of the loop
-						k = ret->boneCt;
+						k = ret.boneCt;
 					}
 				}
 			}
@@ -147,46 +148,39 @@ printf("merp\n");
 		aiMatrix4x4t<float> translateM, rotateM, scaleM;
 		
 		//for each bone we have, we will need to store their personal transform. This is their  translate*rotate*scale transform per keyframe
-		for (i = 0; i < ret->boneCt; i++) {
-			ret->bone_array[i].personalTrans = (aiMatrix4x4 *)calloc(sizeof(aiMatrix4x4), ret->bone_array[i].numPosKeyFrames);
-			for (j = 0; j < ret->bone_array[i].numPosKeyFrames; j++) {
-				aiMatrix4x4::Translation(ret->bone_array[i].posKeys[j].mValue, translateM);
-				rotateM = aiMatrix4x4(ret->bone_array[i].rotKeys[j].mValue.GetMatrix());
-				aiMatrix4x4::Scaling(ret->bone_array[i].scaleKeys[j].mValue, scaleM);
-				ret->bone_array[i].personalTrans[j] = translateM * rotateM * scaleM;
+		for (i = 0; i < ret.boneCt; i++) {
+			ret.bone_array[i].personalTrans = (aiMatrix4x4 *)calloc(sizeof(aiMatrix4x4), ret.bone_array[i].numPosKeyFrames);
+			for (j = 0; j < ret.bone_array[i].numPosKeyFrames; j++) {
+				aiMatrix4x4::Translation(ret.bone_array[i].posKeys[j].mValue, translateM);
+				rotateM = aiMatrix4x4(ret.bone_array[i].rotKeys[j].mValue.GetMatrix());
+				aiMatrix4x4::Scaling(ret.bone_array[i].scaleKeys[j].mValue, scaleM);
+				ret.bone_array[i].personalTrans[j] = translateM * rotateM * scaleM;
 			}
 		}
 		
 		//go through each bone again
-		for (i = 0; i < ret->boneCt; i++) {
+		for (i = 0; i < ret.boneCt; i++) {
 			//allocate space for their total transforms (their personal transform combined with their parents full transform
-			ret->bone_array[i].transformations = (aiMatrix4x4 *)calloc(sizeof(aiMatrix4x4), ret->bone_array[i].numPosKeyFrames);
-			ret->bone_array[i].glmTransforms = (glm::mat4 *)calloc(sizeof(glm::mat4), ret->bone_array[i].numPosKeyFrames);
+			ret.bone_array[i].transformations = (aiMatrix4x4 *)calloc(sizeof(aiMatrix4x4), ret.bone_array[i].numPosKeyFrames);
+			ret.bone_array[i].glmTransforms = (glm::mat4 *)calloc(sizeof(glm::mat4), ret.bone_array[i].numPosKeyFrames);
 			//Go through all of the keyframes and initialize them to their personal transform * offset
-			for (j = 0; j < ret->bone_array[i].numPosKeyFrames; j++) {
-				ret->bone_array[i].transformations[j] = ret->bone_array[i].personalTrans[j] * ret->bone_array[i].offset;
+			for (j = 0; j < ret.bone_array[i].numPosKeyFrames; j++) {
+				ret.bone_array[i].transformations[j] = ret.bone_array[i].personalTrans[j] * ret.bone_array[i].offset;
 			}
 			//combine the transforms for all the parents and store it in the full transform
-			for (parent = ret->bone_array[i].parent; parent != NULL; parent = parent->parent) {
-				for (j = 0; j < ret->bone_array[i].numPosKeyFrames; j++) {
-					ret->bone_array[i].transformations[j] *= parent->personalTrans[j];
+			for (parent = ret.bone_array[i].parent; parent != NULL; parent = parent->parent) {
+				for (j = 0; j < ret.bone_array[i].numPosKeyFrames; j++) {
+					ret.bone_array[i].transformations[j] *= parent->personalTrans[j];
 				}
 			}
 			
-			for (j = 0; j < ret->bone_array[i].numPosKeyFrames; j++) {
-				CopyaiMat(ret->bone_array[i].transformations + j, ret->bone_array[i].glmTransforms[j]);
-				glm::mat4 tsdfds = ret->bone_array[i].glmTransforms[j];
+			for (j = 0; j < ret.bone_array[i].numPosKeyFrames; j++) {
+				CopyaiMat(ret.bone_array[i].transformations + j, ret.bone_array[i].glmTransforms[j]);
 			}
 		}
 		
 		
-		/*for (i = 0; i < ret->boneCt; ++i) {
-			for (j = 0; j < ret->bone_array[i].numPosKeyFrames; j++) {
-				glm::mat4 derperp = ret->bone_array[i].glmTransforms[j];
-				if (j == 12)
-					printf("derp perp\n");
-			}
-		}*/
+		
 		/**************************************************/
 
 		/****************DEBUGGING*************************/
@@ -199,23 +193,23 @@ printf("merp\n");
 	//check the vertices data
 		for (i = 0; i < mesh.mNumVertices; i++) {
 			if (i%100 == 0) {
-				std::cout << "The position for vertex " << i << " is ("<< ret->skeleton_vertices[i].position.x << ", " << ret->skeleton_vertices[i].position.y << ", " << ret->skeleton_vertices[i].position.z << ")" << std::endl;
+				std::cout << "The position for vertex " << i << " is ("<< ret.skeleton_vertices[i].position.x << ", " << ret.skeleton_vertices[i].position.y << ", " << ret.skeleton_vertices[i].position.z << ")" << std::endl;
 			}
 		}*/
 	}
 	
 	//checking vertex counts
-	//printf("Vertex Count~ In Bone Array: %d, in Mesh: %d\n", ret->vertex_array.size()/3, ret->numVerts);
+	//printf("Vertex Count~ In Bone Array: %d, in Mesh: %d\n", ret.vertex_array.size()/3, ret.numVerts);
 	/*
-	for(i = 0; i < ret->boneCt; ++i) {
+	for(i = 0; i < ret.boneCt; ++i) {
 		printf("Bone Name: %s\n", mesh.mBones[i]->mName.C_Str());
 	}
 	
-	for (i = 0; i < ret->boneCt; ++i) {
-		if (ret->bone_array[i].parent == NULL) {
-			printf("Bone %s has the parent NULL\n", ret->bone_array[i].name.C_Str());
+	for (i = 0; i < ret.boneCt; ++i) {
+		if (ret.bone_array[i].parent == NULL) {
+			printf("Bone %s has the parent NULL\n", ret.bone_array[i].name.C_Str());
 		} else {	
-			printf("Bone %s has the parent %s\n", ret->bone_array[i].name.C_Str(), ret->bone_array[i].parent->name.C_Str());
+			printf("Bone %s has the parent %s\n", ret.bone_array[i].name.C_Str(), ret.bone_array[i].parent->name.C_Str());
 		}
 	}*/
 		/**************************************************/

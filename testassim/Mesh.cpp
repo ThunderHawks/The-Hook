@@ -27,28 +27,28 @@ Mesh::Mesh(std::vector<float> const & Positions, std::vector<float> const & Norm
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, Indices.size() * sizeof(unsigned short), & Indices.front(), GL_STATIC_DRAW);
 }
 
-Mesh::Mesh(AssimpMesh *aMesh)
+Mesh::Mesh(AssimpMesh aMesh)
     : PositionHandle(0), NormalHandle(0), IndexHandle(0), IndexBufferLength(0), JointHandle(0), WeightHandle(0)
 {
 	std::vector<float> pos, weights, joints;
 	
-	
-	for (int i = 0; i < aMesh->numVerts; ++i) {
-		pos.push_back((float) aMesh->skeleton_vertices[i].position.x);
-		pos.push_back((float) aMesh->skeleton_vertices[i].position.y);
-		pos.push_back((float) aMesh->skeleton_vertices[i].position.z);
+	for (int i = 0; i < aMesh.numVerts; ++i) {
+		pos.push_back((float) aMesh.skeleton_vertices[i].position.x);
+		pos.push_back((float) aMesh.skeleton_vertices[i].position.y);
+		pos.push_back((float) aMesh.skeleton_vertices[i].position.z);
 		
-		weights.push_back((float) aMesh->skeleton_vertices[i].weight_array[i*3 + 2]);
-		weights.push_back((float) aMesh->skeleton_vertices[i].weight_array[i*3 + 2]);
-		weights.push_back((float) aMesh->skeleton_vertices[i].weight_array[i*3 + 2]);
+		weights.push_back((float) aMesh.skeleton_vertices[i].weight_array[i*3 + 2]);
+		weights.push_back((float) aMesh.skeleton_vertices[i].weight_array[i*3 + 2]);
+		weights.push_back((float) aMesh.skeleton_vertices[i].weight_array[i*3 + 2]);
 		
-		joints.push_back((float) aMesh->skeleton_vertices[i].bone_array[i*3 + 0]);
-		joints.push_back((float) aMesh->skeleton_vertices[i].bone_array[i*3 + 1]);
-		joints.push_back((float) aMesh->skeleton_vertices[i].bone_array[i*3 + 2]);
+		joints.push_back((float) aMesh.skeleton_vertices[i].bone_array[i*3 + 0]);
+		joints.push_back((float) aMesh.skeleton_vertices[i].bone_array[i*3 + 1]);
+		joints.push_back((float) aMesh.skeleton_vertices[i].bone_array[i*3 + 2]);
 	}
 		
 	hasAss = true;
-	IndexBufferLength = aMesh->index_array.size();
+	Assimp = aMesh;
+	IndexBufferLength = aMesh.index_array.size();
     
 	glGenBuffers(1, & JointHandle);
 	glBindBuffer(GL_ARRAY_BUFFER, JointHandle);
@@ -64,11 +64,11 @@ Mesh::Mesh(AssimpMesh *aMesh)
 
 	glGenBuffers(1, & NormalHandle);
 	glBindBuffer(GL_ARRAY_BUFFER, NormalHandle);
-	glBufferData(GL_ARRAY_BUFFER, aMesh->normal_array.size() * sizeof(float), & aMesh->normal_array.front(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, aMesh.normal_array.size() * sizeof(float), & aMesh.normal_array.front(), GL_STATIC_DRAW);
 
 	glGenBuffers(1, & IndexHandle);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexHandle);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, aMesh->index_array.size() * sizeof(unsigned short), & aMesh->index_array.front(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, aMesh.index_array.size() * sizeof(unsigned short), & aMesh.index_array.front(), GL_STATIC_DRAW);
 
 //
 	
@@ -83,16 +83,14 @@ Uses Assimp to convert models into useable stuff
 Output: a Mesh of the model you want
 ******************************************************************************/
 Mesh LoadMesh(std::string file) {
-	AssimpMesh *AssimpModel = loadMesh(file);
+	AssimpMesh AssimpModel = loadMesh(file);
 	std::vector<float> temp;
 	Mesh ret;
 	
-	if (AssimpModel->hasBones)
+	if (AssimpModel.hasBones)
 		ret = Mesh(AssimpModel);
-	else {
-		ret = Mesh(AssimpModel->vertex_array, AssimpModel->normal_array, AssimpModel->index_array);
-		free(AssimpModel);
-	}
+	else
+		ret = Mesh(AssimpModel.vertex_array, AssimpModel.normal_array, AssimpModel.index_array);
 	
 	return ret;
 }
@@ -111,10 +109,10 @@ void PlaceAnimatedModel(Mesh mesh, float locx, float locy, float locz, float sx,
 		static GLfloat boneArr[30*16];
 		int ctr = 0;
 		
-		anims = mesh.Assimp->bone_array[3].glmTransforms[0];
+		anims = mesh.Assimp.bone_array[3].glmTransforms[0];
 		
-		for (int i = 0; i < mesh.Assimp->boneCt; i++) {
-			anims = mesh.Assimp->bone_array[i].glmTransforms[frame];
+		for (int i = 0; i < mesh.Assimp.boneCt; i++) {
+			anims = mesh.Assimp.bone_array[i].glmTransforms[frame];
 			
 			printf("hi\n");
 			
