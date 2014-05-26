@@ -27,6 +27,9 @@ void main() {
    vec3 light = normalize(vec3(uLightVec.x, uLightVec.y, uLightVec.z));  // Directional light
    vec3 view = normalize(uCamPos - vPos);
 
+// ONLY AVERAGE THE SHADOWS FOR PIXELS NOT IN SHADOW. SHADOWS SHOULD BE SLIGHTLY BIGGER THAN THE OBJECT
+
+
    angleNL = clamp(dot(norm, light), 0.0, 1.0);
 
    halfVec = (light + view) / length(light + view);
@@ -68,7 +71,7 @@ void main() {
       float multiplier = 0.0;
       float offsetX, offsetY;
 
-      // Blur the shadow by averaging the surrounding shadow map values in a 3x3 texel square
+      // Blur the shadow by averaging the surrounding shadow map values in a 3x3 texel square for non-shadowed pixels
       for (offsetX = -1.0; offsetX <= 1.0; offsetX++) {
          for (offsetY = -1.0; offsetY <= 1.0; offsetY++) {
             // Get the shadow map depth at a neighboring texel

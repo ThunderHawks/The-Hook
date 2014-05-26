@@ -30,7 +30,7 @@ ShadowMap::~ShadowMap() {
 
 int ShadowMap::MakeShadowMap(int width, int height) {
    int isSuccessful = 0;
-   float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+   float borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
   
    texWidth = width;
    texHeight = height;

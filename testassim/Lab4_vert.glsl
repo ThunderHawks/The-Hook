@@ -39,7 +39,7 @@ void main() {
 //
   mat4 animationMatrix = mat4(1.0);
   if (animFlag == 1) {
-  		for (int i = 0; i < numWeights; i++) {
+  		for (int i = 0; i < int(numWeights); i++) {
   			animationMatrix += weights[i] * bonesMatrix[int(joints[i])];
   		}
 	   /*animationMatrix =
