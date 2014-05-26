@@ -40,6 +40,7 @@ struct Mesh
     GLuint IndexHandle;
     GLuint JointHandle;
     GLuint WeightHandle;
+    GLuint WeightCount;
     AssimpMesh Assimp;
     bool hasAss;
 

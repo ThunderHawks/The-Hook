@@ -1,25 +1,3 @@
-/*uniform mat4 uProjMatrix;
-uniform mat4 uViewMatrix;
-uniform mat4 uModelMatrix1;
-uniform vec3 uColor;
-uniform vec3 uLColor;
-
-attribute vec3 aPosition;
-attribute vec3 aNormal;
-attribute vec3 aLightVec;
-
-varying vec3 vColor;
-varying vec4 vPosition;
-
-void main() {
-
-  vPosition = uModelMatrix1* vec4(aPosition.x, aPosition.y, aPosition.z, 1);
-  vPosition = uViewMatrix* vPosition;
-  gl_Position = uProjMatrix*vPosition;
-  //gl_FrontColor = vec4(uColor.r, uColor.g, uColor.b, 1.0);
-  //vColor = aNormal;
-  //vColor = vec3(uColor.r, uColor.g, uColor.b);
-}*/
 struct Material {
    vec3 aColor;
    vec3 dColor;
@@ -32,7 +10,7 @@ uniform mat4 uViewMatrix;
 uniform mat4 uModelMatrix1;
 //
 uniform int animFlag;
-uniform int numWeights;
+attribute float numWeights;
 uniform mat4 bonesMatrix[30];
 attribute vec3 weights;
 attribute vec3 joints;

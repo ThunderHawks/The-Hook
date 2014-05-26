@@ -150,7 +150,7 @@ void glfwDraw (GLFWwindow *window)
    ModelTrans.loadIdentity();
    SetModelStat();
 
-	if (ctr++%50 == 0)
+	if (ctr++%1 == 0)
 		frm++;
 		
 	PlaceAnimatedModel(damesh, 0, -5, -10, 1, 1, 1, 0, frm%24);
@@ -180,21 +180,21 @@ int main( int argc, char *argv[] )
 
    srand(time(0));
 
-   glfwMakeContextCurrent(window);
-   glfwSetWindowPos(window, 80, 80);
-   glfwSetWindowSizeCallback(window, glfwWindowResize);
-   glfwSetWindowSize(window,1600,800);
-   g_height =800;
-   g_width = 1600;
-   glfwSetKeyCallback(window, glfwKeyPress);
-   glfwSetCursorPosCallback( window, glfwGetCursorPos );
+	glfwMakeContextCurrent(window);
+	glfwSetWindowPos(window, 80, 80);
+	glfwSetWindowSizeCallback(window, glfwWindowResize);
+	glfwSetWindowSize(window,1600,800);
+	g_height =800;
+	g_width = 1600;
+	glfwSetKeyCallback(window, glfwKeyPress);
+	glfwSetCursorPosCallback( window, glfwGetCursorPos );
 
-   glewInit();
-   glInitialize(window);
-   InitGeom();
+	glewInit();
+	glInitialize(window);
+	InitGeom();
    
-   SetMaterial(1);
-   damesh = LoadMesh("../Assets/Models/charWaving.dae");
+	SetMaterial(1);
+	damesh = LoadMesh("../Assets/Models/charWaving.dae");
 
    // Start the main execution loop.
    while (!glfwWindowShouldClose(window)) {

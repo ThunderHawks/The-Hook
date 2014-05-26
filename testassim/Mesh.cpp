@@ -3,13 +3,13 @@
 using namespace glm;
 
 Mesh::Mesh()
-    : PositionHandle(0), NormalHandle(0), IndexHandle(0), IndexBufferLength(0), JointHandle(0), WeightHandle(0)
+    : PositionHandle(0), NormalHandle(0), IndexHandle(0), IndexBufferLength(0), JointHandle(0), WeightHandle(0), WeightCount(0)
 {
 	hasAss = false;
 }
 
 Mesh::Mesh(std::vector<float> const & Positions, std::vector<float> const & Normals, std::vector<unsigned short> const & Indices)
-    : PositionHandle(0), NormalHandle(0), IndexHandle(0), IndexBufferLength(0), JointHandle(0), WeightHandle(0)
+    : PositionHandle(0), NormalHandle(0), IndexHandle(0), IndexBufferLength(0), JointHandle(0), WeightHandle(0), WeightCount(0)
 {
 	hasAss = false;
     IndexBufferLength = Indices.size();
@@ -28,19 +28,22 @@ Mesh::Mesh(std::vector<float> const & Positions, std::vector<float> const & Norm
 }
 
 Mesh::Mesh(AssimpMesh aMesh)
-    : PositionHandle(0), NormalHandle(0), IndexHandle(0), IndexBufferLength(0), JointHandle(0), WeightHandle(0)
+    : PositionHandle(0), NormalHandle(0), IndexHandle(0), IndexBufferLength(0), JointHandle(0), WeightHandle(0), WeightCount(0)
 {
-	std::vector<float> pos, weights, joints;
+	std::vector<float> pos, weights, joints, weightCtr;
 	
 	for (int i = 0; i < aMesh.numVerts; ++i) {
 		pos.push_back((float) aMesh.skeleton_vertices[i].position.x);
 		pos.push_back((float) aMesh.skeleton_vertices[i].position.y);
 		pos.push_back((float) aMesh.skeleton_vertices[i].position.z);
-		printf("vertex %d: ", i);
+		
+		weightCtr.push_back((float) aMesh.skeleton_vertices[i].weight_array.size());
+		
+		//printf("vertex %d: ", i);
 		for (int j = 0; j < aMesh.skeleton_vertices[i].weight_array.size(); j++) {
 			weights.push_back((float) aMesh.skeleton_vertices[i].weight_array[j]);
-			printf("weight %d: %lf ", j, aMesh.skeleton_vertices[i].weight_array[j]);
-		}printf("\n");
+			//printf("weight %d: %lf ", j, aMesh.skeleton_vertices[i].weight_array[j]);
+		}//printf("\n");
 		
 		for (int j = 0; j < aMesh.skeleton_vertices[i].bone_array.size(); j++)
 			joints.push_back((float) aMesh.skeleton_vertices[i].bone_array[j]);
@@ -53,6 +56,10 @@ Mesh::Mesh(AssimpMesh aMesh)
 	glGenBuffers(1, & JointHandle);
 	glBindBuffer(GL_ARRAY_BUFFER, JointHandle);
 	glBufferData(GL_ARRAY_BUFFER, joints.size() * sizeof(float), & joints.front(), GL_STATIC_DRAW);
+
+	glGenBuffers(1, & WeightCount);
+	glBindBuffer(GL_ARRAY_BUFFER, WeightCount);
+	glBufferData(GL_ARRAY_BUFFER, weightCtr.size() * sizeof(float), & weightCtr.front(), GL_STATIC_DRAW);
 
 	glGenBuffers(1, & WeightHandle);
 	glBindBuffer(GL_ARRAY_BUFFER, WeightHandle);
@@ -131,7 +138,6 @@ void PlaceAnimatedModel(Mesh mesh, float locx, float locy, float locz, float sx,
 		glUniformMatrix4fv(h_uBoneMatrix, 30, GL_FALSE, boneArr);
 		
 		glUniform1i(h_uAnimFlag, 1);
-		glUniform1i(h_uNumWeights, mesh.Assimp.skeleton_vertices->weight_array.size());
 		
 		glEnableVertexAttribArray(h_uJoints);
 		glBindBuffer(GL_ARRAY_BUFFER, mesh.JointHandle);
@@ -140,6 +146,10 @@ void PlaceAnimatedModel(Mesh mesh, float locx, float locy, float locz, float sx,
 		glEnableVertexAttribArray(h_uWeights);
 		glBindBuffer(GL_ARRAY_BUFFER, mesh.WeightHandle);
 		glVertexAttribPointer(h_uWeights, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		
+		glEnableVertexAttribArray(h_uNumWeights);
+		glBindBuffer(GL_ARRAY_BUFFER, mesh.WeightCount);
+		glVertexAttribPointer(h_uNumWeights, 1, GL_FLOAT, GL_FALSE, 0, 0);
 	}
 	
    SetModel(locx, locy, locz, sx, sy, sz, angle);
