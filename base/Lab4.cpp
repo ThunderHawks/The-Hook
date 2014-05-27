@@ -355,7 +355,7 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
 		gw = ggaze/magnitude(ggaze);
 	  	gw = glm::vec3(-1.0 * gw.x, -1.0 * gw.y, -1.0 * gw.z);
 	  	gu = glm::cross(GetUp(), gw)/magnitude(glm::cross(GetUp(), gw));
-		SetLookAt(origLookAt + vec3(0, 2, 0) + 2.f*vec3(gu.x, 0, gu.z));
+		SetLookAt(origLookAt + vec3(0, 2, 0));
    }
    curView = SetView();
    curProj = SetProjectionMatrix();
