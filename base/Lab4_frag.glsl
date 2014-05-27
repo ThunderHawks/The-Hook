@@ -10,20 +10,29 @@ uniform vec4 uLightVec;
 uniform vec3 uLColor;
 uniform vec3 uCamPos;
 uniform sampler2D uTexUnit;
+uniform sampler2D uTexUnit2;
 uniform Material uMat;
 uniform int uShadeMode;
 
 varying vec3 vNorm; 
 varying vec3 vPos;
 varying vec4 vShadowPos;
+varying vec4 vShadowPosFar;
 
 varying vec2 vTexCoord;
 uniform float uGuiMode;
 
 void main() {
    float angleNL, angleNH, depth, dist;
-   vec4 shadowPos;
+   vec4 shadowPos, shadowPosFar;
    vec3 color, halfVec;
+   int shadowMapNum = 0;
+
+   vec2 poissonDisk[4];
+   poissonDisk[0] = vec2(-0.94201624, -0.39906216);
+   poissonDisk[1] = vec2(0.94558609, -0.76890725);
+   poissonDisk[2] = vec2(-0.094184101, -0.92938870);
+   poissonDisk[3] = vec2(0.34495938, 0.29387760);
 
    vec3 norm = normalize(vNorm);
    vec3 pos = normalize(vPos);
@@ -36,9 +45,6 @@ void main() {
       gl_FragColor = vec4(texColor1[0], texColor1[1], texColor1[2], 1);
    }
    else {
-
-   
-
       angleNL = clamp(dot(norm, light), 0.0, 1.0);
 
       halfVec = (light + view) / length(light + view);
@@ -46,23 +52,23 @@ void main() {
       angleNH = pow(clamp(angleNH, 0.0, 1.0), uMat.shine * 4.0);
 
       shadowPos = vShadowPos / vShadowPos.w;
-      depth = texture2D(uTexUnit, shadowPos.xy).z; // Shadow map depth = Z VALUE OF SHADOW MAP
-      dist = vShadowPos.z - 0.005; // Distance from light to fragment = FRAG DEPTH FROM LIGHT'S PERSPECTIVE
+      depth = texture2D(uTexUnit, shadowPos.xy).z; // Shadow map depth
+      dist = vShadowPos.z - 0.005; // Distance from light to fragment
 
-   // Diffuse lighting
-/*
-   if (angleNL > 0.8)
-      color = uLColor * uMat.dColor;
-   else if (angleNL > 0.4)
-      color = uLColor * uMat.dColor * 0.7;
-   else
-      color = uLColor * uMat.dColor * 0.35;
-*/
+      /* If the fragment is outside of the near shadow map, use the far shadow map */
+      if (depth >= 1.0) {
+         shadowPosFar = vShadowPosFar / vShadowPosFar.w;
+         depth = texture2D(uTexUnit2, shadowPosFar.xy).z;
+         dist = shadowPosFar.z - 0.005;
+         shadowMapNum = 1;
+      }
+
+      // Diffuse lighting
       if (angleNL > 0.8)
          color = uLColor * uMat.dColor;
       else if (angleNL > 0.6)
          color = uLColor * uMat.dColor * 0.8;
-       else if (angleNL > 0.4)
+      else if (angleNL > 0.4)
          color = uLColor * uMat.dColor * 0.6;
       else if (angleNL > 0.2)
          color = uLColor * uMat.dColor * 0.4;
@@ -77,6 +83,7 @@ void main() {
             color += uLColor * uMat.sColor * angleNH;
       }
       else {
+/*
          float multiplier = 0.0;
          float offsetX, offsetY;
 
@@ -93,6 +100,20 @@ void main() {
          // Only darken the pixel if the shadow isn't negligible. Otherwise, add specular
          if (multiplier / 9.0 <= 0.8)
             color *= multiplier / 9.0;
+         else if (uMat.alpha == 1.0)
+            color += uLColor * uMat.sColor * angleNH;
+*/
+         // Poisson disk blurring
+         float multiplier = 1.0;
+         int count;
+         for (count = 0; count < 4; count++) {
+            if (shadowMapNum == 0 && texture2D(uTexUnit, shadowPos.xy + poissonDisk[count]/300.0 ).z < dist)
+               multiplier -= 0.2;
+            else if (shadowMapNum == 1 && texture2D(uTexUnit2, shadowPosFar.xy + poissonDisk[count]/900.0 ).z < dist)
+               multiplier -= 0.2;
+         }
+         if (multiplier < 1.0)
+            color *= multiplier;
          else if (uMat.alpha == 1.0)
             color += uLColor * uMat.sColor * angleNH;
       }
