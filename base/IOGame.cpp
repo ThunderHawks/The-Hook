@@ -190,7 +190,7 @@ void glfwGameKeyboard(void) {
    }
    if(gKeysPressed['M']){
    	if (gKeysPressed['M'] == 1)
-			musicPlayer.nextSong();
+			musicPlayer.muteAll();
 			
       gKeysPressed['M'] = 2;
    }

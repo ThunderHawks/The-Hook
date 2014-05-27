@@ -78,6 +78,9 @@ class SoundPlayer {
 
 		//Plays the previous song
 		void prevSong();
+		
+		//Mutes everything; SFX don't play
+		void muteAll();
 
 };
 

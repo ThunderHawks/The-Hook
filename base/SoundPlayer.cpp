@@ -61,6 +61,10 @@ void SoundPlayer::prevSong() {
 	BGM.stopSong();
 	BGM.playMusic(getTrackPath(trackNum), true);
 }
+
+void SoundPlayer::muteAll() {
+	BGM.muteAll();
+}
 /******************************************************************************/
 
 void PlayBackground() {
