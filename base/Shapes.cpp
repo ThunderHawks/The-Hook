@@ -223,8 +223,7 @@ void SetupCube(float x, float y, float z, int material, float angle, float scale
 void SetupSq(float x, float y, int texture, float scaleX, float scaleY) {
    /*First Cube*/
    SetModel(x, y, scaleX, scaleY);
-   SetMaterial(texture);
-
+ 
    //setup texture unit
    //glEnable(GL_TEXTURE_2D);
    glActiveTexture(GL_TEXTURE1);
@@ -417,60 +416,6 @@ void SetMaterial(int i) {
 }
 
 void DrawSkyBox() {
-  //Load texture image
-  GLuint Texture = loadBMP("../Assets/Textures/bricks.bmp");
-
-  // Two UV coordinatesfor each vertex.
-  // This corresponds with the order of each vertex.
-  static const GLfloat g_uv_buffer_data[] = { 
-                0.000059f, 1.0f-0.000004f, 
-                0.000103f, 1.0f-0.336048f, 
-                0.335973f, 1.0f-0.335903f, 
-                1.000023f, 1.0f-0.000013f, 
-                0.667979f, 1.0f-0.335851f, 
-                0.999958f, 1.0f-0.336064f, 
-                0.667979f, 1.0f-0.335851f, 
-                0.336024f, 1.0f-0.671877f, 
-                0.667969f, 1.0f-0.671889f, 
-                1.000023f, 1.0f-0.000013f, 
-                0.668104f, 1.0f-0.000013f, 
-                0.667979f, 1.0f-0.335851f, 
-                0.000059f, 1.0f-0.000004f, 
-                0.335973f, 1.0f-0.335903f, 
-                0.336098f, 1.0f-0.000071f, 
-                0.667979f, 1.0f-0.335851f, 
-                0.335973f, 1.0f-0.335903f, 
-                0.336024f, 1.0f-0.671877f, 
-                1.000004f, 1.0f-0.671847f, 
-                0.999958f, 1.0f-0.336064f, 
-                0.667979f, 1.0f-0.335851f, 
-                0.668104f, 1.0f-0.000013f, 
-                0.335973f, 1.0f-0.335903f, 
-                0.667979f, 1.0f-0.335851f, 
-                0.335973f, 1.0f-0.335903f, 
-                0.668104f, 1.0f-0.000013f, 
-                0.336098f, 1.0f-0.000071f, 
-                0.000103f, 1.0f-0.336048f, 
-                0.000004f, 1.0f-0.671870f, 
-                0.336024f, 1.0f-0.671877f, 
-                0.000103f, 1.0f-0.336048f, 
-                0.336024f, 1.0f-0.671877f, 
-                0.335973f, 1.0f-0.335903f, 
-                0.667969f, 1.0f-0.671889f, 
-                1.000004f, 1.0f-0.671847f, 
-                0.667979f, 1.0f-0.335851f
-  };
-
-  GLuint UVBuffObj;
-  glGenBuffers(1, &UVBuffObj);
-  glBindBuffer(GL_ARRAY_BUFFER, UVBuffObj);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
-
-  // Bind our texture in Texture Unit 1
-  glActiveTexture(GL_TEXTURE1);
-  glBindTexture(GL_TEXTURE_2D, Texture);
-  // Set "h_uTexSampler" sampler to user Texture Unit 1
-  glUniform1i(h_uTexSampler, 1);
 	// Disable backface culling for skybox
    glCullFace(GL_BACK);
    glDisable(GL_CULL_FACE);
@@ -492,81 +437,13 @@ void DrawSkyBox() {
    glBindBuffer(GL_ARRAY_BUFFER, NormalBuffObj);
    safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-   safe_glEnableVertexAttribArray(h_aUVVertex);
-   glBindBuffer(GL_ARRAY_BUFFER, UVBuffObj);
-   safe_glVertexAttribPointer(h_aUVVertex, 2, GL_FLOAT, GL_FALSE, 0, 0);
    /* draw!*/
    glDrawElements(GL_TRIANGLES, g_CiboLen, GL_UNSIGNED_SHORT, 0);
    safe_glDisableVertexAttribArray(h_aPosition);
-   safe_glDisableVertexAttribArray(h_aNormal);
-   safe_glDisableVertexAttribArray(h_aUVVertex);
-
-   glDeleteBuffers(1, &UVBuffObj);
-   glDeleteTextures(1, &h_uTexSampler);
    
    glDepthMask(GL_ALWAYS);
    
    // Enable backface culling
    glCullFace(GL_BACK);
    glEnable(GL_CULL_FACE);
-}
-
-GLuint loadBMP(const char* path){
-    unsigned char header[54];
-    unsigned int dataPos;
-    unsigned int width, height;
-    unsigned int imageSize;
-
-    unsigned char* data;
-
-    FILE* file = fopen(path, "rb");
-    if (!file){
-        printf("Image could not be opened.\n");
-        return 0;
-    }
-
-    if (fread(header, 1, 54, file) != 54){
-        printf("Not a correct BMP file.\n");
-        return 0;
-    }
-
-    if (header[0] != 'B' || header[1] != 'M'){
-        printf("Not a correct BMP file.\n");
-        return 0;
-    }
-
-    dataPos = *(int*)&(header[0x0A]);
-    imageSize = *(int*)&(header[0x22]);
-    width = *(int*)&(header[0x12]);
-    height = *(int*)&(header[0x16]);
-
-    if (imageSize == 0){
-        imageSize = width * height * 3;
-    }
-
-    if (dataPos == 0){
-        dataPos = 54;
-    }
-
-    data = new unsigned char [imageSize];
-
-    fread(data, 1, imageSize, file);
-
-    fclose(file);
-    delete data;
-
-    GLuint texID;
-    glGenTextures(1, &texID);
-
-    glBindTexture(GL_TEXTURE_2D, texID);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    return texID;
 }
