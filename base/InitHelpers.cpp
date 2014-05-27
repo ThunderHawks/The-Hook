@@ -65,6 +65,9 @@ int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName) {
 
         h_aPosition = safe_glGetAttribLocation(ShadeProg, "aPosition");
         h_aNormal = safe_glGetAttribLocation(ShadeProg, "aNormal");
+
+        h_aPointSize = safe_glGetAttribLocation(ShadeProg, "aPointSize");
+
         h_uProjMatrix = safe_glGetUniformLocation(ShadeProg, "uProjMatrix");
         h_uViewMatrix = safe_glGetUniformLocation(ShadeProg, "uViewMatrix");
         h_uModelMatrix = safe_glGetUniformLocation(ShadeProg, "uModelMatrix");

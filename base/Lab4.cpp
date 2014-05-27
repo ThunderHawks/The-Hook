@@ -49,7 +49,7 @@ int ShadeMode = 0;
 int ShadeProg;
 
 //Handles to the shader data
-GLint h_aPosition, h_aNormal, h_uViewMatrix, h_uProjMatrix;
+GLint h_aPointSize, h_aPosition, h_aNormal, h_uViewMatrix, h_uProjMatrix;
 GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj, SqIndxBuffObj, SqBuffObj, SqNormalObj;
 GLuint ShadowCubeBuffObj, SCIndxBuffObj, ShadowNormalBuffObj, RampBuffObj, RIndxBuffObj, RampNormalBuffObj;
 int g_CiboLen, g_GiboLen, g_RiboLen, g_SCiboLen, g_SqiboLen;
@@ -203,6 +203,7 @@ void pauseorUnpause() {
  */
 void glfwDraw (GLFWwindow *window, int passNum)
 {
+   glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);//andrew tag here!
    if (passNum != 2) {
       //Draw skybox
    	DrawSkyBox();
@@ -296,6 +297,7 @@ void glfwDraw (GLFWwindow *window, int passNum)
       }
       printf("ya\n");
       if(particleSpawner.front() && particleSpawner.front()->age>60){
+         destroyDustPart( particleSpawner.front());
          particleSpawner.erase(particleSpawner.begin());
       }
       printf("no\n");
