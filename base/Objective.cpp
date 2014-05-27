@@ -21,6 +21,8 @@
 #include "Objective.h"
 #include "physSystem.h"
 #include "SoundPlayer.h"
+#include "particle.h"
+#include "Lab4.h"
 
 int score = 0;
 int seed = rand();
@@ -71,9 +73,13 @@ void Objective::Update(glm::vec3 playerPos) {
    if (sqrt((playerPos.x-end.x)*(playerPos.x-end.x) + (playerPos.z-end.z)*(playerPos.z-end.z)) < 7) {
       active = false;
       score += 20000-time;
+      int deltaScore = 20000-time;
       time = 0;
       this->Init();
       PlayFX(SUCCESS_FX);
+      printf("score is %d\n",deltaScore);
+      particleSpawner.push_front(createMoneyPart(deltaScore/50,1.0,playerPoss()));
+//      particleSpawner.push_front(createDustPart(deltaScore/100,1.0,playerPoss()));
    }
    else if (sqrt((playerPos.x-start.x)*(playerPos.x-start.x) + (playerPos.z-start.z)*(playerPos.z-start.z)) < 7 && !active) {
       active = true;

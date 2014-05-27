@@ -38,7 +38,8 @@ void drawPart(part* thing){
       //printf("draw a part\n");
       //
       SetModel(0,0,0,1,1,1,0);
-      SetMaterial(18);//7
+      SetMaterial(thing->mat);//7
+      //SetMaterial(18);//7
       glBindBuffer(GL_ARRAY_BUFFER, thing->posBuff);
       float* pointdata = (float*)glMapBuffer(GL_ARRAY_BUFFER,GL_READ_WRITE);
       for(int i=0;i<thing->amount;i++){
@@ -124,6 +125,7 @@ part* createDustPart(int max,float scatter,glm::vec3 getPos){
    thing->amount = max;
    thing->scatter = scatter;
    thing->age = 0;
+   thing->mat = 18;
    thing->seed = rand();
    srand(thing->seed);
    //position vbo object
@@ -135,7 +137,7 @@ part* createDustPart(int max,float scatter,glm::vec3 getPos){
    printf("startinit\n");
    for(int i=0;i<max;i++){
       //printf("a\n");
-      thing->pos[i] = thing->getPos+glm::vec3(rand()*1.0/RAND_MAX,rand()*1.0/RAND_MAX,rand()*1.0/RAND_MAX);
+      thing->pos[i] = thing->getPos;//+glm::vec3(rand()*1.0/RAND_MAX,rand()*1.0/RAND_MAX,rand()*1.0/RAND_MAX);
 //      thing->pos[i] = thing->getPos;
       //printf("b\n");
       thing->velocity[i] = glm::normalize(glm::vec3((rand()*2.0/RAND_MAX)-1,1,(rand()*2.0/RAND_MAX)-1));
@@ -167,3 +169,93 @@ void destroyDustPart(part* thing){
   free(thing->size);
   free(thing);
 }
+
+void moveMoney(float step, part*  thing){
+  //printf("%d thing is \n",thing);
+  for(int i=0;i<thing->amount;i++){
+   //printf("%d is active\n",thing->active[i]);
+    if(thing->active[i]){
+      thing->velocity[i].x*= (thing->velocity[i].y+1)*1.01;
+      thing->velocity[i].z*= (thing->velocity[i].y+1)*1.01;
+      thing->pos[i] += thing->velocity[i];
+      
+//      thing->velocity[i] *= .95;
+      thing->velocity[i].y -= .01;
+      //thing->pos[i].y = thing->pos[i].y>0?thing->pos[i].y:0;
+    }
+  }
+}
+void createMoney(float step, part*  thing){
+  srand(thing->seed);
+  //dont do anything third party will handle
+  thing->seed = rand();
+}
+
+void destroyMoney(float step, part*  thing){
+  srand(thing->seed);
+  for(int i=0;i<thing->amount;i++){
+    if(rand()*1.0/RAND_MAX>.97){
+      thing->active[i] = 0;
+    }
+  }
+  thing->seed = rand();
+}
+part* createMoneyPart(int max,float scatter,glm::vec3 getPos){
+   part* thing = (part*)malloc(sizeof(part));
+   thing->getPos = getPos;
+   thing->pos = (glm::vec3*) calloc(max,sizeof(glm::vec3));
+   thing->velocity = (glm::vec3*) calloc(max,sizeof(glm::vec3));
+   thing->ambientColor = (glm::vec3*) calloc(max,sizeof(glm::vec3));
+   thing->normal = (glm::vec3*) calloc(max,sizeof(glm::vec3));
+   thing->size = (float*) calloc(max,sizeof(float));
+   thing->active = (int*) calloc(max,sizeof(int));
+   thing->move = &(moveMoney);
+   thing->create = &(createMoney);
+   thing->destroy = &(destroyMoney);
+   thing->amount = max;
+   thing->scatter = scatter;
+   thing->age = 0;
+   thing->mat = 19;
+   thing->seed = rand();
+   srand(thing->seed);
+   //position vbo object
+   printf("%d %d %d  then",thing->posBuff,thing->norBuff,thing->sizBuff);
+   glGenBuffers(1,&(thing->posBuff));
+   glGenBuffers(1,&(thing->norBuff));
+   glGenBuffers(1,&(thing->sizBuff));
+   printf("%d %d %d\n",thing->posBuff,thing->norBuff,thing->sizBuff);
+   printf("startinit\n");
+   for(int i=0;i<max;i++){
+      //printf("a\n");
+//      thing->pos[i] = thing->getPos+glm::vec3(rand()*1.0/RAND_MAX,rand()*1.0/RAND_MAX,rand()*1.0/RAND_MAX);
+      thing->pos[i] = thing->getPos;
+      //printf("b\n");
+      thing->velocity[i] = glm::normalize(glm::vec3((rand()*2.0/RAND_MAX)-1,1,(rand()*2.0/RAND_MAX)-1));
+      thing->velocity[i] *= .2;
+      thing->velocity[i].y = rand()*scatter/RAND_MAX;
+      //printf("c\n");
+      thing->active[i] = 1;
+      thing->size[i] = 25;
+      //printf("d\n");
+   }
+   printf("ending\n");
+
+   glBindBuffer(GL_ARRAY_BUFFER, thing->posBuff);
+   glBufferData(GL_ARRAY_BUFFER, thing->amount*(sizeof(GLfloat)*3), NULL,GL_DYNAMIC_DRAW);//4 not 3?
+   glBindBuffer(GL_ARRAY_BUFFER, thing->norBuff);
+   glBufferData(GL_ARRAY_BUFFER, thing->amount*(sizeof(GLfloat)*3), NULL,GL_DYNAMIC_DRAW);//4 not 3?
+   glBindBuffer(GL_ARRAY_BUFFER, thing->sizBuff);
+   glBufferData(GL_ARRAY_BUFFER, thing->amount*(sizeof(GLfloat)), NULL,GL_DYNAMIC_DRAW);//4 not 3?
+   printf("wut\n");
+   return thing;
+}
+/*void destroyMoneyPart(part* thing){
+  //unbind things on gpu?
+  free(thing->pos);
+  free(thing->velocity);
+  free(thing->active);
+  free(thing->ambientColor);
+  free(thing->normal);
+  free(thing->size);
+  free(thing);
+}*/
