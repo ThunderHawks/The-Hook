@@ -25,7 +25,6 @@ attribute vec2 aTexCoord;
 uniform float uMGuiMode;
 
 void main() {
-   gl_PointSize = aPointSize==0?500:aPointSize;
    vec4 transPos, transNormal;
    mat4 VMNDCtoTex = mat4(0.38, 0.0, 0.0, 0.0,
                           0.0, 0.485, 0.0, 0.0,
@@ -50,4 +49,6 @@ void main() {
    vShadowPos = NDCtoTex * uLightProjMatrix * uLightViewMatrix * transPos;
 
    vTexCoord = aTexCoord;
+
+   gl_PointSize = aPointSize;//*distance(gl_Position);
 }
