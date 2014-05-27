@@ -38,7 +38,7 @@ void drawPart(part* thing){
       //printf("draw a part\n");
       //
       SetModel(0,0,0,1,1,1,0);
-      SetMaterial(7);//7
+      SetMaterial(18);//7
       glBindBuffer(GL_ARRAY_BUFFER, thing->posBuff);
       float* pointdata = (float*)glMapBuffer(GL_ARRAY_BUFFER,GL_READ_WRITE);
       for(int i=0;i<thing->amount;i++){
