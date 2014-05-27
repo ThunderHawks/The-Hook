@@ -14,7 +14,7 @@ uniform mat4 uLightViewMatrix;
 
 attribute vec3 aPosition;
 attribute vec3 aNormal;
-attribute vec3 aPointSize;
+attribute float aPointSize;
 
 varying vec3 vNorm;
 varying vec3 vPos;
