@@ -60,7 +60,7 @@ GLint h_uLightVec;
 GLint h_uLightColor;
 GLint h_uCamPos, h_uShadeMode;
 GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine, h_uMatAlpha;
-GLint h_uLightViewMatrix, h_uLightProjMatrix, h_uLightFarProjMatrix;
+GLint h_uLightViewMatrix, h_uLightProjMatrix;
 GLint h_uTexUnit, h_uTexUnit2;
 GLint h_uTexCoord, h_aTexCoord, h_uGuiMode;
 GLuint TexBuffObj;
@@ -319,12 +319,6 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    safe_glUniform1i(h_uTexUnit, 0);
    glEnable(GL_TEXTURE_2D);
    glActiveTexture(GL_TEXTURE0);
-   shadowMap->BindDepthTex();
-
-   safe_glUniform1i(h_uTexUnit2, 1);
-   glEnable(GL_TEXTURE_2D);
-   glActiveTexture(GL_TEXTURE1);
-   shadowMap->BindDepthTexFar();
    
    // Set light uniforms
    glUniform3f(h_uLightColor, 0.4, 0.4, 0.38);
@@ -336,19 +330,13 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    SetEye(glm::vec3(origLookAt.x, origLookAt.y + 6.0, origLookAt.z + 8.0));
    SetLookAt(origLookAt);
    curView = SetShadowView();
-   curProj = SetOrthoProjectionMatrix(20.0, 10.0, 0);
+   curProj = SetOrthoProjectionMatrix(10.0);
    glUniform3f(h_uCamPos, 0.0, 3.0, 4.0);
    glfwDraw(window, 0);
    shadowMap->UnbindFBO();
 
-   // Render depth info into a wider shadow map
-   shadowMap->BindFBOFar();
-   glClear(GL_DEPTH_BUFFER_BIT);
-   curProj = SetOrthoProjectionMatrix(75.0, 10.0, 1);
-   glfwDraw(window, 0);
-   shadowMap->UnbindFBO();
-
    // Render scene normally and draw
+   shadowMap->BindDepthTex();
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    SetEye(origEye);
    
