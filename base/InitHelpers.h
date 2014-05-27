@@ -4,8 +4,8 @@
 #include <GLFW/glfw3.h>
 #include "MStackHelp.h"
 
-extern GLint h_aPosition, h_aNormal, h_uViewMatrix, h_uProjMatrix;
-extern GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj;
+extern GLint h_aPosition, h_aNormal, h_aUVVertex, h_uViewMatrix, h_uProjMatrix;
+extern GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj, h_uTexSampler;
 extern GLuint ShadowCubeBuffObj, SCIndxBuffObj, ShadowNormalBuffObj, RampBuffObj, RIndxBuffObj, RampNormalBuffObj;
 extern GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine, h_uMatAlpha;
 extern GLint h_uTexUnit;

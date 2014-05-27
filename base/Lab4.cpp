@@ -49,7 +49,7 @@ int ShadeMode = 0;
 int ShadeProg;
 
 //Handles to the shader data
-GLint h_aPosition, h_aNormal, h_uViewMatrix, h_uProjMatrix;
+GLint h_aPosition, h_aNormal, h_aUVVertex, h_uViewMatrix, h_uProjMatrix;
 GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj, SqIndxBuffObj, SqBuffObj, SqNormalObj;
 GLuint ShadowCubeBuffObj, SCIndxBuffObj, ShadowNormalBuffObj, RampBuffObj, RIndxBuffObj, RampNormalBuffObj;
 int g_CiboLen, g_GiboLen, g_RiboLen, g_SCiboLen, g_SqiboLen;
@@ -63,7 +63,7 @@ GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine, h_uMatAlpha;
 GLint h_uLightViewMatrix, h_uLightProjMatrix;
 GLint h_uTexUnit, h_uTexUnit2;
 GLint h_uTexCoord, h_aTexCoord, h_uGuiMode;
-GLuint TexBuffObj;
+GLuint TexBuffObj, h_uTexSampler;
 
 //declare Matrix stack
 RenderingHelper ModelTrans;

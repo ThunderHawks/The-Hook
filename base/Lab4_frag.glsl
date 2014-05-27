@@ -10,12 +10,14 @@ uniform vec4 uLightVec;
 uniform vec3 uLColor;
 uniform vec3 uCamPos;
 uniform sampler2D uTexUnit;
+uniform sampler2D uTexSampler;
 uniform Material uMat;
 uniform int uShadeMode;
 
 varying vec3 vNorm; 
 varying vec3 vPos;
 varying vec4 vShadowPos;
+varying vec2 vUV;
 
 varying vec2 vTexCoord;
 uniform float uGuiMode;
@@ -31,7 +33,6 @@ void main() {
    vec3 view = normalize(uCamPos - vPos);
 
    vec4 texColor1 = texture2D(uTexUnit, vTexCoord);
-
    if(uGuiMode == 1.0) {
       gl_FragColor = vec4(texColor1[0], texColor1[1], texColor1[2], 1);
    }
@@ -102,7 +103,10 @@ void main() {
 
    //color = (uLColor * uMat.dColor * angleNL) + (uLColor * uMat.sColor * angleNH) + (uLColor * uMat.aColor);   
 
+	vec4 texColor = texture2D(uTexSampler, vUV);
+   
    gl_FragColor = vec4(color, uMat.alpha);
+   gl_FragColor *= vec4(texColor[0], texColor[1], texColor[2], 1);
    //gl_FragColor = vec4(norm, 1.0);
    //gl_FragColor = vec4(depth, depth, depth, 1.0);
    //gl_FragColor = vec4(dist, dist, dist, 1.0);

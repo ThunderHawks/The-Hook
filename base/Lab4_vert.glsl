@@ -14,10 +14,12 @@ uniform mat4 uLightViewMatrix;
 
 attribute vec3 aPosition;
 attribute vec3 aNormal;
+attribute vec2 aUVVertex;
 
 varying vec3 vNorm;
 varying vec3 vPos;
 varying vec4 vShadowPos;
+varying vec2 vUV;
 
 varying vec2 vTexCoord;
 attribute vec2 aTexCoord;
@@ -46,6 +48,7 @@ void main() {
    vPos = vec3(transPos.x, transPos.y, transPos.z);
    /* Vertex location in texture coordinates */
    vShadowPos = NDCtoTex * uLightProjMatrix * uLightViewMatrix * transPos;
+   vUV = aUVVertex;
 
    vTexCoord = aTexCoord;
 }
