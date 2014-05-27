@@ -50,7 +50,7 @@ void glfwPlayMouse(GLFWwindow *window, int button, int action, int mods) {
 	  	gw = glm::vec3(-1.0 * gw.x, -1.0 * gw.y, -1.0 * gw.z);
 	  	glm::vec3 gu = glm::cross(GetUp(), gw)/magnitude(glm::cross(GetUp(), gw));
 		
-      glm::vec3 dir = (GetLookAt() + + 2.f*vec3(gu.x, 0, gu.z))-GetEye();
+      glm::vec3 dir = GetLookAt()- (GetEye() + 2.f*vec3(gu.x, 0, gu.z));
       //check to see if the grappling hook hit. If it did, play a sound
       if (physGrapple(-dir.x,-dir.y,-dir.z))
       	PlayFX(THROW_GRAP_FX);
