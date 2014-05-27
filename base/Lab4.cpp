@@ -294,6 +294,11 @@ void glfwDraw (GLFWwindow *window, int passNum)
          drawPart(*it);
 //         particleSpawner[i]->drawPart();
       }
+      printf("ya\n");
+      if(particleSpawner.front() && particleSpawner.front()->age>60){
+         particleSpawner.erase(particleSpawner.begin());
+      }
+      printf("no\n");
    }
 
    glDisable(GL_CULL_FACE);

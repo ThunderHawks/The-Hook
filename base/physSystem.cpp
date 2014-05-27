@@ -14,6 +14,7 @@
 //#include <bullet/btCollisionWorld.h>
 #include "SoundPlayer.h"
 #include <vector>
+#include "particle.h"
 
 //phys//
 btRigidBody* groundRigidBody;
@@ -246,6 +247,9 @@ glm::vec3 grapplingHookLocation(){
 int canMove(){
    return playerJump;
 }
+glm::vec3 playerPos(){
+   return glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
+}
 void physStep(){
    //player->getX();
    //setPlayerSpeed(2,2,2);
@@ -270,6 +274,7 @@ void physStep(){
    }
    if(player->getLinearVelocity().getY()*player->getLinearVelocity().getY()<.0001 &&
       fspeed*fspeed>.0001 && playerFall==1){
+      if(!playerJump)      particleSpawner.push_front(createDustPart(500,1.0,playerPos()));
       playerJump = 1;
       printf("can boing\n");
    }

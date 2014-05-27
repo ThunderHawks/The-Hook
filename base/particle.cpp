@@ -32,38 +32,50 @@
 glm::vec3[] ambientColor;
 }*/
 void drawPart(part* thing){
+      thing->age++;
+      thing->move(1.0,thing);
+      glPointSize(10);
+      printf("draw a part\n");
       //
       SetModel(0,0,0,1,1,1,0);
-      glBindBuffer(GL_ARRAY_BUFFER, thing->norBuff);
+      SetMaterial(7);//7
+      glBindBuffer(GL_ARRAY_BUFFER, thing->posBuff);
       float* data = (float*)glMapBuffer(GL_ARRAY_BUFFER,GL_READ_WRITE);
       for(int i=0;i<thing->amount;i++){
-         vec3 tmp = glm::normalize(thing->pos[i]);
+         //printf("orig %f %f %f\n",data[i],data[i+1],data[i+2]);
+         //printf("%f %f %f is pos of e part\n",thing->pos[i].x,thing->pos[i].x,thing->pos[i].x);
+         vec3 tmp = thing->pos[i];
          data[i*3+0] = tmp.x;
          data[i*3+1] = tmp.y;
          data[i*3+2] = tmp.z;
+         //printf("now  %f %f %f\n",data[i],data[i+1],data[i+2]);
       }
+      printf("\n");
       glUnmapBuffer(GL_ARRAY_BUFFER);
-   
-      SetMaterial(0);
+
       //set transforms to idents
       safe_glEnableVertexAttribArray(h_aPosition);
-      glBindBuffer(GL_ARRAY_BUFFER, CubeBuffObj);
+      glBindBuffer(GL_ARRAY_BUFFER, thing->posBuff);
       safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
       safe_glEnableVertexAttribArray(h_aNormal);
-      glBindBuffer(GL_ARRAY_BUFFER, NormalBuffObj);
+      glBindBuffer(GL_ARRAY_BUFFER, thing->norBuff);
       safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
       //draw
       glBindBuffer(GL_ARRAY_BUFFER, thing->posBuff);
-      glDrawElements(GL_POINTS, thing->amount, GL_UNSIGNED_SHORT, 0);
+      printf("the amt is %d\n",thing->amount);
+      glDrawArrays(GL_POINTS,0, thing->amount);
 
 }
 void moveDust(float step, part*  thing){
+  printf("%d thing is \n",thing);
   for(int i=0;i<thing->amount;i++){
+   //printf("%d is active\n",thing->active[i]);
     if(thing->active[i]){
       thing->pos[i] += thing->velocity[i];
       thing->velocity[i] *= .95;
+      thing->velocity[i].y -= .05;
+      //thing->pos[i].y = thing->pos[i].y>0?thing->pos[i].y:0;
       thing->size[i] = rand()%2?thing->size[i]*1.1:thing->size[i]*.9;
     }
   }
@@ -83,7 +95,7 @@ void destroyDust(float step, part*  thing){
   }
   thing->seed = rand();
 }
-part* createDustPart(int max,float scatter,glm::mat4 (*getPos)()){
+part* createDustPart(int max,float scatter,glm::vec3 getPos){
    part* thing = (part*)malloc(sizeof(part));
    thing->getPos = getPos;
    thing->pos = (glm::vec3*) calloc(max,sizeof(glm::vec3));
@@ -91,29 +103,44 @@ part* createDustPart(int max,float scatter,glm::mat4 (*getPos)()){
    thing->ambientColor = (glm::vec3*) calloc(max,sizeof(glm::vec3));
    thing->normal = (glm::vec3*) calloc(max,sizeof(glm::vec3));
    thing->size = (float*) calloc(max,sizeof(float));
+   thing->active = (int*) calloc(max,sizeof(int));
    thing->move = &(moveDust);
    thing->create = &(createDust);
    thing->destroy = &(destroyDust);
    thing->amount = max;
    thing->scatter = scatter;
-
+   thing->age = 0;
    thing->seed = rand();
    srand(thing->seed);
    //position vbo object
-
+   printf("%d %d %d  then",thing->posBuff,thing->norBuff,thing->sizBuff);
    glGenBuffers(1,&(thing->posBuff));
    glGenBuffers(1,&(thing->norBuff));
    glGenBuffers(1,&(thing->sizBuff));
-
+   printf("%d %d %d\n",thing->posBuff,thing->norBuff,thing->sizBuff);
+   printf("startinit\n");
    for(int i=0;i<max;i++){
-      glm::vec4 tmp = thing->getPos()*glm::vec4(0,0,0,1);
-      thing->pos[i] = glm::vec3(tmp[0],tmp[1],tmp[2]);
-      thing->velocity[i] = glm::vec3(cos(i*2*3.14159/max),sin(rand()*scatter/RAND_MAX),sin(i*2*3.14159/max));
+      //printf("a\n");
+      thing->pos[i] = thing->getPos+glm::vec3(rand()*1.0/RAND_MAX,rand()*1.0/RAND_MAX,rand()*1.0/RAND_MAX);
+//      thing->pos[i] = thing->getPos;
+      //printf("b\n");
+      thing->velocity[i] = glm::normalize(glm::vec3((rand()*2.0/RAND_MAX)-1,1,(rand()*2.0/RAND_MAX)-1));
+      thing->velocity[i].y = rand()*scatter/RAND_MAX;
+      thing->velocity[i] *= .2;
+      //printf("c\n");
+      thing->active[i] = 1;
+      //printf("d\n");
    }
+   printf("ending\n");
 
    glBindBuffer(GL_ARRAY_BUFFER, thing->posBuff);
-      printf("here %d\n",glGetError());
    glBufferData(GL_ARRAY_BUFFER, thing->amount*(sizeof(GLfloat)*3), NULL,GL_DYNAMIC_DRAW);//4 not 3?
+   glBindBuffer(GL_ARRAY_BUFFER, thing->norBuff);
+   glBufferData(GL_ARRAY_BUFFER, thing->amount*(sizeof(GLfloat)*3), NULL,GL_DYNAMIC_DRAW);//4 not 3?
+   glBindBuffer(GL_ARRAY_BUFFER, thing->sizBuff);
+   glBufferData(GL_ARRAY_BUFFER, thing->amount*(sizeof(GLfloat)), NULL,GL_DYNAMIC_DRAW);//4 not 3?
+   printf("wut\n");
+   return thing;
 }
 void destroyDustPart(part* thing){
   //unbind things on gpu?
