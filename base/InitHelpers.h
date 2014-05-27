@@ -17,7 +17,7 @@ extern GLint h_uLightColor;
 extern GLint h_uCamPos, h_uShadeMode;
 extern GLint h_uModelMatrix;
 extern RenderingHelper ModelTrans;
-extern GLint h_uTexCoord, h_aTexCoord, h_uGuiMode, h_uTextMode;
+extern GLint h_uTexCoord, h_aTexCoord, h_uGuiMode, h_uTextMode, h_utexpos;
 
 int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName);
 void glInitialize(GLFWwindow *window);

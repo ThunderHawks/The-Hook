@@ -26,21 +26,20 @@ void main() {
    vec4 shadowPos;
    vec3 color, halfVec;
 
-   vec3 norm = normalize(vNorm);
-   vec3 pos = normalize(vPos);
-   vec3 light = normalize(vec3(uLightVec.x, uLightVec.y, uLightVec.z));  // Directional light
-   vec3 view = normalize(uCamPos - vPos);
+   vec3 norm, pos, light, view;
 
    vec4 texColor1 = texture2D(uTexUnit, vTexCoord);
 
    if (uTextMode == 1.0) {
-      gl_FragColor = vec4(texColor1[0], texColor1[1], texColor1[2], 1);
+      gl_FragColor = texture2D(uTexUnit, vTexCoord);//vec4(texColor1[0], texColor1[1], texColor1[2], 1);
    } else if(uGuiMode == 1.0) {
       gl_FragColor = vec4(texColor1[0], texColor1[1], texColor1[2], 1);
    }
    else {
-
-   
+      norm = normalize(vNorm);
+      pos = normalize(vPos);
+      light = normalize(vec3(uLightVec.x, uLightVec.y, uLightVec.z));  // Directional light
+      view = normalize(uCamPos - vPos);
 
       angleNL = clamp(dot(norm, light), 0.0, 1.0);
 

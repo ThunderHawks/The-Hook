@@ -79,6 +79,7 @@ void Objective::Update(glm::vec3 playerPos) {
       PlayFX(SUCCESS_FX);
       printf("score is %d\n",deltaScore);
       particleSpawner.push_front(createMoneyPart(deltaScore/50,1.0,playerPoss()));
+      setCool(60);
 //      particleSpawner.push_front(createDustPart(deltaScore/100,1.0,playerPoss()));
    }
    else if (sqrt((playerPos.x-start.x)*(playerPos.x-start.x) + (playerPos.z-start.z)*(playerPos.z-start.z)) < 7 && !active) {

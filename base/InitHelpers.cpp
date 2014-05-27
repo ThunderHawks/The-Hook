@@ -86,6 +86,7 @@ int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName) {
         h_aTexCoord = safe_glGetAttribLocation(ShadeProg, "aTexCoord");
         h_uGuiMode = safe_glGetUniformLocation(ShadeProg, "uGuiMode");
         h_uTextMode = safe_glGetUniformLocation(ShadeProg, "uTextMode");
+        h_utexpos = safe_glGetAttribLocation(ShadeProg, "textPos");
 
    printf("sucessfully installed shader %d\n", ShadeProg);
    return 1;

@@ -156,11 +156,26 @@ bool physGrapple(float lx,float ly,float lz){
 	bool ret = false;
    flip = 0;
    dir = glm::normalize(glm::vec3(-lx,ly,-lz));
+
+
+
    //printf("grapple in dir %f %f %f\n",dir.x,dir.y,dir.z);
    //printf("looks at is %f %f %f\n",lookAt.x,lookAt.y,lookAt.z);
    /*   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAt.x+.0*dir.x,lookAt.y-.0*dir.y,lookAt.z+.0*dir.z), btVector3(lookAt.x+50*dir.x,lookAt.y-50*dir.y,lookAt.z+50*dir.z));
    dynamicsWorld->rayTest(btVector3(lookAt.x+.0*dir.x,lookAt.y-.0*dir.y,lookAt.z+.0*dir.z), btVector3(lookAt.x+50*dir.x,lookAt.y-50*dir.y,lookAt.z+50*dir.z), RayCallback);
 */
+
+//////////////////////////////
+glm:: vec3 ggaze = GetLookAt() - GetEye();
+   glm::vec3 gw = ggaze/magnitude(ggaze);
+   gw = glm::vec3(-1.0 * gw.x, -1.0 * gw.y, -1.0 * gw.z);
+   glm::vec3 gu = glm::cross(GetUp(), gw)/magnitude(glm::cross(GetUp(), gw));
+   gu *= 2;
+
+   lookAt += glm::vec3(gu.x, 0, gu.z);
+   ///////////////////////////////
+
+
    btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAt.x+1.6*dir.x,lookAt.y-1.6*dir.y,lookAt.z+1.6*dir.z), btVector3(lookAt.x+75*dir.x,lookAt.y-75*dir.y,lookAt.z+75*dir.z));
    dynamicsWorld->rayTest(btVector3(lookAt.x+1.6*dir.x,lookAt.y-1.6*dir.y,lookAt.z+1.6*dir.z), btVector3(lookAt.x+75*dir.x,lookAt.y-75*dir.y,lookAt.z+75*dir.z), RayCallback);
    //player->setLinearVelocity(btVector3(dir.x*50,dir.y*50,dir.z*50));
@@ -182,6 +197,10 @@ bool physGrapple(float lx,float ly,float lz){
       ret = true;
    }
    
+
+
+   lookAt -= glm::vec3(gu.x, 0, gu.z);
+
    return ret;
 }
 void physJump(){
@@ -205,6 +224,9 @@ int isGrappleActive(){
 }
 void physGrapplePoint(){
 	lookAt = GetLookAt();
+
+   
+
    glm::vec3 at = glm::vec3(lookAt.x,lookAt.y,lookAt.z);
    glm::vec3 targ = glm::vec3(tmp.getX(),tmp.getY(),tmp.getZ());
    glm::vec3 loc = targ-at;

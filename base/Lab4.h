@@ -220,6 +220,7 @@ int Table_Size();
 void Set_ModelType(int index, int type);
 Node Get_Index(int index);
 void Free_LinkedList();
+void setCool(int i);
 //Bool that returns true if game is paused
 bool isPaused();
 //Pauses/unpasses game

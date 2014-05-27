@@ -216,7 +216,7 @@ void initGui(int EditMode) {
    } else {
       glGenTextures(30, textures);
       glGenTextures(1, textures + 1);
-      LoadTexture((char *)"../Assets/Fonts/font1.bmp", textures[22]);
+      LoadTexture((char *)"../Assets/Fonts/font1.bmp", textures[0]);
    }
 }
 
@@ -522,10 +522,18 @@ void cleanupText2D() {
 void printText2D(string text, int x, int y, int size) {
   char character;
   float uv_x, uv_y;
+  GLuint vertex_Buffer;
+  GLuint uvBuffer;
+  GLuint IndexBuffer;
 
   //cleanupText2D();
   //initText2D("../Assets/Fonts/font1.bmp");
   glUniform1f(h_uTextMode, 1);
+   //setup texture unit
+ //glEnable(GL_TEXTURE_2D);
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_2D, textures[0]);
+
   for ( unsigned int i=0 ; i < text.size() ; i++ ){
     character = text[i] - 32;
     uv_x = (character%10)/10.0f;
@@ -556,14 +564,11 @@ void printText2D(string text, int x, int y, int size) {
     UVs.push_back(uv_up_left   );
     UVs.push_back(uv_down_left );
     UVs.push_back(uv_up_right  );
-   
-    UVs.push_back(uv_down_right);
-    UVs.push_back(uv_up_right);
-    UVs.push_back(uv_down_left);
-  }
 
-  GLuint vertex_Buffer;
-  GLuint uvBuffer;
+    UVs.push_back(uv_down_right);
+    UVs.push_back(uv_up_right  );
+    UVs.push_back(uv_down_left );
+  }
 
   glGenBuffers(1, &vertex_Buffer);
   glBindBuffer(GL_ARRAY_BUFFER, vertex_Buffer);
@@ -573,18 +578,19 @@ void printText2D(string text, int x, int y, int size) {
   glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
   glBufferData(GL_ARRAY_BUFFER, UVs.size()*sizeof(glm::vec2), &UVs.front(), GL_STATIC_DRAW);
 
- //setup texture unit
- //glEnable(GL_TEXTURE_2D);
-  glActiveTexture(GL_TEXTURE1);
-  glBindTexture(GL_TEXTURE_2D, textures[22]);
-
-  safe_glEnableVertexAttribArray(safe_glGetAttribLocation(ShadeProg, "textPos"));
+  
+  safe_glEnableVertexAttribArray(h_utexpos);
   glBindBuffer(GL_ARRAY_BUFFER, vertex_Buffer);
   safe_glVertexAttribPointer(safe_glGetAttribLocation(ShadeProg, "textPos"), 2, GL_FLOAT, GL_FALSE, 0, 0);
 
   safe_glEnableVertexAttribArray(h_aTexCoord);
   glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
   safe_glVertexAttribPointer(h_aTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glGenBuffers(1, &IndexBuffer);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBuffer);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idx), idx, GL_STATIC_DRAW);
+
 
   /* draw!*/
   glDrawElements(GL_TRIANGLES, vertices.size(), GL_UNSIGNED_SHORT, 0);

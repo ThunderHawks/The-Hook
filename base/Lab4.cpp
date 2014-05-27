@@ -62,7 +62,7 @@ GLint h_uCamPos, h_uShadeMode;
 GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine, h_uMatAlpha;
 GLint h_uLightViewMatrix, h_uLightProjMatrix;
 GLint h_uTexUnit, h_uTexUnit2;
-GLint h_uTexCoord, h_aTexCoord, h_uGuiMode, h_uTextMode;
+GLint h_uTexCoord, h_aTexCoord, h_uGuiMode, h_uTextMode, h_utexpos;
 GLuint TexBuffObj;
 
 //declare Matrix stack
@@ -106,6 +106,10 @@ void drawSelectedObjects() {
 }
 float sizer = 45;
 float cool = 0;
+void setCool(int i){
+
+   cool = i;
+}
 
 void cameraColision(){
 	//get all the possible things the eye can collide with using the point level test
@@ -171,11 +175,13 @@ void drawEntities(int passNum) {
    }
 
    if(getGPressed('B')) cool = 1;
-   else{
-    cool = 0;
-    sizer=0;
-   }
    if(cool) sizer+=.16;
+   else{
+      cool = 0;
+      sizer=0;
+
+   }
+   if(cool) cool--;
 }
 
 //Bool that returns true if game is paused
@@ -209,8 +215,6 @@ void glfwDraw (GLFWwindow *window, int passNum)
    	DrawSkyBox();
    	SetModelStat();
 
-      //printText2D("Hello World!", 0, 0, 10);
-
       safe_glEnableVertexAttribArray(h_aPosition);
       safe_glEnableVertexAttribArray(h_aNormal);
 
@@ -242,7 +246,7 @@ void glfwDraw (GLFWwindow *window, int passNum)
 
    //DRAW THE DANCING CYLINDER HERE!!
    btTransform pla;
-   PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY(), physGetPlayerZ(), .25, .25, .25, 0, 1.7);
+   PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY(), physGetPlayerZ(), .25, .25, .25, getYaw(), 1.7);
    //END OF DANCING CYLINDER CODE HERE!!
 
    drawSelectedObjects();
@@ -297,14 +301,13 @@ void glfwDraw (GLFWwindow *window, int passNum)
          drawPart(*it);
 //         particleSpawner[i]->drawPart();
       }
-      printf("ya\n");
+
       if(particleSpawner.front() && particleSpawner.front()->age>60){
          destroyDustPart( particleSpawner.front());
          particleSpawner.erase(particleSpawner.begin());
       }
-      printf("no\n");
-   }
 
+   }
    glDisable(GL_CULL_FACE);
 }
 
