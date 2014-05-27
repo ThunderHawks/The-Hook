@@ -357,6 +357,8 @@ void DrawGui(int editMode) {
    }
    else {
       DrawCrosshair();
+      //printText2D(string text, int x, int y, int size)
+      //printText2D("Corn Flakes", 0, 0, 1.0);
    }
 
    ready3D();
@@ -501,6 +503,9 @@ void makeCheckerBoard ( int nRows, int nCols )
 /***************LET'S WRITE TEXT!!!!! :D ***************************************************************/
 std::vector<glm::vec2> vertices;
 std::vector<glm::vec2> UVs;
+unsigned short idx[] = {0, 1, 2,
+                        3, 1, 2,
+                               };
 
 void initText2D(const char * texturePath) {
 
@@ -515,8 +520,8 @@ void printText2D(string text, int x, int y, int size) {
   char character;
   float uv_x, uv_y;
 
-  cleanupText2D();
-  initText2D("../Assets/Fonts/font1.bmp");
+  //cleanupText2D();
+  //initText2D("../Assets/Fonts/font1.bmp");
 
   for ( unsigned int i=0 ; i < text.size() ; i++ ){
     character = text[i] - 32;
@@ -540,7 +545,11 @@ void printText2D(string text, int x, int y, int size) {
     glm::vec2 uv_up_right   = glm::vec2( uv_x+1.0f/10.0f, 1.0f - uv_y );
     glm::vec2 uv_down_right = glm::vec2( uv_x+1.0f/10.0f, 1.0f - (uv_y + 1.0f/10.0f) );
     glm::vec2 uv_down_left  = glm::vec2( uv_x           , 1.0f - (uv_y + 1.0f/10.0f) );
-   
+//void initScore(glm::vec2 upLeft, glm::vec2 upRight, glm::vec2 downLeft, glm::vec2 downRight)
+  //  initScore(uv_up_left, uv_up_right, uv_down_left, uv_down_right);
+    //SetupScore(float x, float y, int texture, float scaleX, float scaleY) 
+  //  SetupScore(0, 0, 3, 0.2, 0.2);
+
     UVs.push_back(uv_up_left   );
     UVs.push_back(uv_down_left );
     UVs.push_back(uv_up_right  );
@@ -548,5 +557,46 @@ void printText2D(string text, int x, int y, int size) {
     UVs.push_back(uv_down_right);
     UVs.push_back(uv_up_right);
     UVs.push_back(uv_down_left);
+
+    g_SqiboLen = 6;
+    glGenBuffers(1, &SqBuffObj);
+    glBindBuffer(GL_ARRAY_BUFFER, SqBuffObj);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(float)*2, &vertices.front(), GL_STATIC_DRAW);
+
+    glGenBuffers(1, &TexBuffObj);
+    glBindBuffer(GL_ARRAY_BUFFER, TexBuffObj);
+    glBufferData(GL_ARRAY_BUFFER, UVs.size()*sizeof(float)*2, &UVs.front(), GL_STATIC_DRAW);
+
+    glGenBuffers(1, &SqIndxBuffObj);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, SqIndxBuffObj);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idx), idx, GL_STATIC_DRAW);
+
+    SetModel(0, 0, 0.2, 0.2);
+ 
+   //setup texture unit
+   //glEnable(GL_TEXTURE_2D);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, textures[22]);
+
+    safe_glUniform1i(h_uTexUnit, 1);
+    safe_glEnableVertexAttribArray(h_aPosition);
+    glBindBuffer(GL_ARRAY_BUFFER, SqBuffObj);
+    safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    safe_glEnableVertexAttribArray(h_aTexCoord);
+    glBindBuffer(GL_ARRAY_BUFFER, TexBuffObj);
+    safe_glVertexAttribPointer(h_aTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    /* draw!*/
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, SqIndxBuffObj);
+
+    glDrawElements(GL_TRIANGLES, g_SqiboLen, GL_UNSIGNED_SHORT, 0);
+
+    //safe_glUniform1i(h_uTexUnit, 0);
+    /* Disable the attributes used by our shader*/
+    glDisable(GL_TEXTURE_2D);
+    safe_glDisableVertexAttribArray(h_aPosition);
+    safe_glDisableVertexAttribArray(h_aNormal);
+    safe_glDisableVertexAttribArray(h_aTexCoord);
   }
 }

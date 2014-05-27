@@ -284,6 +284,17 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
    return entity;
 }
 
+//Update the radius of each object
+void UpdateBSRadius() {
+   Entity entityTemp;
+
+   for(int i = 0; i < entities.size(); i++) {
+      entityTemp = entities[i];
+      entityTemp.BSRadius = sqrt( pow(entityTemp.scale.x * entityTemp.phyScale.x, 2.0) + pow(entityTemp.scale.y * entityTemp.phyScale.y, 2.0) + pow(entityTemp.scale.z * entityTemp.phyScale.z, 2.0));
+      entities[i] = entityTemp;
+   }
+}
+
 //Access Entity at index from entire pool of entities
 Entity GetEntityPool(int index) {
    return entities[index];
@@ -590,6 +601,8 @@ void redo() {
 
 //Saves the world to the currentLevel
 void saveWorld() {
+   UpdateBSRadius();
+
    ofstream file;
    Entity entityTemp;
    //Is this is a previously unsaved level, we can't save without
@@ -628,6 +641,8 @@ void saveWorld() {
 
 //Save the current world in .wub format
 void saveWorld(string lvName) {
+   UpdateBSRadius();
+
    ofstream file;
    Entity entityTemp;
    string fileName = lvName + ".wub";

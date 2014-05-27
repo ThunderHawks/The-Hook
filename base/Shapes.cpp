@@ -198,6 +198,85 @@ unsigned short idx[] = {0, 1, 2,
     glBufferData(GL_ARRAY_BUFFER, sizeof(SqTex), SqTex, GL_STATIC_DRAW);
 }
 
+void initScore(glm::vec2 upLeft, glm::vec2 upRight, glm::vec2 downLeft, glm::vec2 downRight) {
+
+  float SqPos[] = {
+    -0.5, -0.5, 0.0, //Point0
+    -0.5, 0.5, 0.0,  //Point1
+    0.5, 0.5, 0.0,   //Point2
+    0.5, -0.5, 0.0,  //Point3
+
+  };
+  float SqNormal[] = {
+     0.0, 0.0, 1.0,
+     0.0, 0.0, 1.0,
+     0.0, 0.0, 1.0,
+     0.0, 0.0, 1.0,
+  };
+
+  unsigned short idx[] = {0, 1, 2,
+                        0, 2, 3,
+                               };
+     static GLfloat SqTex[] = {
+     downLeft.x, downLeft.y,
+     upLeft.x, upLeft.y,
+     upRight.x, upRight.y,
+     downRight.x, downRight.y,     
+    };
+
+    g_SqiboLen = 6;
+    glGenBuffers(1, &SqBuffObj);
+    glBindBuffer(GL_ARRAY_BUFFER, SqBuffObj);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(SqPos), SqPos, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &SqIndxBuffObj);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, SqIndxBuffObj);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idx), idx, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &SqNormalObj);
+    glBindBuffer(GL_ARRAY_BUFFER, SqNormalObj);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(SqNormal), SqNormal, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &TexBuffObj);
+    glBindBuffer(GL_ARRAY_BUFFER, TexBuffObj);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(SqTex), SqTex, GL_STATIC_DRAW);
+}
+
+void SetupScore(float x, float y, int texture, float scaleX, float scaleY) {
+   /*First Cube*/
+   SetModel(x, y, scaleX, scaleY);
+ 
+   //setup texture unit
+   //glEnable(GL_TEXTURE_2D);
+   glActiveTexture(GL_TEXTURE1);
+   glBindTexture(GL_TEXTURE_2D, texture);
+
+   safe_glUniform1i(h_uTexUnit, 1);
+   safe_glEnableVertexAttribArray(h_aPosition);
+   glBindBuffer(GL_ARRAY_BUFFER, SqBuffObj);
+   safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+   safe_glEnableVertexAttribArray(h_aTexCoord);
+   glBindBuffer(GL_ARRAY_BUFFER, TexBuffObj);
+   safe_glVertexAttribPointer(h_aTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+   safe_glEnableVertexAttribArray(h_aNormal);
+   glBindBuffer(GL_ARRAY_BUFFER, SqNormalObj);
+   safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+   /* draw!*/
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, SqIndxBuffObj);
+
+   glDrawElements(GL_TRIANGLES, g_SqiboLen, GL_UNSIGNED_SHORT, 0);
+
+   //safe_glUniform1i(h_uTexUnit, 0);
+   /* Disable the attributes used by our shader*/
+   glDisable(GL_TEXTURE_2D);
+   safe_glDisableVertexAttribArray(h_aPosition);
+   safe_glDisableVertexAttribArray(h_aNormal);
+   safe_glDisableVertexAttribArray(h_aTexCoord);
+}
+
 void SetupCube(float x, float y, float z, int material, float angle, float scaleX, float scaleY, float scaleZ) {
    /*First Cube*/
    SetModel(x, y, z, scaleX, scaleY, scaleZ, angle);
