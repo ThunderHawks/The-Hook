@@ -27,6 +27,7 @@
 #include "Objective.h"
 #include "camBox.h"
 #include "Gui.h"
+//#include "particle.h"
 
 #include "types.h"
 #include "Image.h"
@@ -79,6 +80,7 @@ Mesh flag;
 glm::mat4 curProj, curView;
 
 vector<Objective*> objectives;
+std::list<part*> particleSpawner;
 
 /* projection matrix  - do not change */
 glm::mat4 SetProjectionMatrix() {
@@ -286,6 +288,11 @@ void glfwDraw (GLFWwindow *window, int passNum)
             PlaceModel(flag,objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 50, 50, 50, 1, 1.7);
             SetupCube(objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 15, 60, 10, 5000, 10);
          }
+      }
+      //draw particles
+      for (std::list<part*>::iterator it=particleSpawner.begin(); it != particleSpawner.end(); it++){
+         drawPart(*it);
+//         particleSpawner[i]->drawPart();
       }
    }
 
