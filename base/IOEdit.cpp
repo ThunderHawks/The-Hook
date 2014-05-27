@@ -100,15 +100,30 @@ void glfwEditScroll(GLFWwindow *window, double xOffset, double yOffset) {
    if(eKeysPressed['F'] == 1) {
       //Scale in Z
       if(eKeysPressed['Z'] == 1) {
-         scaleSelectedEntityZ(yOffset * 0.05);
+         if(eKeysPressed[341]) {
+            scaleSelectedEntityZ(yOffset * 0.5);
+         }
+         else {
+            scaleSelectedEntityZ(yOffset * 0.05);
+         }
       }
       //Scale in X
       if(eKeysPressed['X'] == 1) {
-         scaleSelectedEntityX(yOffset * 0.05);
+         if(eKeysPressed[341]) {
+            scaleSelectedEntityX(yOffset * 0.5);
+         }
+         else {
+            scaleSelectedEntityX(yOffset * 0.05);
+         }
       }
       //Scale in Y
       if(eKeysPressed['C'] == 1) {
-         scaleSelectedEntityY(yOffset * 0.05);
+         if(eKeysPressed[341]) {
+            scaleSelectedEntityY(yOffset * 0.5);
+         }
+         else {
+            scaleSelectedEntityY(yOffset * 0.05);
+         }
       }
       //Else uniformly scaled
       else if(!eKeysPressed['Z'] && !eKeysPressed['X'] && !eKeysPressed['C']){
@@ -303,7 +318,6 @@ void glfwEditKeyboard(void) {
       saveWorld();
       exit( EXIT_SUCCESS );
    }
-   
 }
 
 //the keyboard callback that will alter the array based on key pressed/released
@@ -363,7 +377,7 @@ void glfwEditKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
        //Allows for faster movement
        case GLFW_KEY_LEFT_SHIFT:
          eKeysPressed[340] = 1;
-         speed = 5.0;
+         speed = 10.0;
          break;
        //Gui
        case GLFW_KEY_G:
