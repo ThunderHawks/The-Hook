@@ -1,0 +1,25 @@
+- Textures
+
+*Lab4.cpp*
+- Need to add handles for attributes and uniform variable for the image texture in glsl.
+@Add 'GLint h_aUVVertex'
+
+*InitHelpers.h*
+- Added variables for glsl
+@Add 'GLint h_aUVVertex' and 'GLuint h_uTexSampler'
+
+*InitHelpers.cpp*
+- Need to get handles to attribute and uniform data in shader
+@Add 'h_aUVVertex = safe_glGetAttribLocation(ShadeProg, "aUVVertex");'
+@Add 'h_uTexSampler = safe_glGetUniformLocation(ShadeProg, "uTexSampler");'
+
+*Shapes.h*
+- Added variables for glsl and function declaration for bmp loader
+@Add 'GLint h_aUVVertex' and 'GLuint h_uTexSampler'
+@Add 'GLuint loadBMP(const char* path);'
+
+*Shapes.cpp*
+- Made changes so that bmp files can be loaded. It also has code that makes use of the texture.
+- 'DrawSkybox' function has been changed.
+
+
