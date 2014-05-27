@@ -14,6 +14,7 @@ uniform mat4 uLightViewMatrix;
 
 attribute vec3 aPosition;
 attribute vec3 aNormal;
+attribute vec3 aPointSize;
 
 varying vec3 vNorm;
 varying vec3 vPos;
@@ -24,6 +25,7 @@ attribute vec2 aTexCoord;
 uniform float uMGuiMode;
 
 void main() {
+   gl_PointSize = aPointSize==0?500:aPointSize;
    vec4 transPos, transNormal;
    mat4 VMNDCtoTex = mat4(0.38, 0.0, 0.0, 0.0,
                           0.0, 0.485, 0.0, 0.0,

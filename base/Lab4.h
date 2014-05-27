@@ -56,6 +56,7 @@ extern GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine, h_uMatAlpha;
 extern GLint h_uTexUnit, h_uTexUnit2;
 extern GLint h_uLightViewMatrix, h_uLightProjMatrix;
 extern GLint h_aTexCoord;
+//extern GLint h_aPointSize;
 extern std::list<part*> particleSpawner;
 extern GLuint TexBuffObj;
 extern RenderingHelper ModelTrans;

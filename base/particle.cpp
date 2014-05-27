@@ -35,40 +35,54 @@ void drawPart(part* thing){
       thing->age++;
       thing->move(1.0,thing);
       glPointSize(10);
-      printf("draw a part\n");
+      //printf("draw a part\n");
       //
       SetModel(0,0,0,1,1,1,0);
       SetMaterial(7);//7
       glBindBuffer(GL_ARRAY_BUFFER, thing->posBuff);
-      float* data = (float*)glMapBuffer(GL_ARRAY_BUFFER,GL_READ_WRITE);
+      float* pointdata = (float*)glMapBuffer(GL_ARRAY_BUFFER,GL_READ_WRITE);
       for(int i=0;i<thing->amount;i++){
          //printf("orig %f %f %f\n",data[i],data[i+1],data[i+2]);
          //printf("%f %f %f is pos of e part\n",thing->pos[i].x,thing->pos[i].x,thing->pos[i].x);
          vec3 tmp = thing->pos[i];
-         data[i*3+0] = tmp.x;
-         data[i*3+1] = tmp.y;
-         data[i*3+2] = tmp.z;
+         pointdata[i*3+0] = tmp.x;
+         pointdata[i*3+1] = tmp.y;
+         pointdata[i*3+2] = tmp.z;
          //printf("now  %f %f %f\n",data[i],data[i+1],data[i+2]);
       }
-      printf("\n");
+      glUnmapBuffer(GL_ARRAY_BUFFER);
+
+      glBindBuffer(GL_ARRAY_BUFFER, thing->sizBuff);
+      float* sizedata = (float*)glMapBuffer(GL_ARRAY_BUFFER,GL_READ_WRITE);
+      for(int i=0;i<thing->amount;i++){
+         //printf("psize is %f\n",sizedata[i]);
+         sizedata[i] = thing->size[i];
+      }
       glUnmapBuffer(GL_ARRAY_BUFFER);
 
       //set transforms to idents
       safe_glEnableVertexAttribArray(h_aPosition);
       glBindBuffer(GL_ARRAY_BUFFER, thing->posBuff);
       safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
       safe_glEnableVertexAttribArray(h_aNormal);
       glBindBuffer(GL_ARRAY_BUFFER, thing->norBuff);
       safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
+      safe_glEnableVertexAttribArray(h_aPointSize);
+      glBindBuffer(GL_ARRAY_BUFFER, thing->sizBuff);
+      safe_glVertexAttribPointer(h_aPointSize, 1, GL_FLOAT, GL_FALSE, 0, 0);
+
+      //printf("the buff is h_aPointSize %d\n",h_aPointSize);
+
       //draw
       glBindBuffer(GL_ARRAY_BUFFER, thing->posBuff);
-      printf("the amt is %d\n",thing->amount);
+      //printf("the amt is %d\n",thing->amount);
       glDrawArrays(GL_POINTS,0, thing->amount);
 
 }
 void moveDust(float step, part*  thing){
-  printf("%d thing is \n",thing);
+  //printf("%d thing is \n",thing);
   for(int i=0;i<thing->amount;i++){
    //printf("%d is active\n",thing->active[i]);
     if(thing->active[i]){
@@ -76,7 +90,7 @@ void moveDust(float step, part*  thing){
       thing->velocity[i] *= .95;
       thing->velocity[i].y -= .05;
       //thing->pos[i].y = thing->pos[i].y>0?thing->pos[i].y:0;
-      thing->size[i] = rand()%2?thing->size[i]*1.1:thing->size[i]*.9;
+      thing->size[i] = rand()%2?thing->size[i]:thing->size[i]-1;
     }
   }
 }
@@ -129,6 +143,7 @@ part* createDustPart(int max,float scatter,glm::vec3 getPos){
       thing->velocity[i] *= .2;
       //printf("c\n");
       thing->active[i] = 1;
+      thing->size[i] = 30;
       //printf("d\n");
    }
    printf("ending\n");
