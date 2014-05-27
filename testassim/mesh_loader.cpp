@@ -207,7 +207,7 @@ AssimpMesh loadMesh(const std::string& path) {
 	
 	for (i = 0; i < ret.boneCt; ++i) {
 		if (ret.bone_array[i].childs.size() == 0)
-			printf("Bone %s has no childeren\n", ret.bone_array[i].name.C_Str());
+			printf("Bone %s has no children\n", ret.bone_array[i].name.C_Str());
 			
 		for (j = 0; j < ret.bone_array[i].childs.size(); j++)
 			printf("Bone %s has the child %s\n", ret.bone_array[i].name.C_Str(), ret.bone_array[i].childs[j]->name.C_Str());
@@ -237,11 +237,13 @@ int setupTrans(Bone *array, Bone *parent, Bone *cur) {
 		cur->personalTrans[i] = translateM * rotateM * scaleM;
 		
 		//a check to make sure we aren't the root
-		if (parent == NULL) {
+		if (parent == NULL)
 			cur->transformations[i] = cur->personalTrans[i] * cur->offset;
-		}
-		else
+		else {
 			cur->transformations[i] = parent->personalTrans[i] * cur->personalTrans[i] * cur->offset;
+			cur->personalTrans[i] = parent->personalTrans[i] * cur->personalTrans[i];
+		}
+			
 		
 		//store the matrix as a glm mat4	
 		CopyaiMat(cur->transformations + i, cur->glmTransforms[i]);	

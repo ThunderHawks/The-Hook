@@ -153,7 +153,7 @@ void glfwDraw (GLFWwindow *window)
 	if (ctr++%1 == 0)
 		frm++;
 		
-	PlaceAnimatedModel(damesh, 0, -3, -10, 1, 1, 1, spin, frm%24);
+	PlaceAnimatedModel(damesh, 0, -3, -10, 1, 1, 1, spin, 0);
 	//SetupCube(0, 0, -2, 10, spin, 1, 1, 1);
 
    //Disable the shader
