@@ -50,5 +50,5 @@ void main() {
 
    vTexCoord = aTexCoord;
 
-   gl_PointSize = aPointSize;//*distance(gl_Position);
+   gl_PointSize = aPointSize*10/length(gl_Position);
 }
