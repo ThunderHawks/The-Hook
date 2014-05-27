@@ -149,6 +149,7 @@ void initGui(int EditMode) {
       LoadTexture((char *)"../Assets/Textures/SelectionUI_converted.bmp", textures[19]);
       LoadTexture((char *)"../Assets/Textures/crackedTexture.bmp", textures[20]);
       LoadTexture((char *)"../Assets/Textures/caution.bmp", textures[21]);
+      LoadTexture((char *)"../Assets/Fonts/font1.bmp", textures[22]);
 
       //Initialize HotBar icons
       HBIndices.push_back(createIcon(0, textures[0], 23.5, glm::vec2(-0.6, -0.88)));
@@ -495,4 +496,57 @@ void makeCheckerBoard ( int nRows, int nCols )
   /* set up the checker board texture as well */
   glBindTexture(GL_TEXTURE_2D, 2);
   glTexImage2D(GL_TEXTURE_2D, 0, 3, 64, 64, 0, GL_RGB, GL_UNSIGNED_BYTE, g_pixel);
+}
+
+/***************LET'S WRITE TEXT!!!!! :D ***************************************************************/
+std::vector<glm::vec2> vertices;
+std::vector<glm::vec2> UVs;
+
+void initText2D(const char * texturePath) {
+
+}
+
+void cleanupText2D() {
+
+}
+
+/*Made with help from http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-11-2d-text/ */
+void printText2D(string text, int x, int y, int size) {
+  char character;
+  float uv_x, uv_y;
+
+  cleanupText2D();
+  initText2D("../Assets/Fonts/font1.bmp");
+
+  for ( unsigned int i=0 ; i < text.size() ; i++ ){
+    character = text[i] - 32;
+    uv_x = (character%10)/10.0f;
+    uv_y = (character/10)/10.0f;
+
+    glm::vec2 vertex_up_left    = glm::vec2( x+i*size     , y+size );
+    glm::vec2 vertex_up_right   = glm::vec2( x+i*size+size, y+size );
+    glm::vec2 vertex_down_right = glm::vec2( x+i*size+size, y      );
+    glm::vec2 vertex_down_left  = glm::vec2( x+i*size     , y      );
+
+    vertices.push_back(vertex_up_left   );
+    vertices.push_back(vertex_down_left );
+    vertices.push_back(vertex_up_right  );
+
+    vertices.push_back(vertex_down_right);
+    vertices.push_back(vertex_up_right);
+    vertices.push_back(vertex_down_left);
+
+    glm::vec2 uv_up_left    = glm::vec2( uv_x           , 1.0f - uv_y );
+    glm::vec2 uv_up_right   = glm::vec2( uv_x+1.0f/10.0f, 1.0f - uv_y );
+    glm::vec2 uv_down_right = glm::vec2( uv_x+1.0f/10.0f, 1.0f - (uv_y + 1.0f/10.0f) );
+    glm::vec2 uv_down_left  = glm::vec2( uv_x           , 1.0f - (uv_y + 1.0f/10.0f) );
+   
+    UVs.push_back(uv_up_left   );
+    UVs.push_back(uv_down_left );
+    UVs.push_back(uv_up_right  );
+   
+    UVs.push_back(uv_down_right);
+    UVs.push_back(uv_up_right);
+    UVs.push_back(uv_down_left);
+  }
 }
