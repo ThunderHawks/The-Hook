@@ -7,8 +7,8 @@
 #include "Shapes.h"
 #include "Camera.h"
 #include "Helper.h"
-#include <ft2build.h>
-#include FT_FREETYPE_H
+//#include <ft2build.h>
+//#include FT_FREETYPE_H
 
 #define ICON_WIDTH 0.13
 #define ICON_HEIGHT 0.22

@@ -15,8 +15,8 @@ bool iconSelected = false;
 Icon lastSelectedIcon;
 
 GLuint textures[30];
-FT_Library library;
-FT_Face face;
+//FT_Library library;
+//FT_Face face;
 
 //Icon createIcon(Entity ent, float distance, int texIndex, glm::vec2 pos) {
 Icon createIcon(int meshIndex, int textureIndex, float distance, glm::vec2 pos) {
@@ -109,7 +109,7 @@ void initGui(int EditMode) {
       Icon iconTemp;
 
       //Initialize Freetype library
-      int error = FT_Init_FreeType(&library);
+      /*int error = FT_Init_FreeType(&library);
       if(error) {
          printf("Error: An error has occurred initializing the FREETYPE library\n");
       }
@@ -121,7 +121,7 @@ void initGui(int EditMode) {
       else if(error) {
          printf("Error: Font file could not be opened and read or broken\n");
       }
-
+*/
 
       glGenTextures(30, textures);
       glGenTextures(1, textures + 1);
