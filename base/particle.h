@@ -12,6 +12,7 @@ struct part{
   int amount;
   float transp;
   int seed;
+  int mat;
 
   unsigned int posBuff;
   glm::vec3 *pos;
@@ -33,4 +34,10 @@ void createDust(float step, part*  thing);
 void destroyDust(float step, part*  thing);
 part* createDustPart(int max,float scatter,glm::vec3 getPos);
 void destroyDustPart(part* thing);
+
+void moveMoney(float step, part*  thing);
+void createMoney(float step, part*  thing);
+
+void destroyMoney(float step, part*  thing);
+part* createMoneyPart(int max,float scatter,glm::vec3 getPos);
 #endif

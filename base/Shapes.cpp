@@ -498,6 +498,14 @@ void SetMaterial(int i) {
         safe_glUniform1f(h_uMatShine, 100.0);
         safe_glUniform1f(h_uMatAlpha, .25);
         break;
+    //money
+    case 19:
+        safe_glUniform3f(h_uMatAmb, 0.25, 0.8, 0.3);
+        safe_glUniform3f(h_uMatDif, 0.0, 0.0, 0.0);
+        safe_glUniform3f(h_uMatSpec, 0.0, 0.0, 0.0);
+        safe_glUniform1f(h_uMatShine, 100.0);
+        safe_glUniform1f(h_uMatAlpha, .9);
+        break;
     }
 }
 

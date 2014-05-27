@@ -247,7 +247,7 @@ glm::vec3 grapplingHookLocation(){
 int canMove(){
    return playerJump;
 }
-glm::vec3 playerPos(){
+glm::vec3 playerPoss(){
    return glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
 }
 void physStep(){
@@ -274,7 +274,7 @@ void physStep(){
    }
    if(player->getLinearVelocity().getY()*player->getLinearVelocity().getY()<.0001 &&
       fspeed*fspeed>.0001 && playerFall==1){
-      if(!playerJump)      particleSpawner.push_front(createDustPart(500,1.0,playerPos()));
+      if(!playerJump)      particleSpawner.push_front(createDustPart(500,1.0,playerPoss()));
       playerJump = 1;
       printf("can boing\n");
    }
