@@ -149,7 +149,6 @@ void initGui(int EditMode) {
       LoadTexture((char *)"../Assets/Textures/SelectionUI_converted.bmp", textures[19]);
       LoadTexture((char *)"../Assets/Textures/crackedTexture.bmp", textures[20]);
       LoadTexture((char *)"../Assets/Textures/caution.bmp", textures[21]);
-      LoadTexture((char *)"../Assets/Fonts/font1.bmp", textures[22]);
 
       //Initialize HotBar icons
       HBIndices.push_back(createIcon(0, textures[0], 23.5, glm::vec2(-0.6, -0.88)));
@@ -214,6 +213,10 @@ void initGui(int EditMode) {
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
 
       makeCheckerBoard(64, 64);
+   } else {
+      glGenTextures(30, textures);
+      glGenTextures(1, textures + 1);
+      LoadTexture((char *)"../Assets/Fonts/font1.bmp", textures[22]);
    }
 }
 
@@ -512,7 +515,7 @@ void initText2D(const char * texturePath) {
 }
 
 void cleanupText2D() {
-
+  glUniform1f(h_uTextMode, 0);
 }
 
 /*Made with help from http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-11-2d-text/ */
@@ -522,7 +525,7 @@ void printText2D(string text, int x, int y, int size) {
 
   //cleanupText2D();
   //initText2D("../Assets/Fonts/font1.bmp");
-
+  glUniform1f(h_uTextMode, 1);
   for ( unsigned int i=0 ; i < text.size() ; i++ ){
     character = text[i] - 32;
     uv_x = (character%10)/10.0f;
@@ -557,46 +560,40 @@ void printText2D(string text, int x, int y, int size) {
     UVs.push_back(uv_down_right);
     UVs.push_back(uv_up_right);
     UVs.push_back(uv_down_left);
-
-    g_SqiboLen = 6;
-    glGenBuffers(1, &SqBuffObj);
-    glBindBuffer(GL_ARRAY_BUFFER, SqBuffObj);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(float)*2, &vertices.front(), GL_STATIC_DRAW);
-
-    glGenBuffers(1, &TexBuffObj);
-    glBindBuffer(GL_ARRAY_BUFFER, TexBuffObj);
-    glBufferData(GL_ARRAY_BUFFER, UVs.size()*sizeof(float)*2, &UVs.front(), GL_STATIC_DRAW);
-
-    glGenBuffers(1, &SqIndxBuffObj);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, SqIndxBuffObj);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idx), idx, GL_STATIC_DRAW);
-
-    SetModel(0, 0, 0.2, 0.2);
- 
-   //setup texture unit
-   //glEnable(GL_TEXTURE_2D);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, textures[22]);
-
-    safe_glUniform1i(h_uTexUnit, 1);
-    safe_glEnableVertexAttribArray(h_aPosition);
-    glBindBuffer(GL_ARRAY_BUFFER, SqBuffObj);
-    safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    safe_glEnableVertexAttribArray(h_aTexCoord);
-    glBindBuffer(GL_ARRAY_BUFFER, TexBuffObj);
-    safe_glVertexAttribPointer(h_aTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-    /* draw!*/
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, SqIndxBuffObj);
-
-    glDrawElements(GL_TRIANGLES, g_SqiboLen, GL_UNSIGNED_SHORT, 0);
-
-    //safe_glUniform1i(h_uTexUnit, 0);
-    /* Disable the attributes used by our shader*/
-    glDisable(GL_TEXTURE_2D);
-    safe_glDisableVertexAttribArray(h_aPosition);
-    safe_glDisableVertexAttribArray(h_aNormal);
-    safe_glDisableVertexAttribArray(h_aTexCoord);
   }
+
+  GLuint vertex_Buffer;
+  GLuint uvBuffer;
+
+  glGenBuffers(1, &vertex_Buffer);
+  glBindBuffer(GL_ARRAY_BUFFER, vertex_Buffer);
+  glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(glm::vec2), &vertices.front(), GL_STATIC_DRAW);
+
+  glGenBuffers(1, &uvBuffer);
+  glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
+  glBufferData(GL_ARRAY_BUFFER, UVs.size()*sizeof(glm::vec2), &UVs.front(), GL_STATIC_DRAW);
+
+ //setup texture unit
+ //glEnable(GL_TEXTURE_2D);
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_2D, textures[22]);
+
+  safe_glEnableVertexAttribArray(safe_glGetAttribLocation(ShadeProg, "textPos"));
+  glBindBuffer(GL_ARRAY_BUFFER, vertex_Buffer);
+  safe_glVertexAttribPointer(safe_glGetAttribLocation(ShadeProg, "textPos"), 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+  safe_glEnableVertexAttribArray(h_aTexCoord);
+  glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
+  safe_glVertexAttribPointer(h_aTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+  /* draw!*/
+  glDrawElements(GL_TRIANGLES, vertices.size(), GL_UNSIGNED_SHORT, 0);
+
+  //safe_glUniform1i(h_uTexUnit, 0);
+  /* Disable the attributes used by our shader*/
+  glDisable(GL_TEXTURE_2D);
+  safe_glDisableVertexAttribArray(safe_glGetAttribLocation(ShadeProg, "textPos"));
+  safe_glDisableVertexAttribArray(h_aTexCoord);
+
+  cleanupText2D();
 }

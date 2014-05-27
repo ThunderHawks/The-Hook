@@ -22,7 +22,13 @@ varying vec4 vShadowPos;
 
 varying vec2 vTexCoord;
 attribute vec2 aTexCoord;
+
+attribute vec2 textPos;
+
 uniform float uMGuiMode;
+uniform float uTextMode;
+
+
 
 void main() {
    vec4 transPos, transNormal;
@@ -35,20 +41,25 @@ void main() {
                         0.0, 0.0, 0.5, 0.0,
                         0.5, 0.5, 0.5, 1.0);
 
-   /* First model transforms */
-   gl_Position = uProjMatrix * uViewMatrix * uModelMatrix * vec4(aPosition, 1);;
-  
-   /* Calculating transformed position and normal */
-   transPos = uModelMatrix * vec4(aPosition, 1);
-   transNormal = uModelMatrix * vec4(aNormal, 0);
-   
-   /* Interpolate the position and normal and send to the fragment shader */
-   vNorm = vec3(transNormal.x, transNormal.y, transNormal.z);
-   vPos = vec3(transPos.x, transPos.y, transPos.z);
-   /* Vertex location in texture coordinates */
-   vShadowPos = NDCtoTex * uLightProjMatrix * uLightViewMatrix * transPos;
+  if (uTextMode == 1.0) {
+    vTexCoord = aTexCoord;
+    gl_Position = vec4(textPos, 0, 1);
+  } else {
+     /* First model transforms */
+     gl_Position = uProjMatrix * uViewMatrix * uModelMatrix * vec4(aPosition, 1);;
+    
+     /* Calculating transformed position and normal */
+     transPos = uModelMatrix * vec4(aPosition, 1);
+     transNormal = uModelMatrix * vec4(aNormal, 0);
+     
+     /* Interpolate the position and normal and send to the fragment shader */
+     vNorm = vec3(transNormal.x, transNormal.y, transNormal.z);
+     vPos = vec3(transPos.x, transPos.y, transPos.z);
+     /* Vertex location in texture coordinates */
+     vShadowPos = NDCtoTex * uLightProjMatrix * uLightViewMatrix * transPos;
 
-   vTexCoord = aTexCoord;
+     vTexCoord = aTexCoord;
 
-   gl_PointSize = aPointSize*15.0/length(gl_Position);
+     gl_PointSize = aPointSize*15.0/length(gl_Position);
+   }
 }

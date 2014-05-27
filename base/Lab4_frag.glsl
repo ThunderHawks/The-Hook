@@ -19,6 +19,7 @@ varying vec4 vShadowPos;
 
 varying vec2 vTexCoord;
 uniform float uGuiMode;
+uniform float uTextMode;
 
 void main() {
    float angleNL, angleNH, depth, dist;
@@ -32,7 +33,9 @@ void main() {
 
    vec4 texColor1 = texture2D(uTexUnit, vTexCoord);
 
-   if(uGuiMode == 1.0) {
+   if (uTextMode == 1.0) {
+      gl_FragColor = vec4(texColor1[0], texColor1[1], texColor1[2], 1);
+   } else if(uGuiMode == 1.0) {
       gl_FragColor = vec4(texColor1[0], texColor1[1], texColor1[2], 1);
    }
    else {

@@ -62,7 +62,7 @@ GLint h_uCamPos, h_uShadeMode;
 GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine, h_uMatAlpha;
 GLint h_uLightViewMatrix, h_uLightProjMatrix;
 GLint h_uTexUnit, h_uTexUnit2;
-GLint h_uTexCoord, h_aTexCoord, h_uGuiMode;
+GLint h_uTexCoord, h_aTexCoord, h_uGuiMode, h_uTextMode;
 GLuint TexBuffObj;
 
 //declare Matrix stack
@@ -84,7 +84,7 @@ std::list<part*> particleSpawner;
 
 /* projection matrix  - do not change */
 glm::mat4 SetProjectionMatrix() {
-   glm::mat4 Projection = glm::perspective(80.0f, (float)g_width/g_height, 0.1f, 500.f);	
+   glm::mat4 Projection = glm::perspective(80.0f, (float)g_width/g_height, 0.1f, 400.f);	
    safe_glUniformMatrix4fv(h_uProjMatrix, glm::value_ptr(Projection));
    return Projection;
 }
@@ -208,6 +208,8 @@ void glfwDraw (GLFWwindow *window, int passNum)
       //Draw skybox
    	DrawSkyBox();
    	SetModelStat();
+
+      //printText2D("Hello World!", 0, 0, 10);
 
       safe_glEnableVertexAttribArray(h_aPosition);
       safe_glEnableVertexAttribArray(h_aNormal);
