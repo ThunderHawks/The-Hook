@@ -2,8 +2,15 @@
 #ifndef LAB4_H_
 #define LAB4_H_
 
+#ifndef GL_GLEW_H_
+#define GL_GLEW_H_
 #include <GL/glew.h>
+#endif 
+
+#ifndef GLFW_3_H_
+#define GLFW_3_H_
 #include <GLFW/glfw3.h>
+#endif
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -13,9 +20,21 @@
 #include "MStackHelp.h"
 #include "InitHelpers.h"
 
+
+#ifndef GLM_HPP_
+#define GLM_HPP_
 #include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp" //perspective, trans etc
-#include "glm/gtc/type_ptr.hpp" //value_ptr
+#endif
+#ifndef GLM_GTC_MATRIX_TRANSFORM_HPP
+#define GLM_GTC_MATRIX_TRANSFORM_HPP
+#include "glm/gtc/matrix_transform.hpp"
+#endif
+
+#ifndef GLM_GTC_TYPE_HPP
+#define GLM_GTC_TYPE_HPP
+#include "glm/gtc/type_ptr.hpp"
+#endif
+
 #include <list>
 #include <math.h>
 #include <fstream>

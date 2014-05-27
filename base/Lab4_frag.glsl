@@ -17,6 +17,9 @@ varying vec3 vNorm;
 varying vec3 vPos;
 varying vec4 vShadowPos;
 
+varying vec2 vTexCoord;
+uniform float uGuiMode;
+
 void main() {
    float angleNL, angleNH, depth, dist;
    vec4 shadowPos;
@@ -27,8 +30,14 @@ void main() {
    vec3 light = normalize(vec3(uLightVec.x, uLightVec.y, uLightVec.z));  // Directional light
    vec3 view = normalize(uCamPos - vPos);
 
-// ONLY AVERAGE THE SHADOWS FOR PIXELS NOT IN SHADOW. SHADOWS SHOULD BE SLIGHTLY BIGGER THAN THE OBJECT
+   vec4 texColor1 = texture2D(uTexUnit, vTexCoord);
 
+   if(uGuiMode == 1.0) {
+      gl_FragColor = vec4(texColor1[0], texColor1[1], texColor1[2], 1);
+   }
+   else {
+
+   
 
    angleNL = clamp(dot(norm, light), 0.0, 1.0);
 
@@ -71,7 +80,7 @@ void main() {
       float multiplier = 0.0;
       float offsetX, offsetY;
 
-      // Blur the shadow by averaging the surrounding shadow map values in a 3x3 texel square for non-shadowed pixels
+      // Blur the shadow by averaging the surrounding shadow map values in a 3x3 texel square
       for (offsetX = -1.0; offsetX <= 1.0; offsetX++) {
          for (offsetY = -1.0; offsetY <= 1.0; offsetY++) {
             // Get the shadow map depth at a neighboring texel
@@ -97,5 +106,6 @@ void main() {
    //gl_FragColor = vec4(norm, 1.0);
    //gl_FragColor = vec4(depth, depth, depth, 1.0);
    //gl_FragColor = vec4(dist, dist, dist, 1.0);
+   }
 
 }

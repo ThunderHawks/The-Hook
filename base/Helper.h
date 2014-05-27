@@ -1,3 +1,6 @@
+#ifndef HELPER_H_
+#define HELPER_H_
+
 extern float g_height, g_width;
 
 /* Input:  a vec3 vector
@@ -24,3 +27,5 @@ float p2w_y(int p_y);
 	Summary: get a random float in between two numbers
 */
 float RandomFloat(float a, float b);
+
+#endif

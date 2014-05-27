@@ -3,14 +3,15 @@
 
 #include "Lab4.h"
 #include "IOEdit.h"
+#include "level.h"
 #include "Shapes.h"
 #include "Camera.h"
 #include "Helper.h"
-#include "level.h"
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 #define ICON_WIDTH 0.13
 #define ICON_HEIGHT 0.22
-
 
 /*TEXTURING*/
 
@@ -27,6 +28,13 @@ typedef struct RGB {
    GLubyte b;
 } RGB;
 
+struct Icon {
+   Entity entity;
+   float lookAtDistance;
+   int textureIndex;
+   glm::vec2 position;
+}; 
+
 //Initialize gui
 void initGui(int EditMode);
 void DrawCrosshair();
@@ -40,6 +48,9 @@ void ready3D();
 //Called in IOEdit.cpp when in gui mode and the left mouse button
 //is pressed
 void GuiPressing(int xPos, int yPos);
+//Retrieve the icon at Hot Bar index
+Icon getHBIcon(int index);
 int ImageLoad(char *filename, TexImage *image);
 GLvoid LoadTexture(char *image_file, int tex_id);
+void makeCheckerBoard ( int nRows, int nCols );
 #endif

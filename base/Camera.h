@@ -1,7 +1,10 @@
 #ifndef CAMERA_H_
 #define CAMERA_H_
 
+#ifndef GLM_HPP_
+#define GLM_HPP_
 #include "glm/glm.hpp"
+#endif
 
 extern GLint h_uViewMatrix;
 extern GLint h_uLightViewMatrix;

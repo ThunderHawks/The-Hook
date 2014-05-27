@@ -5,36 +5,229 @@ RGB myImage[64][64];
 RGB* g_pixel;
 
 //Location of each HotBar Icon Index
-vector<glm::vec2> HBIndices;
+vector<Icon> HBIndices;
 
 //Location of each Selection Screen Icon Index
-vector<glm::vec2> SSIndices;
+vector<Icon> SSIndices;
 
 //Last selection index pressed
-int lastSelectionIndex = -1;
+bool iconSelected = false;
+Icon lastSelectedIcon;
+
+GLuint textures[30];
+FT_Library library;
+FT_Face face;
+
+//Icon createIcon(Entity ent, float distance, int texIndex, glm::vec2 pos) {
+Icon createIcon(int meshIndex, int textureIndex, float distance, glm::vec2 pos) {
+   Icon icon;
+
+   //Set icon's entity
+   switch(meshIndex) {
+      case 0:
+         //Basic Blg
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 0);
+         break;
+      case 1:
+         //Shop Bldg
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.25, 0.25, 0.25), 0.0, 1);
+         break;
+      case 2:
+         //Cinderblock
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 2);
+         break;
+      case 3:
+         //Medium Blg
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.1, 0.1, 0.1), 0.0, 3);
+         break;
+      case 4:
+         //Side walk corner
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 4);
+         break;
+      case 5:
+         //SideWalk
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 5);
+         break;
+      case 6:
+         //Street light
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.5, 0.5, 0.5), 0.0, 6);
+         break;
+      case 7:
+         //Table
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 7);
+         break;
+      case 8:
+         //Tall blg
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.4, 0.4, 0.4), 0.0, 8);
+         break;
+      case 9:
+         //Water tower
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 9);
+         break;
+      case 10:
+         //Record Building
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 10);
+         break;
+      case 11:
+         //Wall
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 11);
+         break;
+      case 12:
+         //Gas Station
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 12);
+         break;
+      case 13:
+         //Half slab
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 0.0, 13);
+         break;
+      case 14:
+         //Mart
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 14);
+         break;
+      case 15:
+         //Flag
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 15);
+         break;
+      case 16:
+         //AsymbBldg
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.1, 0.1, 0.1), 0.0, 16);
+         break;
+      case 17:
+         //PointyBldg
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.1, 0.1, 0.1), 0.0, 17);
+         break;
+   }
+   icon.lookAtDistance = distance;
+   icon.textureIndex = textureIndex;
+   icon.position = pos;
+   return icon;
+}
 
 void initGui(int EditMode) {
+
    if(EditMode) {
-      //Initialize HotBar icon indices
-      for(int i = 0; i < 9; i++) {
-         HBIndices.push_back(glm::vec2(0.15 * i - 0.6, -0.88));
+      Icon iconTemp;
+
+      //Initialize Freetype library
+      int error = FT_Init_FreeType(&library);
+      if(error) {
+         printf("Error: An error has occurred initializing the FREETYPE library\n");
+      }
+      //Initialize Freetype New Face
+      error = FT_New_Face(library, "/usr/share/fonts/truetype/arial.ttf", 0, &face );
+      if(error == FT_Err_Unknown_File_Format) {
+         printf("Error: Font file could be opened and read but unsupported format\n");
+      }
+      else if(error) {
+         printf("Error: Font file could not be opened and read or broken\n");
       }
 
-     //Initialize Selection screen icon indicies
-     for(int j = 3; j >= 0; j--) {
-         for(int i = 0; i < 9; i++) {
-            SSIndices.push_back(glm::vec2(0.15 * i - 0.6 , 0.3 * j - 0.2));
-         }
-      }
+
+      glGenTextures(30, textures);
+      glGenTextures(1, textures + 1);
+
+      printf("here\n");
+      LoadTexture((char *)"../Assets/Textures/ModMBasicBldg.bmp", textures[0]);
+      LoadTexture((char *)"../Assets/Textures/shopBldg.bmp", textures[1]);
+      LoadTexture((char *)"../Assets/Textures/cinderblock.bmp", textures[2]);
+      LoadTexture((char *)"../Assets/Textures/mediumBasicBuilding.bmp", textures[3]);
+      LoadTexture((char *)"../Assets/Textures/sidewalkCorner.bmp", textures[4]);
+      LoadTexture((char *)"../Assets/Textures/sidewalk.bmp", textures[5]);
+      LoadTexture((char *)"../Assets/Textures/streetlight.bmp", textures[6]);
+      LoadTexture((char *)"../Assets/Textures/table.bmp", textures[7]);
+      LoadTexture((char *)"../Assets/Textures/tallBldg.bmp", textures[8]);
+      LoadTexture((char *)"../Assets/Textures/waterTower.bmp", textures[9]);
+      LoadTexture((char *)"../Assets/Textures/simpleCRBldg.bmp", textures[10]);
+      LoadTexture((char *)"../Assets/Textures/wall.bmp", textures[11]);
+      LoadTexture((char *)"../Assets/Textures/gasStation.bmp", textures[12]); 
+      LoadTexture((char *)"../Assets/Textures/halfSlab.bmp", textures[13]);
+      LoadTexture((char *)"../Assets/Textures/mart.bmp", textures[14]);
+      LoadTexture((char *)"../Assets/Textures/flag.bmp", textures[15]);
+      LoadTexture((char *)"../Assets/Textures/asymBldg.bmp", textures[16]);
+      LoadTexture((char *)"../Assets/Textures/pointyBldg.bmp", textures[17]);
+      LoadTexture((char *)"../Assets/Textures/SelectionScreenTexture.bmp", textures[18]);
+      LoadTexture((char *)"../Assets/Textures/SelectionUI_converted.bmp", textures[19]);
+      LoadTexture((char *)"../Assets/Textures/crackedTexture.bmp", textures[20]);
+      LoadTexture((char *)"../Assets/Textures/caution.bmp", textures[21]);
+
+      //Initialize HotBar icons
+      HBIndices.push_back(createIcon(0, textures[0], 23.5, glm::vec2(-0.6, -0.88)));
+      HBIndices.push_back(createIcon(1, textures[1], 12.5, glm::vec2(-0.45, -0.88)));
+      HBIndices.push_back(createIcon(2, textures[2], 3.5, glm::vec2(-0.3, -0.88)));
+      HBIndices.push_back(createIcon(3, textures[3], 8.0, glm::vec2(-0.15, -0.88)));
+      HBIndices.push_back(createIcon(4, textures[4], 8.0, glm::vec2(0.0, -0.88)));
+      HBIndices.push_back(createIcon(5, textures[5], 8.0, glm::vec2(0.15, -0.88)));
+      HBIndices.push_back(createIcon(2, textures[6], 11.5, glm::vec2(0.3, -0.88)));
+      HBIndices.push_back(createIcon(7, textures[7], 5.0, glm::vec2(0.45, -0.88)));
+      HBIndices.push_back(createIcon(8, textures[8], 500.0, glm::vec2(0.6, -0.88)));
+
+
+      //Initialize Selection screen icons
+      //Row 1
+      SSIndices.push_back(createIcon(0, textures[0], 23.5, glm::vec2(-0.6, 0.7)));
+      SSIndices.push_back(createIcon(1, textures[1], 12.5, glm::vec2(-0.45, 0.7)));
+      SSIndices.push_back(createIcon(2, textures[2], 3.5, glm::vec2(-0.3, 0.7)));
+      SSIndices.push_back(createIcon(3, textures[3], 8.0, glm::vec2(-0.15, 0.7)));
+      SSIndices.push_back(createIcon(4, textures[4], 8.0, glm::vec2(0.0, 0.7)));
+      SSIndices.push_back(createIcon(5, textures[5], 8.0, glm::vec2(0.15, 0.7)));
+      SSIndices.push_back(createIcon(6, textures[6], 11.5, glm::vec2(0.3, 0.7)));
+      SSIndices.push_back(createIcon(7, textures[7], 5.0, glm::vec2(0.45, 0.7)));
+      SSIndices.push_back(createIcon(8, textures[8], 500.0, glm::vec2(0.6, 0.7)));
+      //Row 2
+      SSIndices.push_back(createIcon(9, textures[9], 8.0, glm::vec2(-0.6, 0.4)));
+      SSIndices.push_back(createIcon(10, textures[10], 35.6, glm::vec2(-0.45, 0.4)));
+      SSIndices.push_back(createIcon(11, textures[11], 5.8, glm::vec2(-0.3, 0.4)));
+      SSIndices.push_back(createIcon(12, textures[12], 18.0, glm::vec2(-0.15, 0.4)));
+      SSIndices.push_back(createIcon(13, textures[13], 8.0, glm::vec2(0.0, 0.4)));
+      SSIndices.push_back(createIcon(14, textures[14], 22.5, glm::vec2(0.15, 0.4)));
+      SSIndices.push_back(createIcon(15, textures[15], 4.1, glm::vec2(0.3, 0.4)));
+      SSIndices.push_back(createIcon(16, textures[16], 54.7, glm::vec2(0.45, 0.4)));
+      SSIndices.push_back(createIcon(17, textures[17], 70.0, glm::vec2(0.6, 0.4)));
+      //Row 
+      SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(-0.6, 0.1)));
+      SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(-0.45, 0.1)));
+      SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(-0.3, 0.1)));
+      SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(-0.15, 0.1)));
+      SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.0, 0.1)));
+      SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.15, 0.1)));
+      SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.3, 0.1)));
+      SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.45, 0.1)));
+      SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.6, 0.1)));
+      //Row 4*/
+/*
+      SSIndices.push_back(createIcon(40, 8.0, glm::vec2(-0.6, -0.2)));
+      SSIndices.push_back(createIcon(40, 8.0, glm::vec2(-0.45, -0.2)));
+      SSIndices.push_back(createIcon(40, 8.0, glm::vec2(-0.3, -0.2)));
+      SSIndices.push_back(createIcon(40, 8.0, glm::vec2(-0.15, -0.2)));
+      SSIndices.push_back(createIcon(40, 8.0, glm::vec2(0.0, -0.2)));
+      SSIndices.push_back(createIcon(40, 8.0, glm::vec2(0.15, -0.2)));
+      SSIndices.push_back(createIcon(40, 8.0, glm::vec2(0.3, -0.2)));
+      SSIndices.push_back(createIcon(40, 8.0, glm::vec2(0.45, -0.2)));
+      SSIndices.push_back(createIcon(40, 8.0, glm::vec2(0.6, -0.2)));
+*/
+      //For the time being
+      glEnable(GL_TEXTURE_2D);
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
+
+      makeCheckerBoard(64, 64);
    }
 }
 
+Icon getHBIcon(int index) {
+   return HBIndices[index - 1];
+}
+
 void DrawCrosshair() {
-   SetupSq(0, 0, 5, 0.01, 0.04);
-   SetupSq(0, 0, 5, 0.03, 0.01);
+   SetupSq(0, 0, 0, 0.01, 0.04);
+   SetupSq(0, 0, 0, 0.03, 0.01);
 }
 
 void ready2D() {
+
+   glUniform1f(h_uGuiMode, 1);
    //glCullFace(GL_BACK);
    glDisable(GL_CULL_FACE);
 
@@ -51,6 +244,8 @@ void ready2D() {
 }
 
 void ready3D() {
+    glUniform1f(h_uGuiMode, 0);
+
     glViewport(0, 0, g_width, g_height);
     glMatrixMode(GL_PROJECTION);
 
@@ -66,31 +261,30 @@ void ready3D() {
 }
 
 void DrawHotBar() {
-   glm::vec2 tempPos;
+   Icon iconTemp;
 
    //Draw background
-   SetupSq(0, -0.9, 5, 1.4, 0.3);
+   SetupSq(0, -0.9, textures[20], 1.4, 0.3);
 
    //Draw Icons
    for(int i = 0; i < HBIndices.size(); i++) {
-      tempPos = HBIndices[i];
-      SetupSq(tempPos.x, tempPos.y, 4, ICON_WIDTH, ICON_HEIGHT);      
+      iconTemp = HBIndices[i];
+      SetupSq(iconTemp.position.x, iconTemp.position.y, iconTemp.textureIndex, ICON_WIDTH, ICON_HEIGHT);      
    }
 }
 
 void DrawSelection() {
-   glm::vec2 tempPos;
+   Icon iconTemp;
 
    //Draw background
-   SetupSq(0, 0.25, 5, 1.4, 1.3);
+   SetupSq(0, 0.35, textures[20], 1.4, 1.1);
 
    //Draw icons
    for(int i = 0; i < SSIndices.size(); i++) {
-      tempPos = SSIndices[i];
-      SetupSq(tempPos.x, tempPos.y, 4, ICON_WIDTH, ICON_HEIGHT);      
+      iconTemp = SSIndices[i];
+      SetupSq(iconTemp.position.x, iconTemp.position.y, iconTemp.textureIndex, ICON_WIDTH, ICON_HEIGHT); ;      
    }
 }
-
 
 bool iconPressed(glm::vec2 iconPos, int xPos, int yPos) {
 
@@ -113,17 +307,26 @@ bool iconPressed(glm::vec2 iconPos, int xPos, int yPos) {
    return false;
 }
 
+void SetHBIcon(Icon icon, int HBIndex) {
+   //Save HB position
+   glm::vec2 posTemp = HBIndices[HBIndex].position;
+   //Set icon over HB icon
+   HBIndices[HBIndex] = icon;
+   //Restore HB position
+   HBIndices[HBIndex].position = posTemp;
+}
+
 void GuiPressing(int xPos, int yPos) {
    //printf("Tried to press button at %d %d\n", xPos, yPos);
 
    //Test HB icons
    for(int i = 0; i < HBIndices.size(); i++) {
 
-      if(iconPressed(HBIndices[i], xPos, yPos) == true) {
+      if(iconPressed(HBIndices[i].position, xPos, yPos) == true) {
          printf("~~~~Icon %d Pressed on hotbar\n", i);
-         if(lastSelectionIndex != -1) {
-            SetHotBarIndex(i + 1, lastSelectionIndex);
-            lastSelectionIndex = -1;
+         if(iconSelected == true) {
+            SetHBIcon(lastSelectedIcon, i);
+            iconSelected = false;
          }
          return;
       }
@@ -131,9 +334,10 @@ void GuiPressing(int xPos, int yPos) {
 
    //Test SS icons
    for(int i = 0; i < SSIndices.size(); i++) {
-      if(iconPressed(SSIndices[i], xPos, yPos) == true) {
+      if(iconPressed(SSIndices[i].position, xPos, yPos) == true) {
          printf("~~~~Icon %d Pressed on selection\n", i);
-         lastSelectionIndex = i;
+         lastSelectedIcon = SSIndices[i];
+         iconSelected = true;
          return; 
       }
    }
@@ -270,4 +474,25 @@ int ImageLoad(char *filename, TexImage *image) {
 
   /*  we're done. */
   return 1;
+}
+
+void makeCheckerBoard ( int nRows, int nCols )
+{
+  g_pixel = new RGB[nRows * nCols];
+  int c;
+
+  long count = 0;
+  for ( int i=0; i < nRows; i++ ) {
+    for ( int j=0; j < nCols; j++ ) {
+      count = j*nCols +i;
+      c = (((i/8) + (j/8)) %2) * 255;
+      g_pixel[count].r = c;
+      g_pixel[count].g = c;
+      g_pixel[count].b = c;
+
+    }
+  }
+  /* set up the checker board texture as well */
+  glBindTexture(GL_TEXTURE_2D, 2);
+  glTexImage2D(GL_TEXTURE_2D, 0, 3, 64, 64, 0, GL_RGB, GL_UNSIGNED_BYTE, g_pixel);
 }

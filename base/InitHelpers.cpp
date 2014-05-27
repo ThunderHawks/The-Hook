@@ -27,17 +27,12 @@ int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName) {
    GLuint FS; //handles to frag shader object
    GLint vCompiled, fCompiled, linked; //status of shader
 
-   printf("IS1\n");
-
    VS = glCreateShader(GL_VERTEX_SHADER);
    FS = glCreateShader(GL_FRAGMENT_SHADER);
 
-   printf("IS3\n");
    //load the source
    glShaderSource(VS, 1, &vShaderName, NULL);
    glShaderSource(FS, 1, &fShaderName, NULL);
-   
-   printf("IS2\n");
 
    //compile shader and print log
    glCompileShader(VS);
@@ -64,7 +59,6 @@ int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName) {
    glGetProgramiv(ShadeProg, GL_LINK_STATUS, &linked);
 
    glUseProgram(ShadeProg);
-   printf("IS10\n");
 
    /* get handles to attribute and uniform data in shader */
         /* get handles to attribute data */
@@ -86,6 +80,8 @@ int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName) {
         h_uLightViewMatrix = safe_glGetUniformLocation(ShadeProg, "uLightViewMatrix");
         h_uLightProjMatrix = safe_glGetUniformLocation(ShadeProg, "uLightProjMatrix");
         h_uShadeMode = safe_glGetUniformLocation(ShadeProg, "uShadeMode");
+        h_aTexCoord = safe_glGetAttribLocation(ShadeProg, "aTexCoord");
+        h_uGuiMode = safe_glGetUniformLocation(ShadeProg, "uGuiMode");
 
    printf("sucessfully installed shader %d\n", ShadeProg);
    return 1;

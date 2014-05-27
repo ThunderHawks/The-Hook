@@ -4,6 +4,8 @@
 #define SCALE 3
 #include "Mesh.h"
 #include "Camera.h"
+//#include "Gui.h"
+
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -32,9 +34,7 @@ struct Entity {
 };
 
 //This method loads the level models and initializes the hotbar
-void initLevelLoader();
-//Allows the Hotbar Index to be set to the Selection Screen Index
-void SetHotBarIndex(int HBIndex, int SSIndex);
+void initLevelLoader(int EditMode);
 //The entities are loaded into the physics engine
 void loadLevel(string fileName);
 //Creates an entity with the given arguments

@@ -59,9 +59,9 @@ GLint h_uLightVec;
 GLint h_uLightColor;
 GLint h_uCamPos, h_uShadeMode;
 GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine, h_uMatAlpha;
-GLint h_uTexUnit, h_uTexUnit2;
 GLint h_uLightViewMatrix, h_uLightProjMatrix;
-GLint h_aTexCoord;
+GLint h_uTexUnit, h_uTexUnit2;
+GLint h_uTexCoord, h_aTexCoord, h_uGuiMode;
 GLuint TexBuffObj;
 
 //declare Matrix stack
@@ -440,7 +440,7 @@ int main( int argc, char *argv[] )
       physicsInit();
       InitGeom();
       initGui(Edit);
-      initLevelLoader();
+      initLevelLoader(Edit);
       loadLevel(fileName);
    }
    //If Play Mode
@@ -472,7 +472,8 @@ int main( int argc, char *argv[] )
       physicsInit();
       InitGeom();
       initGui(Edit);
-      initLevelLoader();
+      initLevelLoader(Edit);
+      printf("Reading lv\n");
       loadLevel(fileName);
 
       //music
@@ -498,6 +499,7 @@ int main( int argc, char *argv[] )
    objectives.push_back(tObj);
    tObj->Init();
 
+   printf("Starting main loop\n");
    // Start the main execution loop.
    while (!glfwWindowShouldClose(window)) {
       glfwPollEvents();

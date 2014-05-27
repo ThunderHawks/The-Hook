@@ -192,7 +192,7 @@ AssimpMesh loadMesh(const std::string& path) {
 	}
 	
 	//checking vertex counts
-	printf("Vertex Count~ In Bone Array: %d, in Mesh: %d\n", ret.vertex_array.size()/3, ret.numVerts);
+	//printf("Vertex Count~ In Bone Array: %d, in Mesh: %d\n", ret.vertex_array.size()/3, ret.numVerts);
 	/*
 	for(i = 0; i < ret.boneCt; ++i) {
 		printf("Bone Name: %s\n", mesh.mBones[i]->mName.C_Str());

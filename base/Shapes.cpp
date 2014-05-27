@@ -173,6 +173,12 @@ void initSquare() {
 unsigned short idx[] = {0, 1, 2,
                         0, 2, 3,
                                };
+     static GLfloat SqTex[] = {
+     0, 0,
+     0, 1,
+     1, 1,
+     1, 0,     
+    };
 
     g_SqiboLen = 6;
     glGenBuffers(1, &SqBuffObj);
@@ -186,6 +192,10 @@ unsigned short idx[] = {0, 1, 2,
     glGenBuffers(1, &SqNormalObj);
     glBindBuffer(GL_ARRAY_BUFFER, SqNormalObj);
     glBufferData(GL_ARRAY_BUFFER, sizeof(SqNormal), SqNormal, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &TexBuffObj);
+    glBindBuffer(GL_ARRAY_BUFFER, TexBuffObj);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(SqTex), SqTex, GL_STATIC_DRAW);
 }
 
 void SetupCube(float x, float y, float z, int material, float angle, float scaleX, float scaleY, float scaleZ) {
@@ -210,13 +220,23 @@ void SetupCube(float x, float y, float z, int material, float angle, float scale
    safe_glDisableVertexAttribArray(h_aNormal);
 }
 
-void SetupSq(float x, float y, int material, float scaleX, float scaleY) {
+void SetupSq(float x, float y, int texture, float scaleX, float scaleY) {
    /*First Cube*/
    SetModel(x, y, scaleX, scaleY);
-   SetMaterial(material);
+ 
+   //setup texture unit
+   //glEnable(GL_TEXTURE_2D);
+   glActiveTexture(GL_TEXTURE1);
+   glBindTexture(GL_TEXTURE_2D, texture);
+
+   safe_glUniform1i(h_uTexUnit, 1);
    safe_glEnableVertexAttribArray(h_aPosition);
    glBindBuffer(GL_ARRAY_BUFFER, SqBuffObj);
    safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+   safe_glEnableVertexAttribArray(h_aTexCoord);
+   glBindBuffer(GL_ARRAY_BUFFER, TexBuffObj);
+   safe_glVertexAttribPointer(h_aTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
    safe_glEnableVertexAttribArray(h_aNormal);
    glBindBuffer(GL_ARRAY_BUFFER, SqNormalObj);
@@ -227,134 +247,19 @@ void SetupSq(float x, float y, int material, float scaleX, float scaleY) {
 
    glDrawElements(GL_TRIANGLES, g_SqiboLen, GL_UNSIGNED_SHORT, 0);
 
+   //safe_glUniform1i(h_uTexUnit, 0);
    /* Disable the attributes used by our shader*/
+   glDisable(GL_TEXTURE_2D);
    safe_glDisableVertexAttribArray(h_aPosition);
    safe_glDisableVertexAttribArray(h_aNormal);
+   safe_glDisableVertexAttribArray(h_aTexCoord);
 }
 
-/*static void initRamp() {
-   float RampPos[] = {
-      //Slanted face, 4 verts
-      0.25, 0.0, 0.5, //0
-      -0.25, 0.0, 0.5, //1
-      0.25, 0.5, -0.25, //2
-      -0.25, 0.5, -0.25, //3
-
-      //Right Triangle, 3 verts
-      0.25, 0.0, 0.5, //4
-      0.25, 0.0, -0.25, //5
-      0.25, 0.5, -0.25, //6
-
-      //Left Triangle, 3 verts
-      -0.25, 0.0, 0.5, //7
-      -0.25, 0.0, -0.25, //8
-      -0.25, 0.5, -0.25, //9
-
-      //Back Face, 4 verts
-      0.25, 0, -0.25, //10 
-      -0.25, 0, -0.25, //11
-      0.25, 0.5, -0.25, //12
-      -0.25, 0.5, -0.25, //13
-
-      //Bottom, 4 verts
-      0.25, 0, 0.5, //14
-      -0.25, 0, 0.5,  //15
-      0.25, 0, -0.25, //16
-      -0.25, 0, -0.25, //17
-   };*/
-/*float RampNormal[] = {
-      0, 0.8, 1,
-      0, 0.8, 1,
-      0, 0.8, 1,
-      0, 0.8, 1,
-
-      1.0, 0.0, 0.0,
-      1.0, 0.0, 0.0,
-      1.0, 0.0, 0.0,
-
-      -1.0, 0.0, 0.0,
-      -1.0, 0.0, 0.0,
-      -1.0, 0.0, 0.0,
-
-      0.0, 0.0, -1.0,
-      0.0, 0.0, -1.0,
-      0.0, 0.0, -1.0,
-
-      0.0, -1.0, 0.0,
-      0.0, -1.0, 0.0,
-      0.0, -1.0, 0.0,
-   };
-   unsigned short idx[] = {0, 1, 3,
-                           0, 2, 3,
-
-                           4, 5, 6,
-
-                           7, 8, 9,
-
-                           10, 11, 12,
-                           11, 12, 13,
-
-                           14, 15, 16,
-                           15, 16, 17,
-                           };
-
-    g_RiboLen = 24;
-    glGenBuffers(1, &RampBuffObj);
-    glBindBuffer(GL_ARRAY_BUFFER, RampBuffObj);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(RampPos), RampPos, GL_STATIC_DRAW);
-
-    glGenBuffers(1, &RIndxBuffObj);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, RIndxBuffObj);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idx), idx, GL_STATIC_DRAW);
-
-    glGenBuffers(1, &RampNormalBuffObj);
-    glBindBuffer(GL_ARRAY_BUFFER, RampNormalBuffObj);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(RampNormal), RampNormal, GL_STATIC_DRAW);
-
-}*/
-/*static void initCubeShadow() {
-   float ShadowPos[] = {
-      0.5, 0.0, 0.5, //P0
-      -0.5, 0.0, 0.5, //P1
-      -0.5, 0.0, -0.5, //P2
-      0.5, 0.0, -0.5, //P3
-   };
-
-    float ShadowNormal[] = {
-     0, 1, 0,
-     0, 1, 0,
-     0, 1, 0,
-     0, 1, 0,
-     0, 1, 0,
-     0, 1, 0
-    };
-
-   unsigned short idx[] = {0, 1, 2,
-                           0, 2, 3};
-
-    g_SCiboLen = 6;
-    glGenBuffers(1, &ShadowCubeBuffObj);
-    glBindBuffer(GL_ARRAY_BUFFER, ShadowCubeBuffObj);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(ShadowPos), ShadowPos, GL_STATIC_DRAW);
-
-    glGenBuffers(1, &SCIndxBuffObj);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, SCIndxBuffObj);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idx), idx, GL_STATIC_DRAW);
-
-    glGenBuffers(1, &ShadowNormalBuffObj);
-    glBindBuffer(GL_ARRAY_BUFFER, ShadowNormalBuffObj);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(ShadowNormal), ShadowNormal, GL_STATIC_DRAW);
-}*/
-
-
 /* Initialize the geometry */
-void InitGeom() {
-  //initRamp();
+void InitGeom() {;
   initGround();
   initCube();
   initSquare();
-  /*initCubeShadow();
-  initMesh();*/
 }
 
 /* helper function to set up material for shading */

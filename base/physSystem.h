@@ -4,7 +4,11 @@
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
 #include <vector>
+
+#ifndef GLM_HPP_
+#define GLM_HPP_
 #include "glm/glm.hpp"
+#endif 
 
 bool physGrapple(float lx, float ly, float lz);
 std::vector<btRigidBody*> getVecList();

@@ -132,6 +132,7 @@ void glfwEditScroll(GLFWwindow *window, double xOffset, double yOffset) {
    }
    //If the change will be in range
    else if(getDistance() + yOffset * 0.1 <= 70.0 && getDistance() + yOffset * 0.1 >= 1.0) {
+      printf("getDistance %f\n", getDistance());
       //If l-shift increment by a tiny amount
       if(eKeysPressed[340] == 1) {
          addDistance(0.1 * yOffset);

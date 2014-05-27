@@ -19,9 +19,19 @@
 #include <cstdlib>
 #include <iostream>
 
+#ifndef GLM_HPP_
+#define GLM_HPP_
 #include "glm/glm.hpp"
+#endif
+#ifndef GLM_GTC_MATRIX_TRANSFORM_HPP
+#define GLM_GTC_MATRIX_TRANSFORM_HPP
 #include "glm/gtc/matrix_transform.hpp"
+#endif
+
+#ifndef GLM_GTC_TYPE_HPP
+#define GLM_GTC_TYPE_HPP
 #include "glm/gtc/type_ptr.hpp"
+#endif
 
 #include "level.h"
 
