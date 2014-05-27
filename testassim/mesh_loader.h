@@ -24,6 +24,7 @@ struct Bone {
 	int numPosKeyFrames;
 	int numRotKeyFrames;
 	int numScaleKeyFrames;
+	
 	aiVectorKey *posKeys;
 	aiQuatKey *rotKeys;
 	aiVectorKey *scaleKeys;

@@ -48,12 +48,6 @@ AssimpMesh loadMesh(const std::string& path) {
 	//fill all the positions for the skeleton_vertices with the actual vertices
 	for (i = 0; i < mesh.mNumVertices; i++) {
 		ret.skeleton_vertices[i].position = mesh.mVertices[i];
-		/*other option if we ues vec3*/
-		/*
-		ret.skeleton_verticies[i*3].position.x = ret.vertex_array[i];
-		ret.skeleton_verticies[i*3 + 1].position.y = ret.vertex_array[i + 1];
-		ret.skeleton_verticies[i*3 + 2].position.z = ret.vertex_array[i + 2];
-		*/
 	}
 
 	//store whether it has bones or not. If it does, then we are dealing with an animated model and we go in the if
@@ -80,18 +74,11 @@ AssimpMesh loadMesh(const std::string& path) {
 				smallest = i;
 				root = temp;
 			}
-			//fill our array of vertices with bones and weights. This code is depricated and can be removed when desired
-			/*for (i = 0; i < mesh.mBones[j]->mNumWeights; i++) {
-				ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].bone_array.push_back(*(mesh.mBones[j]));
-				ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].weight_array.push_back(mesh.mBones[j]->mWeights[i].mWeight);
-			}*/
 		}
 		
 		//construct the hierarchy of bones,starting with the root node. It will go to each of the children adding any bone its finds to the hierarchy
-		for (i = 0; i < root->mNumChildren; ++i) {
-			CreateHierarchy(&boneNames, root->mChildren[i], NULL, &iter, ret.bone_array);
-		}
-		/**********************MODIFIED**********************/
+		CreateHierarchy(&boneNames, root, NULL, &iter, ret.bone_array);
+
 		/*Here is where we actually fill our array of vertices with bones and weights*/
 		for(j = 0; j < mesh.mNumBones; j++) {
 			for (i = 0; i < mesh.mBones[j]->mNumWeights; i++) {
@@ -103,13 +90,9 @@ AssimpMesh loadMesh(const std::string& path) {
 				}
 				//fill the weights. There is a max of 4 weights
 				ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].weight_array.push_back(mesh.mBones[j]->mWeights[i].mWeight);
-				
-				//for (int p = 0; p < ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].weight_array.size(); p++)
-					//printf("weight for vertex %d: %lf\n", mesh.mBones[j]->mWeights[i].mVertexId, ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].weight_array[p]);
 			}
 		}
 		
-		/*****************END**MODIFIED**********************/
 		
 		/*****************GRAB KEY FRAMES******************/
 		//go through all the animations (brace your efficiency organs for sadness)
@@ -131,15 +114,21 @@ AssimpMesh loadMesh(const std::string& path) {
 						ret.bone_array[k].posKeys = (aiVectorKey *)calloc(sizeof(aiVectorKey), nodeHold->mNumPositionKeys);
 						ret.bone_array[k].rotKeys = (aiQuatKey *)calloc(sizeof(aiQuatKey), nodeHold->mNumRotationKeys);
 						ret.bone_array[k].scaleKeys = (aiVectorKey *)calloc(sizeof(aiVectorKey), nodeHold->mNumScalingKeys);
+						
 						//get all the position transforms
-						for (int l = 0; l < nodeHold->mNumPositionKeys; l++)
+						for (int l = 0; l < nodeHold->mNumPositionKeys; l++) {
 							ret.bone_array[k].posKeys[l] = nodeHold->mPositionKeys[l];
+							//if (l==0)
+								//printf("from assimp: %.3lf, %.3lf, %.3lf\n", nodeHold->mPositionKeys[l].mValue.x, nodeHold->mPositionKeys[l].mValue.y, nodeHold->mPositionKeys[l].mValue.z);
+						}
 						//get all the rotation transforms
-						for (int l = 0; l < nodeHold->mNumRotationKeys; l++)
+						for (int l = 0; l < nodeHold->mNumRotationKeys; l++) {
 							ret.bone_array[k].rotKeys[l] = nodeHold->mRotationKeys[l];
+						}
 						//get all the scaling transforms	
-						for (int l = 0; l < nodeHold->mNumScalingKeys; l++)
+						for (int l = 0; l < nodeHold->mNumScalingKeys; l++) {
 							ret.bone_array[k].scaleKeys[l] = nodeHold->mScalingKeys[l];
+						}
 						
 						//get out of the loop
 						k = ret.boneCt;
@@ -148,36 +137,37 @@ AssimpMesh loadMesh(const std::string& path) {
 			}
 		}
 		
-		//these variables are used as place holders
-		Bone *parent;
-		aiMatrix4x4t<float> translateM, rotateM, scaleM;
 		
-		//for each bone we have, we will need to store their personal transform. This is their  translate*rotate*scale transform per keyframe
-		for (i = 0; i < ret.boneCt; i++) {
-			ret.bone_array[i].personalTrans = (aiMatrix4x4 *)calloc(sizeof(aiMatrix4x4), ret.bone_array[i].numPosKeyFrames);
-			for (j = 0; j < ret.bone_array[i].numPosKeyFrames; j++) {
-				aiMatrix4x4::Translation(ret.bone_array[i].posKeys[j].mValue, translateM);
-				rotateM = aiMatrix4x4(ret.bone_array[i].rotKeys[j].mValue.GetMatrix());
-				aiMatrix4x4::Scaling(ret.bone_array[i].scaleKeys[j].mValue, scaleM);
-				ret.bone_array[i].personalTrans[j] = translateM * rotateM * scaleM;
-			}
-		}
 		
-		//go through each bone again
+		/********************Save the Root bone*****************************************************************************************/
+		//go through each bone
 		for (i = 0; i < ret.boneCt; i++) {
-			
 			//store the root bone
 			if (ret.bone_array[i].parent == NULL)
 				ret.root = ret.bone_array +i;
-		}
-		
+		}		
+		/********************Transforms done here*************************************************************************************************/
 		//setup the transforms hierarchically. Starting with the root and going down
 		setupTrans(ret.bone_array, NULL, ret.root);		
-		
 		
 		/**************************************************/
 
 		/****************DEBUGGING*************************/
+		/*for(i = 0; i < ret.boneCt; ++i) {
+			
+			if (i < 30) {
+				printf("Bone %d: \n", i);
+				for (j = 0; j < 4; ++j) {
+					for (int k = 0; k < 4; ++k) {
+						printf("%.3lf, ", ret.bone_array[i].glmTransforms[0][j][k]);
+					}
+					printf("\n");
+				}
+			
+				printf("\n");
+			}
+		}*/
+		
 		/*
 		
 		for (i = 0; i < mesh.mNumVertices; i++) {
@@ -207,8 +197,8 @@ AssimpMesh loadMesh(const std::string& path) {
 	for(i = 0; i < ret.boneCt; ++i) {
 		printf("Bone Name: %s\n", mesh.mBones[i]->mName.C_Str());
 	}
-	
-	for (i = 0; i < ret.boneCt; ++i) {
+	*/
+	/*for (i = 0; i < ret.boneCt; ++i) {
 		if (ret.bone_array[i].parent == NULL) {
 			printf("Bone %s has the parent NULL\n", ret.bone_array[i].name.C_Str());
 		} else {	
@@ -231,22 +221,89 @@ AssimpMesh loadMesh(const std::string& path) {
 
 int setupTrans(Bone *array, Bone *parent, Bone *cur) {
 	int i;
+	aiMatrix4x4t<float> translateM, rotateM, scaleM;
 	
 	//setup the transforms hierarchically. Starting with the root and going down
 	//allocate the space for the transforms first
 	cur->transformations = (aiMatrix4x4 *)calloc(sizeof(aiMatrix4x4), cur->numPosKeyFrames);
 	cur->glmTransforms = (glm::mat4 *)calloc(sizeof(glm::mat4), cur->numPosKeyFrames);
+	cur->personalTrans = (aiMatrix4x4 *)calloc(sizeof(aiMatrix4x4), cur->numPosKeyFrames);
 	
 	//set the bone's transformation to its parent's transformation (without the bone offset) * it's own transformation (without the bone offset) * the bone offset
 	for (i = 0; i < cur->numPosKeyFrames; i++) {
+		//set up the bone's own transformation, for each bone we have, we will need to store their personal transform. This is their  translate*rotate*scale transform per keyframe
+		aiMatrix4x4::Translation(cur->posKeys[i].mValue, translateM);
+		/*if (i == 0) {
+			printf("Vector: %.3lf, %.3lf, %.3lf\n", cur->posKeys[i].mValue.x, cur->posKeys[i].mValue.y, cur->posKeys[i].mValue.z);
+			printf("Matrix: \n");
+			printf("%.3lf %.3lf %.3lf %.3lf\n", translateM.a1, translateM.a2, translateM.a3, translateM.a4);
+			printf("%.3lf %.3lf %.3lf %.3lf\n", translateM.b1, translateM.b2, translateM.b3, translateM.b4);
+			printf("%.3lf %.3lf %.3lf %.3lf\n", translateM.c1, translateM.c2, translateM.c3, translateM.c4);
+			printf("%.3lf %.3lf %.3lf %.3lf\n", translateM.d1, translateM.d2, translateM.d3, translateM.d4);
+			printf("\n");
+		}*/
+		rotateM = aiMatrix4x4(cur->rotKeys[i].mValue.GetMatrix());
+		/*if (i == 0) {
+			printf("Matrix: \n");
+			printf("%.3lf %.3lf %.3lf %.3lf\n", rotateM.a1, rotateM.a2, rotateM.a3, rotateM.a4);
+			printf("%.3lf %.3lf %.3lf %.3lf\n", rotateM.b1, rotateM.b2, rotateM.b3, rotateM.b4);
+			printf("%.3lf %.3lf %.3lf %.3lf\n", rotateM.c1, rotateM.c2, rotateM.c3, rotateM.c4);
+			printf("%.3lf %.3lf %.3lf %.3lf\n", rotateM.d1, rotateM.d2, rotateM.d3, rotateM.d4);
+			printf("\n");
+		}*/
+		aiMatrix4x4::Scaling(cur->scaleKeys[i].mValue, scaleM);
+		/*if (i == 0) {
+			printf("Vector: %.3lf, %.3lf, %.3lf\n", cur->scaleKeys[i].mValue.x, cur->scaleKeys[i].mValue.y, cur->scaleKeys[i].mValue.z);
+			printf("Matrix: \n");
+			printf("%.3lf %.3lf %.3lf %.3lf\n", scaleM.a1, scaleM.a2, scaleM.a3, scaleM.a4);
+			printf("%.3lf %.3lf %.3lf %.3lf\n", scaleM.b1, scaleM.b2, scaleM.b3, scaleM.b4);
+			printf("%.3lf %.3lf %.3lf %.3lf\n", scaleM.c1, scaleM.c2, scaleM.c3, scaleM.c4);
+			printf("%.3lf %.3lf %.3lf %.3lf\n", scaleM.d1, scaleM.d2, scaleM.d3, scaleM.d4);
+			printf("\n");
+		}*/
+		cur->personalTrans[i] = translateM * rotateM * scaleM;
+		
 		//a check to make sure we aren't the root
-		if (parent == NULL)
+		if (parent == NULL) {
 			cur->transformations[i] = cur->personalTrans[i] * cur->offset;
+			/*if (i < 4) {
+				printf("Matrix personal Trans: \n");
+				printf("%.3lf %.3lf %.3lf %.3lf\n", cur->personalTrans[i].a1, cur->personalTrans[i].a2, cur->personalTrans[i].a3, cur->personalTrans[i].a4);
+				printf("%.3lf %.3lf %.3lf %.3lf\n", cur->personalTrans[i].b1, cur->personalTrans[i].b2, cur->personalTrans[i].b3, cur->personalTrans[i].b4);
+				printf("%.3lf %.3lf %.3lf %.3lf\n", cur->personalTrans[i].c1, cur->personalTrans[i].c2, cur->personalTrans[i].c3, cur->personalTrans[i].c4);
+				printf("%.3lf %.3lf %.3lf %.3lf\n", cur->personalTrans[i].d1, cur->personalTrans[i].d2, cur->personalTrans[i].d3, cur->personalTrans[i].d4);
+				printf("\n");
+				
+				printf("Matrix offset: \n");
+				printf("%.3lf %.3lf %.3lf %.3lf\n", cur->offset.a1, cur->offset.a2, cur->offset.a3, cur->offset.a4);
+				printf("%.3lf %.3lf %.3lf %.3lf\n", cur->offset.b1, cur->offset.b2, cur->offset.b3, cur->offset.b4);
+				printf("%.3lf %.3lf %.3lf %.3lf\n", cur->offset.c1, cur->offset.c2, cur->offset.c3, cur->offset.c4);
+				printf("%.3lf %.3lf %.3lf %.3lf\n", cur->offset.d1, cur->offset.d2, cur->offset.d3, cur->offset.d4);
+				printf("\n");
+				
+				printf("Matrix Transformations: \n");
+				printf("%.3lf %.3lf %.3lf %.3lf\n", cur->transformations[i].a1, cur->transformations[i].a2, cur->transformations[i].a3, cur->transformations[i].a4);
+				printf("%.3lf %.3lf %.3lf %.3lf\n", cur->transformations[i].b1, cur->transformations[i].b2, cur->transformations[i].b3, cur->transformations[i].b4);
+				printf("%.3lf %.3lf %.3lf %.3lf\n", cur->transformations[i].c1, cur->transformations[i].c2, cur->transformations[i].c3, cur->transformations[i].c4);
+				printf("%.3lf %.3lf %.3lf %.3lf\n", cur->transformations[i].d1, cur->transformations[i].d2, cur->transformations[i].d3, cur->transformations[i].d4);
+				printf("\n");
+			}*/
+		}
 		else
 			cur->transformations[i] = cur->parent->personalTrans[i] * cur->personalTrans[i] * cur->offset;
 		
 		//store the matrix as a glm mat4	
 		CopyaiMat(cur->transformations + i, cur->glmTransforms[i]);
+		/*if (parent == NULL && i < 4 ) {
+			printf("Matrix glm: \n");
+			for (int j = 0; j < 4; j++) {
+				for (int k = 0; k < 4; k++) {
+					printf("%.3lf ", cur->glmTransforms[i][j][k]);
+				}
+				printf("\n");
+			}
+			printf("\n");
+		}*/
 	
 	}
 	

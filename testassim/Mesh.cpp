@@ -118,13 +118,11 @@ draws the model :D AWW YEAH!
 Output: YOU GET NOTHING!
 ******************************************************************************/
 void PlaceAnimatedModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle, int frame) {
-	
+
 	if (mesh.hasAss) {
 		glm::mat4 anims;
 		static GLfloat boneArr[30*16];
 		int ctr = 0;
-		
-		anims = mesh.Assimp.bone_array[3].glmTransforms[0];
 		
 		for (int i = 0; i < mesh.Assimp.boneCt; i++) {
 			anims = mesh.Assimp.bone_array[i].glmTransforms[frame];
@@ -134,6 +132,7 @@ void PlaceAnimatedModel(Mesh mesh, float locx, float locy, float locz, float sx,
 					boneArr[ctr++] = anims[j][k];
 				}
 		}
+		
 		
 		glUniformMatrix4fv(h_uBoneMatrix, 30, GL_FALSE, boneArr);
 		
