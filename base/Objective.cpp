@@ -24,7 +24,9 @@
 
 int score = 0;
 int seed = rand();
-
+int getPoints(){
+   return score;
+}
 //Level borders
 //-42x, 67z
 //230x, -379z
