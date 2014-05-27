@@ -24,3 +24,9 @@
 
 Lastly, made few changes in the shaders.
 See the included glsl files.
+
+Finally, I'm loading 'bricks.bmp' file as a test file. The bmp loaded will only load image size that is 2^n by 2^n. Square image size would be nice, but it doesn't have to be.
+I need to set up UV coordinates for the skybox cube according to the loaded bmp image. 
+- (0, 0) is top left corner of the bmp image, and (1, 1) is bottom right corner.
+- As you can see, minimum coordinate for the UV is (0, 0) and maximum coordinate is (1, 1) no matter the size of the image.
+If the image isn't square, you have to consider size of each dimension.
