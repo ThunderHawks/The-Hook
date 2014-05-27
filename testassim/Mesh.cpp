@@ -120,21 +120,15 @@ Output: YOU GET NOTHING!
 void PlaceAnimatedModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle, int frame) {
 
 	if (mesh.hasAss) {
-		glm::mat4 anims;
-		static GLfloat boneArr[30*16];
+		static glm::mat4 boneArr[30];
 		int ctr = 0;
 		
 		for (int i = 0; i < mesh.Assimp.boneCt; i++) {
-			anims = mesh.Assimp.bone_array[i].glmTransforms[frame];
-			
-			for (int j = 0; j < 4; j++)
-				for (int k = 0; k < 4; k++) {
-					boneArr[ctr++] = anims[j][k];
-				}
+			boneArr[i] = mesh.Assimp.bone_array[i].glmTransforms[frame];
 		}
 		
 		
-		glUniformMatrix4fv(h_uBoneMatrix, 30, GL_FALSE, boneArr);
+		glUniformMatrix4fv(h_uBoneMatrix, 30, GL_FALSE, (GLfloat *)boneArr);
 		
 		glUniform1i(h_uAnimFlag, 1);
 		

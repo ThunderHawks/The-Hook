@@ -12,8 +12,8 @@ uniform mat4 uModelMatrix1;
 uniform int animFlag;
 attribute float numWeights;
 uniform mat4 bonesMatrix[30];
-attribute vec3 weights;
-attribute vec3 joints;
+attribute vec4 weights;
+attribute vec4 joints;
 //
 uniform float uShadeMode;
 uniform Material uMat;
@@ -39,8 +39,10 @@ void main() {
 //
   mat4 animationMatrix = mat4(1.0);
   if (animFlag == 1) {
-  		for (int i = 0; i < int(numWeights); i++) {
-  			animationMatrix += weights[i] * bonesMatrix[int(joints[i])];
+  	//animationMatrix += weights[0] * bonesMatrix[int(joints[0])];
+  		for (int i = 0; i < int(numWeights) && i < 4; i++) {
+  			if (weights[i] > 0.0)
+  				animationMatrix += weights[i] * bonesMatrix[int(joints[i])];
   		}
 	   /*animationMatrix =
 		 weights[0] * bonesMatrix[int(joints[0])] +

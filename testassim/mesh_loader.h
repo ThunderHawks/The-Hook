@@ -59,6 +59,9 @@ struct AssimpMesh {
 };
 
 AssimpMesh loadMesh(const std::string& path);
+int setupTrans(Bone *array, Bone *parent, Bone *cur);
+int CreateHierarchy(std::vector<aiBone *> *boneNames, aiNode *root, Bone *parent, int *iter, Bone *array);
+void CopyaiMat(const aiMatrix4x4 *from, glm::mat4 &to);
 
 #endif // MESH_LOADER_H_
 
