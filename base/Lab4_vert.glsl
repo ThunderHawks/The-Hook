@@ -14,11 +14,13 @@ uniform mat4 uLightViewMatrix;
 
 attribute vec3 aPosition;
 attribute vec3 aNormal;
+attribute vec2 aUVVertex;
 attribute float aPointSize;
 
 varying vec3 vNorm;
 varying vec3 vPos;
 varying vec4 vShadowPos;
+varying vec2 vUV;
 
 varying vec2 vTexCoord;
 attribute vec2 aTexCoord;
@@ -59,6 +61,7 @@ void main() {
      vShadowPos = NDCtoTex * uLightProjMatrix * uLightViewMatrix * transPos;
 
      vTexCoord = aTexCoord;
+     vUV = aUVVertex;
 
      gl_PointSize = aPointSize*15.0/length(gl_Position);
    }

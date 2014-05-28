@@ -10,12 +10,14 @@ uniform vec4 uLightVec;
 uniform vec3 uLColor;
 uniform vec3 uCamPos;
 uniform sampler2D uTexUnit;
+uniform sampler2D uTexSampler;
 uniform Material uMat;
 uniform int uShadeMode;
 
 varying vec3 vNorm; 
 varying vec3 vPos;
 varying vec4 vShadowPos;
+varying vec2 vUV;
 
 varying vec2 vTexCoord;
 uniform float uGuiMode;
@@ -92,7 +94,7 @@ void main() {
                   multiplier += 1.0;
             }
          }
-         // Only darken the pixel if the shadow isn't negligible. Otherwise, add specular
+         // Only darken the pixel if the shadow isn't negligible. Otherwvec4 texColorise, add specular
          if (multiplier / 9.0 <= 0.8)
             color *= multiplier / 9.0;
          else if (uMat.alpha == 1.0)
@@ -104,7 +106,10 @@ void main() {
 
    //color = (uLColor * uMat.dColor * angleNL) + (uLColor * uMat.sColor * angleNH) + (uLColor * uMat.aColor);   
 
+   vec3 texColor = texture2D(uTexSampler, vUV).rgb;
+
    gl_FragColor = vec4(color, uMat.alpha);
+   //gl_FragColor *= vec4(texColor, 1.0);
    //gl_FragColor = vec4(norm, 1.0);
    //gl_FragColor = vec4(depth, depth, depth, 1.0);
    //gl_FragColor = vec4(dist, dist, dist, 1.0);

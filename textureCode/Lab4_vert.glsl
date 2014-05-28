@@ -21,6 +21,10 @@ varying vec3 vPos;
 varying vec4 vShadowPos;
 varying vec2 vUV;
 
+varying vec2 vTexCoord;
+attribute vec2 aTexCoord;
+uniform float uMGuiMode;
+
 void main() {
    vec4 transPos, transNormal;
    mat4 VMNDCtoTex = mat4(0.38, 0.0, 0.0, 0.0,
@@ -44,5 +48,8 @@ void main() {
    vPos = vec3(transPos.x, transPos.y, transPos.z);
    /* Vertex location in texture coordinates */
    vShadowPos = NDCtoTex * uLightProjMatrix * uLightViewMatrix * transPos;
+
+   vTexCoord = aTexCoord;
+
    vUV = aUVVertex;
 }

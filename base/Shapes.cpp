@@ -15,8 +15,11 @@
 
 #include "Shapes.h"
 #include "Camera.h"
+#include "Gui.h"
 
 float g_groundSize = 10000.0, g_groundY = 0;   // half the ground length, the y of the ground, 
+
+GLuint skytex;
 
 void initGround() {
 
@@ -339,6 +342,10 @@ void InitGeom() {;
   initGround();
   initCube();
   initSquare();
+
+  glGenTextures(1, &skytex);
+  //Load texture image
+  LoadTexture((char*)"../Assets/Textures/skybox_texture_g.bmp", skytex);
 }
 
 /* helper function to set up material for shading */
@@ -510,17 +517,67 @@ void SetMaterial(int i) {
 }
 
 void DrawSkyBox() {
-	// Disable backface culling for skybox
+  
+
+  // Two UV coordinatesfor each vertex.
+  // This corresponds with the order of each vertex.
+  static const GLfloat g_uv_buffer_data[] = { 
+                //Back
+                .273f, 1.f, 
+                .273f, .75f, 
+                .5223f, .75f,
+                .5223f, 1.0f,
+                //Right
+                .745f, .5f, 
+                .523f, .5f,
+                .745f, .25f, 
+                .523f, .25f, 
+                //Left
+                .023f, .5f,
+                .273f, .5f, 
+                .023f, .25f, 
+                .273f, .25f,
+                //Bottom
+                .023f, .5f, 
+                .273f, .5f, 
+                .023f, .25f,
+                .273f, .5f, 
+                //Top
+                .5223f, .75f, 
+                .5223f, .5f,
+                .273f, .75f, 
+                .273f, .5f, 
+                //Front
+                .523f, .5f,
+                .523f, .25f, 
+                .273f, .5f, 
+                .273f, .25f,
+  };
+
+
+  // Disable backface culling for skybox
    glCullFace(GL_BACK);
    glDisable(GL_CULL_FACE);
    
-	SetMaterial(14);
-	
-	glDepthMask(GL_FALSE);
-	
-	SetModel(GetEye().x, GetEye().y, GetEye().z, 1, 1, 1, 1);
-	
-	safe_glEnableVertexAttribArray(h_aPosition);
+
+  GLuint UVBuffObj;
+  glGenBuffers(1, &UVBuffObj);
+  glBindBuffer(GL_ARRAY_BUFFER, UVBuffObj);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
+
+  // Bind our texture in Texture Unit 1
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_2D, skytex);
+  // Set "h_uTexSampler" sampler to user Texture Unit 1
+  glUniform1i(h_uTexSampler, 1);
+
+  SetMaterial(14);
+  
+  glDepthMask(GL_FALSE);
+  
+  SetModel(GetEye().x, GetEye().y, GetEye().z, 1, 1, 1, 1);
+  
+  safe_glEnableVertexAttribArray(h_aPosition);
 
    glBindBuffer(GL_ARRAY_BUFFER, CubeBuffObj);
    safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -531,10 +588,20 @@ void DrawSkyBox() {
    glBindBuffer(GL_ARRAY_BUFFER, NormalBuffObj);
    safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
+   safe_glEnableVertexAttribArray(h_aUVVertex);
+   glBindBuffer(GL_ARRAY_BUFFER, UVBuffObj);
+   safe_glVertexAttribPointer(h_aUVVertex, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
    /* draw!*/
    glDrawElements(GL_TRIANGLES, g_CiboLen, GL_UNSIGNED_SHORT, 0);
-   safe_glDisableVertexAttribArray(h_aPosition);
    
+   safe_glDisableVertexAttribArray(h_aPosition);
+   safe_glDisableVertexAttribArray(h_aNormal);
+   safe_glDisableVertexAttribArray(h_aUVVertex);
+
+   glDeleteBuffers(1, &UVBuffObj);
+   glDeleteTextures(1, &h_uTexSampler);
+
    glDepthMask(GL_ALWAYS);
    
    // Enable backface culling
