@@ -39,14 +39,25 @@ Mesh::Mesh(AssimpMesh aMesh)
 		
 		weightCtr.push_back((float) aMesh.skeleton_vertices[i].weight_array.size());
 		
-		//printf("vertex %d: ", i);
+		printf("vertex %d: ", i);
 		for (int j = 0; j < aMesh.skeleton_vertices[i].weight_array.size(); j++) {
 			weights.push_back((float) aMesh.skeleton_vertices[i].weight_array[j]);
-			//printf("weight %d: %lf ", j, aMesh.skeleton_vertices[i].weight_array[j]);
-		}//printf("\n");
+			printf("weight %d: %lf ", j, aMesh.skeleton_vertices[i].weight_array[j]);
+		}printf("\n");
 		
 		for (int j = 0; j < aMesh.skeleton_vertices[i].bone_array.size(); j++)
 			joints.push_back((float) aMesh.skeleton_vertices[i].bone_array[j]);
+	}
+			
+	for (int i = 0; i < aMesh.boneCt; i++) {
+		printf("Matrix %d is: \n", i);
+		for (int j = 0; j < 4; ++j) {
+			for (int k = 0; k < 4; k++) {
+				printf("%lf, ", aMesh.bone_array[i].glmTransforms[0][j][k]);
+			}
+			printf("\n");
+		}
+		printf("\n");
 	}
 		
 	hasAss = true;
@@ -128,17 +139,17 @@ void PlaceAnimatedModel(Mesh mesh, float locx, float locy, float locz, float sx,
 		}
 		
 		
-		glUniformMatrix4fv(h_uBoneMatrix, 30, GL_FALSE, (GLfloat *)boneArr);
+		glUniformMatrix4fv(h_uBoneMatrix, 30*16, GL_FALSE, (GLfloat *)boneArr);
 		
 		glUniform1i(h_uAnimFlag, 1);
 		
 		glEnableVertexAttribArray(h_uJoints);
 		glBindBuffer(GL_ARRAY_BUFFER, mesh.JointHandle);
-		glVertexAttribPointer(h_uJoints, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glVertexAttribPointer(h_uJoints, 4, GL_FLOAT, GL_FALSE, 0, 0);
 		
 		glEnableVertexAttribArray(h_uWeights);
 		glBindBuffer(GL_ARRAY_BUFFER, mesh.WeightHandle);
-		glVertexAttribPointer(h_uWeights, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glVertexAttribPointer(h_uWeights, 4, GL_FLOAT, GL_FALSE, 0, 0);
 		
 		glEnableVertexAttribArray(h_uNumWeights);
 		glBindBuffer(GL_ARRAY_BUFFER, mesh.WeightCount);

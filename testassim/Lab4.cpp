@@ -104,7 +104,7 @@ void SetModel(float x, float y, float z, float Sx, float Sy, float Sz, float ang
    glm::mat4 Trans = glm::translate( glm::mat4(1.0f), glm::vec3(x, y, z));
    glm::mat4 Scale = glm::scale(glm::mat4(1.0f), glm::vec3(Sx, Sy, Sz));
    //printf("%f %f ModelPosition\n",Sy,Sz);
-   glm::mat4 Rotate = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 1.0f, 0.0f));
+   glm::mat4 Rotate = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 0.0f, 0.0f));
    glm::mat4 ctm = Trans * Rotate * Scale;
    safe_glUniformMatrix4fv(h_uModelMatrix, glm::value_ptr(ctm));
 }
@@ -150,10 +150,10 @@ void glfwDraw (GLFWwindow *window)
    ModelTrans.loadIdentity();
    SetModelStat();
 
-	if (ctr++%1 == 0)
+	if (ctr++%100 == 0)
 		frm++;
 		
-	PlaceAnimatedModel(damesh, 0, -3, -10, 1, 1, 1, spin, frm%24);
+	PlaceAnimatedModel(damesh, 0, -3, -10, 1, 1, 1, 0, frm%24);
 	//SetupCube(0, 0, -2, 10, spin, 1, 1, 1);
 
    //Disable the shader
@@ -194,7 +194,7 @@ int main( int argc, char *argv[] )
 	InitGeom();
    
 	SetMaterial(1);
-	damesh = LoadMesh("../Assets/Models/dancingCylinderTriangulated.dae");
+	damesh = LoadMesh("../Assets/Models/gem.dae");//damesh = LoadMesh("../Assets/Models/dancingCylinderTriangulated.dae");//damesh = LoadMesh("../Assets/Models/simpleDancingCylinder.dae");
 
    // Start the main execution loop.
    while (!glfwWindowShouldClose(window)) {

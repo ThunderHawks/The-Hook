@@ -1,6 +1,8 @@
 #include "mesh_loader.h"
 #include "Mesh.h"
 
+#include <assert.h>
+
 AssimpMesh loadMesh(const std::string& path) {
 	Assimp::Importer importer;
 
@@ -8,6 +10,7 @@ AssimpMesh loadMesh(const std::string& path) {
 		aiProcess_CalcTangentSpace       |
 		aiProcess_Triangulate            |
 		aiProcess_JoinIdenticalVertices  |
+		aiProcess_LimitBoneWeights			|
 		aiProcess_SortByPType);
 	if (!scene) {
 		std::cerr << "Failed to load: " << path << std::endl;
@@ -83,7 +86,7 @@ AssimpMesh loadMesh(const std::string& path) {
 				for (int k = 0; k < ret.boneCt; ++k) {
 					//fill with bones
 					if(mesh.mBones[j]->mName == ret.bone_array[k].name) {
-						//fill the bone
+						//find the bone in the array
 						ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].bone_array.push_back(k);
 						//fill the weights. There is a max of 4 weights
 						ret.skeleton_vertices[mesh.mBones[j]->mWeights[i].mVertexId].weight_array.push_back(mesh.mBones[j]->mWeights[i].mWeight);
@@ -167,14 +170,18 @@ AssimpMesh loadMesh(const std::string& path) {
 			}
 		}*/
 		
-		/*
+		
 		
 		for (i = 0; i < mesh.mNumVertices; i++) {
 			for (j = 0; j < ret.skeleton_vertices[i].weight_array.size(); j++) {
 				if (ret.skeleton_vertices[i].weight_array[j] > 1 || ret.skeleton_vertices[i].weight_array[j] < 0)
 					printf("Bad weight at %d\n", i);
+					
 			}
+			assert(ret.skeleton_vertices[i].weight_array.size() <= 4);
+			
 		}
+		/*
 		
 		printf("anim name: %s\n", scene->mAnimations[0]->mName.C_Str());
 		for(i = 0; i < scene->mAnimations[0]->mNumChannels; i++) {
@@ -240,8 +247,8 @@ int setupTrans(Bone *array, Bone *parent, Bone *cur) {
 		if (parent == NULL)
 			cur->transformations[i] = cur->personalTrans[i] * cur->offset;
 		else {
-			cur->transformations[i] = parent->personalTrans[i] * cur->personalTrans[i] * cur->offset;
 			cur->personalTrans[i] = parent->personalTrans[i] * cur->personalTrans[i];
+			cur->transformations[i] = cur->personalTrans[i] * cur->offset;
 		}
 			
 		

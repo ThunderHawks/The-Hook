@@ -30,7 +30,7 @@ void main() {
 
      //Diffusion
      //dist = 1.0/pow(distance(vPosition, light), 2.0);
-     dist = 1.0;
+   /*  dist = 1.0;
      //L = view * light;
      L = normalize(light);
      N = uModelMatrix1 * vec4(normal, 0);
@@ -61,13 +61,13 @@ void main() {
      //Ambient
      ambientR = uLColor.r * uMat.aColor.r;
      ambientG = uLColor.g * uMat.aColor.g;
-     ambientB = uLColor.b * uMat.aColor.b;
+     ambientB = uLColor.b * uMat.aColor.b;*/
 
      //gl_FragColor = vec4(diffusedR + ambientR, diffusedG + ambientG, diffusedB + ambientB, 1.0);
      //gl_FragColor = vec4(diffusedR + ambientR, diffusedG + ambientG, diffusedB + ambientB, 1.0);
-     gl_FragColor = vec4(diffusedR*1.0 + specularR*1.0 + ambientR*1.0, diffusedG*1.0 + specularG*1.0 + ambientG*1.0, diffusedB*1.0 + specularB*1.0 + ambientB*1.0, 1.0);
+     //gl_FragColor = vec4(diffusedR*1.0 + specularR*1.0 + ambientR*1.0, diffusedG*1.0 + specularG*1.0 + ambientG*1.0, diffusedB*1.0 + specularB*1.0 + ambientB*1.0, 1.0);
 	//gl_FragColor = vec4(uLColor.r,uLColor.g,uLColor.b,1.0);
 	//gl_FragColor = vec4(uMat.sColor.r,uMat.sColor.g,temp,1.0);
 	//gl_FragColor = vPosition;
-//     gl_FragColor = vec4(vColor.r, vColor.g, vColor.b, 1.0);
+     gl_FragColor = vec4(vColor.r, vColor.g, vColor.b, 1.0);
 }
