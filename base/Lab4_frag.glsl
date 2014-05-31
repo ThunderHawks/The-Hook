@@ -86,7 +86,7 @@ void main() {
                   multiplier += 1.0;
             }
          }
-         // Only darken the pixel if the shadow isn't negligible. Otherwvec4 texColorise, add specular
+         // Only darken the pixel if the shadow isn't negligible. Otherwise, add specular
          if (multiplier / 9.0 <= 0.8)
             color *= multiplier / 9.0;
          else if (uMat.alpha == 1.0)
