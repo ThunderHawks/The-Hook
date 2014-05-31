@@ -43,10 +43,10 @@ void main() {
                         0.0, 0.0, 0.5, 0.0,
                         0.5, 0.5, 0.5, 1.0);
 
-  if (uTextMode == 1.0) {
-    vTexCoord = aTexCoord;
-    gl_Position = vec4(textPos, 0, 1);
-  } else {
+//  if (uTextMode == 1.0) {
+//    vTexCoord = aTexCoord;
+//    gl_Position = vec4(textPos, 0, 1);
+//  } else {
      /* First model transforms */
      gl_Position = uProjMatrix * uViewMatrix * uModelMatrix * vec4(aPosition, 1);;
     
@@ -64,5 +64,5 @@ void main() {
      vUV = aUVVertex;
 
      gl_PointSize = aPointSize*15.0/length(gl_Position);
-   }
+//   }
 }

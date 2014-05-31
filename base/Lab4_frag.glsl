@@ -50,18 +50,10 @@ void main() {
       angleNH = pow(clamp(angleNH, 0.0, 1.0), uMat.shine * 4.0);
 
       shadowPos = vShadowPos / vShadowPos.w;
-      depth = texture2D(uTexUnit, shadowPos.xy).z; // Shadow map depth = Z VALUE OF SHADOW MAP
-      dist = vShadowPos.z - 0.005; // Distance from light to fragment = FRAG DEPTH FROM LIGHT'S PERSPECTIVE
+      depth = texture2D(uTexUnit, shadowPos.xy).z; // Shadow map depth
+      dist = vShadowPos.z - 0.005; // Distance from light to fragment
 
    // Diffuse lighting
-/*
-   if (angleNL > 0.8)
-      color = uLColor * uMat.dColor;
-   else if (angleNL > 0.4)
-      color = uLColor * uMat.dColor * 0.7;
-   else
-      color = uLColor * uMat.dColor * 0.35;
-*/
       if (angleNL > 0.8)
          color = uLColor * uMat.dColor;
       else if (angleNL > 0.6)
