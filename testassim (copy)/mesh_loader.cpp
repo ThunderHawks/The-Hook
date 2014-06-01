@@ -98,6 +98,12 @@ AssimpMesh loadMesh(const std::string& path) {
 			}
 		}
 		
+		for(i = 0; i < ret.numVerts; i++) {
+			while(ret.skeleton_vertices[i].bone_array.size() < 4) {
+				ret.skeleton_vertices[i].bone_array.push_back(0);
+				ret.skeleton_vertices[i].weight_array.push_back(0);
+			}
+		}
 		
 		/*****************GRAB KEY FRAMES*****************/
 		//go through all the animations (brace your efficiency organs for sadness)
@@ -307,16 +313,20 @@ int GetFrame(int frame, AssimpMesh mesh) {
 int getFrame(Bone *parent, Bone *cur, aiMatrix4x4 globalTrans, int frame) {
 	int i;
 	aiMatrix4x4t<float> translateM, rotateM, scaleM, totalTransformation, tranWithOffset;
-	printf("merp1 %d\n", cur->posKeys.size());
+	//printf("merp1 %d\n", cur->posKeys.size());
 	
 	//set the bone's transformation to its parent's transformation (without the bone offset) * it's own transformation (without the bone offset) * the bone offset
 	//set up the bone's own transformation, for each bone we have, we will need to store their personal transform. This is their  translate*rotate*scale transform at the keyframe
-	aiMatrix4x4::Translation(cur->posKeys[frame].mValue, translateM);
-	rotateM = aiMatrix4x4(cur->rotKeys[frame].mValue.GetMatrix());
-	aiMatrix4x4::Scaling(cur->scaleKeys[frame].mValue, scaleM);
-	totalTransformation = translateM * rotateM * scaleM;
+	if(cur->posKeys.size() <= frame)
+		totalTransformation = aiMatrix4x4();
+	else {
+		aiMatrix4x4::Translation(cur->posKeys[frame].mValue, translateM);
+		rotateM = aiMatrix4x4(cur->rotKeys[frame].mValue.GetMatrix());
+		aiMatrix4x4::Scaling(cur->scaleKeys[frame].mValue, scaleM);
+		totalTransformation = translateM * rotateM * scaleM;
+	}
 	
-	printf("merp2\n");
+	//printf("merp2\n");
 
 	//a check to make sure we aren't the root
 	if (parent == NULL) {
@@ -326,7 +336,7 @@ int getFrame(Bone *parent, Bone *cur, aiMatrix4x4 globalTrans, int frame) {
 		totalTransformation = globalTrans * totalTransformation;
 	}
 		
-	printf("merp3\n");
+	//printf("merp3\n");
 	//store the matrix as a glm mat4	
 	CopyaiMat(&tranWithOffset, cur->currentTransform);	
 	

@@ -39,15 +39,16 @@ void main() {
 //
   mat4 animationMatrix = mat4(0.0);
   if (animFlag == 1) {
-  	animationMatrix = weights[0] * bonesMatrix[int(joints[0])];
+  	/*animationMatrix = weights[0] * mat4(1.0);//bonesMatrix[int(joints[0])];
   		for (int i = 1; i < int(numWeights) && i < 3; i++) {
   			if (weights[i] > 0.0)
   				animationMatrix += weights[i] * bonesMatrix[int(joints[i])];
-  		}
-	   /*animationMatrix =
+  		}*/
+	   animationMatrix =
 		 weights[0] * bonesMatrix[int(joints[0])] +
 		 weights[1] * bonesMatrix[int(joints[1])] +
-		 weights[2] * bonesMatrix[int(joints[2])];*/
+		 weights[2] * bonesMatrix[int(joints[2])] +
+     weights[3] * bonesMatrix[int(joints[3])];
   } else {
   	animationMatrix = mat4(1.0);
   }

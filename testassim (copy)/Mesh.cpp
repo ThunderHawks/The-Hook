@@ -39,18 +39,18 @@ Mesh::Mesh(AssimpMesh aMesh)
 		
 		weightCtr.push_back((float) aMesh.skeleton_vertices[i].weight_array.size());
 		
-		//printf("vertex %d: ", i);
+		printf("vertex %d: ", i);
 		for (int j = 0; j < aMesh.skeleton_vertices[i].weight_array.size(); j++) {
 			weights.push_back((float) aMesh.skeleton_vertices[i].weight_array[j]);
-			//printf("weight %d: %lf ", j, aMesh.skeleton_vertices[i].weight_array[j]);
+			printf("weight %d: %lf ", j, aMesh.skeleton_vertices[i].weight_array[j]);
 		}
-		//printf("\n");
+		printf("\n");
 		
 		for (int j = 0; j < aMesh.skeleton_vertices[i].bone_array.size(); j++)
 			joints.push_back((float) aMesh.skeleton_vertices[i].bone_array[j]);
 	}
 			
-	for (int i = 0; i < aMesh.boneCt; i++) {
+	/*for (int i = 0; i < aMesh.boneCt; i++) {
 		printf("Matrix %d is: \n", i);
 		for (int j = 0; j < 4; ++j) {
 			for (int k = 0; k < 4; k++) {
@@ -59,7 +59,7 @@ Mesh::Mesh(AssimpMesh aMesh)
 			printf("\n");
 		}
 		printf("\n");
-	}
+	}*/
 		
 	hasAss = true;
 	Assimp = aMesh;
@@ -131,7 +131,17 @@ Output: YOU GET NOTHING!
 ******************************************************************************/
 void PlaceAnimatedModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle, int frame) {
 	GetFrame(frame, mesh.Assimp);
-	printf("MAde it\n");
+
+	/*for (int i = 0; i < mesh.Assimp.boneCt; i++) {
+		printf("Matrix %d is: \n", i);
+		for (int j = 0; j < 4; ++j) {
+			for (int k = 0; k < 4; k++) {
+				printf("%lf, ", mesh.Assimp.bone_array[i]->currentTransform[j][k]);
+			}
+			printf("\n");
+		}
+		printf("\n");
+	}*/
 
 	if (mesh.hasAss) {
 		static glm::mat4 boneArr[30];
