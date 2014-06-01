@@ -20,7 +20,6 @@
 #include "MStackHelp.h"
 #include "InitHelpers.h"
 
-
 #ifndef GLM_HPP_
 #define GLM_HPP_
 #include "glm/glm.hpp"
@@ -45,6 +44,10 @@
 #include <time.h>
 #include <unistd.h>
 #include "particle.h"
+
+#define STARTSCREEN_MODE -1
+#define GAME_MODE 0
+#define EDIT_MODE 1
 
 using namespace std;
 
@@ -229,6 +232,11 @@ glm::vec3 computeWeightedNormal(int vertex);
 /* projection matrix  - do not change */
 glm::mat4 SetProjectionMatrix();
 int RandomInt(int one, int two);
+void toStartScreen();
+void initStartScreen();
+void initPlay(string fileName);
+void initEdit(string fileName);
+
 
 // Macro used to obtain relative offset of a field within a struct
 #define FIELD_OFFSET(StructType, field) &(((StructType *)0)->field)

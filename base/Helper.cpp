@@ -12,6 +12,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp" //perspective, trans etc
 #include "glm/gtc/type_ptr.hpp" //value_ptr
+
 #include <list>
 #include <fstream>
 #include <iostream>
@@ -67,16 +68,7 @@ float p2w_x(int p_x) {
 }
 
 float p2w_y(int p_y) {
-   double bottom, top, scale, translate;
-   
-   top = g_height >= g_width ? g_height / g_width : 1;
-   bottom = -top;
-
-   scale = (-g_width + 1)/(bottom - top);
-   translate = scale * -bottom;
-   return (p_y - translate)/scale;
- 
-//  return( ( (float)p_y - ((g_height-1.0)/2.0) )*2.0/g_height);
+  return( ( (float)p_y - ((g_height-1.0)/2.0) )*2.0/g_height);
 }
 
 /* Input:  two floats that determine the bounds of the random number

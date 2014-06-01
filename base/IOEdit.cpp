@@ -69,7 +69,7 @@ void glfwEditMouse(GLFWwindow *window, int button, int action, int mods) {
       }
       //If in gui mode, call button presses
       if(eKeysPressed['G']) {
-         GuiPressing(lastCurPos.x, lastCurPos.y);
+         GuiPressing(EDIT_MODE, lastCurPos.x, lastCurPos.y);
       }
       //If an entity is not selected and shift is held
       else if(areEntitiesSelected() == false && eKeysPressed[340] && eKeysPressed['G'] == 0) {
@@ -220,22 +220,8 @@ void glfwEditKeyboard(void) {
 
    //If in GUI Selection, disable all other actions
    if(eKeysPressed['G'] == 0) {
-
-      //GLFW_KEY_LEFTCONTROL + GLFW_KEY_Leftcontrol + 'S'
-      if(eKeysPressed[341] && eKeysPressed['S'] && eKeysPressed[341]) {
-         string toSave;
-         pauseorUnpause();
-         printf("Enter a string to have this world saved (don't include .wub, type 'none' to abort save):\n");
-         scanf("%s", &toSave[0]);
-
-         if(strcmp(&toSave[0], "abort") == 0) {
-            printf("Save aborted\n");
-            return;
-         }
-         saveWorld(&toSave[0]);
-      }
       //GLFW_KEY_S
-      else if(eKeysPressed['S']) {
+      if(eKeysPressed['S']) {
           MoveEye(glm::vec3(speed * 0.15 * ew.x, speed * 0.15 * ew.y, speed * 0.15 * ew.z));
       }
       //GLFW_KEY_W
@@ -311,12 +297,12 @@ void glfwEditKeyboard(void) {
    }
    //Quit and don't save if 'Q' + lShift/lctrl
    if(eKeysPressed['Q'] && eKeysPressed[340] || eKeysPressed['Q'] && eKeysPressed[341]) {
-      exit( EXIT_SUCCESS );
+      toStartScreen();
    }
    //Quit and Save
    else if(eKeysPressed['Q']) {
       saveWorld();
-      exit( EXIT_SUCCESS );
+      toStartScreen();
    }
 }
 

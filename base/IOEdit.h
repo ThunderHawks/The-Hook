@@ -1,6 +1,8 @@
 #ifndef IOEDIT_H_
 #define IOEDIT_H_
 
+#define EDIT_MODE 1
+
 //returns bool of character pressed takes the character for a given key
 int getEPressed(char ch);
 //Mouse press callback for Edit Mode

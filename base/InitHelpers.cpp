@@ -97,8 +97,6 @@ void glInitialize(GLFWwindow *window)
 {
    srand(time(0));
 
-   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
    // Black Background
    glClearColor (0.7f, 0.8f, 0.9f, 1.0f);                                                          
    glClearDepth (1.0f);    // Depth Buffer Setup

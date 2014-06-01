@@ -51,6 +51,8 @@ int changeDupNumBy(int toChange);
 bool areEntitiesSelected();
 //Grab selected entity at index 0
 Entity getSelectedEntity();
+//Returns a vector of the objective destination positions
+vector<glm::vec3> getObjectiveDestinationPositions();
 
 //Changes the x scale of the selected entity
 void scaleSelectedEntityX(float scaleX);
@@ -90,8 +92,8 @@ void undo();
 void redo();
 //Saves the world to the currentLevel
 void saveWorld();
-//Save the current world in .wub format
-void saveWorld(string lvName);
+//Frees all data
+void freeLevelData();
 //askPoint translation
 vector<Entity*> pointLevelTest(glm::vec3 point);
 

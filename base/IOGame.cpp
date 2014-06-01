@@ -41,17 +41,34 @@ glm::vec3 gw, gu;
 //Change size to increase amount of keys input
 int gKeysPressed[255];
 
-void glfwPlayMouse(GLFWwindow *window, int button, int action, int mods) {
+//Mouse scroll callback for Play mode to adjust camera
+void glfwGameScroll(GLFWwindow *window, double xOffset, double yOffset) {
+   printf("getDistance %f\n", getDistance());
+   printf("yOffset: %f\n", yOffset);
+   printf("%f\n", getDistance() + yOffset);
+   //if(getDistance() + yOffset <= 10.0 && getDistance() + yOffset >= 2.0) {
+    //  MoveEye(getDistance() + yOffset);
+   //}
+}
+
+void glfwGameMouse(GLFWwindow *window, int button, int action, int mods) {
    //If the left button is pressed
    if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-   	//find the direction to throw the grappling hook		
-      glm::vec3 dir = GetLookAt()- GetEye();
-      //check to see if the grappling hook hit. If it did, play a sound
-      if (physGrapple(-dir.x,-dir.y,-dir.z))
-      	PlayFX(THROW_GRAP_FX);
+      //If game is paused
+      if(isPaused()) {
+         pauseorUnpause();
+         musicPlayer.muteAll();
+      }
+      else {
+   	 //find the direction to throw the grappling hook		
+         glm::vec3 dir = GetLookAt()- GetEye();
+         //check to see if the grappling hook hit. If it did, play a sound
+         if (physGrapple(-dir.x,-dir.y,-dir.z))
+      	   PlayFX(THROW_GRAP_FX);
       
-      //pull on the grapple
-      holdGrapple(1);
+         //pull on the grapple
+         holdGrapple(1);
+      }
    }
    if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
       holdGrapple(0);
@@ -153,48 +170,37 @@ void glfwGameKeyboard(void) {
        //newSpeed.x=newSpeed.x-u.x*3;
        //newSpeed.z=newSpeed.z-u.z*3;
    }
-   ///setPlayerSpeed(newSpeed.x,newSpeed.y,newSpeed.z);
    //GLFW_KEY_SPACE
    if(gKeysPressed[' ']) {
-//      setPlayerSpeed(0,4,0);
-      //KeysPressed[' ']=0;
-      //printf("Space is not implemented!\n");
       physJump();
-      //PlayFX(JUMP_FX);
+   }
+   //GLFW_KEY_P
+   if(gKeysPressed['P']) {
+      pauseorUnpause();
+      musicPlayer.muteAll();
    }
    //GLFW_KEY_Q
    if(gKeysPressed['Q']) {
-      exit( EXIT_SUCCESS );
+      toStartScreen();
    }
-   if(gKeysPressed['F']){
-     // printf("box %f %f %f\n",-gaze.x*5,gaze.y*5,-gaze.z*5);
-   //   createStaticBox(eye.x,eye.y,eye.z,1,1,1,btQuaternion(0,0,0,1),1,gaze.x*10,gaze.y*10,gaze.z*10);
-      gKeysPressed['F']=0;
+   if(gKeysPressed['K']){
+      if (gKeysPressed['K'] == 1) {
+         musicPlayer.prevSong();
+         gKeysPressed['K'] = 2;
+      }
    }
-   if(gKeysPressed['E']){
-      
-         //KeysPressed['E']=2;
-  //    }
-      //else physGrapplePoint();
-
-   }
-	if(gKeysPressed['K']){
-   	if (gKeysPressed['K'] == 1)
-			musicPlayer.prevSong();
-      gKeysPressed['K'] = 2;
-   }
-	if(gKeysPressed['L']){
-   	if (gKeysPressed['L'] == 1)
-			musicPlayer.nextSong();
-      gKeysPressed['L'] = 2;
+   if(gKeysPressed['L']){
+      if (gKeysPressed['L'] == 1) {
+         musicPlayer.nextSong();
+         gKeysPressed['L'] = 2;
+      }
    }
    if(gKeysPressed['M']){
-   	if (gKeysPressed['M'] == 1)
-			musicPlayer.muteAll();
-			
+   	if (gKeysPressed['M'] == 1) {
+           musicPlayer.muteAll();	
+        }
       gKeysPressed['M'] = 2;
    }
-
    if (gKeysPressed['N']) {
       if (++ShadeMode == 2)
          ShadeMode = 0;
@@ -207,6 +213,13 @@ void glfwGameKeyboard(void) {
 void glfwGameKeyPress(GLFWwindow *window, int key, int scan, int action, int mods) {
    if(action == GLFW_PRESS) {
       switch( key ) {
+       //Pause/unpause
+       case GLFW_KEY_P:
+         gKeysPressed['P'] = 1;
+         break;
+       case GLFW_KEY_H:
+         gKeysPressed['H'] = 1;
+         break;
        case GLFW_KEY_S:
          gKeysPressed['S'] = 1;
          break;
@@ -258,6 +271,13 @@ void glfwGameKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
    }   
    else if(action == GLFW_RELEASE) {
       switch( key ) {
+       //Pause/unpause
+       case GLFW_KEY_P:
+         gKeysPressed['P'] = 0;
+         break;
+       case GLFW_KEY_H:
+         gKeysPressed['H'] = 0;
+         break;
        case GLFW_KEY_S:
          gKeysPressed['S'] = 0;
          break;
@@ -282,24 +302,24 @@ void glfwGameKeyPress(GLFWwindow *window, int key, int scan, int action, int mod
        case GLFW_KEY_E:
          gKeysPressed['E'] = 0;
          break;
-		 case GLFW_KEY_K:
+       case GLFW_KEY_K:
          gKeysPressed['K'] = 0;
          break;
-		 case GLFW_KEY_L:
+       case GLFW_KEY_L:
          gKeysPressed['L'] = 0;
          break;
-		 case GLFW_KEY_M:
+       case GLFW_KEY_M:
          gKeysPressed['M'] = 0;
          break;
-		 case GLFW_KEY_N:
+       case GLFW_KEY_N:
          gKeysPressed['N'] = 0;
          break;
-		 case GLFW_KEY_B:
-			gKeysPressed['B'] = 0;
-			break;
-		 case GLFW_KEY_V:
-			gKeysPressed['V'] = 0;
-			break;
+       case GLFW_KEY_B:
+	 gKeysPressed['B'] = 0;
+	 break;
+       case GLFW_KEY_V:
+	 gKeysPressed['V'] = 0;
+	 break;
      }
    }
 }

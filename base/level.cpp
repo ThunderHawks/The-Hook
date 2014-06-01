@@ -9,10 +9,8 @@ using namespace std;
 
 //All of the meshes
 Mesh mesh[100];
-
 //All entities placed in world
 vector<Entity> entities;
-
 //If entities are selected
 bool entitiesSelected;
 //Selected entities relative to the current lookAt 
@@ -27,12 +25,16 @@ int dupNum = 0;
 int undoAmount = 0;
 //Entities to redo
 vector<Entity> redoEntities;
-
 //Name of the level loaded, else default
 string currentLevel = "level1.wub";
+//Octree
+Octree* octLevel;
 
 //This method loads the level models and initializes the hotbar
 void initLevelLoader(int EditMode) {
+   printf("Preparing Octree...\n");
+   octLevel = new Octree(glm::vec3(-42,-100,67),glm::vec3(230,2000,379),3);
+
    printf("Initializing Level content...\n");
 
    //Load Meshes
@@ -54,6 +56,7 @@ void initLevelLoader(int EditMode) {
    mesh[15] = LoadMesh("../Assets/Models/flag.obj"); //10h 1d 7w
    mesh[16] = LoadMesh("../Assets/Models/asymBldg.obj"); //10h 1d 7w
    mesh[17] = LoadMesh("../Assets/Models/pointyBldg.obj"); //10h 1d 7w
+   mesh[18] = LoadMesh("../Assets/Models/asymBldg.obj"); //10h 1d 7w
 
    printf("Loaded meshes..\n");
 
@@ -65,7 +68,6 @@ void initLevelLoader(int EditMode) {
    }
 }
 
-Octree* octLevel = new Octree(glm::vec3(-42,-100,67),glm::vec3(230,2000,379),3);
 void loadOctTree(){
    for(int i = 0;i<entities.size();i++){
       octLevel->add(&entities[i]);
@@ -73,6 +75,18 @@ void loadOctTree(){
 }
 vector<Entity*> pointLevelTest(glm::vec3 point){
    return octLevel->askPoint(point);//dont wana mess with .h files
+}
+
+vector<glm::vec3> getObjectiveDestinationPositions() {
+   vector<glm::vec3> positions;
+
+   for(int i = 0; i < entities.size(); i++) {
+      //If destination beacon
+      if(entities[i].meshIndex == 18) {
+         positions.push_back(entities[i].position);
+      }
+   }
+   return positions;
 }
 
 //The entities are loaded into the physics engine
@@ -181,6 +195,10 @@ void loadLevel(string fileName){
          case 17:
             tempEntity.phyScale = glm::vec3(150, 825, 150);
             break;
+         //Destination Beacon
+         case 18:
+            tempEntity.phyScale = glm::vec3(140, 500, 140);
+            break;
         }
 
       if(!(tempEntity.angle>-10&&tempEntity.angle<10||tempEntity.angle>170&&tempEntity.angle<190)){
@@ -191,11 +209,15 @@ void loadLevel(string fileName){
          tempEntity.scale.x = tempEntity.scale.z;
          tempEntity.scale.z = tem;
       }
-      tempEntity.btPhys = createStaticBox(tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,
-       tempEntity.scale.x*tempEntity.phyScale.x*.5,tempEntity.scale.y*tempEntity.phyScale.y*.5,tempEntity.scale.z*tempEntity.phyScale.z*.5,
-       btQuaternion(0,0,0,1),0,0,0,0);
-      tempEntity.physics = createCameraBox(tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,
-       tempEntity.scale.y*tempEntity.phyScale.y*.6,tempEntity.scale.x*tempEntity.phyScale.x*.6,tempEntity.scale.z*tempEntity.phyScale.z*.6);
+      
+      //If not destination beacon
+      if(tempEntity.meshIndex != 18) {
+         tempEntity.btPhys = createStaticBox(tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,
+         tempEntity.scale.x*tempEntity.phyScale.x*.5,tempEntity.scale.y*tempEntity.phyScale.y*.5,tempEntity.scale.z*tempEntity.phyScale.z*.5,
+         btQuaternion(0,0,0,1),0,0,0,0);
+         tempEntity.physics = createCameraBox(tempEntity.position.x,tempEntity.position.y,tempEntity.position.z,
+         tempEntity.scale.y*tempEntity.phyScale.y*.6,tempEntity.scale.x*tempEntity.phyScale.x*.6,tempEntity.scale.z*tempEntity.phyScale.z*.6);
+      }
 
       if(!(tempEntity.angle>-10&&tempEntity.angle<10||tempEntity.angle>170&&tempEntity.angle<190)){
          float tem = tempEntity.phyScale.x;
@@ -276,6 +298,10 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
             break;
          case 17:
             entity.phyScale = glm::vec3(150, 825, 150);
+            break;
+         //Destination Beacon
+         case 18:
+            entity.phyScale = glm::vec3(140, 500, 140);
             break;
         }
 
@@ -509,7 +535,6 @@ void updateCurrentEntitiesPos() {
 //Places the selected entity into the world at lookAtPoint
 void placeSelectedEntity() {
 
-   //If 
    if(entitiesSelected == true) {
       updateCurrentEntitiesPos();
 
@@ -639,43 +664,15 @@ void saveWorld() {
    }
 }
 
-//Save the current world in .wub format
-void saveWorld(string lvName) {
-   UpdateBSRadius();
-
-   ofstream file;
-   Entity entityTemp;
-   string fileName = lvName + ".wub";
-   file.open(&fileName[0]);
-
-   if(strcmp(&fileName[0], "none.wub") == 0) {
-      printf("Save aborted\n");
-      return;
-   }
-
-   //Write number of entities
-   file << entities.size() << "\n";
-
-   //For each entitys
-   for(int i = 0; i < entities.size(); i++) {
-      entityTemp = entities.at(i);
+void freeLevelData() {
+   CESpacing = 0.0;
+   lineAngle = 0;
+   dupNum = 0;
+   undoAmount = 0;
    
-      //Write angle
-      file << entityTemp.angle << " ";
-      //Write position
-      file << entityTemp.position.x << " " << entityTemp.position.y << " " << entityTemp.position.z << " ";
-      //Write scale
-      file << entityTemp.scale.x << " " << entityTemp.scale.y << " " << entityTemp.scale.z << " ";
-      //Write BSRadius
-      file << entityTemp.BSRadius << " ";
-      //Write meshIndex
-      file << entityTemp.meshIndex << " ";
-      //Write phyScale
-      file << entityTemp.phyScale.x << " ";
-      file << entityTemp.phyScale.y << " ";
-      file << entityTemp.phyScale.z << "\n";
-   }
-   file.close();
-   printf("%s saved\n", &fileName[0]);
+   entities.clear();
+   redoEntities.clear();
+   currentEntities.clear();
+   octLevel = 0;
 }
 

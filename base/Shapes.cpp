@@ -308,6 +308,7 @@ void SetupSq(float x, float y, int texture, float scaleX, float scaleY) {
    glActiveTexture(GL_TEXTURE1);
    glBindTexture(GL_TEXTURE_2D, texture);
 
+
    safe_glUniform1i(h_uTexUnit, 1);
    safe_glEnableVertexAttribArray(h_aPosition);
    glBindBuffer(GL_ARRAY_BUFFER, SqBuffObj);

@@ -15,6 +15,7 @@
 #include "Helper.h"
 #include "IOGame.h"
 #include "IOEdit.h"
+#include "IOStartScreen.h"
 #include "physSystem.h"
 #include "Shapes.h"
 #include "level.h"
@@ -36,10 +37,17 @@
 #include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
 
 
+//Window
+GLFWwindow *window;
+//Shadow Map
+ShadowMap *shadowMap;
+//Objectives
+Objective* tObj;
 SoundPlayer musicPlayer;
 //Paused/unpause
 bool paused;
-   int Edit;
+//Mode is either -1, 0 or 1 for Start screen, game, or edit more respectively
+int Mode = -1;
 //position and color data handles
 GLuint triBuffObj, colBuffObj;
 
@@ -84,7 +92,7 @@ std::list<part*> particleSpawner;
 
 /* projection matrix  - do not change */
 glm::mat4 SetProjectionMatrix() {
-   glm::mat4 Projection = glm::perspective(80.0f, (float)g_width/g_height, 0.1f, 400.f);	
+   glm::mat4 Projection = glm::perspective(80.0f, (float)g_width/g_height, 0.1f, 300.f);	
    safe_glUniformMatrix4fv(h_uProjMatrix, glm::value_ptr(Projection));
    return Projection;
 }
@@ -155,23 +163,37 @@ void cameraColision(){
 }
 //Draws the entities into the world
 void drawEntities(int passNum) {
-   if(!Edit) cameraColision();
+   if(Mode == GAME_MODE) {
+      cameraColision();
+   }
    Entity entityTemp;
    srand(sizer);
    int hit = 0;
    //printf("num ent rend %d\n",getEntityNum());
    for(int i = 0; i < getEntityNum(); ++i) {
       entityTemp = getEntityAt(i);
-      
-      if (passNum == 2)
-         SetMaterial(17);
-      else {
-         int mat = rand()%13;
-         while(!(mat = rand()%13));
-         SetMaterial(mat);
+      if(entityTemp.meshIndex != 18 && Mode == GAME_MODE) {
+         if (passNum == 2)
+            SetMaterial(17);
+         else {
+            int mat = rand()%13;
+            while(!(mat = rand()%13));
+               SetMaterial(mat);
+            }
+         if(!getGPressed('V')) PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
+            entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
       }
-      if(!getGPressed('V')) PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
-         entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
+      else if(Mode == EDIT_MODE) {
+         if (passNum == 2)
+            SetMaterial(17);
+         else {
+            int mat = rand()%13;
+            while(!(mat = rand()%13));
+               SetMaterial(mat);
+            }
+         if(!getGPressed('V')) PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
+            entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
+      }
    }
 
    if(getGPressed('B')) cool = 1;
@@ -202,48 +224,7 @@ void pauseorUnpause() {
    }
 }
 
-/* Main display function 
- * passNum: 0 = Create shadow map
- *          1 = Draw scene normally
- *          2 = Draw outlines around objects
- */
-void glfwDraw (GLFWwindow *window, int passNum)
-{
-   glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);//andrew tag here!
-   if (passNum != 2) {
-      //Draw skybox
-   	DrawSkyBox();
-   	SetModelStat();
-
-      safe_glEnableVertexAttribArray(h_aPosition);
-      safe_glEnableVertexAttribArray(h_aNormal);
-
-      glBindBuffer(GL_ARRAY_BUFFER, GrndBuffObj);
-      safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GIndxBuffObj);
-
-      SetMaterial(0);
-
-      glBindBuffer(GL_ARRAY_BUFFER, GNBuffObj);
-      safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-      /* draw!*/
-      glDrawElements(GL_TRIANGLES, g_GiboLen, GL_UNSIGNED_SHORT, 0);
-
-      // Disable attributes
-      safe_glDisableVertexAttribArray(h_aPosition);
-      safe_glDisableVertexAttribArray(h_aNormal);
-
-      SetMaterial(2);
-   }
-   else {
-      // Enable front face culling for object outlines
-      glCullFace(GL_FRONT);
-      glEnable(GL_CULL_FACE);
-
-      SetMaterial(17);
-   }
-
+void drawGameElements(int passNum) {
    //DRAW THE DANCING CYLINDER HERE!!
    btTransform pla;
    PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY(), physGetPlayerZ(), .25, .25, .25, getYaw(), 1.7);
@@ -311,14 +292,58 @@ void glfwDraw (GLFWwindow *window, int passNum)
    glDisable(GL_CULL_FACE);
 }
 
-void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
+/* Main display function 
+ * passNum: 0 = Create shadow map
+ *          1 = Draw scene normally
+ *          2 = Draw outlines around objects
+ */
+void glfwDraw (GLFWwindow *window, int passNum)
+{
+   glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);//andrew tag here!
+
+   if (passNum != 2) {
+      //Draw skybox
+   	DrawSkyBox();
+   	SetModelStat();
+
+      safe_glEnableVertexAttribArray(h_aPosition);
+      safe_glEnableVertexAttribArray(h_aNormal);
+
+      glBindBuffer(GL_ARRAY_BUFFER, GrndBuffObj);
+      safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GIndxBuffObj);
+
+      SetMaterial(0);
+
+      glBindBuffer(GL_ARRAY_BUFFER, GNBuffObj);
+      safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+      /* draw!*/
+      glDrawElements(GL_TRIANGLES, g_GiboLen, GL_UNSIGNED_SHORT, 0);
+
+      // Disable attributes
+      safe_glDisableVertexAttribArray(h_aPosition);
+      safe_glDisableVertexAttribArray(h_aNormal);
+
+      SetMaterial(2);
+   }
+   else if (passNum == 2) {
+      // Enable front face culling for object outlines
+      glCullFace(GL_FRONT);
+      glEnable(GL_CULL_FACE);
+
+      SetMaterial(17);
+   }
+   drawGameElements(passNum);
+}
+
+void renderScene() {
    glm::vec3 origEye = GetEye();
    glm::vec3 origLookAt = GetLookAt();
    
    glm::vec3 ggaze;
    glm::vec3 gw;
   	glm::vec3 gu;
-   
    glUseProgram(ShadeProg);
 
    glUniform1i(h_uShadeMode, ShadeMode);
@@ -331,11 +356,9 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    safe_glUniform1i(h_uTexUnit, 0);
    glEnable(GL_TEXTURE_2D);
    glActiveTexture(GL_TEXTURE0);
-   
    // Set light uniforms
    glUniform3f(h_uLightColor, 0.4, 0.4, 0.38);
    glUniform4f(h_uLightVec, 0.0, 3.0, 4.0, 0.0);
-
    // Render depth info from light's perspective
    shadowMap->BindFBO();
    glClear(GL_DEPTH_BUFFER_BIT);
@@ -353,7 +376,7 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    SetEye(origEye);
    
    //move the character to the left when not in edit mode
-   if (Edit) {
+   if (Mode == GAME_MODE) {
    	SetLookAt(origLookAt);
    } else {
    	ggaze = GetLookAt() - GetEye();
@@ -375,7 +398,7 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
    //Draw any gui elements that should be on the screen
-   DrawGui(Edit);
+   DrawGui(Mode);
 
    // Disable textures
    glDisable(GL_TEXTURE_2D);
@@ -385,126 +408,69 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    glfwSwapBuffers(window);
 }
 
-int main( int argc, char *argv[] )
-{
-   GLFWwindow *window;
-   //File name to load
-   string fileName;
-   //whether name inputtted is valid
-   bool validFile = false;
+void toStartScreen() {
+   Mode = STARTSCREEN_MODE;
+   glfwSetMouseButtonCallback( window, glfwStartScreenMouse );
+   glfwSetCursorPosCallback( window, glfwStartScreenGetCursorPos );
+   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+   freeLevelData();
+}
 
-   //Try to determine file input
-   while(validFile == false) {
-      printf("Type the file to load (Special options: 'd' = default, 'c' = clean):\n");
-      scanf("%s", &fileName[0]);
-      strcat(&fileName[0], ".wub");
-
-      ifstream toLoad(&fileName[0]);
-      validFile = toLoad.good();
-
-      //If 'c' was entered, then load a clean level
-      if(strcmp(&fileName[0], "c.wub") == 0) {
-         printf("Loading clean level...\n");
-         validFile = true;
-      }
-      //If 'd' was entered, then deafult level
-      else if(strcmp(&fileName[0], "d.wub") == 0) {
-         printf("Loading default level...\n");
-         validFile = true;
-      }
-      else if(validFile == false){
-         printf("Bad file, please type another file to load.\n");
-      }
-      else if(validFile == true) {
-         toLoad.close();
-      }
-   }
-
-   //Determine mode
-   printf("Type 0 to play, any other int to edit\n");
-   scanf("%i", &Edit);
-
+void initStartScreen() {
+   Mode = STARTSCREEN_MODE;
    glfwSetErrorCallback(glfwError);
    if (!glfwInit()) {
       exit(EXIT_FAILURE);
    }
 
-   //If Edit Mode
-   if(Edit) {
-      //World Edit Init
-      //initWorldEdit(window);
-      window = glfwCreateWindow(800, 800, "World Editor", NULL, NULL);
-      if (!window) {
-         glfwTerminate();
-         exit(EXIT_FAILURE);
-      }
-      srand(time(0));
-      glfwMakeContextCurrent(window);
-      glfwSetWindowPos(window, 80, 80);
-      glfwSetWindowSizeCallback(window, glfwWindowResize);
-      glfwSetWindowSize(window,1600,800);
-      g_height =800;
-      g_width = 1600;
-      setDistance(7);
-      SetEdit(1);
-      paused = false;
-
-      glfwSetKeyCallback( window, glfwEditKeyPress);
-      glfwSetCursorPosCallback( window, glfwEditGetCursorPos );
-      glfwSetMouseButtonCallback( window, glfwEditMouse );
-      glfwSetScrollCallback( window, glfwEditScroll );
-
-      glewInit();
-      glInitialize(window);
-      physicsInit();
-      InitGeom();
-      initGui(Edit);
-      initLevelLoader(Edit);
-      loadLevel(fileName);
+   window = glfwCreateWindow(800, 800, "Grapple", NULL, NULL);
+   if(!window) {
+      glfwTerminate();
+      exit(EXIT_FAILURE);
    }
-   //If Play Mode
-   else {
-      //Game Play Init
-      //initGamePlay(window);
-      window = glfwCreateWindow(800, 800, "Grapple", NULL, NULL);
-      if (!window) {
-         glfwTerminate();
-         exit(EXIT_FAILURE);
-      }
-      srand(time(0));
-      SetEye(vec3(0, 0, 0));
-      glfwMakeContextCurrent(window);
-      glfwSetWindowPos(window, 80, 80);
-      glfwSetWindowSizeCallback(window, glfwWindowResize);
-      glfwSetWindowSize(window,1600,800);
-      g_height =800;
-      g_width = 1600;
-      setDistance(10);
-      paused = false;
 
-      glfwSetKeyCallback(window, glfwGameKeyPress);
-      glfwSetCursorPosCallback( window, glfwGameGetCursorPos );
-      glfwSetMouseButtonCallback( window, glfwPlayMouse );
+   glfwMakeContextCurrent(window);
+   glfwSetWindowPos(window, 80, 80);
+   glfwSetWindowSizeCallback(window, glfwWindowResize);
+   glfwSetWindowSize(window,1600,800);
+   g_height =800;
+   g_width = 1600;
+   //Set Mouse callbacks for start screen
+   glewInit();
+   glInitialize(window);
+   InitGeom();
+   initGui();
 
-      glewInit();
-      glInitialize(window);
-      physicsInit();
-      InitGeom();
-      initGui(Edit);
-      initLevelLoader(Edit);
-      printf("Reading lv\n");
-      loadLevel(fileName);
+   glfwSetMouseButtonCallback( window, glfwStartScreenMouse );
+   glfwSetCursorPosCallback( window, glfwStartScreenGetCursorPos );
 
-      //music
-      musicPlayer = SoundPlayer();
-		musicPlayer.CreatePlayList("./playList.txt");
-   }
-   playerMesh = LoadMesh("../Assets/Models/topHatChar.obj");
-   ShadowMap *shadowMap = new ShadowMap();
+   shadowMap = new ShadowMap();
    if (shadowMap->MakeShadowMap(g_width, g_height) == -1) {
       printf("SHADOW MAP FAILED\n");
       exit(EXIT_FAILURE);  
    }
+
+   //music
+   musicPlayer = SoundPlayer();
+   musicPlayer.CreatePlayList("./playList.txt");
+}
+
+void initPlay(string fileName) {
+   Mode = GAME_MODE;
+   //srand(time(0));
+   SetEdit(Mode);
+   paused = false;
+   playerMesh = LoadMesh("../Assets/Models/topHatChar.obj");
+
+   glfwSetKeyCallback(window, glfwGameKeyPress);
+   glfwSetCursorPosCallback( window, glfwGameGetCursorPos );
+   glfwSetMouseButtonCallback( window, glfwGameMouse );
+   glfwSetScrollCallback( window, glfwGameScroll );
+   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+   physicsInit();
+   initLevelLoader(Mode);
+   loadLevel(fileName);
+
    Objective* tObj = new Objective(-42.0, -379.0, 230.0, 67.0);
    objectives.push_back(tObj);
    tObj->Init();
@@ -517,28 +483,41 @@ int main( int argc, char *argv[] )
    tObj = new Objective(-42.0, -379.0, 230.0, 67.0);
    objectives.push_back(tObj);
    tObj->Init();
+}
+
+void initEdit(string fileName) {
+   setDistance(7);
+   SetEdit(Mode);
+   paused = false;
+
+   glfwSetKeyCallback( window, glfwEditKeyPress);
+   glfwSetCursorPosCallback( window, glfwEditGetCursorPos );
+   glfwSetMouseButtonCallback( window, glfwEditMouse );
+   glfwSetScrollCallback( window, glfwEditScroll );
+
+   Mode = EDIT_MODE;
+   physicsInit();
+   initLevelLoader(Mode);
+   loadLevel(fileName);
+}
+
+int main( int argc, char *argv[] )
+{
+   initStartScreen();
 
    printf("Starting main loop\n");
    // Start the main execution loop.
    while (!glfwWindowShouldClose(window)) {
       glfwPollEvents();
-      if(Edit) {
-         if(paused == false) {
-            //Keep the cursor centered if gui is not displayed
-            if(getEPressed('G') == 0) {
-               glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-               glfwSetCursorPos(window,g_width/2,g_height/2);
-               glfwEditGetCursorPos(NULL,g_width/2.0,g_height/2.0);
-            }  
-            else {
-               glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            }
-            renderScene(window, shadowMap);
-            //glfw Game Keyboard
-            glfwEditKeyboard();
-         }
+
+      if(Mode == STARTSCREEN_MODE) {
+         glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+         glUseProgram(ShadeProg);
+         DrawGui(Mode);
+       	 glUseProgram(0);	
+         glfwSwapBuffers(window);
       }
-      else {
+      else if(Mode == GAME_MODE){
          if(paused == false) {
             //player appy physics controls
             SetLookAt(glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ()));
@@ -549,12 +528,29 @@ int main( int argc, char *argv[] )
             for(int i=0;i<objectives.size();++i) objectives[i]->Update(glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ()));
             //printf("oop%d\n",      getVecList().size());
             //Draw stuff
-            renderScene(window, shadowMap);
+            renderScene();
             glfwGameGetCursorPos(NULL,g_width/2.0,g_height/2.0);
             //glfw Game Keyboard
             glfwGameKeyboard();
          }
       }
+      else if(Mode == EDIT_MODE) {
+         if(paused == false) {
+            //Keep the cursor centered if gui is not displayed
+            if(getEPressed('G') == 0) {
+               glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+               glfwSetCursorPos(window,g_width/2,g_height/2);
+               glfwEditGetCursorPos(NULL,g_width/2.0,g_height/2.0);
+            }  
+            else {
+               glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            }
+            renderScene();
+            //glfw Game Keyboard
+            glfwEditKeyboard();
+         }
+      }
+
       usleep(15000);
    }
 

@@ -20,6 +20,7 @@ void glfwGameGetCursorPos(GLFWwindow *window, double xpos, double ypos);
 void glfwGameKeyPress(GLFWwindow *window, int key, int scan, int action, int mods);
 //Returns bool of char pressed
 int getPressed(char ch);
-
-void glfwPlayMouse(GLFWwindow *window, int button, int action, int mods);
+//Mouse scroll callback for Play mode to adjust camera
+void glfwGameScroll(GLFWwindow *window, double xOffset, double yOffset);
+void glfwGameMouse(GLFWwindow *window, int button, int action, int mods);
 #endif

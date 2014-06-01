@@ -3,6 +3,7 @@
 
 #include "Lab4.h"
 #include "IOEdit.h"
+#include "IOGame.h"
 #include "level.h"
 #include "Shapes.h"
 #include "Camera.h"
@@ -12,6 +13,21 @@
 
 #define ICON_WIDTH 0.13
 #define ICON_HEIGHT 0.22
+#define BUTTON_WIDTH 0.4
+#define BUTTON_HEIGHT 0.3
+#define DIGIT_WIDTH 0.06
+#define DIGIT_HEIGHT 0.15
+#define PLAY_BUTTON 1
+#define EDIT_BUTTON 2
+#define QUIT_BUTTON 3
+#define WORLD1_SELECT_BUTTON 4
+#define WORLD2_SELECT_BUTTON 5
+#define WORLD3_SELECT_BUTTON 6
+#define WORLD4_SELECT_BUTTON 7
+#define BACK_BUTTON 8
+
+
+extern GLFWwindow *window;
 
 /*TEXTURING*/
 
@@ -33,10 +49,16 @@ struct Icon {
    float lookAtDistance;
    int textureIndex;
    glm::vec2 position;
-}; 
+};
+
+struct Button {
+   glm::vec2 position;
+   int textureIndex;
+   int ID;
+};
 
 //Initialize gui
-void initGui(int EditMode);
+void initGui();
 void DrawCrosshair();
 //Master call that will draw all gui elements if any depending on
 //game mode
@@ -47,7 +69,7 @@ void ready2D();
 void ready3D();
 //Called in IOEdit.cpp when in gui mode and the left mouse button
 //is pressed
-void GuiPressing(int xPos, int yPos);
+void GuiPressing(int mode, int xPos, int yPos);
 //Retrieve the icon at Hot Bar index
 Icon getHBIcon(int index);
 int ImageLoad(char *filename, TexImage *image);

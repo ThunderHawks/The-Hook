@@ -1,4 +1,5 @@
 #include "Gui.h"
+//#include "Helper.h"
 
 TexImage *TextureImage;
 RGB myImage[64][64];
@@ -10,6 +11,16 @@ vector<Icon> HBIndices;
 //Location of each Selection Screen Icon Index
 vector<Icon> SSIndices;
 
+//Location of start Start Screen Buttons
+vector<Button> StartScreen1;
+vector<Button> StartScreen2;
+
+//Indicates which start screen is active
+//1 - StartScreen 1
+//2 - StartScreen 2 (Play)
+//3 - StartScreen 3 (Edit)
+int StartScreenShowing = 1;
+
 //Last selection index pressed
 bool iconSelected = false;
 Icon lastSelectedIcon;
@@ -17,6 +28,17 @@ Icon lastSelectedIcon;
 GLuint textures[30];
 //FT_Library library;
 //FT_Face face;
+
+int debt = 200000;
+
+Button createButton(int textureIndex, glm::vec2 position, int ID) {
+   Button button;
+   
+   button.position = position;
+   button.textureIndex = textureIndex;
+   button.ID = ID;
+   return button;
+}
 
 //Icon createIcon(Entity ent, float distance, int texIndex, glm::vec2 pos) {
 Icon createIcon(int meshIndex, int textureIndex, float distance, glm::vec2 pos) {
@@ -96,6 +118,14 @@ Icon createIcon(int meshIndex, int textureIndex, float distance, glm::vec2 pos) 
          //PointyBldg
          icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.1, 0.1, 0.1), 0.0, 17);
          break;
+      case 18:
+         //Destination Beacon
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.05, 0.01, 0.05), 0.0, 18);
+         break;
+      case 19:
+         //Selection tool
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.01, 0.01, 0.01), 0.0, 19);
+         break;
    }
    icon.lookAtDistance = distance;
    icon.textureIndex = textureIndex;
@@ -103,10 +133,9 @@ Icon createIcon(int meshIndex, int textureIndex, float distance, glm::vec2 pos) 
    return icon;
 }
 
-void initGui(int EditMode) {
+void initGui() {
 
-   if(EditMode) {
-      Icon iconTemp;
+   Icon iconTemp;
 
       //Initialize Freetype library
       /*int error = FT_Init_FreeType(&library);
@@ -123,76 +152,110 @@ void initGui(int EditMode) {
       }
 */
 
-      glGenTextures(30, textures);
-      glGenTextures(1, textures + 1);
+   glGenTextures(50, textures);
+   glGenTextures(1, textures + 1);
 
-      printf("here\n");
-      LoadTexture((char *)"../Assets/Textures/ModMBasicBldg.bmp", textures[0]);
-      LoadTexture((char *)"../Assets/Textures/shopBldg.bmp", textures[1]);
-      LoadTexture((char *)"../Assets/Textures/cinderblock.bmp", textures[2]);
-      LoadTexture((char *)"../Assets/Textures/mediumBasicBuilding.bmp", textures[3]);
-      LoadTexture((char *)"../Assets/Textures/sidewalkCorner.bmp", textures[4]);
-      LoadTexture((char *)"../Assets/Textures/sidewalk.bmp", textures[5]);
-      LoadTexture((char *)"../Assets/Textures/streetlight.bmp", textures[6]);
-      LoadTexture((char *)"../Assets/Textures/table.bmp", textures[7]);
-      LoadTexture((char *)"../Assets/Textures/tallBldg.bmp", textures[8]);
-      LoadTexture((char *)"../Assets/Textures/waterTower.bmp", textures[9]);
-      LoadTexture((char *)"../Assets/Textures/simpleCRBldg.bmp", textures[10]);
-      LoadTexture((char *)"../Assets/Textures/wall.bmp", textures[11]);
-      LoadTexture((char *)"../Assets/Textures/gasStation.bmp", textures[12]); 
-      LoadTexture((char *)"../Assets/Textures/halfSlab.bmp", textures[13]);
-      LoadTexture((char *)"../Assets/Textures/mart.bmp", textures[14]);
-      LoadTexture((char *)"../Assets/Textures/flag.bmp", textures[15]);
-      LoadTexture((char *)"../Assets/Textures/asymBldg.bmp", textures[16]);
-      LoadTexture((char *)"../Assets/Textures/pointyBldg.bmp", textures[17]);
-      LoadTexture((char *)"../Assets/Textures/SelectionScreenTexture.bmp", textures[18]);
-      LoadTexture((char *)"../Assets/Textures/SelectionUI_converted.bmp", textures[19]);
-      LoadTexture((char *)"../Assets/Textures/crackedTexture.bmp", textures[20]);
-      LoadTexture((char *)"../Assets/Textures/caution.bmp", textures[21]);
+   printf("here\n");
+   LoadTexture((char *)"../Assets/Textures/ModMBasicBldg.bmp", textures[0]);
+   LoadTexture((char *)"../Assets/Textures/shopBldg.bmp", textures[1]);
+   LoadTexture((char *)"../Assets/Textures/cinderblock.bmp", textures[2]);
+   LoadTexture((char *)"../Assets/Textures/mediumBasicBuilding.bmp", textures[3]);
+   LoadTexture((char *)"../Assets/Textures/sidewalkCorner.bmp", textures[4]);
+   LoadTexture((char *)"../Assets/Textures/sidewalk.bmp", textures[5]);
+   LoadTexture((char *)"../Assets/Textures/streetlight.bmp", textures[6]);
+   LoadTexture((char *)"../Assets/Textures/table.bmp", textures[7]);
+   LoadTexture((char *)"../Assets/Textures/tallBldg.bmp", textures[8]);
+   LoadTexture((char *)"../Assets/Textures/waterTower.bmp", textures[9]);
+   LoadTexture((char *)"../Assets/Textures/simpleCRBldg.bmp", textures[10]);
+   LoadTexture((char *)"../Assets/Textures/wall.bmp", textures[11]);
+   LoadTexture((char *)"../Assets/Textures/gasStation.bmp", textures[12]); 
+   LoadTexture((char *)"../Assets/Textures/halfSlab.bmp", textures[13]);
+   LoadTexture((char *)"../Assets/Textures/mart.bmp", textures[14]);
+   LoadTexture((char *)"../Assets/Textures/flag.bmp", textures[15]);
+   LoadTexture((char *)"../Assets/Textures/asymBldg.bmp", textures[16]);
+   LoadTexture((char *)"../Assets/Textures/pointyBldg.bmp", textures[17]);
+   LoadTexture((char *)"../Assets/Textures/SelectionScreenTexture.bmp", textures[18]);
+   LoadTexture((char *)"../Assets/Textures/SelectionUI_converted.bmp", textures[19]);
+   LoadTexture((char *)"../Assets/Textures/crackedTexture.bmp", textures[20]);
+   LoadTexture((char *)"../Assets/Textures/caution.bmp", textures[21]);
+   LoadTexture((char *)"../Assets/Fonts/font1.bmp", textures[22]);
+   LoadTexture((char *)"../Assets/Textures/playButton.bmp", textures[23]);   
+   LoadTexture((char *)"../Assets/Textures/editButton.bmp", textures[24]);
+   LoadTexture((char *)"../Assets/Textures/quitButton.bmp", textures[25]);
+   LoadTexture((char *)"../Assets/Textures/world1Button.bmp", textures[26]);
+   LoadTexture((char *)"../Assets/Textures/world2Button.bmp", textures[27]);
+   LoadTexture((char *)"../Assets/Textures/world3Button.bmp", textures[28]);
+   LoadTexture((char *)"../Assets/Textures/world4Button.bmp", textures[29]);
+   LoadTexture((char *)"../Assets/Textures/backButton.bmp", textures[30]);
+   LoadTexture((char *)"../Assets/Textures/gameInstructions1.0.bmp", textures[31]);
+   LoadTexture((char *)"../Assets/Textures/ScoreBackground.bmp", textures[32]);
+   LoadTexture((char *)"../Assets/Fonts/0.bmp", textures[33]);
+   LoadTexture((char *)"../Assets/Fonts/1.bmp", textures[34]);
+   LoadTexture((char *)"../Assets/Fonts/2.bmp", textures[35]);
+   LoadTexture((char *)"../Assets/Fonts/3.bmp", textures[36]);
+   LoadTexture((char *)"../Assets/Fonts/4.bmp", textures[37]);
+   LoadTexture((char *)"../Assets/Fonts/5.bmp", textures[38]);
+   LoadTexture((char *)"../Assets/Fonts/6.bmp", textures[39]);
+   LoadTexture((char *)"../Assets/Fonts/7.bmp", textures[40]);
+   LoadTexture((char *)"../Assets/Fonts/8.bmp", textures[41]);
+   LoadTexture((char *)"../Assets/Fonts/9.bmp", textures[42]);
 
-      //Initialize HotBar icons
-      HBIndices.push_back(createIcon(0, textures[0], 23.5, glm::vec2(-0.6, -0.88)));
-      HBIndices.push_back(createIcon(1, textures[1], 12.5, glm::vec2(-0.45, -0.88)));
-      HBIndices.push_back(createIcon(2, textures[2], 3.5, glm::vec2(-0.3, -0.88)));
-      HBIndices.push_back(createIcon(3, textures[3], 8.0, glm::vec2(-0.15, -0.88)));
-      HBIndices.push_back(createIcon(4, textures[4], 8.0, glm::vec2(0.0, -0.88)));
-      HBIndices.push_back(createIcon(5, textures[5], 8.0, glm::vec2(0.15, -0.88)));
-      HBIndices.push_back(createIcon(2, textures[6], 11.5, glm::vec2(0.3, -0.88)));
-      HBIndices.push_back(createIcon(7, textures[7], 5.0, glm::vec2(0.45, -0.88)));
-      HBIndices.push_back(createIcon(8, textures[8], 500.0, glm::vec2(0.6, -0.88)));
+   //Initialize HotBar icons
+   HBIndices.push_back(createIcon(0, textures[0], 23.5, glm::vec2(-0.6, -0.88)));
+   HBIndices.push_back(createIcon(1, textures[1], 12.5, glm::vec2(-0.45, -0.88)));
+   HBIndices.push_back(createIcon(2, textures[2], 3.5, glm::vec2(-0.3, -0.88)));
+   HBIndices.push_back(createIcon(3, textures[3], 8.0, glm::vec2(-0.15, -0.88)));
+   HBIndices.push_back(createIcon(4, textures[4], 8.0, glm::vec2(0.0, -0.88)));
+   HBIndices.push_back(createIcon(5, textures[5], 8.0, glm::vec2(0.15, -0.88)));
+   HBIndices.push_back(createIcon(6, textures[6], 11.5, glm::vec2(0.3, -0.88)));
+   HBIndices.push_back(createIcon(7, textures[7], 5.0, glm::vec2(0.45, -0.88)));
+   HBIndices.push_back(createIcon(8, textures[8], 500.0, glm::vec2(0.6, -0.88)));
 
+   //Initialize Selection screen icons
+   //Row 1
+   SSIndices.push_back(createIcon(0, textures[0], 23.5, glm::vec2(-0.6, 0.7)));
+   SSIndices.push_back(createIcon(1, textures[1], 12.5, glm::vec2(-0.45, 0.7)));
+   SSIndices.push_back(createIcon(2, textures[2], 3.5, glm::vec2(-0.3, 0.7)));
+   SSIndices.push_back(createIcon(3, textures[3], 8.0, glm::vec2(-0.15, 0.7)));
+   SSIndices.push_back(createIcon(4, textures[4], 8.0, glm::vec2(0.0, 0.7)));
+   SSIndices.push_back(createIcon(5, textures[5], 8.0, glm::vec2(0.15, 0.7)));
+   SSIndices.push_back(createIcon(6, textures[6], 11.5, glm::vec2(0.3, 0.7)));
+   SSIndices.push_back(createIcon(7, textures[7], 5.0, glm::vec2(0.45, 0.7)));
+   SSIndices.push_back(createIcon(8, textures[8], 500.0, glm::vec2(0.6, 0.7)));
+   //Row 2
+   SSIndices.push_back(createIcon(9, textures[9], 8.0, glm::vec2(-0.6, 0.4)));
+   SSIndices.push_back(createIcon(10, textures[10], 35.6, glm::vec2(-0.45, 0.4)));
+   SSIndices.push_back(createIcon(11, textures[11], 5.8, glm::vec2(-0.3, 0.4)));
+   SSIndices.push_back(createIcon(12, textures[12], 18.0, glm::vec2(-0.15, 0.4)));
+   SSIndices.push_back(createIcon(13, textures[13], 8.0, glm::vec2(0.0, 0.4)));
+   SSIndices.push_back(createIcon(14, textures[14], 22.5, glm::vec2(0.15, 0.4)));
+   SSIndices.push_back(createIcon(15, textures[15], 4.1, glm::vec2(0.3, 0.4)));
+   SSIndices.push_back(createIcon(16, textures[16], 54.7, glm::vec2(0.45, 0.4)));
+   SSIndices.push_back(createIcon(17, textures[17], 70.0, glm::vec2(0.6, 0.4)));
+   //Row 3 
+   SSIndices.push_back(createIcon(18, textures[16], 8.0, glm::vec2(-0.6, 0.1)));
+   SSIndices.push_back(createIcon(19, textures[16], 8.0, glm::vec2(-0.45, 0.1)));
+   SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(-0.3, 0.1)));
+   SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(-0.15, 0.1)));
+   SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.0, 0.1)));
+   SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.15, 0.1)));
+   SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.3, 0.1)));
+   SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.45, 0.1)));
+   SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.6, 0.1)));
 
-      //Initialize Selection screen icons
-      //Row 1
-      SSIndices.push_back(createIcon(0, textures[0], 23.5, glm::vec2(-0.6, 0.7)));
-      SSIndices.push_back(createIcon(1, textures[1], 12.5, glm::vec2(-0.45, 0.7)));
-      SSIndices.push_back(createIcon(2, textures[2], 3.5, glm::vec2(-0.3, 0.7)));
-      SSIndices.push_back(createIcon(3, textures[3], 8.0, glm::vec2(-0.15, 0.7)));
-      SSIndices.push_back(createIcon(4, textures[4], 8.0, glm::vec2(0.0, 0.7)));
-      SSIndices.push_back(createIcon(5, textures[5], 8.0, glm::vec2(0.15, 0.7)));
-      SSIndices.push_back(createIcon(6, textures[6], 11.5, glm::vec2(0.3, 0.7)));
-      SSIndices.push_back(createIcon(7, textures[7], 5.0, glm::vec2(0.45, 0.7)));
-      SSIndices.push_back(createIcon(8, textures[8], 500.0, glm::vec2(0.6, 0.7)));
-      //Row 2
-      SSIndices.push_back(createIcon(9, textures[9], 8.0, glm::vec2(-0.6, 0.4)));
-      SSIndices.push_back(createIcon(10, textures[10], 35.6, glm::vec2(-0.45, 0.4)));
-      SSIndices.push_back(createIcon(11, textures[11], 5.8, glm::vec2(-0.3, 0.4)));
-      SSIndices.push_back(createIcon(12, textures[12], 18.0, glm::vec2(-0.15, 0.4)));
-      SSIndices.push_back(createIcon(13, textures[13], 8.0, glm::vec2(0.0, 0.4)));
-      SSIndices.push_back(createIcon(14, textures[14], 22.5, glm::vec2(0.15, 0.4)));
-      SSIndices.push_back(createIcon(15, textures[15], 4.1, glm::vec2(0.3, 0.4)));
-      SSIndices.push_back(createIcon(16, textures[16], 54.7, glm::vec2(0.45, 0.4)));
-      SSIndices.push_back(createIcon(17, textures[17], 70.0, glm::vec2(0.6, 0.4)));
-      //Row 
-      SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(-0.6, 0.1)));
-      SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(-0.45, 0.1)));
-      SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(-0.3, 0.1)));
-      SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(-0.15, 0.1)));
-      SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.0, 0.1)));
-      SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.15, 0.1)));
-      SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.3, 0.1)));
-      SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.45, 0.1)));
-      SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.6, 0.1)));
+   //Initialize Start Screen buttons
+   //Screen 1
+   StartScreen1.push_back(createButton(textures[23], glm::vec2(0.7, 0.4), PLAY_BUTTON));
+   StartScreen1.push_back(createButton(textures[24], glm::vec2(0.7, 0.0), EDIT_BUTTON));
+   StartScreen1.push_back(createButton(textures[25], glm::vec2(0.7, -0.4), QUIT_BUTTON));
+
+   //Screen 2
+   StartScreen2.push_back(createButton(textures[26], glm::vec2(0.7, 0.8), WORLD1_SELECT_BUTTON));
+   StartScreen2.push_back(createButton(textures[27], glm::vec2(0.7, 0.4), WORLD2_SELECT_BUTTON));
+   StartScreen2.push_back(createButton(textures[28], glm::vec2(0.7, 0.0), WORLD3_SELECT_BUTTON));
+   StartScreen2.push_back(createButton(textures[29], glm::vec2(0.7, -0.4), WORLD4_SELECT_BUTTON));
+   StartScreen2.push_back(createButton(textures[30], glm::vec2(0.7, -0.8), BACK_BUTTON));
+
       //Row 4*/
 /*
       SSIndices.push_back(createIcon(40, 8.0, glm::vec2(-0.6, -0.2)));
@@ -206,18 +269,13 @@ void initGui(int EditMode) {
       SSIndices.push_back(createIcon(40, 8.0, glm::vec2(0.6, -0.2)));
 */
       //For the time being
-      glEnable(GL_TEXTURE_2D);
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
+   glEnable(GL_TEXTURE_2D);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
 
-      makeCheckerBoard(64, 64);
-   } else {
-      glGenTextures(30, textures);
-      glGenTextures(1, textures + 1);
-      LoadTexture((char *)"../Assets/Fonts/font1.bmp", textures[0]);
-   }
+   makeCheckerBoard(64, 64);
 }
 
 Icon getHBIcon(int index) {
@@ -229,8 +287,110 @@ void DrawCrosshair() {
    SetupSq(0, 0, 0, 0.03, 0.01);
 }
 
-void ready2D() {
+vector<int> scoreDigitTextures() {
+   vector<int> digitTextures;
+   int array[6];
+   int debtTemp = debt;
+   int digitTemp;
 
+   //Convert debt number into an array of ints
+   for(int i = 5; i >= 0; i--) {
+      digitTemp = debtTemp%10;
+      debtTemp /= 10;
+
+      switch(digitTemp) {
+         case 0:
+            digitTextures.push_back(textures[33]);
+            break;
+         case 1:
+            digitTextures.push_back(textures[34]);
+            break;
+         case 2:
+            digitTextures.push_back(textures[35]);
+            break;
+         case 3:
+            digitTextures.push_back(textures[36]);
+            break;
+         case 4:
+            digitTextures.push_back(textures[37]);
+            break;
+         case 5:
+            digitTextures.push_back(textures[38]);
+            break;
+         case 6:
+            digitTextures.push_back(textures[39]);
+            break;
+         case 7:
+            digitTextures.push_back(textures[40]);
+            break;
+         case 8:
+            digitTextures.push_back(textures[41]);
+            break;
+         case 9:
+            digitTextures.push_back(textures[42]);
+            break;
+
+      }
+   }
+   
+  // printf("%d%d%d,%d%d%d\n", array[0], array[1], array[2], array[3], array[4], array[5]);
+  // printf("hi?\n");
+//   printf("%d\n", array[0]);
+/*
+   //Convert array of ints into array of digit textures
+   for(int i = 5; i >= 0; i--) {
+      printf("i: %d\n", i);
+      switch(array[i]) {
+         case 0: 
+            digitTextures[i] = textures[33];
+            break;
+         case 1: 
+            digitTextures[i] = textures[34];
+            break;
+         case 2: 
+            digitTextures[i] = textures[35];
+            break;
+         case 3: 
+            digitTextures[i] = textures[36];
+            break;
+         case 4: 
+            digitTextures[i] = textures[37];
+            break;
+         case 5: 
+            digitTextures[i] = textures[38];
+            break;
+         case 6: 
+            digitTextures[i] = textures[39];
+            break;
+         case 7: 
+            digitTextures[i] = textures[40];
+            break;
+         case 8: 
+            digitTextures[i] = textures[41];
+            break;
+         case 9: 
+            digitTextures[i] = textures[42];
+            break;
+      }
+   }*/
+   return digitTextures;
+}
+
+void DrawScore() {
+   vector<int> digitTextures = scoreDigitTextures();
+   //Background
+   SetupSq(p2i_x(g_width) - 0.3, p2i_y(g_height) - 0.3,  textures[32], 0.5, 0.4);
+
+   SetupSq(p2i_x(g_width) - 0.46, p2i_y(g_height) - 0.365,  digitTextures[5], DIGIT_WIDTH, DIGIT_HEIGHT);
+   SetupSq(p2i_x(g_width) - 0.41, p2i_y(g_height) - 0.365,  digitTextures[4], DIGIT_WIDTH, DIGIT_HEIGHT);
+   SetupSq(p2i_x(g_width) - 0.36, p2i_y(g_height) - 0.365,  digitTextures[3], DIGIT_WIDTH, DIGIT_HEIGHT);
+   SetupSq(p2i_x(g_width) - 0.31, p2i_y(g_height) - 0.365,  digitTextures[2], DIGIT_WIDTH, DIGIT_HEIGHT);
+   SetupSq(p2i_x(g_width) - 0.26, p2i_y(g_height) - 0.365,  digitTextures[1], DIGIT_WIDTH, DIGIT_HEIGHT);
+   SetupSq(p2i_x(g_width) - 0.21, p2i_y(g_height) - 0.365,  digitTextures[0], DIGIT_WIDTH, DIGIT_HEIGHT);  
+   
+}
+
+void ready2D() {
    glUniform1f(h_uGuiMode, 1);
    //glCullFace(GL_BACK);
    glDisable(GL_CULL_FACE);
@@ -258,10 +418,39 @@ void ready3D() {
 
     glMatrixMode(GL_MODELVIEW);
     ModelTrans.loadIdentity();
-    SetView();
+    //SetView();
 
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_DEPTH_TEST);
+}
+
+void DrawGameControls() {
+   SetupSq(0, 0, textures[31], 1.4, 1.4);
+}
+
+void DrawStartScreen() {
+   Button buttonTemp;
+
+   //printf("Drawing Start Screen\n");
+   //printf("Screen: %d\n", StartScreenShowing);
+
+   //Background
+   SetupSq(0, 0, textures[31], p2w_x(g_width), p2w_y(g_height) * 2.0);
+
+   if(StartScreenShowing == 1) {
+      //printf("SS1: %d\n", (int)StartScreen1.size());
+      for(int i = 0; i < StartScreen1.size(); i++) {
+         buttonTemp = StartScreen1[i];
+         SetupSq(buttonTemp.position.x, buttonTemp.position.y, buttonTemp.textureIndex, BUTTON_WIDTH, BUTTON_HEIGHT);
+      }
+   }
+   if(StartScreenShowing == 2 || StartScreenShowing == 3) {
+      //printf("SS2: %d\n", (int)StartScreen2.size());
+      for(int i = 0; i < StartScreen2.size(); i++) {
+         buttonTemp = StartScreen2[i];
+         SetupSq(buttonTemp.position.x, buttonTemp.position.y, buttonTemp.textureIndex, BUTTON_WIDTH, BUTTON_HEIGHT);
+      }
+   }
 }
 
 void DrawHotBar() {
@@ -290,17 +479,23 @@ void DrawSelection() {
    }
 }
 
+bool buttonPressed(glm::vec2 buttonPos, int xPos, int yPos) {
+   float worldX = p2i_x(xPos);
+   float worldY = p2i_y(yPos);
+
+   if(buttonPos.x - BUTTON_WIDTH/2.0 <= worldX && worldX <= buttonPos.x + BUTTON_WIDTH/2.0) {
+      if(buttonPos.y - BUTTON_HEIGHT/2.0 <= worldY && worldY <= buttonPos.y + BUTTON_HEIGHT/2.0) {
+         return true;
+      }
+   }
+
+   return false;
+}
+
 bool iconPressed(glm::vec2 iconPos, int xPos, int yPos) {
 
    float worldX = p2i_x(xPos);
    float worldY = p2i_y(yPos);
-
-   //printf("iconPos: %f %f, mouse: %f %f\n", iconPos.x, iconPos.y, worldX, worldY);
-   //printf("mouse: %d %d, p2w: %f %f, p2i: %f %f\n", xPos, yPos, worldX, worldY, p2i_x(xPos), p2i_y(yPos));
-   //printf("width/height: %f %f\n\n", p2i_x(ICON_WIDTH), p2i_y(ICON_HEIGHT));
-   //printf("world: %f %f, icon: %f %f\n", worldX, worldY, iconPos.x, iconPos.y);
-   //printf("x: %f <= %f <= %f\n", iconPos.x - ICON_WIDTH/2.0, worldX, iconPos.x + ICON_WIDTH/2.0);
-   //printf("y: %f <= %f <= %f\n", iconPos.y - ICON_HEIGHT/2.0, worldY, iconPos.y + ICON_HEIGHT/2.0);
 
    if(iconPos.x - ICON_WIDTH/2.0 <= worldX && worldX <= iconPos.x + ICON_WIDTH/2.0) {
       if(iconPos.y - ICON_HEIGHT/2.0 <= worldY && worldY <= iconPos.y + ICON_HEIGHT/2.0) {
@@ -320,46 +515,141 @@ void SetHBIcon(Icon icon, int HBIndex) {
    HBIndices[HBIndex].position = posTemp;
 }
 
-void GuiPressing(int xPos, int yPos) {
-   //printf("Tried to press button at %d %d\n", xPos, yPos);
-
-   //Test HB icons
-   for(int i = 0; i < HBIndices.size(); i++) {
-
-      if(iconPressed(HBIndices[i].position, xPos, yPos) == true) {
-         printf("~~~~Icon %d Pressed on hotbar\n", i);
-         if(iconSelected == true) {
-            SetHBIcon(lastSelectedIcon, i);
-            iconSelected = false;
+void GuiPressing(int mode, int xPos, int yPos) {
+   if(mode == STARTSCREEN_MODE) {
+      //Screen with only Play, Edit, and Quit
+      if(StartScreenShowing == 1) {
+         //printf("Gui Pressed StartScreen mode\n");
+         for(int i = 0; i < (int)StartScreen1.size(); i++) {
+            if(buttonPressed(StartScreen1[i].position, xPos, yPos) == true) {
+               printf("button %d pressed\n", i);
+               switch(StartScreen1[i].ID) {
+                  case(PLAY_BUTTON):
+                     StartScreenShowing = 2;
+                     break;
+                  case(EDIT_BUTTON):
+                     StartScreenShowing = 3;
+                     break;
+                  case(QUIT_BUTTON):
+                     printf("exiting\n");
+                     //exit( EXIT_SUCCESS );
+                     glfwDestroyWindow(window);
+                     break;
+               }
+               return;
+            }
          }
-         return;
+      }
+      //Screen with all worlds in Play
+      else if(StartScreenShowing == 2) {
+         //printf("Gui Pressed StartScreen mode\n");
+         for(int i = 0; i < (int)StartScreen2.size(); i++) {
+            if(buttonPressed(StartScreen2[i].position, xPos, yPos) == true) {
+
+               switch(StartScreen2[i].ID) {
+                  case(WORLD1_SELECT_BUTTON):
+                     initPlay("level1.wub");
+                     break;
+                  case(WORLD2_SELECT_BUTTON):
+                     initPlay("level2.wub");
+                     break;
+                  case(WORLD3_SELECT_BUTTON):
+                     initPlay("level3.wub");
+                     break;
+                  case(WORLD4_SELECT_BUTTON):
+                     initPlay("level4.wub");
+                     break;
+                  case(BACK_BUTTON):
+                     StartScreenShowing = 1;
+                     break;
+               }
+               return;
+            }
+         }
+      }
+      //Screen with all worlds in Edit
+      else if(StartScreenShowing == 3) {
+         for(int i = 0; i < (int)StartScreen2.size(); i++) {
+            if(buttonPressed(StartScreen2[i].position, xPos, yPos) == true) {
+               switch(StartScreen2[i].ID) {
+                  case(WORLD1_SELECT_BUTTON):
+                     initEdit("level1.wub");
+                     break;
+                  case(WORLD2_SELECT_BUTTON):
+                     initEdit("level2.wub");
+                     break;
+                  case(WORLD3_SELECT_BUTTON):
+                     initEdit("level3.wub");
+                     break;
+                  case(WORLD4_SELECT_BUTTON):
+                     initEdit("level4.wub");
+                     break;
+                  case(BACK_BUTTON):
+                     StartScreenShowing = 1;
+                     break;
+               }
+               return;
+            }
+         }
       }
    }
+   else if(mode == EDIT_MODE) {
+      printf("Gui Pressed Edit mode\n");
+      //printf("Tried to press button at %d %d\n", xPos, yPos);
 
-   //Test SS icons
-   for(int i = 0; i < SSIndices.size(); i++) {
-      if(iconPressed(SSIndices[i].position, xPos, yPos) == true) {
-         printf("~~~~Icon %d Pressed on selection\n", i);
-         lastSelectedIcon = SSIndices[i];
-         iconSelected = true;
-         return; 
+      //Test HB icons
+      for(int i = 0; i < HBIndices.size(); i++) {
+
+         if(iconPressed(HBIndices[i].position, xPos, yPos) == true) {
+            printf("~~~~Icon %d Pressed on hotbar\n", i);
+            if(iconSelected == true) {
+               SetHBIcon(lastSelectedIcon, i);
+               iconSelected = false;
+            }
+            return;
+         }
       }
+
+      //Test SS icons
+      for(int i = 0; i < SSIndices.size(); i++) {
+         if(iconPressed(SSIndices[i].position, xPos, yPos) == true) {
+            printf("~~~~Icon %d Pressed on selection\n", i);
+            lastSelectedIcon = SSIndices[i];
+            iconSelected = true;
+            return; 
+         }
+       }
    }
 }
 
-void DrawGui(int editMode) {
-
+void DrawGui(int mode) {
+   
    ready2D();
 
-   if(editMode) {
+   //printf("Mode; %d\n", mode);
+   //If start screen mode
+   if(mode == -1) {
+      //printf("%f %f\n", g_width, g_height);
+      //printf("Drawing start screen\n");
+      //printf("%f %f\n", p2w_x(g_width), p2w_y(g_height));
+      DrawStartScreen();
+   }
+   //Else if edit mode
+   else if(mode) {
       DrawHotBar();
       //Display gui with all of the models to edit hotbar
       if(getEPressed('G')) {
          DrawSelection();
       }
    }
+   //Else game mode
    else {
       DrawCrosshair();
+      DrawScore();
+
+      if(getGPressed('H')) {
+         DrawGameControls();
+      }
       //printText2D(string text, int x, int y, int size)
       //printText2D("Corn Flakes", 0, 0, 1.0);
    }

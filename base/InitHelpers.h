@@ -4,6 +4,8 @@
 #include <GLFW/glfw3.h>
 #include "MStackHelp.h"
 
+#define STARTSCREEN_MODE -1
+
 extern GLint h_aPointSize, h_aPosition, h_aNormal, h_uViewMatrix, h_uProjMatrix;
 extern GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj;
 extern GLuint ShadowCubeBuffObj, SCIndxBuffObj, ShadowNormalBuffObj, RampBuffObj, RIndxBuffObj, RampNormalBuffObj;
