@@ -32,8 +32,8 @@ int ShadowMap::MakeShadowMap(int width, int height) {
    int isSuccessful = 0;
    float borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
   
-   texWidth = width * 2;
-   texHeight = height * 2;
+   texWidth = width;
+   texHeight = height;
 
    // Create the depth texture
    glGenTextures(1, &DepthTex);
@@ -87,12 +87,12 @@ glm::mat4 SetOrthoProjectionMatrix(glm::vec3 eye, glm::vec3 lookAt, float dist) 
    float expandPosX, expandNegX;
    
    if (eye.x < lookAt.x) {
-      expandPosX = (lookAt.x - eye.x) * 8.0;
+      expandPosX = (lookAt.x - eye.x) * 7.0;
       expandNegX = 0.0;
    }
    else {
       expandPosX = 0.0;
-      expandNegX = (lookAt.x - eye.x) * 8.0;
+      expandNegX = (lookAt.x - eye.x) * 7.0;
    }
 
    glm::mat4 orthoProj = glm::ortho(-40.f + expandNegX, 40.f + expandPosX, -50.f, 100.f, dist - 50.f, dist + 100.f);
