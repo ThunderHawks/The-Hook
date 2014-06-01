@@ -20,23 +20,18 @@ struct Bone {
 	aiString name;
 	Bone *parent;									//parent in hierarchy
 	aiMatrix4x4 offset;							//bone offset matrix
-	
-	int numPosKeyFrames;
-	int numRotKeyFrames;
-	int numScaleKeyFrames;
-	
+
+	//these next three will be deleted
+	aiMatrix4x4 *transformations;
+	glm::mat4 *glmTransforms;
+	aiMatrix4x4 *personalTrans;
+
+	glm::mat4 currentTransform;
+
 	std::vector<aiVectorKey> posKeys;
 	std::vector<aiQuatKey> rotKeys;
 	std::vector<aiVectorKey> scaleKeys;
-	glm::mat4 *glmTransforms;
-	aiMatrix4x4 *transformations;
-	aiMatrix4x4 *personalTrans;
 	std::vector<Bone *> childs;
-	
-	//aiMatrix4x4 meshTrans;					//mesh matrix
-	//aiString parentName;						//name of parent
-	//aiBone bone;
-	//aiNode boneNode;
 };
 
 struct vertexInfo {
@@ -50,17 +45,19 @@ struct AssimpMesh {
    std::vector<float> normal_array;
    std::vector<float> uv_array;
    std::vector<unsigned short> index_array;
-	vertexInfo *skeleton_vertices;
+	std::vector <vertexInfo> skeleton_vertices;
 	int numVerts;
-	Bone *bone_array;
+	std::vector<Bone *> bone_array;
 	Bone *root;
 	int boneCt;
 	bool hasBones;
 };
 
 AssimpMesh loadMesh(const std::string& path);
-int setupTrans(Bone *array, Bone *parent, Bone *cur);
-int CreateHierarchy(std::vector<aiBone *> *boneNames, aiNode *root, Bone *parent, int *iter, Bone *array);
+int setupTrans(Bone *parent, Bone *cur);
+int GetFrame(int frame, AssimpMesh mesh);
+int getFrame(Bone *parent, Bone *cur, aiMatrix4x4 globalTrans, int frame);
+int CreateHierarchy(std::vector<aiBone *> *boneNames, aiNode *root, Bone *parent, AssimpMesh *mesh);
 void CopyaiMat(const aiMatrix4x4 *from, glm::mat4 &to);
 
 #endif // MESH_LOADER_H_
