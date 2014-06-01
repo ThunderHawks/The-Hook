@@ -32,8 +32,8 @@ int ShadowMap::MakeShadowMap(int width, int height) {
    int isSuccessful = 0;
    float borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
   
-   texWidth = width;
-   texHeight = height;
+   texWidth = width * 2;
+   texHeight = height * 2;
 
    // Create the depth texture
    glGenTextures(1, &DepthTex);
@@ -67,10 +67,12 @@ int ShadowMap::MakeShadowMap(int width, int height) {
 
 void ShadowMap::BindFBO() {
    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER, FrameBuf);
+   glViewport(0, 0, texWidth, texHeight);
 }
 
-void ShadowMap::UnbindFBO() {
+void ShadowMap::UnbindFBO(int width, int height) {
    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER, 0);
+   glViewport(0, 0, width, height);
 }
 
 void ShadowMap::BindDepthTex() {
@@ -81,8 +83,19 @@ void ShadowMap::UnbindDepthTex() {
    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-glm::mat4 SetOrthoProjectionMatrix(float dist) {
-   glm::mat4 orthoProj = glm::ortho(-100.f, 100.f, -50.f, 100.f, dist - 50.f, dist + 100.f);
+glm::mat4 SetOrthoProjectionMatrix(glm::vec3 eye, glm::vec3 lookAt, float dist) {
+   float expandPosX, expandNegX;
+   
+   if (eye.x < lookAt.x) {
+      expandPosX = (lookAt.x - eye.x) * 8.0;
+      expandNegX = 0.0;
+   }
+   else {
+      expandPosX = 0.0;
+      expandNegX = (lookAt.x - eye.x) * 8.0;
+   }
+
+   glm::mat4 orthoProj = glm::ortho(-40.f + expandNegX, 40.f + expandPosX, -50.f, 100.f, dist - 50.f, dist + 100.f);
    safe_glUniformMatrix4fv(h_uProjMatrix, glm::value_ptr(orthoProj));
    safe_glUniformMatrix4fv(h_uLightProjMatrix, glm::value_ptr(orthoProj));
    return orthoProj;

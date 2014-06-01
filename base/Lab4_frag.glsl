@@ -50,18 +50,10 @@ void main() {
       angleNH = pow(clamp(angleNH, 0.0, 1.0), uMat.shine * 4.0);
 
       shadowPos = vShadowPos / vShadowPos.w;
-      depth = texture2D(uTexUnit, shadowPos.xy).z; // Shadow map depth = Z VALUE OF SHADOW MAP
-      dist = vShadowPos.z - 0.005; // Distance from light to fragment = FRAG DEPTH FROM LIGHT'S PERSPECTIVE
+      depth = texture2D(uTexUnit, shadowPos.xy).z; // Shadow map depth
+      dist = vShadowPos.z - 0.005; // Distance from light to fragment
 
    // Diffuse lighting
-/*
-   if (angleNL > 0.8)
-      color = uLColor * uMat.dColor;
-   else if (angleNL > 0.4)
-      color = uLColor * uMat.dColor * 0.7;
-   else
-      color = uLColor * uMat.dColor * 0.35;
-*/
       if (angleNL > 0.8)
          color = uLColor * uMat.dColor;
       else if (angleNL > 0.6)
@@ -94,7 +86,7 @@ void main() {
                   multiplier += 1.0;
             }
          }
-         // Only darken the pixel if the shadow isn't negligible. Otherwvec4 texColorise, add specular
+         // Only darken the pixel if the shadow isn't negligible. Otherwise, add specular
          if (multiplier / 9.0 <= 0.8)
             color *= multiplier / 9.0;
          else if (uMat.alpha == 1.0)
