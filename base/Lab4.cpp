@@ -230,14 +230,15 @@ void pauseorUnpause() {
 void drawGameElements(int passNum) {
    //DRAW THE DANCING CYLINDER HERE!!
    btTransform pla;
-   
+
    /*These are for animation. They should be removed later*/
    static unsigned int ctr = 0;
    static unsigned int frm = 0;
 
    /*REMOVE LATER TODO*/
-   if (ctr++%1 == 0)
-      frm++;
+   if (passNum == 0)
+      if (ctr++%1 == 0)
+         frm++;
 
    PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY(), physGetPlayerZ(), .25, .25, .25, getYaw(), 1.7, frm%24);
    //END OF DANCING CYLINDER CODE HERE!!
