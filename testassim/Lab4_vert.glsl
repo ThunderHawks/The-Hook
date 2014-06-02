@@ -86,5 +86,5 @@ void main() {
    light = aLightVec;
    reflection = R;      
 
-   vColor == uMat.dColor + uMat.sColor + uMat.aColor;
+   vColor = vec3(weights[0], weights[1], weights[2]);//uMat.dColor + uMat.sColor + uMat.aColor;
 }

@@ -10,12 +10,14 @@ uniform vec4 uLightVec;
 uniform vec3 uLColor;
 uniform vec3 uCamPos;
 uniform sampler2D uTexUnit;
+uniform sampler2D uTexSampler;
 uniform Material uMat;
 uniform int uShadeMode;
 
 varying vec3 vNorm; 
 varying vec3 vPos;
 varying vec4 vShadowPos;
+varying vec2 vUV;
 
 varying vec2 vTexCoord;
 uniform float uGuiMode;
@@ -54,18 +56,10 @@ void main() {
       angleNH = pow(clamp(angleNH, 0.0, 1.0), uMat.shine * 4.0);
 
       shadowPos = vShadowPos / vShadowPos.w;
-      depth = texture2D(uTexUnit, shadowPos.xy).z; // Shadow map depth = Z VALUE OF SHADOW MAP
-      dist = vShadowPos.z - 0.005; // Distance from light to fragment = FRAG DEPTH FROM LIGHT'S PERSPECTIVE
+      depth = texture2D(uTexUnit, shadowPos.xy).z; // Shadow map depth
+      dist = vShadowPos.z - 0.005; // Distance from light to fragment
 
    // Diffuse lighting
-/*
-   if (angleNL > 0.8)
-      color = uLColor * uMat.dColor;
-   else if (angleNL > 0.4)
-      color = uLColor * uMat.dColor * 0.7;
-   else
-      color = uLColor * uMat.dColor * 0.35;
-*/
       if (angleNL > 0.8)
          color = uLColor * uMat.dColor;
       else if (angleNL > 0.6)
@@ -110,7 +104,10 @@ void main() {
 
    //color = (uLColor * uMat.dColor * angleNL) + (uLColor * uMat.sColor * angleNH) + (uLColor * uMat.aColor);   
 
+   vec3 texColor = texture2D(uTexSampler, vUV).rgb;
+
    gl_FragColor = vec4(color, uMat.alpha);
+   //gl_FragColor *= vec4(texColor, 1.0);
    //gl_FragColor = vec4(norm, 1.0);
    //gl_FragColor = vec4(depth, depth, depth, 1.0);
    //gl_FragColor = vec4(dist, dist, dist, 1.0);

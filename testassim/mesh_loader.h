@@ -25,9 +25,9 @@ struct Bone {
 	int numRotKeyFrames;
 	int numScaleKeyFrames;
 	
-	aiVectorKey *posKeys;
-	aiQuatKey *rotKeys;
-	aiVectorKey *scaleKeys;
+	std::vector<aiVectorKey> posKeys;
+	std::vector<aiQuatKey> rotKeys;
+	std::vector<aiVectorKey> scaleKeys;
 	glm::mat4 *glmTransforms;
 	aiMatrix4x4 *transformations;
 	aiMatrix4x4 *personalTrans;

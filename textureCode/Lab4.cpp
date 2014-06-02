@@ -27,6 +27,7 @@
 #include "Objective.h"
 #include "camBox.h"
 #include "Gui.h"
+//#include "particle.h"
 
 #include "types.h"
 #include "Image.h"
@@ -49,7 +50,7 @@ int ShadeProg;
 
 //Handles to the shader data
 GLint h_aPosition, h_aNormal, h_aUVVertex, h_uViewMatrix, h_uProjMatrix;
-GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj, SqIndxBuffObj, SqBuffObj, SqNormalObj;
+GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj, SqIndxBuffObj, SqBuffObj, SqNormalObj, h_uTexSampler;
 GLuint ShadowCubeBuffObj, SCIndxBuffObj, ShadowNormalBuffObj, RampBuffObj, RIndxBuffObj, RampNormalBuffObj;
 int g_CiboLen, g_GiboLen, g_RiboLen, g_SCiboLen, g_SqiboLen;
 
@@ -59,9 +60,9 @@ GLint h_uLightVec;
 GLint h_uLightColor;
 GLint h_uCamPos, h_uShadeMode;
 GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine, h_uMatAlpha;
-GLint h_uTexUnit, h_uTexUnit2, h_uTexSampler;
 GLint h_uLightViewMatrix, h_uLightProjMatrix;
-GLint h_aTexCoord;
+GLint h_uTexUnit, h_uTexUnit2;
+GLint h_uTexCoord, h_aTexCoord, h_uGuiMode;
 GLuint TexBuffObj;
 
 //declare Matrix stack
@@ -79,6 +80,7 @@ Mesh flag;
 glm::mat4 curProj, curView;
 
 vector<Objective*> objectives;
+std::list<part*> particleSpawner;
 
 /* projection matrix  - do not change */
 glm::mat4 SetProjectionMatrix() {
@@ -153,7 +155,7 @@ void drawEntities(int passNum) {
    Entity entityTemp;
    srand(sizer);
    int hit = 0;
-   printf("num ent rend %d\n",getEntityNum());
+   //printf("num ent rend %d\n",getEntityNum());
    for(int i = 0; i < getEntityNum(); ++i) {
       entityTemp = getEntityAt(i);
       
@@ -199,12 +201,22 @@ void pauseorUnpause() {
  *          1 = Draw scene normally
  *          2 = Draw outlines around objects
  */
-void glfwDraw (GLFWwindow *window, int passNum)
+void glfwDraw (GLFWwindow *window, int passNum, ShadowMap *shadowMap)
 {
+   glEnable(GL_DEPTH_TEST);
+
    if (passNum != 2) {
       //Draw skybox
    	DrawSkyBox();
    	SetModelStat();
+
+      // Specify texture unit
+      safe_glUniform1i(h_uTexUnit, 0);
+      glEnable(GL_TEXTURE_2D);
+      glActiveTexture(GL_TEXTURE0);
+      // Render scene normally and draw
+      shadowMap->BindDepthTex();
+   
 
       safe_glEnableVertexAttribArray(h_aPosition);
       safe_glEnableVertexAttribArray(h_aNormal);
@@ -287,6 +299,11 @@ void glfwDraw (GLFWwindow *window, int passNum)
             SetupCube(objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 15, 60, 10, 5000, 10);
          }
       }
+      //draw particles
+      for (std::list<part*>::iterator it=particleSpawner.begin(); it != particleSpawner.end(); it++){
+         drawPart(*it);
+//         particleSpawner[i]->drawPart();
+      }
    }
 
    glDisable(GL_CULL_FACE);
@@ -312,6 +329,8 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    safe_glUniform1i(h_uTexUnit, 0);
    glEnable(GL_TEXTURE_2D);
    glActiveTexture(GL_TEXTURE0);
+   // Render scene normally and draw
+   shadowMap->BindDepthTex();
    
    // Set light uniforms
    glUniform3f(h_uLightColor, 0.4, 0.4, 0.38);
@@ -325,11 +344,10 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    curView = SetShadowView();
    curProj = SetOrthoProjectionMatrix(10.0);
    glUniform3f(h_uCamPos, 0.0, 3.0, 4.0);
-   glfwDraw(window, 0);
+   glfwDraw(window, 0, shadowMap);
    shadowMap->UnbindFBO();
 
-   // Render scene normally and draw
-   shadowMap->BindDepthTex();
+   
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    SetEye(origEye);
    
@@ -346,13 +364,13 @@ void renderScene(GLFWwindow *window, ShadowMap *shadowMap) {
    curView = SetView();
    curProj = SetProjectionMatrix();
    glUniform3f(h_uCamPos, GetEye().x, GetEye().y, GetEye().z);
-   glfwDraw(window, 1);
+   glfwDraw(window, 1, shadowMap);
    shadowMap->UnbindDepthTex();
 
    // Draw outlines
    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
    glLineWidth(3.0);
-   glfwDraw(window, 2);
+   glfwDraw(window, 2, shadowMap);
    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
    //Draw any gui elements that should be on the screen
@@ -439,7 +457,8 @@ int main( int argc, char *argv[] )
       glInitialize(window);
       physicsInit();
       InitGeom();
-      initLevelLoader();
+      initGui(Edit);
+      initLevelLoader(Edit);
       loadLevel(fileName);
    }
    //If Play Mode
@@ -470,7 +489,9 @@ int main( int argc, char *argv[] )
       glInitialize(window);
       physicsInit();
       InitGeom();
-      initLevelLoader();
+      initGui(Edit);
+      initLevelLoader(Edit);
+      printf("Reading lv\n");
       loadLevel(fileName);
 
       //music
@@ -496,15 +517,22 @@ int main( int argc, char *argv[] )
    objectives.push_back(tObj);
    tObj->Init();
 
+   printf("Starting main loop\n");
    // Start the main execution loop.
    while (!glfwWindowShouldClose(window)) {
       glfwPollEvents();
       if(Edit) {
          if(paused == false) {
-            //Keep the cursor centered
-            glfwSetCursorPos(window,g_width/2,g_height/2);  
+            //Keep the cursor centered if gui is not displayed
+            if(getEPressed('G') == 0) {
+               glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+               glfwSetCursorPos(window,g_width/2,g_height/2);
+               glfwEditGetCursorPos(NULL,g_width/2.0,g_height/2.0);
+            }  
+            else {
+               glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            }
             renderScene(window, shadowMap);
-            glfwEditGetCursorPos(NULL,g_width/2.0,g_height/2.0);
             //glfw Game Keyboard
             glfwEditKeyboard();
          }

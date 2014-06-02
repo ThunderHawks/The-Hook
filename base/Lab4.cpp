@@ -57,8 +57,8 @@ int ShadeMode = 0;
 int ShadeProg;
 
 //Handles to the shader data
-GLint h_aPointSize, h_aPosition, h_aNormal, h_uViewMatrix, h_uProjMatrix;
-GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj, SqIndxBuffObj, SqBuffObj, SqNormalObj;
+GLint h_aPointSize, h_aPosition, h_aNormal, h_aUVVertex, h_uViewMatrix, h_uProjMatrix;
+GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, GNIndxBuffObj, SqIndxBuffObj, SqBuffObj, SqNormalObj, h_uTexSampler;
 GLuint ShadowCubeBuffObj, SCIndxBuffObj, ShadowNormalBuffObj, RampBuffObj, RIndxBuffObj, RampNormalBuffObj;
 int g_CiboLen, g_GiboLen, g_RiboLen, g_SCiboLen, g_SqiboLen;
 
@@ -303,7 +303,7 @@ void glfwDraw (GLFWwindow *window, int passNum)
 
    if (passNum != 2) {
       //Draw skybox
-   	DrawSkyBox();
+   	//DrawSkyBox();
    	SetModelStat();
 
       safe_glEnableVertexAttribArray(h_aPosition);
@@ -365,10 +365,10 @@ void renderScene() {
    SetEye(glm::vec3(origLookAt.x, origLookAt.y + 6.0, origLookAt.z + 8.0));
    SetLookAt(origLookAt);
    curView = SetShadowView();
-   curProj = SetOrthoProjectionMatrix(10.0);
+   curProj = SetOrthoProjectionMatrix(GetEye(), GetLookAt(), 10.0);
    glUniform3f(h_uCamPos, 0.0, 3.0, 4.0);
    glfwDraw(window, 0);
-   shadowMap->UnbindFBO();
+   shadowMap->UnbindFBO(g_width, g_height);
 
    // Render scene normally and draw
    shadowMap->BindDepthTex();

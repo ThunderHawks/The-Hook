@@ -14,11 +14,13 @@ uniform mat4 uLightViewMatrix;
 
 attribute vec3 aPosition;
 attribute vec3 aNormal;
+attribute vec2 aUVVertex;
 attribute float aPointSize;
 
 varying vec3 vNorm;
 varying vec3 vPos;
 varying vec4 vShadowPos;
+varying vec2 vUV;
 
 varying vec2 vTexCoord;
 attribute vec2 aTexCoord;
@@ -41,10 +43,10 @@ void main() {
                         0.0, 0.0, 0.5, 0.0,
                         0.5, 0.5, 0.5, 1.0);
 
-  if (uTextMode == 1.0) {
-    vTexCoord = aTexCoord;
-    gl_Position = vec4(textPos, 0, 1);
-  } else {
+//  if (uTextMode == 1.0) {
+//    vTexCoord = aTexCoord;
+//    gl_Position = vec4(textPos, 0, 1);
+//  } else {
      /* First model transforms */
      gl_Position = uProjMatrix * uViewMatrix * uModelMatrix * vec4(aPosition, 1);;
     
@@ -59,7 +61,8 @@ void main() {
      vShadowPos = NDCtoTex * uLightProjMatrix * uLightViewMatrix * transPos;
 
      vTexCoord = aTexCoord;
+     vUV = aUVVertex;
 
      gl_PointSize = aPointSize*15.0/length(gl_Position);
-   }
+//   }
 }

@@ -93,6 +93,7 @@ void initCube() {
     -0.5, 0.5, 0.5,  //P22
     -0.5, -0.5, 0.5, //P23
   };
+
   float CubeNormal[] = {
      0.0, 0.0, -1.0,
      0.0, 0.0, -1.0,
@@ -173,6 +174,12 @@ void initSquare() {
 unsigned short idx[] = {0, 1, 2,
                         0, 2, 3,
                                };
+     static GLfloat SqTex[] = {
+     0, 0,
+     0, 1,
+     1, 1,
+     1, 0,     
+    };
 
     g_SqiboLen = 6;
     glGenBuffers(1, &SqBuffObj);
@@ -186,6 +193,10 @@ unsigned short idx[] = {0, 1, 2,
     glGenBuffers(1, &SqNormalObj);
     glBindBuffer(GL_ARRAY_BUFFER, SqNormalObj);
     glBufferData(GL_ARRAY_BUFFER, sizeof(SqNormal), SqNormal, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &TexBuffObj);
+    glBindBuffer(GL_ARRAY_BUFFER, TexBuffObj);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(SqTex), SqTex, GL_STATIC_DRAW);
 }
 
 void SetupCube(float x, float y, float z, int material, float angle, float scaleX, float scaleY, float scaleZ) {
@@ -210,13 +221,23 @@ void SetupCube(float x, float y, float z, int material, float angle, float scale
    safe_glDisableVertexAttribArray(h_aNormal);
 }
 
-void SetupSq(float x, float y, int material, float scaleX, float scaleY) {
+void SetupSq(float x, float y, int texture, float scaleX, float scaleY) {
    /*First Cube*/
    SetModel(x, y, scaleX, scaleY);
-   SetMaterial(material);
+ 
+   //setup texture unit
+   //glEnable(GL_TEXTURE_2D);
+   glActiveTexture(GL_TEXTURE1);
+   glBindTexture(GL_TEXTURE_2D, texture);
+
+   safe_glUniform1i(h_uTexUnit, 1);
    safe_glEnableVertexAttribArray(h_aPosition);
    glBindBuffer(GL_ARRAY_BUFFER, SqBuffObj);
    safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+   safe_glEnableVertexAttribArray(h_aTexCoord);
+   glBindBuffer(GL_ARRAY_BUFFER, TexBuffObj);
+   safe_glVertexAttribPointer(h_aTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
    safe_glEnableVertexAttribArray(h_aNormal);
    glBindBuffer(GL_ARRAY_BUFFER, SqNormalObj);
@@ -227,134 +248,19 @@ void SetupSq(float x, float y, int material, float scaleX, float scaleY) {
 
    glDrawElements(GL_TRIANGLES, g_SqiboLen, GL_UNSIGNED_SHORT, 0);
 
+   //safe_glUniform1i(h_uTexUnit, 0);
    /* Disable the attributes used by our shader*/
+   glDisable(GL_TEXTURE_2D);
    safe_glDisableVertexAttribArray(h_aPosition);
    safe_glDisableVertexAttribArray(h_aNormal);
+   safe_glDisableVertexAttribArray(h_aTexCoord);
 }
 
-/*static void initRamp() {
-   float RampPos[] = {
-      //Slanted face, 4 verts
-      0.25, 0.0, 0.5, //0
-      -0.25, 0.0, 0.5, //1
-      0.25, 0.5, -0.25, //2
-      -0.25, 0.5, -0.25, //3
-
-      //Right Triangle, 3 verts
-      0.25, 0.0, 0.5, //4
-      0.25, 0.0, -0.25, //5
-      0.25, 0.5, -0.25, //6
-
-      //Left Triangle, 3 verts
-      -0.25, 0.0, 0.5, //7
-      -0.25, 0.0, -0.25, //8
-      -0.25, 0.5, -0.25, //9
-
-      //Back Face, 4 verts
-      0.25, 0, -0.25, //10 
-      -0.25, 0, -0.25, //11
-      0.25, 0.5, -0.25, //12
-      -0.25, 0.5, -0.25, //13
-
-      //Bottom, 4 verts
-      0.25, 0, 0.5, //14
-      -0.25, 0, 0.5,  //15
-      0.25, 0, -0.25, //16
-      -0.25, 0, -0.25, //17
-   };*/
-/*float RampNormal[] = {
-      0, 0.8, 1,
-      0, 0.8, 1,
-      0, 0.8, 1,
-      0, 0.8, 1,
-
-      1.0, 0.0, 0.0,
-      1.0, 0.0, 0.0,
-      1.0, 0.0, 0.0,
-
-      -1.0, 0.0, 0.0,
-      -1.0, 0.0, 0.0,
-      -1.0, 0.0, 0.0,
-
-      0.0, 0.0, -1.0,
-      0.0, 0.0, -1.0,
-      0.0, 0.0, -1.0,
-
-      0.0, -1.0, 0.0,
-      0.0, -1.0, 0.0,
-      0.0, -1.0, 0.0,
-   };
-   unsigned short idx[] = {0, 1, 3,
-                           0, 2, 3,
-
-                           4, 5, 6,
-
-                           7, 8, 9,
-
-                           10, 11, 12,
-                           11, 12, 13,
-
-                           14, 15, 16,
-                           15, 16, 17,
-                           };
-
-    g_RiboLen = 24;
-    glGenBuffers(1, &RampBuffObj);
-    glBindBuffer(GL_ARRAY_BUFFER, RampBuffObj);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(RampPos), RampPos, GL_STATIC_DRAW);
-
-    glGenBuffers(1, &RIndxBuffObj);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, RIndxBuffObj);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idx), idx, GL_STATIC_DRAW);
-
-    glGenBuffers(1, &RampNormalBuffObj);
-    glBindBuffer(GL_ARRAY_BUFFER, RampNormalBuffObj);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(RampNormal), RampNormal, GL_STATIC_DRAW);
-
-}*/
-/*static void initCubeShadow() {
-   float ShadowPos[] = {
-      0.5, 0.0, 0.5, //P0
-      -0.5, 0.0, 0.5, //P1
-      -0.5, 0.0, -0.5, //P2
-      0.5, 0.0, -0.5, //P3
-   };
-
-    float ShadowNormal[] = {
-     0, 1, 0,
-     0, 1, 0,
-     0, 1, 0,
-     0, 1, 0,
-     0, 1, 0,
-     0, 1, 0
-    };
-
-   unsigned short idx[] = {0, 1, 2,
-                           0, 2, 3};
-
-    g_SCiboLen = 6;
-    glGenBuffers(1, &ShadowCubeBuffObj);
-    glBindBuffer(GL_ARRAY_BUFFER, ShadowCubeBuffObj);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(ShadowPos), ShadowPos, GL_STATIC_DRAW);
-
-    glGenBuffers(1, &SCIndxBuffObj);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, SCIndxBuffObj);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idx), idx, GL_STATIC_DRAW);
-
-    glGenBuffers(1, &ShadowNormalBuffObj);
-    glBindBuffer(GL_ARRAY_BUFFER, ShadowNormalBuffObj);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(ShadowNormal), ShadowNormal, GL_STATIC_DRAW);
-}*/
-
-
 /* Initialize the geometry */
-void InitGeom() {
-  //initRamp();
-  initGround();
+void InitGeom() {;
+  //initGround();
   initCube();
   initSquare();
-  /*initCubeShadow();
-  initMesh();*/
 }
 
 /* helper function to set up material for shading */
@@ -511,49 +417,49 @@ void SetMaterial(int i) {
 }
 
 void DrawSkyBox() {
-  //Load texture image
-  GLuint Texture = loadBMP("../Assets/Textures/bricks.bmp");
+//Load texture image
+  GLuint Texture = loadBMP("../Assets/Textures/skybox_texture_g.bmp");
 
   // Two UV coordinatesfor each vertex.
   // This corresponds with the order of each vertex.
   static const GLfloat g_uv_buffer_data[] = { 
-                0.000059f, 1.0f-0.000004f, 
-                0.000103f, 1.0f-0.336048f, 
-                0.335973f, 1.0f-0.335903f, 
-                1.000023f, 1.0f-0.000013f, 
-                0.667979f, 1.0f-0.335851f, 
-                0.999958f, 1.0f-0.336064f, 
-                0.667979f, 1.0f-0.335851f, 
-                0.336024f, 1.0f-0.671877f, 
-                0.667969f, 1.0f-0.671889f, 
-                1.000023f, 1.0f-0.000013f, 
-                0.668104f, 1.0f-0.000013f, 
-                0.667979f, 1.0f-0.335851f, 
-                0.000059f, 1.0f-0.000004f, 
-                0.335973f, 1.0f-0.335903f, 
-                0.336098f, 1.0f-0.000071f, 
-                0.667979f, 1.0f-0.335851f, 
-                0.335973f, 1.0f-0.335903f, 
-                0.336024f, 1.0f-0.671877f, 
-                1.000004f, 1.0f-0.671847f, 
-                0.999958f, 1.0f-0.336064f, 
-                0.667979f, 1.0f-0.335851f, 
-                0.668104f, 1.0f-0.000013f, 
-                0.335973f, 1.0f-0.335903f, 
-                0.667979f, 1.0f-0.335851f, 
-                0.335973f, 1.0f-0.335903f, 
-                0.668104f, 1.0f-0.000013f, 
-                0.336098f, 1.0f-0.000071f, 
-                0.000103f, 1.0f-0.336048f, 
-                0.000004f, 1.0f-0.671870f, 
-                0.336024f, 1.0f-0.671877f, 
-                0.000103f, 1.0f-0.336048f, 
-                0.336024f, 1.0f-0.671877f, 
-                0.335973f, 1.0f-0.335903f, 
-                0.667969f, 1.0f-0.671889f, 
-                1.000004f, 1.0f-0.671847f, 
-                0.667979f, 1.0f-0.335851f
+                //Back
+                .275f, 1.f, 
+                .275f, .75f, 
+                .5f, .75f,
+                .5f, 1.0f,
+                //Right
+                .75f, .5f, 
+                .5f, .5f,
+                .75f, .23f, 
+                .5f, .25f, 
+                //Left
+                .025f, .5f,
+                .25f, .5f, 
+                .025f, .25f, 
+                .25f, .25f,
+                //Bottom
+                .0f, .5f, 
+                .25f, .5f, 
+                .0f, .25f,
+                .25f, .5f, 
+                //Top
+                .5f, .75f, 
+                .5f, .5f,
+                .275f, .75f, 
+                .275f, .5f, 
+                //Front
+                .5f, .5f,
+                .5f, .25f, 
+                .25f, .5f, 
+                .25f, .25f,
   };
+
+
+	// Disable backface culling for skybox
+   glCullFace(GL_BACK);
+   glDisable(GL_CULL_FACE);
+   
 
   GLuint UVBuffObj;
   glGenBuffers(1, &UVBuffObj);
@@ -566,10 +472,6 @@ void DrawSkyBox() {
   // Set "h_uTexSampler" sampler to user Texture Unit 1
   glUniform1i(h_uTexSampler, 1);
 
-	// Disable backface culling for skybox
-   glCullFace(GL_BACK);
-   glDisable(GL_CULL_FACE);
-   
 	SetMaterial(14);
 	
 	glDepthMask(GL_FALSE);
@@ -593,13 +495,14 @@ void DrawSkyBox() {
 
    /* draw!*/
    glDrawElements(GL_TRIANGLES, g_CiboLen, GL_UNSIGNED_SHORT, 0);
+   
    safe_glDisableVertexAttribArray(h_aPosition);
    safe_glDisableVertexAttribArray(h_aNormal);
    safe_glDisableVertexAttribArray(h_aUVVertex);
 
    glDeleteBuffers(1, &UVBuffObj);
    glDeleteTextures(1, &h_uTexSampler);
-   
+
    glDepthMask(GL_ALWAYS);
    
    // Enable backface culling
@@ -608,62 +511,85 @@ void DrawSkyBox() {
 }
 
 
-GLuint loadBMP(const char* path){
-    unsigned char header[54];
-    unsigned int dataPos;
-    unsigned int width, height;
-    unsigned int imageSize;
+GLuint loadBMP(const char * imagepath){
 
-    unsigned char* data;
+        printf("Reading image %s\n", imagepath);
 
-    FILE* file = fopen(path, "rb");
-    if (!file){
-        printf("Image could not be opened.\n");
-        return 0;
-    }
+        // Data read from the header of the BMP file
+        unsigned char header[54];
+        unsigned int dataPos;
+        unsigned int imageSize;
+        unsigned int width, height;
+        // Actual RGB data
+        unsigned char * data;
 
-    if (fread(header, 1, 54, file) != 54){
-        printf("Not a correct BMP file.\n");
-        return 0;
-    }
+        // Open the file
+        FILE * file = fopen(imagepath,"rb");
+        if (!file){
+          printf("%s could not be opened.\n", imagepath); 
+          getchar(); 
+          return 0;
+        }
 
-    if (header[0] != 'B' || header[1] != 'M'){
-        printf("Not a correct BMP file.\n");
-        return 0;
-    }
+        // Read the header, i.e. the 54 first bytes
 
-    dataPos = *(int*)&(header[0x0A]);
-    imageSize = *(int*)&(header[0x22]);
-    width = *(int*)&(header[0x12]);
-    height = *(int*)&(header[0x16]);
+        // If less than 54 bytes are read, problem
+        if ( fread(header, 1, 54, file)!=54 ){ 
+                printf("Not a correct BMP file\n");
+                return 0;
+        }
+        // A BMP files always begins with "BM"
+        if ( header[0]!='B' || header[1]!='M' ){
+                printf("Not a correct BMP file\n");
+                return 0;
+        }
+        // Make sure this is a 24bpp file
+        if ( *(int*)&(header[0x1E])!=0  )         {printf("Not a correct BMP file\n");    return 0;}
+        if ( *(int*)&(header[0x1C])!=24 )         {printf("Not a correct BMP file\n");    return 0;}
 
-    if (imageSize == 0){
-        imageSize = width * height * 3;
-    }
+        // Read the information about the image
+        dataPos    = *(int*)&(header[0x0A]);
+        imageSize  = *(int*)&(header[0x22]);
+        width      = *(int*)&(header[0x12]);
+        height     = *(int*)&(header[0x16]);
 
-    if (dataPos == 0){
-        dataPos = 54;
-    }
+        // Some BMP files are misformatted, guess missing information
+        if (imageSize==0)    imageSize=width*height*3; // 3 : one byte for each Red, Green and Blue component
+        if (dataPos==0)      dataPos=54; // The BMP header is done that way
 
-    data = new unsigned char [imageSize];
+        // Create a buffer
+        data = new unsigned char [imageSize];
 
-    fread(data, 1, imageSize, file);
+        // Read the actual data from the file into the buffer
+        fread(data,1,imageSize,file);
 
-    fclose(file);
-    delete data;
+        // Everything is in memory now, the file wan be closed
+        fclose (file);
 
-    GLuint texID;
-    glGenTextures(1, &texID);
+        // Create one OpenGL texture
+        GLuint textureID;
+        glGenTextures(1, &textureID);
+        
+        // "Bind" the newly created texture : all future texture functions will modify this texture
+        glBindTexture(GL_TEXTURE_2D, textureID);
 
-    glBindTexture(GL_TEXTURE_2D, texID);
+        // Give the image to OpenGL
+        glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        // OpenGL has now copied the data. Free our own version
+        delete [] data;
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glGenerateMipmap(GL_TEXTURE_2D);
+        // Poor filtering, or ...
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
 
-    return texID;
+        // ... nice trilinear filtering.
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        // Return the ID of the texture we just created
+        return textureID;
 }

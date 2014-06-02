@@ -11,7 +11,7 @@ public:
    ~ShadowMap();
    int MakeShadowMap(int width, int height);
    void BindFBO();
-   void UnbindFBO();
+   void UnbindFBO(int width, int height);
    void BindDepthTex();
    void UnbindDepthTex();
 
@@ -21,6 +21,6 @@ private:
    int texWidth, texHeight;
 };
 
-glm::mat4 SetOrthoProjectionMatrix(float dist);
+glm::mat4 SetOrthoProjectionMatrix(glm::vec3 eye, glm::vec3 lookAt, float dist);
 
 #endif
