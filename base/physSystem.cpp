@@ -15,6 +15,7 @@
 #include "SoundPlayer.h"
 #include <vector>
 #include "particle.h"
+#include "camBox.h"
 
 //phys//
 btRigidBody* groundRigidBody;
@@ -152,6 +153,12 @@ float physGetPlayerZ(){
 glm::vec3 dir;
 btVector3 tmp;
 int flip;
+
+
+int grappleInRange(){
+   return inRange(5,75,glm::lookAt(playerPoss(),glm::vec3(tmp.getX(),tmp.getY(),tmp.getZ()),glm::vec3(0,1,0)));
+}
+
 bool physGrapple(float lx,float ly,float lz){
 	bool ret = false;
    flip = 0;
@@ -192,9 +199,11 @@ glm:: vec3 ggaze = GetLookAt() - GetEye();
       //printf("%f %f %f on hit norm",RayCallback.m_hitNormalWorld.getX(),RayCallback.m_hitNormalWorld.getY(),RayCallback.m_hitNormalWorld.getZ());
       tmp = RayCallback.m_hitPointWorld;
     // Do some clever stuff here
-      playerGrappleActive =1;
-      
-      ret = true;
+      if(tmp.getY()>1){
+         playerGrappleActive =1;
+         
+         ret = true;
+      }
    }
    
 

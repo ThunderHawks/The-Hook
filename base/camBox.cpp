@@ -141,7 +141,7 @@ int inRange(int num,float dist,glm::mat4 lookat){//request from mathew
    glm::vec4 step = glm::vec4(0,0,dist/num,0);
 
    int hit = 0;
-   for(int i = 0; i < num; i++){
+   for(int i = 1; i < num; i++){
       glm::vec4 test4 = lookat*start+lookat*(step*i);
       glm::vec3 test;
 

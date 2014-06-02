@@ -35,4 +35,6 @@ float physGetHeight(float x, float y);
 void holdGrapple(int i);
 glm::vec3 playerPoss();
 
+int grappleInRange();
+
 #endif
