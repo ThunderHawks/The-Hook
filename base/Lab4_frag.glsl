@@ -36,12 +36,12 @@ void main() {
       gl_FragColor = texture2D(uTexUnit, vTexCoord);//vec4(texColor1[0], texColor1[1], texColor1[2], 1);
    } 
    else if(uGuiMode == 1.0) {
-    //  if(texColor1[0] == 0 && texColor1[1] == 0 && texColor1[2] == 0) {
-     //    discard;
-     // }
-     // else {
-         gl_FragColor = vec4(texColor1[0], texColor1[1], texColor1[2], 1);
-     // }
+      if(texColor1[0] > 0.7 && texColor1[1] > 0.7 && texColor1[2] > 0.7) {
+         discard;
+      }
+      else {
+        gl_FragColor = vec4(texColor1[0], texColor1[1], texColor1[2], 1);
+      }
    }
    else {
       norm = normalize(vNorm);

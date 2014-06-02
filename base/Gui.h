@@ -8,6 +8,8 @@
 #include "Shapes.h"
 #include "Camera.h"
 #include "Helper.h"
+#include "Objective.h"
+#include "physSystem.h"
 //#include <ft2build.h>
 //#include FT_FREETYPE_H
 
@@ -25,7 +27,6 @@
 #define WORLD3_SELECT_BUTTON 6
 #define WORLD4_SELECT_BUTTON 7
 #define BACK_BUTTON 8
-
 
 extern GLFWwindow *window;
 

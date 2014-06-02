@@ -28,7 +28,6 @@ Icon lastSelectedIcon;
 GLuint textures[30];
 //FT_Library library;
 //FT_Face face;
-
 int debt = 200000;
 
 Button createButton(int textureIndex, glm::vec2 position, int ID) {
@@ -199,6 +198,9 @@ void initGui() {
    LoadTexture((char *)"../Assets/Fonts/7.bmp", textures[40]);
    LoadTexture((char *)"../Assets/Fonts/8.bmp", textures[41]);
    LoadTexture((char *)"../Assets/Fonts/9.bmp", textures[42]);
+   LoadTexture((char *)"../Assets/Textures/redCrossHair.bmp", textures[43]);
+   LoadTexture((char *)"../Assets/Textures/greenCrossHair.bmp", textures[44]);
+   
 
    //Initialize HotBar icons
    HBIndices.push_back(createIcon(0, textures[0], 23.5, glm::vec2(-0.6, -0.88)));
@@ -283,14 +285,20 @@ Icon getHBIcon(int index) {
 }
 
 void DrawCrosshair() {
-   SetupSq(0, 0, 0, 0.01, 0.04);
-   SetupSq(0, 0, 0, 0.03, 0.01);
+   glm::vec3 dir = GetLookAt()- GetEye();
+
+  // if(grappleInRange(-dir.x, -dir.y, -dir.z) == 0.0) {
+      SetupSq(0, 0, textures[44], 0.05, 0.05);
+  // }
+  // else {
+  //    SetupSq(0, 0, textures[43], 0.1, 0.05);
+  // }
 }
 
 vector<int> scoreDigitTextures() {
    vector<int> digitTextures;
    int array[6];
-   int debtTemp = debt;
+   int debtTemp = debt - getPoints()/10;
    int digitTemp;
 
    //Convert debt number into an array of ints
@@ -387,7 +395,6 @@ void DrawScore() {
    SetupSq(p2i_x(g_width) - 0.31, p2i_y(g_height) - 0.365,  digitTextures[2], DIGIT_WIDTH, DIGIT_HEIGHT);
    SetupSq(p2i_x(g_width) - 0.26, p2i_y(g_height) - 0.365,  digitTextures[1], DIGIT_WIDTH, DIGIT_HEIGHT);
    SetupSq(p2i_x(g_width) - 0.21, p2i_y(g_height) - 0.365,  digitTextures[0], DIGIT_WIDTH, DIGIT_HEIGHT);  
-   
 }
 
 void ready2D() {
@@ -653,6 +660,8 @@ void DrawGui(int mode) {
       //printText2D(string text, int x, int y, int size)
       //printText2D("Corn Flakes", 0, 0, 1.0);
    }
+
+   //printf("%d\n", (int)getPoints()/10);
 
    ready3D();
 }
