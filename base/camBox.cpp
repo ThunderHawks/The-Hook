@@ -136,6 +136,26 @@ int BoxAndBox(camBox* a,camBox* b){
   return BoxIntoBox(a,b) || BoxIntoBox(b,a);
 }
 
+int inRange(int num,float dist,glm::mat4 lookat){//request from mathew
+   glm::vec4 start = glm::vec4(0,0,0,1);
+   glm::vec4 step = glm::vec4(0,0,dist/num,0);
+
+   int hit = 0;
+   for(int i = 0; i < num; i++){
+      glm::vec4 test4 = lookat*start+lookat*(step*i);
+      glm::vec3 test;
+
+      test[0] = test4[0];
+      test[1] = test4[1];
+      test[2] = test4[2];
+      
+      vector<Entity*> posible = pointLevelTest(test);
+      for(int j=0;j<posible.size();j++){
+         pointBox(test,(camBox*)posible[j]->physics);
+      }
+   }
+}
+
 float distLineToPoint(glm::mat4 line,glm::vec3 pt){
   return -1;
 }

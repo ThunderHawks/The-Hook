@@ -296,7 +296,7 @@ void physStep(){
    }
    if(player->getLinearVelocity().getY()*player->getLinearVelocity().getY()<.0001 &&
       fspeed*fspeed>.0001 && playerFall==1){
-      if(!playerJump)      particleSpawner.push_front(createDustPart(500,1.0,playerPoss()));
+      if(!playerJump)      particleSpawner.push_front(createDustPart(250,1.0,playerPoss()-glm::vec3(0,1,0)));
       playerJump = 1;
       printf("can boing\n");
    }

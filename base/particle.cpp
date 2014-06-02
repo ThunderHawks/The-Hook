@@ -145,7 +145,7 @@ part* createDustPart(int max,float scatter,glm::vec3 getPos){
       thing->velocity[i] *= .2;
       //printf("c\n");
       thing->active[i] = 1;
-      thing->size[i] = 30;
+      thing->size[i] = 10;
       //printf("d\n");
    }
    printf("ending\n");

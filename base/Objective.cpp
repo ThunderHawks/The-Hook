@@ -70,7 +70,7 @@ void Objective::Init() {
 }
 
 void Objective::Update(glm::vec3 playerPos) {
-   if (sqrt((playerPos.x-end.x)*(playerPos.x-end.x) + (playerPos.z-end.z)*(playerPos.z-end.z)) < 7) {
+   if ((sqrt((playerPos.x-end.x)*(playerPos.x-end.x) + (playerPos.z-end.z)*(playerPos.z-end.z)) < 7)&&(active)) {
       active = false;
       score += 20000-time;
       int deltaScore = 20000-time;
