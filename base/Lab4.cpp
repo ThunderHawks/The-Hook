@@ -41,8 +41,7 @@
 GLFWwindow *window;
 //Shadow Map
 ShadowMap *shadowMap;
-//Objectives
-Objective* tObj;
+//Music player
 SoundPlayer musicPlayer;
 //Paused/unpause
 bool paused;
@@ -501,18 +500,12 @@ void initPlay(string fileName) {
    initLevelLoader(Mode);
    loadLevel(fileName);
 
-   Objective* tObj = new Objective(-42.0, -379.0, 230.0, 67.0);
-   objectives.push_back(tObj);
-   tObj->Init();
-   tObj = new Objective(-42.0, -379.0, 230.0, 67.0);
-   objectives.push_back(tObj);
-   tObj->Init();
-   tObj = new Objective(-42.0, -379.0, 230.0, 67.0);
-   objectives.push_back(tObj);
-   tObj->Init();
-   tObj = new Objective(-42.0, -379.0, 230.0, 67.0);
-   objectives.push_back(tObj);
-   tObj->Init();
+   Objective *tObj;
+   while (objectives.size() < 4) {
+      tObj = new Objective(-42.0, -379.0, 230.0, 67.0);
+      objectives.push_back(tObj);
+      tObj->Init();
+   }
 }
 
 void initEdit(string fileName) {
