@@ -76,6 +76,9 @@ class Sound {
 
 		//Plays a sound effect
 		void playSFX(char* path);
+		
+		// Plays a 3D sound effect
+		void play3DSFX(char* path, float x, float y, float z);
 
 		/**************************
 		 VOLUME CONTROL FUNCTIONS

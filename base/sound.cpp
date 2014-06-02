@@ -128,6 +128,12 @@ void Sound::playSFX(char* path) {
 	engine->play2D(path);
 }
 
+void Sound::play3DSFX(char* path, float x, float y, float z) {
+	vec3df position(x, y, z);
+
+	engine->play3D(path, position);
+}
+
 /**************************
  VOLUME CONTROL FUNCTIONS
  *************************/

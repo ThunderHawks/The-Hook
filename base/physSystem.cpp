@@ -12,7 +12,7 @@
 #include "physSystem.h"
 #include "Camera.h"
 //#include <bullet/btCollisionWorld.h>
-#include "SoundPlayer.h"
+#include "sound.h"
 #include <vector>
 #include "particle.h"
 #include "camBox.h"
@@ -214,6 +214,9 @@ glm:: vec3 ggaze = GetLookAt() - GetEye();
     // Do some clever stuff here
       if(tmp.getY()>1){
          playerGrappleActive =1;
+         //SFX HERE
+         Sound s = Sound();
+         s.play3DSFX("../Assets/Sounds/HookShot.mp3", grapplingHookLocation().x, grapplingHookLocation().y, grapplingHookLocation().z);
          
          ret = true;
       }
