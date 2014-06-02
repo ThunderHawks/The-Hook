@@ -166,6 +166,11 @@ void cameraColision(){
 }
 //Draws the entities into the world
 void drawEntities(int passNum) {
+	glm::vec3 gaze = GetLookAt() - GetEye();
+	glm::vec3 backPoint = GetEye() - gaze;
+	glm::vec3 temp;
+	int objects = 0;
+	
    if(Mode == GAME_MODE) {
       cameraColision();
    }
@@ -182,9 +187,16 @@ void drawEntities(int passNum) {
             int mat = rand()%13;
             while(!(mat = rand()%13));
                SetMaterial(mat);
+         }
+            
+         if(!getGPressed('V')) {
+         	temp = entityTemp.position - backPoint;
+         	if (passNum < 2 || glm::dot(temp, gaze) > entityTemp.BSRadius) {
+         		PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
+            		entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
+            	++objects;		
             }
-         if(!getGPressed('V')) PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
-            entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
+         }
       }
       else if(Mode == EDIT_MODE) {
          if (passNum == 2)
@@ -207,6 +219,9 @@ void drawEntities(int passNum) {
 
    }
    if(cool) cool--;
+   
+   if(passNum == 2)
+   	printf("OBJECTS! %d\n", objects);
 }
 
 //Bool that returns true if game is paused
