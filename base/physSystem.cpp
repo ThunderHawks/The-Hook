@@ -155,8 +155,21 @@ btVector3 tmp;
 int flip;
 
 
-int grappleInRange(){
-   return inRange(5,75,glm::lookAt(playerPoss(),glm::vec3(tmp.getX(),tmp.getY(),tmp.getZ()),glm::vec3(0,1,0)));
+int grappleInRange(float lx,float ly,float lz){
+   dir = glm::normalize(glm::vec3(-lx,ly,-lz));
+
+   glm:: vec3 ggaze = GetLookAt() - GetEye();
+   glm::vec3 gw = ggaze/magnitude(ggaze);
+   gw = glm::vec3(-1.0 * gw.x, -1.0 * gw.y, -1.0 * gw.z);
+   glm::vec3 gu = glm::cross(GetUp(), gw)/magnitude(glm::cross(GetUp(), gw));
+   gu *= 2;
+
+   lookAt += glm::vec3(gu.x, 0, gu.z);
+   
+   int ret = inRange(5,75,glm::lookAt(playerPoss(),glm::vec3(lookAt.x+75*dir.x,lookAt.y-75*dir.y,lookAt.z+75*dir.z),glm::vec3(0,1,0)));
+
+   lookAt -= glm::vec3(gu.x, 0, gu.z);
+   return ret;
 }
 
 bool physGrapple(float lx,float ly,float lz){
