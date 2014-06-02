@@ -68,7 +68,7 @@ void main() {
 //    gl_Position = vec4(textPos, 0, 1);
 //  } else {
      /* First model transforms */
-     gl_Position = uProjMatrix * uViewMatrix * uModelMatrix * vec4(aPosition, 1);;
+     gl_Position = uProjMatrix * uViewMatrix * uModelMatrix * animationMatrix * vec4(aPosition, 1);
     
      /* Calculating transformed position and normal */
      transPos = uModelMatrix * vec4(aPosition, 1);

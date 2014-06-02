@@ -156,6 +156,8 @@ int flip;
 
 
 int grappleInRange(float lx,float ly,float lz){
+   glm::vec3 tempLookAt;
+
    dir = glm::normalize(glm::vec3(-lx,ly,-lz));
 
    glm:: vec3 ggaze = GetLookAt() - GetEye();
@@ -164,11 +166,10 @@ int grappleInRange(float lx,float ly,float lz){
    glm::vec3 gu = glm::cross(GetUp(), gw)/magnitude(glm::cross(GetUp(), gw));
    gu *= 2;
 
-   lookAt += glm::vec3(gu.x, 0, gu.z);
+   tempLookAt += lookAt + glm::vec3(gu.x, 0, gu.z);
    
-   int ret = inRange(5,75,glm::lookAt(playerPoss(),glm::vec3(lookAt.x+75*dir.x,lookAt.y-75*dir.y,lookAt.z+75*dir.z),glm::vec3(0,1,0)));
+   int ret = inRange(5,75,glm::lookAt(playerPoss(),glm::vec3(tempLookAt.x+75*dir.x,tempLookAt.y-75*dir.y,tempLookAt.z+75*dir.z),glm::vec3(0,1,0)));
 
-   lookAt -= glm::vec3(gu.x, 0, gu.z);
    return ret;
 }
 

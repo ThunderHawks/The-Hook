@@ -228,12 +228,12 @@ void pauseorUnpause() {
 }
 
 void drawGameElements(int passNum) {
+   //DRAW THE DANCING CYLINDER HERE!!
+   btTransform pla;
+   
    /*These are for animation. They should be removed later*/
    static unsigned int ctr = 0;
    static unsigned int frm = 0;
-   
-   //DRAW THE DANCING CYLINDER HERE!!
-   btTransform pla;
 
    /*REMOVE LATER TODO*/
    if (ctr++%1 == 0)
@@ -388,7 +388,7 @@ void renderScene() {
    SetEye(origEye);
    
    //move the character to the left when not in edit mode
-   if (Mode == GAME_MODE) {
+   if (Mode != GAME_MODE) {
    	SetLookAt(origLookAt);
    } else {
    	ggaze = GetLookAt() - GetEye();
