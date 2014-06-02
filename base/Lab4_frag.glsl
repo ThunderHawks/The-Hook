@@ -104,6 +104,13 @@ void main() {
 
    //color = (uLColor * uMat.dColor * angleNL) + (uLColor * uMat.sColor * angleNH) + (uLColor * uMat.aColor);   
 
+   // Apply fog
+   float fogDistance = min(length(vPos - uCamPos), 390.0) / 390.0;
+   if (uMat.aColor == vec3(0.0, 0.0, 0.0) && uMat.dColor == vec3(0.0, 0.0, 0.0) && uMat.sColor == vec3(0.0, 0.0, 0.0))
+      color = mix(vec3(0.0, 0.0, 0.0), vec3(0.7, 0.8, 0.9), pow(fogDistance, 5.0));
+   else
+      color = mix(color, vec3(0.7, 0.8, 0.9), pow(fogDistance, 5.0));
+
    vec3 texColor = texture2D(uTexSampler, vUV).rgb;
 
    gl_FragColor = vec4(color, uMat.alpha);
