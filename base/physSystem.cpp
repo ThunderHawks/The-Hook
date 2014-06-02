@@ -174,12 +174,10 @@ int grappleInRange(float lx,float ly,float lz){
    lookAt -= glm::vec3(gu.x, 0, gu.z);
 //   int ret = //inRange(50,75,glm::lookAt(playerPoss(),glm::vec3(tempLookAt.x+75*dir.x,tempLookAt.y+75*dir.y,tempLookAt.z+75*dir.z),glm::vec3(0,1,0)));
    printf("grapple is %d range\n",RayCallback.hasHit());
+   if(RayCallback.hasHit())   printf("%f %f %f",RayCallback.m_hitPointWorld.getX(),RayCallback.m_hitPointWorld.getY(),RayCallback.m_hitPointWorld.getZ());
    return    RayCallback.hasHit();
 }
 
-   //btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAt.x+1.6*dir.x,lookAt.y-1.6*dir.y,lookAt.z+1.6*dir.z), btVector3(lookAt.x+75*dir.x,lookAt.y-75*dir.y,lookAt.z+75*dir.z));
-   //dynamicsWorld->rayTest(btVector3(lookAt.x+1.6*dir.x,lookAt.y-1.6*dir.y,lookAt.z+1.6*dir.z), btVector3(lookAt.x+75*dir.x,lookAt.y-75*dir.y,lookAt.z+75*dir.z), RayCallback);
-   //RayCallback.hasHit()
 
 bool physGrapple(float lx,float ly,float lz){
 	bool ret = false;

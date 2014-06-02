@@ -287,7 +287,7 @@ Icon getHBIcon(int index) {
 void DrawCrosshair() {
    glm::vec3 dir = GetLookAt()- GetEye();
 
-   if(grappleInRange(dir.x, dir.y, dir.z)) {
+   if(grappleInRange(-dir.x, -dir.y, -dir.z)) {
       SetupSq(0, 0, textures[44], 0.05, 0.05);
    }
    else {
