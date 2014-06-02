@@ -156,7 +156,7 @@ int flip;
 
 
 int grappleInRange(float lx,float ly,float lz){
-   glm::vec3 tempLookAt;
+   //glm::vec3 tempLookAt;
 
    dir = glm::normalize(glm::vec3(-lx,ly,-lz));
 
@@ -166,12 +166,20 @@ int grappleInRange(float lx,float ly,float lz){
    glm::vec3 gu = glm::cross(GetUp(), gw)/magnitude(glm::cross(GetUp(), gw));
    gu *= 2;
 
-   tempLookAt += lookAt + glm::vec3(gu.x, 0, gu.z);
+   lookAt += glm::vec3(gu.x, 0, gu.z);
    
-   int ret = inRange(5,75,glm::lookAt(playerPoss(),glm::vec3(tempLookAt.x+75*dir.x,tempLookAt.y-75*dir.y,tempLookAt.z+75*dir.z),glm::vec3(0,1,0)));
+   btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAt.x+1.6*dir.x,lookAt.y-1.6*dir.y,lookAt.z+1.6*dir.z), btVector3(lookAt.x+75*dir.x,lookAt.y-75*dir.y,lookAt.z+75*dir.z));
+   dynamicsWorld->rayTest(btVector3(lookAt.x+1.6*dir.x,lookAt.y-1.6*dir.y,lookAt.z+1.6*dir.z), btVector3(lookAt.x+75*dir.x,lookAt.y-75*dir.y,lookAt.z+75*dir.z), RayCallback);
 
-   return ret;
+   lookAt -= glm::vec3(gu.x, 0, gu.z);
+//   int ret = //inRange(50,75,glm::lookAt(playerPoss(),glm::vec3(tempLookAt.x+75*dir.x,tempLookAt.y+75*dir.y,tempLookAt.z+75*dir.z),glm::vec3(0,1,0)));
+   printf("grapple is %d range\n",RayCallback.hasHit());
+   return    RayCallback.hasHit();
 }
+
+   //btCollisionWorld::ClosestRayResultCallback RayCallback(btVector3(lookAt.x+1.6*dir.x,lookAt.y-1.6*dir.y,lookAt.z+1.6*dir.z), btVector3(lookAt.x+75*dir.x,lookAt.y-75*dir.y,lookAt.z+75*dir.z));
+   //dynamicsWorld->rayTest(btVector3(lookAt.x+1.6*dir.x,lookAt.y-1.6*dir.y,lookAt.z+1.6*dir.z), btVector3(lookAt.x+75*dir.x,lookAt.y-75*dir.y,lookAt.z+75*dir.z), RayCallback);
+   //RayCallback.hasHit()
 
 bool physGrapple(float lx,float ly,float lz){
 	bool ret = false;
@@ -187,7 +195,7 @@ bool physGrapple(float lx,float ly,float lz){
 */
 
 //////////////////////////////
-glm:: vec3 ggaze = GetLookAt() - GetEye();
+   glm:: vec3 ggaze = GetLookAt() - GetEye();
    glm::vec3 gw = ggaze/magnitude(ggaze);
    gw = glm::vec3(-1.0 * gw.x, -1.0 * gw.y, -1.0 * gw.z);
    glm::vec3 gu = glm::cross(GetUp(), gw)/magnitude(glm::cross(GetUp(), gw));

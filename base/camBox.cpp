@@ -149,9 +149,13 @@ int inRange(int num,float dist,glm::mat4 lookat){//request from mathew
       test[1] = test4[1];
       test[2] = test4[2];
       
-      vector<Entity*> posible = pointLevelTest(test);
-      for(int j=0;j<posible.size();j++){
-         if (pointBox(test,(camBox*)posible[j]->physics)){
+      //vector<Entity*> posible = pointLevelTest(test);
+      //for(int j=0;j<posible.size();j++){
+    //     if (pointBox(test,(camBox*)posible[j]->physics)){
+  //          return 1;
+//         }
+      for(int j=0;j<boxes.size();j++){
+         if (pointBox(test,boxes[j])){
             return 1;
          }
       }
