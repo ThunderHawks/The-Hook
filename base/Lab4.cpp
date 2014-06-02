@@ -84,6 +84,9 @@ GLuint MeshBuffObj, MeshIndxBuffObj;
 Mesh playerMesh;
 Mesh flag;
 
+//animation stuff here
+GLint h_uAnimFlag, h_uNumWeights, h_uBoneMatrix, h_uWeights, h_uJoints;
+
 /*Do something better with this later. I don't like that it is a global but oh well for now.*/
 glm::mat4 curProj, curView;
 
@@ -225,9 +228,18 @@ void pauseorUnpause() {
 }
 
 void drawGameElements(int passNum) {
+   /*These are for animation. They should be removed later*/
+   static unsigned int ctr = 0;
+   static unsigned int frm = 0;
+   
    //DRAW THE DANCING CYLINDER HERE!!
    btTransform pla;
-   PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY(), physGetPlayerZ(), .25, .25, .25, getYaw(), 1.7);
+
+   /*REMOVE LATER TODO*/
+   if (ctr++%1 == 0)
+      frm++;
+
+   PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY(), physGetPlayerZ(), .25, .25, .25, getYaw(), 1.7, frm%24);
    //END OF DANCING CYLINDER CODE HERE!!
 
    drawSelectedObjects();
@@ -460,7 +472,7 @@ void initPlay(string fileName) {
    //srand(time(0));
    SetEdit(Mode);
    paused = false;
-   playerMesh = LoadMesh("../Assets/Models/topHatChar.obj");
+   playerMesh = LoadMesh("../Assets/Models/dancingCylinderTriangulated.dae");
 
    glfwSetKeyCallback(window, glfwGameKeyPress);
    glfwSetCursorPosCallback( window, glfwGameGetCursorPos );

@@ -30,6 +30,13 @@ attribute vec2 textPos;
 uniform float uMGuiMode;
 uniform float uTextMode;
 
+// animation stuff here
+uniform int animFlag;
+attribute float numWeights;
+uniform mat4 bonesMatrix[30];
+attribute vec4 weights;
+attribute vec4 joints;
+
 
 
 void main() {
@@ -42,6 +49,19 @@ void main() {
                         0.0, 0.5, 0.0, 0.0,
                         0.0, 0.0, 0.5, 0.0,
                         0.5, 0.5, 0.5, 1.0);
+
+    mat4 animationMatrix = mat4(0.0);
+
+    //more animation stuff here
+    if (animFlag == 1) {
+       animationMatrix =
+       weights[0] * bonesMatrix[int(joints[0])] +
+       weights[1] * bonesMatrix[int(joints[1])] +
+       weights[2] * bonesMatrix[int(joints[2])] +
+          weights[3] * bonesMatrix[int(joints[3])];
+     } else {
+          animationMatrix = mat4(1.0);
+     }
 
 //  if (uTextMode == 1.0) {
 //    vTexCoord = aTexCoord;

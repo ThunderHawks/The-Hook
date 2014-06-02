@@ -22,6 +22,14 @@ extern GLint h_uModelMatrix;
 extern RenderingHelper ModelTrans;
 extern GLint h_uTexCoord, h_aTexCoord, h_uGuiMode, h_uTextMode, h_utexpos;
 
+// Animation stuff
+extern GLint h_uAnimFlag;
+extern GLint h_uNumWeights;
+extern GLint h_uBoneMatrix;
+extern GLint h_uWeights;
+extern GLint h_uJoints;
+//
+
 int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName);
 void glInitialize(GLFWwindow *window);
 

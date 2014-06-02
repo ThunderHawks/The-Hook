@@ -2,9 +2,12 @@
 #define MESH_LOADER_H_
 
 #include <assimp/mesh.h> 
-#include <assimp/Importer.hpp>      // C++ importer interface
-#include <assimp/scene.h>           // Output data structure
-#include <assimp/postprocess.h>     // Post processing flags
+#include <assimp/Importer.hpp>      		// C++ importer interface
+#include <assimp/scene.h>           		// Output data structure
+#include <assimp/postprocess.h>     		// Post processing flags
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp" 	//perspective, trans etc
+#include "glm/gtc/type_ptr.hpp" 			 	//value_ptr
 
 #include <iostream>
 #include <cstdio>
@@ -15,27 +18,25 @@ struct aiScene;
 
 struct Bone {
 	aiString name;
-	Bone *parent;					//parent in hierarchy
-	aiMatrix4x4 offset;			//bone offset matrix
-	
-	int numPosKeyFrames;
-	int numRotKeyFrames;
-	int numScaleKeyFrames;
-	aiVectorKey *posKeys;
-	aiQuatKey *rotKeys;
-	aiVectorKey *scaleKeys;
+	Bone *parent;									//parent in hierarchy
+	aiMatrix4x4 offset;							//bone offset matrix
+
+	//these next three will be deleted
 	aiMatrix4x4 *transformations;
+	glm::mat4 *glmTransforms;
 	aiMatrix4x4 *personalTrans;
-	
-	//aiMatrix4x4 meshTrans;		//mesh matrix
-	//aiString parentName;			//name of parent
-	//aiBone bone;
-	//aiNode boneNode;
+
+	glm::mat4 currentTransform;
+
+	std::vector<aiVectorKey> posKeys;
+	std::vector<aiQuatKey> rotKeys;
+	std::vector<aiVectorKey> scaleKeys;
+	std::vector<Bone *> childs;
 };
 
 struct vertexInfo {
 	aiVector3D position;
-	std::vector<Bone *> bone_array; //Switched from aiBone to Bone -- hopefully correct
+	std::vector<float> bone_array; 			//Switched from aiBone to Bone *
 	std::vector<float> weight_array;
 };
 
@@ -44,15 +45,19 @@ struct AssimpMesh {
    std::vector<float> normal_array;
    std::vector<float> uv_array;
    std::vector<unsigned short> index_array;
-	vertexInfo *skeleton_vertices;
+	std::vector <vertexInfo> skeleton_vertices;
 	int numVerts;
-	Bone *bone_array;
+	std::vector<Bone *> bone_array;
+	Bone *root;
 	int boneCt;
 	bool hasBones;
 };
 
 AssimpMesh loadMesh(const std::string& path);
+int setupTrans(Bone *parent, Bone *cur);
+int GetFrame(int frame, AssimpMesh mesh);
+int getFrame(Bone *parent, Bone *cur, aiMatrix4x4 globalTrans, int frame);
+int CreateHierarchy(std::vector<aiBone *> *boneNames, aiNode *root, Bone *parent, AssimpMesh *mesh);
+void CopyaiMat(const aiMatrix4x4 *from, glm::mat4 &to);
 
 #endif // MESH_LOADER_H_
-
-//print out vertex position, bones names, and weight for each bone. DONT DO FOR EVERY VERTEX

@@ -561,7 +561,7 @@ void DrawSkyBox() {
    glDisable(GL_CULL_FACE);
    
 
-  GLuint UVBuffObj;
+  /*GLuint UVBuffObj;
   glGenBuffers(1, &UVBuffObj);
   glBindBuffer(GL_ARRAY_BUFFER, UVBuffObj);
   glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
@@ -570,7 +570,7 @@ void DrawSkyBox() {
   glActiveTexture(GL_TEXTURE1);
   glBindTexture(GL_TEXTURE_2D, skytex);
   // Set "h_uTexSampler" sampler to user Texture Unit 1
-  glUniform1i(h_uTexSampler, 1);
+  glUniform1i(h_uTexSampler, 1);*/
 
   SetMaterial(14);
   
@@ -589,7 +589,7 @@ void DrawSkyBox() {
    glBindBuffer(GL_ARRAY_BUFFER, NormalBuffObj);
    safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-   safe_glEnableVertexAttribArray(h_aUVVertex);
+   /*safe_glEnableVertexAttribArray(h_aUVVertex);
    glBindBuffer(GL_ARRAY_BUFFER, UVBuffObj);
    safe_glVertexAttribPointer(h_aUVVertex, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
@@ -598,10 +598,10 @@ void DrawSkyBox() {
    
    safe_glDisableVertexAttribArray(h_aPosition);
    safe_glDisableVertexAttribArray(h_aNormal);
-   safe_glDisableVertexAttribArray(h_aUVVertex);
+   /*safe_glDisableVertexAttribArray(h_aUVVertex);
 
    glDeleteBuffers(1, &UVBuffObj);
-   glDeleteTextures(1, &h_uTexSampler);
+   glDeleteTextures(1, &h_uTexSampler);*/
 
    glDepthMask(GL_ALWAYS);
    
