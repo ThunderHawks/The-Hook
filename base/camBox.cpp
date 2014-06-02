@@ -151,9 +151,12 @@ int inRange(int num,float dist,glm::mat4 lookat){//request from mathew
       
       vector<Entity*> posible = pointLevelTest(test);
       for(int j=0;j<posible.size();j++){
-         pointBox(test,(camBox*)posible[j]->physics);
+         if (pointBox(test,(camBox*)posible[j]->physics)){
+            return 1;
+         }
       }
    }
+   return 0;
 }
 
 float distLineToPoint(glm::mat4 line,glm::vec3 pt){
