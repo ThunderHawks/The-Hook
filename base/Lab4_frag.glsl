@@ -59,12 +59,12 @@ void main() {
       depth = texture2D(uTexUnit, shadowPos.xy).z; // Shadow map depth
       dist = vShadowPos.z - 0.005; // Distance from light to fragment
 
-   // Diffuse lighting
+      // Diffuse lighting
       if (angleNL > 0.8)
          color = uLColor * uMat.dColor;
       else if (angleNL > 0.6)
          color = uLColor * uMat.dColor * 0.8;
-       else if (angleNL > 0.4)
+      else if (angleNL > 0.4)
          color = uLColor * uMat.dColor * 0.6;
       else if (angleNL > 0.2)
          color = uLColor * uMat.dColor * 0.4;

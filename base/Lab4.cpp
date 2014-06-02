@@ -384,9 +384,11 @@ void renderScene() {
    safe_glUniform1i(h_uTexUnit, 0);
    glEnable(GL_TEXTURE_2D);
    glActiveTexture(GL_TEXTURE0);
+
    // Set light uniforms
    glUniform3f(h_uLightColor, 0.4, 0.4, 0.38);
    glUniform4f(h_uLightVec, 0.0, 3.0, 4.0, 0.0);
+
    // Render depth info from light's perspective
    shadowMap->BindFBO();
    glClear(GL_DEPTH_BUFFER_BIT);

@@ -149,8 +149,7 @@ void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float s
         boneArr[i] = mesh.Assimp.bone_array[i]->glmTransforms[frame];
       }
       
-      
-      glUniformMatrix4fv(h_uBoneMatrix, 30*16, GL_FALSE, (GLfloat *)boneArr);
+      glUniformMatrix4fv(h_uBoneMatrix, 30, GL_FALSE, (GLfloat *)boneArr);
       
       glUniform1i(h_uAnimFlag, 1);
       
