@@ -123,7 +123,7 @@ public:
    //art
    vector<Entity*> askPoint(glm::vec3 point);
    vector<Entity*> askSphere(glm::vec3 point, float Radius);
-	
+    vector<Entity*> askEntity(Entity ent);
 };
 
 #endif //end of OCTREE_H

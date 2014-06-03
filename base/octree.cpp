@@ -284,7 +284,9 @@ vector<Entity*> Octree::askPoint(glm::vec3 point){
 	Entity* bs;
    
    if(this->hasChildren){//if octree has a sub octree
-      r = this->children[point.x>center.x?1:0][point.y>center.y?1:0][point.z>center.z?1:0]->askPoint(point);//recurse into the correct octree
+      r = this->children[point.x>center.x?1:0]
+      					[point.y>center.y?1:0]
+      					[point.z>center.z?1:0]->askPoint(point);//recurse into the correct octree
    }
 
    for(set<Entity*>::iterator it = bsSet.begin(); it != bsSet.end(); it++){//for verything in the current octree
@@ -297,6 +299,27 @@ vector<Entity*> Octree::askPoint(glm::vec3 point){
    return r;//return results
 }
 
+vector<Entity*> Octree::askEntity(Entity ent){
+	vector<Entity*> r;
+	Entity* bs;
+
+	//if the octree has a sub octree
+	if(this->hasChildren){
+		//recurse through octrees till match
+		r = this->children[ent.position.x>center.x?1:0]
+						  [ent.position.y>center.y?1:0]
+						  [ent.position.z>center.z?1:0]->askEntity(ent);
+	}
+
+	for(set<Entity*>::iterator it = bsSet.begin(); it != bsSet.end(); it++){
+		bs = *it;
+		if((bs->position - ent.position).length() < bs->BSRadius){
+			r.push_back(bs);
+		}
+	}
+
+	return r;
+}
 
 //Adds potential bs-wall collisions to the specified set
 void Octree::BSWallCollision(vector<BS_Wall> &col) {
