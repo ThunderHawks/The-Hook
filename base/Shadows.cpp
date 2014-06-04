@@ -65,6 +65,37 @@ int ShadowMap::MakeShadowMap(int width, int height) {
    return isSuccessful;
 }
 
+int ShadowMap::MakeGlowMap(int width, int height) {
+   int isSuccessful = 0;
+  
+   texWidth = width;
+   texHeight = height;
+
+   // Create the glow map texture
+   glGenTextures(1, &DepthTex);
+   glBindTexture(GL_TEXTURE_2D, DepthTex);
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_FLOAT, NULL);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+   // Create a frame buffer and attach the glow map texture to it
+   glGenFramebuffersEXT(1, &FrameBuf);
+   glBindFramebufferEXT(GL_FRAMEBUFFER, FrameBuf);
+   glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, DepthTex, 0);
+
+   // Make sure everything was created alright
+   if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+      printf("Error creating frame buffer for bloom!\n");      
+      isSuccessful = -1;
+   }
+
+   glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
+
+   return isSuccessful;
+}
+
 void ShadowMap::BindFBO() {
    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER, FrameBuf);
    glViewport(0, 0, texWidth, texHeight);
@@ -75,12 +106,26 @@ void ShadowMap::UnbindFBO(int width, int height) {
    glViewport(0, 0, width, height);
 }
 
+void ShadowMap::BindReadFBO() {
+   glBindFramebufferEXT(GL_READ_FRAMEBUFFER, FrameBuf);
+   glViewport(0, 0, texWidth, texHeight);
+}
+
+void ShadowMap::UnbindReadFBO(int width, int height) {
+   glBindFramebufferEXT(GL_READ_FRAMEBUFFER, 0);
+   glViewport(0, 0, width, height);
+}
+
 void ShadowMap::BindDepthTex() {
    glBindTexture(GL_TEXTURE_2D, DepthTex);
 }
 
 void ShadowMap::UnbindDepthTex() {
    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+GLuint ShadowMap::GetTexture() {
+   return DepthTex;
 }
 
 glm::mat4 SetOrthoProjectionMatrix(glm::vec3 eye, glm::vec3 lookAt, float dist) {

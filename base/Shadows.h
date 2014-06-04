@@ -10,10 +10,14 @@ public:
    ShadowMap();
    ~ShadowMap();
    int MakeShadowMap(int width, int height);
+   int MakeGlowMap(int width, int height);
    void BindFBO();
    void UnbindFBO(int width, int height);
+   void BindReadFBO();
+   void UnbindReadFBO(int width, int height);
    void BindDepthTex();
    void UnbindDepthTex();
+   GLuint GetTexture();
 
 private:
    GLuint FrameBuf;

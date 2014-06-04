@@ -10,6 +10,7 @@ uniform vec4 uLightVec;
 uniform vec3 uLColor;
 uniform vec3 uCamPos;
 uniform sampler2D uTexUnit;
+uniform sampler2D uTexUnit2;
 uniform sampler2D uTexSampler;
 uniform Material uMat;
 uniform int uShadeMode;
@@ -43,6 +44,31 @@ void main() {
         gl_FragColor = vec4(texColor1[0], texColor1[1], texColor1[2], 1);
       }
    }
+   else if (uTextMode == 2.0) {
+      // Create the bloom map
+      gl_FragColor = vec4(uMat.aColor, 1.0);
+   }
+   else if (uTextMode == 3.0) {
+      // Blur the bloom map horizontally
+      float blurSize = 1.0/64.0;
+      vec4 blur = vec4(0.0);
+      blur += texture2D(uTexUnit, vec2(vTexCoord.x - 4.0*blurSize, vTexCoord.y)) * 0.05;
+      blur += texture2D(uTexUnit, vec2(vTexCoord.x - 3.0*blurSize, vTexCoord.y)) * 0.09;
+      blur += texture2D(uTexUnit, vec2(vTexCoord.x - 2.0*blurSize, vTexCoord.y)) * 0.12;
+      blur += texture2D(uTexUnit, vec2(vTexCoord.x - blurSize, vTexCoord.y)) * 0.15;
+      blur += texture2D(uTexUnit, vTexCoord) * 0.16;
+      blur += texture2D(uTexUnit, vec2(vTexCoord.x + blurSize, vTexCoord.y)) * 0.15;
+      blur += texture2D(uTexUnit, vec2(vTexCoord.x + 2.0*blurSize, vTexCoord.y)) * 0.12;
+      blur += texture2D(uTexUnit, vec2(vTexCoord.x + 3.0*blurSize, vTexCoord.y)) * 0.09;
+      blur += texture2D(uTexUnit, vec2(vTexCoord.x + 4.0*blurSize, vTexCoord.y)) * 0.05;
+
+      gl_FragColor = blur;
+   }
+   else if (uTextMode == 5.0) {
+      // Add bloom light to the scene
+      gl_FragColor = mix(gl_FragColor, texColor1, 0.8);
+   }
+
    else {
       norm = normalize(vNorm);
       pos = normalize(vPos);
@@ -73,7 +99,7 @@ void main() {
 
       // Test if the fragment is in a shadow
       if (uShadeMode == 0) {
-        if (depth < dist && dist < 1.0 && abs(angleNL) >= 0.01)
+         if (depth < dist && dist < 1.0 && abs(angleNL) >= 0.01)
             color *= 0.3;
          else if (uMat.alpha == 1.0) // If not in a shadow, add specular
             color += uLColor * uMat.sColor * angleNH;
