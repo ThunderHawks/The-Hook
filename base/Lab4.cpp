@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <vector>
 #include <string>
+#include "octree.h"
 #include "Camera.h"
 #include "Shadows.h"
 #include "SoundPlayer.h"
@@ -35,6 +36,8 @@
 
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
+
+#define FAR_PLANE 300
 
 
 //Window
@@ -94,7 +97,7 @@ std::list<part*> particleSpawner;
 
 /* projection matrix  - do not change */
 glm::mat4 SetProjectionMatrix() {
-   glm::mat4 Projection = glm::perspective(80.0f, (float)g_width/g_height, 0.1f, 300.f);	
+   glm::mat4 Projection = glm::perspective(80.0f, (float)g_width/g_height, 0.1f, (float)FAR_PLANE);	
    safe_glUniformMatrix4fv(h_uProjMatrix, glm::value_ptr(Projection));
    return Projection;
 }
@@ -170,6 +173,8 @@ void drawEntities(int passNum) {
 	glm::vec3 temp;
 	int objects = 0;
 	
+	std::vector<Entity *> entities = GetNearby(FAR_PLANE);
+	
    if(Mode == GAME_MODE) {
       cameraColision();
    }
@@ -177,8 +182,8 @@ void drawEntities(int passNum) {
    srand(sizer);
    int hit = 0;
    //printf("num ent rend %d\n",getEntityNum());
-   for(int i = 0; i < getEntityNum(); ++i) {
-      entityTemp = getEntityAt(i);
+   for(int i = 0; i < entities.size(); ++i) {
+      entityTemp = *(entities[i]);
       if(entityTemp.meshIndex != 18 && Mode == GAME_MODE) {
          if (passNum == 2)
             SetMaterial(17);
@@ -326,8 +331,6 @@ void drawGameElements(int passNum) {
  */
 void glfwDraw (GLFWwindow *window, int passNum)
 {
-   glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);//andrew tag here!
-
    if (passNum != 2) {
       //Draw skybox
    	//DrawSkyBox();
@@ -530,6 +533,8 @@ int main( int argc, char *argv[] )
 
    printf("Starting main loop\n");
    // Start the main execution loop.
+   glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);//andrew tag here!
+
    while (!glfwWindowShouldClose(window)) {
       glfwPollEvents();
 

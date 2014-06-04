@@ -96,5 +96,6 @@ void saveWorld();
 void freeLevelData();
 //askPoint translation
 vector<Entity*> pointLevelTest(glm::vec3 point);
+vector<Entity*> GetNearby(int range);
 
 #endif

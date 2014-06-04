@@ -29,6 +29,8 @@ vector<Entity> redoEntities;
 string currentLevel = "level1.wub";
 //Octree
 Octree* octLevel;
+//for GetNearby
+Entity culler;
 
 //This method loads the level models and initializes the hotbar
 void initLevelLoader(int EditMode) {
@@ -75,6 +77,13 @@ void loadOctTree(){
 }
 vector<Entity*> pointLevelTest(glm::vec3 point){
    return octLevel->askPoint(point);//dont wana mess with .h files
+}
+
+vector<Entity*> GetNearby(int range){
+	culler.BSRadius = range;
+	culler.position = GetEye();
+	
+   return octLevel->askEntity(culler);//dont wana mess with .h files
 }
 
 vector<glm::vec3> getObjectiveDestinationPositions() {
