@@ -574,7 +574,7 @@ int main( int argc, char *argv[] )
          }
       }
 
-      usleep(15000);
+      //usleep(15000);
    }
 
    // Clean up after GLFW.
