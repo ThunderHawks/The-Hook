@@ -375,18 +375,10 @@ void renderScene() {
 
    glUniform1i(h_uShadeMode, ShadeMode);
 
-   //Enable transparency
-   glEnable(GL_BLEND);
-   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
    // Specify texture unit
    safe_glUniform1i(h_uTexUnit, 0);
    glEnable(GL_TEXTURE_2D);
    glActiveTexture(GL_TEXTURE0);
-
-   // Set light uniforms
-   glUniform3f(h_uLightColor, 0.4, 0.4, 0.38);
-   glUniform4f(h_uLightVec, 0.0, 3.0, 4.0, 0.0);
 
    // Render depth info from light's perspective
    shadowMap->BindFBO();
@@ -422,7 +414,6 @@ void renderScene() {
 
    // Draw outlines
    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-   glLineWidth(3.0);
    glfwDraw(window, 2);
    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -478,6 +469,17 @@ void initStartScreen() {
       printf("SHADOW MAP FAILED\n");
       exit(EXIT_FAILURE);  
    }
+
+   // Enable transparency
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+   // Set light uniforms
+   glUniform3f(h_uLightColor, 0.4, 0.4, 0.38);
+   glUniform4f(h_uLightVec, 0.0, 3.0, 4.0, 0.0);
+
+   // Set line width for object outlines
+   glLineWidth(3.0);
 
    //music
    musicPlayer = SoundPlayer();
