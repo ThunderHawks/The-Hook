@@ -343,3 +343,7 @@ glm::vec3 getPlayerSpeed() {
 	btVector3 pVec = player->getLinearVelocity();
 	return glm::vec3(pVec.getX(), pVec.getY(), pVec.getZ());
 }
+
+void ReleaseGrapple() {
+   playerGrappleActive = 0;
+}

@@ -262,7 +262,7 @@ void drawGameElements(int passNum) {
       if (ctr++%1 == 0)
          frm++;
 
-   PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY(), physGetPlayerZ(), .25, .25, .25, getYaw(), 1.7, frm%24);
+   PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY(), physGetPlayerZ(), .25, .25, .25, -getYaw()*180/3.14, 1.7, frm%24);
    //END OF DANCING CYLINDER CODE HERE!!
 
    drawSelectedObjects();

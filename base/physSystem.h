@@ -36,5 +36,7 @@ void holdGrapple(int i);
 glm::vec3 playerPoss();
 
 int grappleInRange(float lx, float ly, float lz);
+//Made by Andrew. This allows the player to let go of the grapple.
+void ReleaseGrapple();
 
 #endif

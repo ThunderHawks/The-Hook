@@ -62,12 +62,17 @@ void glfwGameMouse(GLFWwindow *window, int button, int action, int mods) {
       else {
    	 //find the direction to throw the grappling hook		
          glm::vec3 dir = GetLookAt()- GetEye();
-         //check to see if the grappling hook hit. If it did, play a sound
-         if (physGrapple(-dir.x,-dir.y,-dir.z));
-      	   //PlayFX(THROW_GRAP_FX);
-      
-         //pull on the grapple
-         holdGrapple(1);
+
+         if(isGrappleActive()) {
+            ReleaseGrapple();
+          } else {
+           //check to see if the grappling hook hit. If it did, play a sound
+           if (physGrapple(-dir.x,-dir.y,-dir.z));
+        	   //PlayFX(THROW_GRAP_FX);
+        
+           //pull on the grapple
+           holdGrapple(1);
+        }
       }
    }
    if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
