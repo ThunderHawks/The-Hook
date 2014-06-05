@@ -11,7 +11,7 @@ extern GLuint CubeBuffObj, CIndxBuffObj, GrndBuffObj, GIndxBuffObj, GNBuffObj, G
 
 extern GLuint ShadowCubeBuffObj, SCIndxBuffObj, ShadowNormalBuffObj, RampBuffObj, RIndxBuffObj, RampNormalBuffObj;
 extern GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine, h_uMatAlpha;
-extern GLint h_uTexUnit, h_uTexUnit2;
+extern GLint h_uTexUnit;
 extern GLint h_uLightViewMatrix, h_uLightProjMatrix;
 extern float g_width, g_height, beta, alpha, eyeAtx, eyeAty, eyeAtz;
 extern int ShadeProg;

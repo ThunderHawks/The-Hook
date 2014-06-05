@@ -80,7 +80,6 @@ int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName) {
         h_uMatAlpha = safe_glGetUniformLocation(ShadeProg, "uMat.alpha");
         h_uCamPos = safe_glGetUniformLocation(ShadeProg, "uCamPos");
         h_uTexUnit = safe_glGetUniformLocation(ShadeProg, "uTexUnit");
-        h_uTexUnit2 = safe_glGetUniformLocation(ShadeProg, "uTexUnit2");
         h_uLightViewMatrix = safe_glGetUniformLocation(ShadeProg, "uLightViewMatrix");
         h_uTexSampler = safe_glGetUniformLocation(ShadeProg, "uTexSampler");        
         h_uLightProjMatrix = safe_glGetUniformLocation(ShadeProg, "uLightProjMatrix");

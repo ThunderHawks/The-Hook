@@ -11,17 +11,19 @@ public:
    ~ShadowMap();
    int MakeShadowMap(int width, int height);
    int MakeGlowMap(int width, int height);
-   void BindFBO();
-   void UnbindFBO(int width, int height);
+   void BindDrawFBO();
+   void UnbindDrawFBO(int width, int height);
    void BindReadFBO();
    void UnbindReadFBO(int width, int height);
    void BindDepthTex();
-   void UnbindDepthTex();
-   GLuint GetTexture();
+   void BindColorTex();
+   void UnbindTex();
+   GLuint GetColorTex();
 
 private:
    GLuint FrameBuf;
    GLuint DepthTex;
+   GLuint ColorTex;
    int texWidth, texHeight;
 };
 

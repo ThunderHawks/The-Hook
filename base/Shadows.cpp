@@ -23,6 +23,7 @@
 ShadowMap::ShadowMap() {
    FrameBuf = 0;
    DepthTex = 0;
+   ColorTex = 0;
 }
 
 ShadowMap::~ShadowMap() {
@@ -71,19 +72,25 @@ int ShadowMap::MakeGlowMap(int width, int height) {
    texWidth = width;
    texHeight = height;
 
-   // Create the glow map texture
-   glGenTextures(1, &DepthTex);
-   glBindTexture(GL_TEXTURE_2D, DepthTex);
+   // Create the glow map color texture
+   glGenTextures(1, &ColorTex);
+   glBindTexture(GL_TEXTURE_2D, ColorTex);
    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_FLOAT, NULL);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-   // Create a frame buffer and attach the glow map texture to it
+   // Create the glow map depth texture
+   glGenTextures(1, &DepthTex);
+   glBindTexture(GL_TEXTURE_2D, DepthTex);
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, texWidth, texHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+   // Create a frame buffer and attach the color and depth textures to it
    glGenFramebuffersEXT(1, &FrameBuf);
    glBindFramebufferEXT(GL_FRAMEBUFFER, FrameBuf);
-   glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, DepthTex, 0);
+   glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ColorTex, 0);
+   glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, DepthTex, 0);
 
    // Make sure everything was created alright
    if (glCheckFramebufferStatusEXT(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -96,12 +103,12 @@ int ShadowMap::MakeGlowMap(int width, int height) {
    return isSuccessful;
 }
 
-void ShadowMap::BindFBO() {
+void ShadowMap::BindDrawFBO() {
    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER, FrameBuf);
    glViewport(0, 0, texWidth, texHeight);
 }
 
-void ShadowMap::UnbindFBO(int width, int height) {
+void ShadowMap::UnbindDrawFBO(int width, int height) {
    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER, 0);
    glViewport(0, 0, width, height);
 }
@@ -120,12 +127,16 @@ void ShadowMap::BindDepthTex() {
    glBindTexture(GL_TEXTURE_2D, DepthTex);
 }
 
-void ShadowMap::UnbindDepthTex() {
+void ShadowMap::BindColorTex() {
+   glBindTexture(GL_TEXTURE_2D, ColorTex);
+}
+
+void ShadowMap::UnbindTex() {
    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-GLuint ShadowMap::GetTexture() {
-   return DepthTex;
+GLuint ShadowMap::GetColorTex() {
+   return ColorTex;
 }
 
 glm::mat4 SetOrthoProjectionMatrix(glm::vec3 eye, glm::vec3 lookAt, float dist) {

@@ -394,17 +394,12 @@ void renderScene() {
    glActiveTexture(GL_TEXTURE0);
    shadowMap->BindDepthTex();
 
-   safe_glUniform1i(h_uTexUnit2, 1);
-   glEnable(GL_TEXTURE_2D);
-   glActiveTexture(GL_TEXTURE1);
-   glowMap->BindDepthTex();
-
    // Set light uniforms
    glUniform3f(h_uLightColor, 0.4, 0.4, 0.38);
    glUniform4f(h_uLightVec, 0.0, 6.0, 8.0, 0.0);
 
    // Render depth info from light's perspective
-   shadowMap->BindFBO();
+   shadowMap->BindDrawFBO();
    glClear(GL_DEPTH_BUFFER_BIT);
    SetEye(glm::vec3(origLookAt.x, origLookAt.y + 6.0, origLookAt.z + 8.0));
    SetLookAt(origLookAt);
@@ -412,7 +407,7 @@ void renderScene() {
    curProj = SetOrthoProjectionMatrix(GetEye(), GetLookAt(), 10.0);
    glUniform3f(h_uCamPos, 0.0, 3.0, 4.0);
    glfwDraw(window, 0);
-   shadowMap->UnbindFBO(g_width, g_height);
+   shadowMap->UnbindDrawFBO(g_width, g_height);
 
    // Set the eye and look at point to their original locations
    SetEye(origEye);
@@ -430,20 +425,22 @@ void renderScene() {
    glUniform3f(h_uCamPos, GetEye().x, GetEye().y, GetEye().z);
 /*
    // Render glow map
-   glowMap->BindFBO();
+   glowMap->BindDrawFBO();
+   GLenum renderTargets[] = {GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT};
+   glDrawBuffers(2, renderTargets);
    glUniform1f(h_uTextMode, 2);
    glClearColor(1.0, 1.0, 1.0, 0.0);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    glfwDraw(window, 3);
-   glowMap->UnbindFBO(g_width, g_height);
+   glowMap->UnbindDrawFBO(g_width, g_height);
    glUniform1f(h_uTextMode, 0);
 */
    // Render scene normally and draw
    glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    glfwDraw(window, 1);
-   shadowMap->UnbindDepthTex();
-   glowMap->UnbindDepthTex();
+   shadowMap->UnbindTex();
+   glowMap->UnbindTex();
 
    // Draw outlines
    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -453,27 +450,22 @@ void renderScene() {
 /*
    // Blur the glow map
    glowMap->BindReadFBO();
-   glowBlurMap->BindFBO();
+   glowBlurMap->BindDrawFBO();
    glClearColor(1.0, 1.0, 1.0, 0.0);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   //horizontal blur here
    ready2D();
    glUniform1f(h_uGuiMode, 0);
    glUniform1f(h_uTextMode, 3);
-   SetupSq(0.0, 0.0, glowMap->GetTexture(), 2.0, 2.0);
-   //ready3D();
-   //glUniform1f(h_uTextMode, 0);
-   glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
+   SetupSq(0.0, 0.0, glowMap->GetColorTex(), 2.0, 2.0);
    glowMap->UnbindReadFBO(g_width, g_height);
-   glowBlurMap->UnbindFBO(g_width, g_height);
+   glowBlurMap->UnbindDrawFBO(g_width, g_height);
 
    // Draw glowmap over scene
-   //ready2D();
-   //glUniform1f(h_uGuiMode, 0);
    glUniform1f(h_uTextMode, 5);
-   SetupSq(0.0, 0.0, glowBlurMap->GetTexture(), 2.0, 2.0);
+   SetupSq(0.0, 0.0, glowBlurMap->GetColorTex(), 2.0, 2.0);
    ready3D();
    glUniform1f(h_uTextMode, 0);
+   glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
 */
    //Draw any gui elements that should be on the screen
    DrawGui(Mode);
@@ -529,11 +521,11 @@ void initStartScreen() {
       printf("SHADOW MAP FAILED\n");
       exit(EXIT_FAILURE);  
    }
-   if (glowMap->MakeGlowMap(256, 256) == -1) {
+   if (glowMap->MakeGlowMap(g_width, g_height) == -1) {
       printf("GLOW MAP FAILED\n");
       exit(EXIT_FAILURE); 
    }
-   if (glowBlurMap->MakeGlowMap(256, 256) == -1) {
+   if (glowBlurMap->MakeGlowMap(g_width, g_height) == -1) {
       printf("GLOW BLUR MAP FAILED\n");
       exit(EXIT_FAILURE); 
    }
@@ -633,7 +625,7 @@ int main( int argc, char *argv[] )
          }
       }
 
-      usleep(15000);
+      //usleep(15000);
    }
 
    // Clean up after GLFW.
