@@ -42,8 +42,9 @@
 
 //Window
 GLFWwindow *window;
-//Shadow Map
+//Shadow Map and glow map
 ShadowMap *shadowMap;
+ShadowMap *glowMap, *glowBlurMap;
 //Music player
 SoundPlayer musicPlayer;
 //Paused/unpause
@@ -299,8 +300,9 @@ void drawGameElements(int passNum) {
    }
 
    srand(0);
+   glColorMask(true, true, true, true);
 
-   if (passNum == 1) {
+   if (passNum == 1 || passNum == 3) {
       //draw objectives
       for(int i = 0; i < objectives.size();++i){
          if(objectives[i]->active){
@@ -312,6 +314,8 @@ void drawGameElements(int passNum) {
             SetupCube(objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 15, 60, 10, 5000, 10);
          }
       }
+   }
+   if (passNum == 1) {
       //draw particles
       for (std::list<part*>::iterator it=particleSpawner.begin(); it != particleSpawner.end(); it++){
          drawPart(*it);
@@ -331,9 +335,13 @@ void drawGameElements(int passNum) {
  * passNum: 0 = Create shadow map
  *          1 = Draw scene normally
  *          2 = Draw outlines around objects
+ *          3 = Create glow map for bloom effect
  */
 void glfwDraw (GLFWwindow *window, int passNum)
-{
+{   
+   if (passNum == 3)
+      glColorMask(false, false, false, false);
+
    if (passNum != 2) {
       //Draw skybox
    	//DrawSkyBox();
@@ -368,6 +376,7 @@ void glfwDraw (GLFWwindow *window, int passNum)
       SetMaterial(17);
    }
    drawGameElements(passNum);
+   glColorMask(true, true, true, true);
 }
 
 void renderScene() {
@@ -385,9 +394,10 @@ void renderScene() {
    safe_glUniform1i(h_uTexUnit, 0);
    glEnable(GL_TEXTURE_2D);
    glActiveTexture(GL_TEXTURE0);
+   shadowMap->BindDepthTex();
 
    // Render depth info from light's perspective
-   shadowMap->BindFBO();
+   shadowMap->BindDrawFBO();
    glClear(GL_DEPTH_BUFFER_BIT);
    SetEye(glm::vec3(origLookAt.x, origLookAt.y + 6.0, origLookAt.z + 8.0));
    SetLookAt(origLookAt);
@@ -395,14 +405,10 @@ void renderScene() {
    curProj = SetOrthoProjectionMatrix(GetEye(), GetLookAt(), 10.0);
    glUniform3f(h_uCamPos, 0.0, 3.0, 4.0);
    glfwDraw(window, 0);
-   shadowMap->UnbindFBO(g_width, g_height);
+   shadowMap->UnbindDrawFBO(g_width, g_height);
 
-   // Render scene normally and draw
-   shadowMap->BindDepthTex();
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   // Set the eye and look at point to their original locations
    SetEye(origEye);
-   
-   //move the character to the left when not in edit mode
    if (Mode != GAME_MODE) {
    	SetLookAt(origLookAt);
    } else {
@@ -415,14 +421,49 @@ void renderScene() {
    curView = SetView();
    curProj = SetProjectionMatrix();
    glUniform3f(h_uCamPos, GetEye().x, GetEye().y, GetEye().z);
+/*
+   // Render glow map
+   glowMap->BindDrawFBO();
+   GLenum renderTargets[] = {GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT};
+   glDrawBuffers(2, renderTargets);
+   glUniform1f(h_uTextMode, 2);
+   glClearColor(1.0, 1.0, 1.0, 0.0);
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   glfwDraw(window, 3);
+   glowMap->UnbindDrawFBO(g_width, g_height);
+   glUniform1f(h_uTextMode, 0);
+*/
+   // Render scene normally and draw
+   glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    glfwDraw(window, 1);
-   shadowMap->UnbindDepthTex();
+   shadowMap->UnbindTex();
+   glowMap->UnbindTex();
 
    // Draw outlines
    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
    glfwDraw(window, 2);
    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+/*
+   // Blur the glow map
+   glowMap->BindReadFBO();
+   glowBlurMap->BindDrawFBO();
+   glClearColor(1.0, 1.0, 1.0, 0.0);
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   ready2D();
+   glUniform1f(h_uGuiMode, 0);
+   glUniform1f(h_uTextMode, 3);
+   SetupSq(0.0, 0.0, glowMap->GetColorTex(), 2.0, 2.0);
+   glowMap->UnbindReadFBO(g_width, g_height);
+   glowBlurMap->UnbindDrawFBO(g_width, g_height);
 
+   // Draw glowmap over scene
+   glUniform1f(h_uTextMode, 5);
+   SetupSq(0.0, 0.0, glowBlurMap->GetColorTex(), 2.0, 2.0);
+   ready3D();
+   glUniform1f(h_uTextMode, 0);
+   glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
+*/
    //Draw any gui elements that should be on the screen
    DrawGui(Mode);
 
@@ -471,9 +512,19 @@ void initStartScreen() {
    glfwSetCursorPosCallback( window, glfwStartScreenGetCursorPos );
 
    shadowMap = new ShadowMap();
+   glowMap = new ShadowMap();
+   glowBlurMap = new ShadowMap();
    if (shadowMap->MakeShadowMap(g_width, g_height) == -1) {
       printf("SHADOW MAP FAILED\n");
       exit(EXIT_FAILURE);  
+   }
+   if (glowMap->MakeGlowMap(g_width, g_height) == -1) {
+      printf("GLOW MAP FAILED\n");
+      exit(EXIT_FAILURE); 
+   }
+   if (glowBlurMap->MakeGlowMap(g_width, g_height) == -1) {
+      printf("GLOW BLUR MAP FAILED\n");
+      exit(EXIT_FAILURE); 
    }
 
    // Enable transparency

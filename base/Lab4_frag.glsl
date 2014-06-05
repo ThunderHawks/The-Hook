@@ -23,6 +23,11 @@ varying vec2 vTexCoord;
 uniform float uGuiMode;
 uniform float uTextMode;
 
+float Gaussian (float x) {
+   float stdDev = 5.0;
+	return (1.0 / sqrt(2.0 * 3.141592 * stdDev)) * exp(-((x * x) / (2.0 * stdDev * stdDev)));	
+}
+
 void main() {
    float angleNL, angleNH, depth, dist;
    vec4 shadowPos;
@@ -42,6 +47,55 @@ void main() {
       else {
         gl_FragColor = vec4(texColor1[0], texColor1[1], texColor1[2], 1);
       }
+   }
+   else if (uTextMode == 2.0) {
+      // Fill the bloom map, taking fog into account
+      float fogDist = min(length(vPos - uCamPos), 350.0) / 350.0;
+      gl_FragColor = mix(vec4(uMat.aColor, 1.0), vec4(0.0, 0.0, 0.0, 0.0), pow(fogDist, 5.0));
+   }
+   else if (uTextMode == 3.0) {
+      // Blur the bloom map horizontally
+      float blurSize = 1.0/200.0;
+      vec4 blur = vec4(0.0);
+      vec4 clear = vec4(1.0, 1.0, 1.0, 0.0);
+      // If the fragment is in the glowing light, use the light color
+      if (texture2D(uTexUnit, vTexCoord).a != 0.0) {
+         blur = texture2D(uTexUnit, vTexCoord);
+         blur = vec4(blur.rgb, blur.a * 0.75);
+      }     
+      // Otherwise, blur the bloom map    
+      else {
+         float count, negRange, posRange;
+         vec4 temp;
+         bool onLeft = false, onRight = false;
+
+         negRange = -5.0;
+         posRange = 5.0;
+
+         // Fixing edge cases so that the blur doesn't appear on the other side of the screen
+         if (vTexCoord.x + negRange*blurSize < 0.0)
+            negRange = -vTexCoord.x / blurSize;
+         else if (vTexCoord.x + posRange*blurSize > 1.0)
+            posRange = (1.0 - vTexCoord.x) / blurSize;
+
+         // Take the weighted Gaussian distribution
+         for (count = negRange; count <= posRange; count++) {
+            temp = texture2D(uTexUnit, vec2(vTexCoord.x + count*blurSize, vTexCoord.y));
+            if (count < 0.0 && temp != clear)
+               onLeft = true;
+            else if (count > 0.0 && temp != clear)
+               onRight = true;
+            if (temp != clear)   // Comment this out to have white glow
+               blur += temp * Gaussian(count);
+         }
+         if (onLeft && onRight)
+            blur = vec4(0.0);
+      }
+      gl_FragColor = blur;
+   }
+   else if (uTextMode == 5.0) {
+      // Add bloom light to the scene
+      gl_FragColor += texColor1;
    }
    else {
       norm = normalize(vNorm);
@@ -73,7 +127,7 @@ void main() {
 
       // Test if the fragment is in a shadow
       if (uShadeMode == 0) {
-        if (depth < dist && dist < 1.0 && abs(angleNL) >= 0.01)
+         if (depth < dist && dist < 1.0 && abs(angleNL) >= 0.01)
             color *= 0.3;
          else if (uMat.alpha == 1.0) // If not in a shadow, add specular
             color += uLColor * uMat.sColor * angleNH;
