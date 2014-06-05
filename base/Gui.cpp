@@ -492,6 +492,7 @@ bool buttonPressed(glm::vec2 buttonPos, int xPos, int yPos) {
 
    if(buttonPos.x - BUTTON_WIDTH/2.0 <= worldX && worldX <= buttonPos.x + BUTTON_WIDTH/2.0) {
       if(buttonPos.y - BUTTON_HEIGHT/2.0 <= worldY && worldY <= buttonPos.y + BUTTON_HEIGHT/2.0) {
+         PlayFX(BUTTON_FX);
          return true;
       }
    }

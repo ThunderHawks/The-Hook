@@ -14,8 +14,9 @@
 #define SUCCESS_FX 3				//for doing something good, like beating a mission
 #define FAIL_FX 4					//You have disappointed me for the last time
 #define JUMP_FX 5					//BOING!
+#define BUTTON_FX 6
 
-#define MAXSOUNDS 6
+#define MAXSOUNDS 7
 
 class SoundPlayer {
 	private:
@@ -111,4 +112,5 @@ Bastion
 https://www.youtube.com/watch?v=3KVEe6UVpYw
 http://www.freesfx.co.uk/
 BFXR
+https://www.youtube.com/watch?v=4enMMX_fmZQ
 */

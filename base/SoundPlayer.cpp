@@ -124,6 +124,10 @@ void PlayFX(int fx) {
 			case JUMP_FX:
 				bMusic.playSFX("../Assets/Sounds/Jump.wav");
 				break;
+
+			case BUTTON_FX:
+				bMusic.playSFX("../Assets/Sounds/Button.mp3");
+				break;
 		}
 	}
 }
