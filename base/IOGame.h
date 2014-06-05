@@ -4,7 +4,7 @@
 #include "SoundPlayer.h"
 
 extern float g_width, g_height;
-extern int ShadeMode;
+extern int ShadeMode, MAX_DISTANCE;
 extern SoundPlayer musicPlayer;
 
 /*

@@ -95,6 +95,9 @@ glm::mat4 curProj, curView;
 vector<Objective*> objectives;
 std::list<part*> particleSpawner;
 
+//camera thing
+int MAX_DISTANCE = 20;
+
 /* projection matrix  - do not change */
 glm::mat4 SetProjectionMatrix() {
    glm::mat4 Projection = glm::perspective(80.0f, (float)g_width/g_height, 0.1f, (float)FAR_PLANE);	
@@ -163,7 +166,7 @@ void cameraColision(){
    	
    //keep the eye within its bounds
    if(getDistance()<2)  setDistance(2);
-   if(getDistance()>20)  setDistance(20);
+   if(getDistance()>MAX_DISTANCE)  setDistance(MAX_DISTANCE);
 
 }
 //Draws the entities into the world
@@ -321,7 +324,7 @@ void drawGameElements(int passNum) {
       }
 
    }
-   glDisable(GL_CULL_FACE);
+   glEnable(GL_CULL_FACE);
 }
 
 /* Main display function 

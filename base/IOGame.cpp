@@ -43,12 +43,12 @@ int gKeysPressed[255];
 
 //Mouse scroll callback for Play mode to adjust camera
 void glfwGameScroll(GLFWwindow *window, double xOffset, double yOffset) {
-   printf("getDistance %f\n", getDistance());
-   printf("yOffset: %f\n", yOffset);
-   printf("%f\n", getDistance() + yOffset);
-   //if(getDistance() + yOffset <= 10.0 && getDistance() + yOffset >= 2.0) {
-    //  MoveEye(getDistance() + yOffset);
-   //}
+   //printf("getDistance %f\n", getDistance());
+   //printf("yOffset: %f\n", yOffset);
+   //printf("%f\n", getDistance() + yOffset);
+   if(getDistance() - yOffset <= 20.0 && getDistance() - yOffset >= 2.0) {
+      MAX_DISTANCE = getDistance() - yOffset;
+   }
 }
 
 void glfwGameMouse(GLFWwindow *window, int button, int action, int mods) {
@@ -72,7 +72,7 @@ void glfwGameMouse(GLFWwindow *window, int button, int action, int mods) {
    }
    if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
       holdGrapple(0);
-      physJump();
+      //physJump();
    }
    else if(button == GLFW_MOUSE_BUTTON_RIGHT) {
    	//zoom in
