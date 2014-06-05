@@ -302,24 +302,43 @@ void SetupCube(float x, float y, float z, int material, float angle, float scale
    safe_glDisableVertexAttribArray(h_aNormal);
 }
 
+void SetupColoredSq(float x, float y, glm::vec3 rgbVals, float scaleX, float scaleY) {
+   SetModel(x, y, scaleX, scaleY);
+   //SetCustomMaterialColor(rgbVals.x, rgbVals.y, rgbVals.z);  
+   SetMaterial(3);
+
+   safe_glEnableVertexAttribArray(h_aPosition);
+   glBindBuffer(GL_ARRAY_BUFFER, SqBuffObj);
+   safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+   safe_glEnableVertexAttribArray(h_aNormal);
+   glBindBuffer(GL_ARRAY_BUFFER, SqNormalObj);
+   safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, SqIndxBuffObj);
+   glDrawElements(GL_TRIANGLES, g_SqiboLen, GL_UNSIGNED_SHORT, 0);
+   safe_glDisableVertexAttribArray(h_aPosition);
+   safe_glDisableVertexAttribArray(h_aNormal);
+}
+
 void SetupSq(float x, float y, int texture, float scaleX, float scaleY) {
    /*First Cube*/
    SetModel(x, y, scaleX, scaleY);
  
    //setup texture unit
    //glEnable(GL_TEXTURE_2D);
+
    glActiveTexture(GL_TEXTURE1);
    glBindTexture(GL_TEXTURE_2D, texture);
 
-
    safe_glUniform1i(h_uTexUnit, 1);
-   safe_glEnableVertexAttribArray(h_aPosition);
-   glBindBuffer(GL_ARRAY_BUFFER, SqBuffObj);
-   safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
    safe_glEnableVertexAttribArray(h_aTexCoord);
    glBindBuffer(GL_ARRAY_BUFFER, TexBuffObj);
    safe_glVertexAttribPointer(h_aTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+   safe_glEnableVertexAttribArray(h_aPosition);
+   glBindBuffer(GL_ARRAY_BUFFER, SqBuffObj);
+   safe_glVertexAttribPointer(h_aPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
    safe_glEnableVertexAttribArray(h_aNormal);
    glBindBuffer(GL_ARRAY_BUFFER, SqNormalObj);
@@ -332,9 +351,10 @@ void SetupSq(float x, float y, int texture, float scaleX, float scaleY) {
 
    //safe_glUniform1i(h_uTexUnit, 0);
    /* Disable the attributes used by our shader*/
-   glDisable(GL_TEXTURE_2D);
+   
    safe_glDisableVertexAttribArray(h_aPosition);
    safe_glDisableVertexAttribArray(h_aNormal);
+   glDisable(GL_TEXTURE_2D);
    safe_glDisableVertexAttribArray(h_aTexCoord);
 }
 
@@ -347,6 +367,16 @@ void InitGeom() {;
   glGenTextures(1, &skytex);
   //Load texture image
   LoadTexture((char*)"../Assets/Textures/skybox_texture_g.bmp", skytex);
+}
+
+void SetCustomMaterialColor(float r, float g, float b) {
+   glUseProgram(ShadeProg);
+   
+   safe_glUniform3f(h_uMatAmb, r, g, b);
+   safe_glUniform3f(h_uMatDif, 0.04, 1.0, 0.1);
+   safe_glUniform3f(h_uMatSpec, 0.23, 0.5, 0.3);
+   safe_glUniform1f(h_uMatShine, 15.0);
+   safe_glUniform1f(h_uMatAlpha, 1.0);
 }
 
 /* helper function to set up material for shading */

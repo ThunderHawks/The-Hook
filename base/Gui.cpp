@@ -152,6 +152,7 @@ void initGui() {
 */
 
    glGenTextures(50, textures);
+   glGenTextures(1, textures + 0);
    glGenTextures(1, textures + 1);
 
    printf("here\n");
@@ -200,6 +201,7 @@ void initGui() {
    LoadTexture((char *)"../Assets/Fonts/9.bmp", textures[42]);
    LoadTexture((char *)"../Assets/Textures/redCrossHair.bmp", textures[43]);
    LoadTexture((char *)"../Assets/Textures/greenCrossHair.bmp", textures[44]);
+   LoadTexture((char *)"../Assets/Fonts/collegeFund.bmp", textures[45]);
    
 
    //Initialize HotBar icons
@@ -286,13 +288,15 @@ Icon getHBIcon(int index) {
 
 void DrawCrosshair() {
    glm::vec3 dir = GetLookAt()- GetEye();
+   glUniform1f(h_uTextMode, 1);
 
    if(grappleInRange(-dir.x, -dir.y, -dir.z)) {
       SetupSq(0, 0, textures[44], 0.05, 0.05);
    }
    else {
-      SetupSq(0, 0, textures[43], 0.1, 0.05);
+      SetupSq(0, 0, textures[43], 0.05, 0.05);
    }
+   glUniform1f(h_uTextMode, 0);
 }
 
 vector<int> scoreDigitTextures() {
@@ -389,12 +393,15 @@ void DrawScore() {
    //Background
    SetupSq(p2i_x(g_width) - 0.3, p2i_y(g_height) - 0.3,  textures[32], 0.5, 0.4);
 
+   glUniform1f(h_uTextMode, 1);
+
    SetupSq(p2i_x(g_width) - 0.46, p2i_y(g_height) - 0.365,  digitTextures[5], DIGIT_WIDTH, DIGIT_HEIGHT);
    SetupSq(p2i_x(g_width) - 0.41, p2i_y(g_height) - 0.365,  digitTextures[4], DIGIT_WIDTH, DIGIT_HEIGHT);
    SetupSq(p2i_x(g_width) - 0.36, p2i_y(g_height) - 0.365,  digitTextures[3], DIGIT_WIDTH, DIGIT_HEIGHT);
    SetupSq(p2i_x(g_width) - 0.31, p2i_y(g_height) - 0.365,  digitTextures[2], DIGIT_WIDTH, DIGIT_HEIGHT);
    SetupSq(p2i_x(g_width) - 0.26, p2i_y(g_height) - 0.365,  digitTextures[1], DIGIT_WIDTH, DIGIT_HEIGHT);
-   SetupSq(p2i_x(g_width) - 0.21, p2i_y(g_height) - 0.365,  digitTextures[0], DIGIT_WIDTH, DIGIT_HEIGHT);  
+   SetupSq(p2i_x(g_width) - 0.21, p2i_y(g_height) - 0.365,  digitTextures[0], DIGIT_WIDTH, DIGIT_HEIGHT); 
+   glUniform1f(h_uTextMode, 0);
 }
 
 void ready2D() {
