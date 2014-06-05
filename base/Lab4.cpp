@@ -486,18 +486,23 @@ void initStartScreen() {
 
    // Set line width for object outlines
    glLineWidth(3.0);
-
-   //music
-   musicPlayer = SoundPlayer();
-   musicPlayer.CreatePlayList("./playList.txt");
 }
 
 void initPlay(string fileName) {
+   static bool musicStarted = false;
+
    Mode = GAME_MODE;
    //srand(time(0));
    SetEdit(Mode);
    paused = false;
    playerMesh = LoadMesh("../Assets/Models/dancingCylinderTriangulated.dae");
+
+   //music
+   if (!musicStarted) {
+      musicPlayer = SoundPlayer();
+      musicPlayer.CreatePlayList("./playList.txt");
+      musicStarted = true;
+   }
 
    glfwSetKeyCallback(window, glfwGameKeyPress);
    glfwSetCursorPosCallback( window, glfwGameGetCursorPos );

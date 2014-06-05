@@ -75,6 +75,8 @@ void SetBackground(char *path) {
 	bMusic = Sound(path, 75, true);
 	bMusic.playMusic();
 }
+
+//This doesn't work :( 
 void pauseBackground() {
 	bMusic.pause();
 }
@@ -130,4 +132,8 @@ void PlayFX(int fx) {
 				break;
 		}
 	}
+}
+
+bool IsMuted() {
+	return isMuted;
 }

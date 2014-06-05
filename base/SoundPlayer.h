@@ -102,6 +102,8 @@ int PrevSong();
 /* Input: Please Use a Macro to determine which sound effect is playing. The macros are listed above
  *Summary: Plays the sound effect that corresponds to the macro if it is not muted.*/
 void PlayFX(int fx);
+//Checks if it is muted
+bool IsMuted();
 
 #endif 
 
