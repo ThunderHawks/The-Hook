@@ -122,8 +122,16 @@ Icon createIcon(int meshIndex, int textureIndex, float distance, glm::vec2 pos) 
          icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.05, 0.01, 0.05), 0.0, 18);
          break;
       case 19:
-         //Selection tool
-         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.01, 0.01, 0.01), 0.0, 19);
+         //Rounded building
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2, 0.2, 0.2), 0.0, 19);
+         break;
+      case 20:
+         //Cafe
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.3, 0.3, 0.3), 0.0, 20);
+         break;
+      case 21:
+         //Mailbox
+         icon.entity = createEntity(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.4, 0.4, 0.4), 0.0, 21);
          break;
    }
    icon.lookAtDistance = distance;
@@ -155,7 +163,7 @@ void initGui() {
    glGenTextures(1, textures + 0);
    glGenTextures(1, textures + 1);
 
-   //printf("here\n");
+   printf("here\n");
    LoadTexture((char *)"../Assets/Textures/ModMBasicBldg.bmp", textures[0]);
    LoadTexture((char *)"../Assets/Textures/shopBldg.bmp", textures[1]);
    LoadTexture((char *)"../Assets/Textures/cinderblock.bmp", textures[2]);
@@ -237,9 +245,9 @@ void initGui() {
    SSIndices.push_back(createIcon(17, textures[17], 70.0, glm::vec2(0.6, 0.4)));
    //Row 3 
    SSIndices.push_back(createIcon(18, textures[16], 8.0, glm::vec2(-0.6, 0.1)));
-   SSIndices.push_back(createIcon(19, textures[16], 8.0, glm::vec2(-0.45, 0.1)));
-   SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(-0.3, 0.1)));
-   SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(-0.15, 0.1)));
+   SSIndices.push_back(createIcon(19, textures[2], 15.0, glm::vec2(-0.45, 0.1)));
+   SSIndices.push_back(createIcon(20, textures[2], 15.0, glm::vec2(-0.3, 0.1)));
+   SSIndices.push_back(createIcon(21, textures[2], 8.0, glm::vec2(-0.15, 0.1)));
    SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.0, 0.1)));
    SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.15, 0.1)));
    SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.3, 0.1)));
@@ -303,6 +311,10 @@ vector<int> scoreDigitTextures() {
    int array[6];
    int debtTemp = debt - getPoints()/10;
    int digitTemp;
+
+   if(debtTemp <= 0) {
+      debtTemp = 0;
+   }
 
    //Convert debt number into an array of ints
    for(int i = 5; i >= 0; i--) {
