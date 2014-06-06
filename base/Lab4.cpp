@@ -171,7 +171,7 @@ void cameraColision(){
 
 }
 //Draws the entities into the world
-void drawEntities(int passNum, std::vector<Entity > entities) {
+void drawEntities(int passNum, std::vector<Entity > *entities) {
 	glm::vec3 gaze = GetLookAt() - GetEye();
 	glm::vec3 backPoint = GetEye() - gaze;
 	glm::vec3 temp;
@@ -186,8 +186,8 @@ void drawEntities(int passNum, std::vector<Entity > entities) {
    sized = sin(sizer);
    int hit = 0;
    //printf("num ent rend %d\n",getEntityNum());
-   for(int i = 0; i < entities.size(); ++i) {
-      entityTemp = entities[i];
+   for(int i = 0; i < entities->size(); ++i) {
+      entityTemp = (*entities)[i];
       if(entityTemp.meshIndex != 18 && Mode == GAME_MODE) {
          if (passNum == 2)
             SetMaterial(17);
@@ -250,7 +250,7 @@ void pauseorUnpause() {
    }
 }
 
-void drawGameElements(int passNum, std::vector<Entity > entities) {
+void drawGameElements(int passNum, std::vector<Entity > *entities) {
    //DRAW THE DANCING CYLINDER HERE!!
    btTransform pla;
 
@@ -337,7 +337,7 @@ void drawGameElements(int passNum, std::vector<Entity > entities) {
  *          2 = Draw outlines around objects
  *          3 = Create glow map for bloom effect
  */
-void glfwDraw (GLFWwindow *window, int passNum, std::vector<Entity > entities)
+void glfwDraw (GLFWwindow *window, int passNum, std::vector<Entity > *entities)
 {   
    if (passNum == 3)
       glColorMask(false, false, false, false);
@@ -420,7 +420,7 @@ void renderScene() {
    }
    
    
-   glfwDraw(window, 0, entities);
+   glfwDraw(window, 0, &entities);
    shadowMap->UnbindDrawFBO(g_width, g_height);
 
    // Set the eye and look at point to their original locations
@@ -452,13 +452,13 @@ void renderScene() {
    // Render scene normally and draw
    glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   glfwDraw(window, 1, entities);
+   glfwDraw(window, 1, &entities);
    shadowMap->UnbindTex();
    glowMap->UnbindTex();
 
    // Draw outlines
    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-   glfwDraw(window, 2, entities);
+   glfwDraw(window, 2, &entities);
    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 /*
    // Blur the glow map
@@ -531,15 +531,15 @@ void initStartScreen() {
    glowMap = new ShadowMap();
    glowBlurMap = new ShadowMap();
    if (shadowMap->MakeShadowMap(g_width, g_height) == -1) {
-      printf("SHADOW MAP FAILED\n");
+      //printf("SHADOW MAP FAILED\n");
       exit(EXIT_FAILURE);  
    }
    if (glowMap->MakeGlowMap(g_width, g_height) == -1) {
-      printf("GLOW MAP FAILED\n");
+      //printf("GLOW MAP FAILED\n");
       exit(EXIT_FAILURE); 
    }
    if (glowBlurMap->MakeGlowMap(g_width, g_height) == -1) {
-      printf("GLOW BLUR MAP FAILED\n");
+      //printf("GLOW BLUR MAP FAILED\n");
       exit(EXIT_FAILURE); 
    }
 

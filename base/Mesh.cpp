@@ -127,7 +127,6 @@ void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float s
 
   mat4 Mod = SetModel(locx, locy, locz, sx, sy, sz, angle);
    
-  //if (checkViewFrustum (glm::vec3 (0,0,0), rad, curProj*curView*Mod) == 0) {
     if (mesh.hasAss) {
       static glm::mat4 boneArr[30];
       int ctr = 0;
@@ -185,7 +184,6 @@ void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float s
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndexHandle);
 
     glDrawElements(GL_TRIANGLES, mesh.IndexBufferLength, GL_UNSIGNED_SHORT, 0);
-   //}
    
    glUniform1i(h_uAnimFlag, 0);
 }
@@ -203,7 +201,6 @@ void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float s
    //if (rad < 0)
     //printf("rad: %f\n", rad);
    
-  //if (checkViewFrustum (glm::vec3 (0,0,0), rad, curProj*curView*Mod) == 0) {
      glUniform1i(h_uAnimFlag, 0);
     //safe_glEnableVertexAttribArray(h_aPosition);
     glEnableVertexAttribArray(h_aPosition);
@@ -221,7 +218,6 @@ void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float s
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.IndexHandle);
 
     glDrawElements(GL_TRIANGLES, mesh.IndexBufferLength, GL_UNSIGNED_SHORT, 0);
-  //}
 }
 
 
