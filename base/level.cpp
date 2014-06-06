@@ -214,13 +214,13 @@ void loadLevel(string fileName){
             tempEntity.phyScale = glm::vec3(140, 500, 140);
             break;
          case 19:
-            tempEntity.phyScale = glm::vec3(60, 40, 40);
+            tempEntity.phyScale = glm::vec3(40, 60, 40);
             break;
          case 20:
             tempEntity.phyScale = glm::vec3(40, 30, 20);
             break;
          case 21:
-            tempEntity.phyScale = glm::vec3(7.5, 3, 4);
+            tempEntity.phyScale = glm::vec3(3, 7.5, 4);
             break;
         }
 
@@ -328,13 +328,13 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
             entity.phyScale = glm::vec3(140, 500, 140);
             break;
          case 19:
-            entity.phyScale = glm::vec3(60, 40, 40);
+            entity.phyScale = glm::vec3(40, 60, 40);
             break;
          case 20:
             entity.phyScale = glm::vec3(40, 30, 20);
             break;
          case 21:
-            entity.phyScale = glm::vec3(7.5, 3, 4);
+            entity.phyScale = glm::vec3(3, 7.5, 4);
             break;
         }
 
@@ -581,6 +581,7 @@ void placeSelectedEntity() {
    undoAmount = currentEntities.size();
    //No longer selecting entities
    entitiesSelected = false;
+   UpdateBSRadius();
 }
 
 //Make selected entity the one last placed

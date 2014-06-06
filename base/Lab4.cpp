@@ -216,10 +216,10 @@ void drawEntities(int passNum, std::vector<Entity > *entities) {
          if (passNum == 2)
             SetMaterial(17);
          else {
-            int mat = rand()%13;
-            while(!(mat = rand()%13));
-               SetMaterial(mat);
-            }
+            //int mat = rand()%13;
+            //while(!(mat = rand()%13));
+               SetMaterial(entityTemp.material);
+         }
          if(!getGPressed('V')) PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
             entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*3, entityTemp.BSRadius);
       }
