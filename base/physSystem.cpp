@@ -215,7 +215,7 @@ bool physGrapple(float lx,float ly,float lz){
       //printf("hit!\n");
       btVector3 go=RayCallback.m_hitNormalWorld*-5+player->getLinearVelocity();
       if (go.length()>10)(go/go.length())*10;
-      player->setLinearVelocity(go);
+      //player->setLinearVelocity(go);
       //printf("%f %f %f on hit norm",RayCallback.m_hitNormalWorld.getX(),RayCallback.m_hitNormalWorld.getY(),RayCallback.m_hitNormalWorld.getZ());
       tmp = RayCallback.m_hitPointWorld;
     // Do some clever stuff here
@@ -266,7 +266,7 @@ void physGrapplePoint(){
    targ-=at;
    targ*=10;
    //
-   dist/=5;
+   dist/=3;
    dist = dist>1?dist:1;
    dist = targ.y>0?dist:dist/1.4;
    //
