@@ -278,7 +278,15 @@ void drawGameElements(int passNum, std::vector<Entity > *entities) {
    	
    	glm::vec3 gaze = glm::normalize(GetLookAt() - GetEye());
    	glm::vec3 ArrowLoc = GetEye() + 3.f*gaze + glm::vec3(0, 1, 0);
-		PlaceArrow(arrow, ArrowLoc.x, ArrowLoc.y, ArrowLoc.z, .1, .1, .1, glm::lookAt(glm::normalize(GetEye()), glm::normalize(getCurentObjective()), glm::vec3(0, 1, 0)));
+
+		glm::vec3 tmpa,tmpb;
+		tmpa = GetEye();
+		tmpb = getCurentObjective();
+		tmpa.y=0;
+		tmpb.y=0;
+		
+		printf("%f is angle %f %f\n",acos((tmpa.z-tmpb.z)/(tmpa-tmpb).length()),tmpa.z-tmpb.z,(tmpa-tmpb).length());	
+		PlaceModel(arrow, ArrowLoc.x, ArrowLoc.y, ArrowLoc.z, .1, .1, .1 , acos((tmpa.z-tmpb.z)/(tmpa-tmpb).length())*180/3.14159 ,0);
    }
 
    drawSelectedObjects();
