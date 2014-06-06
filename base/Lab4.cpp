@@ -183,8 +183,7 @@ void cameraColision(){
 void drawEntities(int passNum, std::vector<Entity > *entities) {
 	int objects = 0;
 	float sized;
-	glm::vec3 ObjectiveDir = getCurentObjective();
-	
+
    if(Mode == GAME_MODE) {
       cameraColision();
    }
@@ -225,10 +224,6 @@ void drawEntities(int passNum, std::vector<Entity > *entities) {
             entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*3, entityTemp.BSRadius);
       }
    }
-   
-   if (Mode == GAME_MODE && passNum >= 2 && (ObjectiveDir.x != 0 || ObjectiveDir.y != 0 || ObjectiveDir.z != 0)) {
-   	
-   }
 
    if(getGPressed('B')) cool = 1;
    if(cool) sizer+=.06;
@@ -262,10 +257,8 @@ void pauseorUnpause() {
 }
 
 void drawGameElements(int passNum, std::vector<Entity > *entities) {
-   //DRAW THE DANCING CYLINDER HERE!!
    btTransform pla;
    glm::vec3 ObjDir = getCurentObjective();
-   
   
    /*These are for animation. They should be removed later*/
    static unsigned int ctr = 0;
@@ -280,15 +273,9 @@ void drawGameElements(int passNum, std::vector<Entity > *entities) {
    //END OF DANCING CYLINDER CODE HERE!!
    
    /*Draw the arrow*/
-   if (Mode == GAME_MODE && passNum <= 2 && (ObjDir.x != 0 || ObjDir.y != 0 || ObjDir.z != 0)) {
-   	
-   	glm::vec3 gaze = glm::normalize(GetLookAt() - GetEye());
-   	glm::vec3 ArrowLoc = GetEye() + 2.f*gaze + glm::vec3(0, 1, 0);
-   	gaze.y = 0;
-   	ObjDir.y = 0;
-
-		PlaceModel(arrow, ArrowLoc.x, ArrowLoc.y, ArrowLoc.z, .1, .1, .1, glm::dot(gaze, ObjDir) + 90, 0);
-   }
+  /* if (Mode == GAME_MODE && passNum <= 2 && (ObjDir.x != 0 || ObjDir.y != 0 || ObjDir.z != 0)) {
+		PlaceArrow(arrow, ArrowLoc.x, ArrowLoc.y, ArrowLoc.z, .1, .1, .1, glm::lookAt(glm::normalize(GetEye()), glm::normalize(getCurentObjective()), glm::vec3(0, 1, 0)));
+   }*/
 
    drawSelectedObjects();
    drawEntities(passNum, entities);
@@ -348,7 +335,7 @@ void drawGameElements(int passNum, std::vector<Entity > *entities) {
 //         particleSpawner[i]->drawPart();
       }
 
-      if(particleSpawner.front() && particleSpawner.front()->age>60){
+      if(particleSpawner.size() && particleSpawner.front() && particleSpawner.front()->age>60){
          destroyDustPart( particleSpawner.front());
          particleSpawner.erase(particleSpawner.begin());
       }

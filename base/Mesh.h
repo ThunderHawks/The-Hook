@@ -57,9 +57,11 @@ Mesh LoadMesh(std::string file);
 void drawAtM4(Mesh *m, mat4 trans, int shaderProg);
 void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle, float rad);
 void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, float angle, float rad, int frame);
+void PlaceArrow(Mesh mesh, float locx, float locy, float locz, float sx, float sy, float sz, glm::mat4 in);
 glm::mat4 SetModelStat();
 glm::mat4 SetModel(float x, float y, float Sx, float Sy);
 glm::mat4 SetModel(float x, float y, float z, float Sx, float Sy, float Sz, float angle);
+glm::mat4 SetModel(float x, float y, float z, float Sx, float Sy, float Sz, glm::mat4 in);
 glm::mat4 GetModel(float x, float y, float z, float Sx, float Sy, float Sz, float angle);
 
 #endif
