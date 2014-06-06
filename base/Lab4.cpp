@@ -228,8 +228,8 @@ void drawEntities(int passNum, std::vector<Entity > entities) {
    }
    if(cool) cool--;
    
-   if(passNum == 2)
-   	printf("OBJECTS! %d\n", objects);
+   //if(passNum == 2)
+   	//printf("OBJECTS! %d\n", objects);
 }
 
 //Bool that returns true if game is paused
