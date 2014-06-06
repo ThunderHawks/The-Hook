@@ -257,6 +257,7 @@ void pauseorUnpause() {
 }
 
 void drawGameElements(int passNum, std::vector<Entity > *entities) {
+   //DRAW THE DANCING CYLINDER HERE!!
    btTransform pla;
    glm::vec3 ObjDir = getCurentObjective();
   
@@ -273,9 +274,12 @@ void drawGameElements(int passNum, std::vector<Entity > *entities) {
    //END OF DANCING CYLINDER CODE HERE!!
    
    /*Draw the arrow*/
-  /* if (Mode == GAME_MODE && passNum <= 2 && (ObjDir.x != 0 || ObjDir.y != 0 || ObjDir.z != 0)) {
+   if (Mode == GAME_MODE && passNum <= 2 && (ObjDir.x != 0 || ObjDir.y != 0 || ObjDir.z != 0)) {
+   	
+   	glm::vec3 gaze = glm::normalize(GetLookAt() - GetEye());
+   	glm::vec3 ArrowLoc = GetEye() + 3.f*gaze + glm::vec3(0, 1, 0);
 		PlaceArrow(arrow, ArrowLoc.x, ArrowLoc.y, ArrowLoc.z, .1, .1, .1, glm::lookAt(glm::normalize(GetEye()), glm::normalize(getCurentObjective()), glm::vec3(0, 1, 0)));
-   }*/
+   }
 
    drawSelectedObjects();
    drawEntities(passNum, entities);
@@ -422,7 +426,7 @@ void renderScene() {
 
 		holdMat = GetModel(entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x, entityTemp.scale.y, entityTemp.scale.z, entityTemp.angle);
 		
-		if (checkViewFrustum(glm::vec3 (0,0,0), entityTemp.BSRadius, curProj*curView*holdMat) == 0) {
+		if (entityTemp.meshIndex != 5 && entityTemp.meshIndex != 4 && checkViewFrustum(glm::vec3 (0,0,0), entityTemp.BSRadius, curProj*curView*holdMat) == 0) {
 			if (largestRadius < entityTemp.BSRadius) {
 				largestRadius = entityTemp.BSRadius;
 				largestEntity = entityTemp;
