@@ -196,7 +196,7 @@ void drawEntities(int passNum, std::vector<Entity > *entities) {
             
          if(!getGPressed('V')) {
          	
-         	if (passNum < 2) {
+         	if (passNum <= 2) {
          		PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
             		entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*3, entityTemp.BSRadius);
             	++objects;		
@@ -629,14 +629,15 @@ float getFPS() {
    static float curr;
    float diff;
    char title[30];
+   float cap = 40.0
 
    curr = glfwGetTime();
    diff = curr - prev;
    prev = curr;
 
-   if (1.0/diff > 60.0) {
-      usleep((1.0/60.0 - diff)*1000000);
-      diff = 1.0/60.0; 
+   if (1.0/diff > cap) {
+      usleep((1.0/cap - diff)*1000000);
+      diff = 1.0/cap; 
    }
 
    sprintf(title, "Grapple --- FPS: %d", int(1.0/diff));
