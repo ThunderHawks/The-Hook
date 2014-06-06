@@ -588,6 +588,21 @@ void initEdit(string fileName) {
    loadLevel(fileName);
 }
 
+void getFPS() {
+   static float prev = 0.0;
+   static float curr;
+   float diff;
+   char title[30];
+
+   curr = glfwGetTime();
+   diff = curr - prev;
+   prev = curr;
+
+   sprintf(title, "Grapple --- FPS: %d", int(1.0/diff));
+
+   glfwSetWindowTitle(window, title); 
+}
+
 int main( int argc, char *argv[] )
 {
    initStartScreen();
@@ -598,6 +613,7 @@ int main( int argc, char *argv[] )
 
    while (!glfwWindowShouldClose(window)) {
       glfwPollEvents();
+      getFPS();
 
       if(Mode == STARTSCREEN_MODE) {
          glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
