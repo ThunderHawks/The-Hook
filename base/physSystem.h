@@ -17,7 +17,7 @@ void physGetPlayerLocation(btTransform);
 void setPlayerSpeed(float x, float y, float z);
 btRigidBody* createStaticBox(float posX,float posY,float posZ,float scaleX,float scaleY,float scaleZ,btQuaternion rotation,float mass,float ix,float iy,float iz);
 btRigidBody* createStaticSphere(float posX,float posY,float posZ,float scaleX,float scaleY,float scaleZ,btQuaternion rotation,float mass,float ix,float iy,float iz);
-void physStep();
+void physStep(float time);
 float physGetPlayerX();
 float physGetPlayerY();
 float physGetPlayerZ();

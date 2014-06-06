@@ -304,7 +304,7 @@ int canMove(){
 glm::vec3 playerPoss(){
    return glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
 }
-void physStep(){
+void physStep(float time){
    //player->getX();
    //setPlayerSpeed(2,2,2);
    AsetPlayerSpeed(curXsp,curYsp,curZsp);
@@ -321,7 +321,7 @@ void physStep(){
    //printf("the h is %d\n",getPressed('E'));
    if(playerGrappleActive) physGrapplePoint();
    //printf("a\n");
-   dynamicsWorld->stepSimulation(1/60.f,10);
+   dynamicsWorld->stepSimulation(1/time,5);
    //printf("fall %f %f\n",fspeed,player->getLinearVelocity().getY());
    if(fspeed<-8 && player->getLinearVelocity().getY()<-8){
       playerFall = 1;

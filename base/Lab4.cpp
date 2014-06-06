@@ -605,7 +605,7 @@ void initEdit(string fileName) {
    loadLevel(fileName);
 }
 
-void getFPS() {
+float getFPS() {
    static float prev = 0.0;
    static float curr;
    float diff;
@@ -622,10 +622,12 @@ void getFPS() {
 
    sprintf(title, "Grapple --- FPS: %d", int(1.0/diff));
    glfwSetWindowTitle(window, title); 
+   return 1.0/diff;
 }
 
 int main( int argc, char *argv[] )
 {
+   float t;
    initStartScreen();
 
    printf("Starting main loop\n");
@@ -634,7 +636,7 @@ int main( int argc, char *argv[] )
 
    while (!glfwWindowShouldClose(window)) {
       glfwPollEvents();
-      getFPS();
+      t=getFPS();
 
       if(Mode == STARTSCREEN_MODE) {
          glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -650,7 +652,7 @@ int main( int argc, char *argv[] )
             SetSpeed(.05*magnitude(getPlayerSpeed()));
             //Keep the cursor centered
             glfwSetCursorPos(window,g_width/2,g_height/2);         
-            physStep();
+            physStep(t);
             for(int i=0;i<objectives.size();++i) objectives[i]->Update(glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ()));
             //printf("oop%d\n",      getVecList().size());
             //Draw stuff
