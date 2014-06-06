@@ -106,6 +106,13 @@ glm::mat4 SetProjectionMatrix() {
    return Projection;
 }
 
+glm::vec3 getCurentObjective(){
+   for(int i = 0;i<objectives.size();i++)
+      if (objectives[i]->active)
+         return objectives[i]->end;
+   return glm::vec3(0,0,0);
+}
+
 //Draws the currently selected entity
 void drawSelectedObjects() {
 
