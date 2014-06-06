@@ -85,7 +85,9 @@ GLuint MeshBuffObj, MeshIndxBuffObj;
 
 //The assimp mesh stuff
 Mesh playerMesh;
+Mesh startNPC;
 Mesh flag;
+Mesh arrow;
 
 //animation stuff here
 GLint h_uAnimFlag, h_uNumWeights, h_uBoneMatrix, h_uWeights, h_uJoints;
@@ -107,10 +109,10 @@ glm::mat4 SetProjectionMatrix() {
 }
 
 glm::vec3 getCurentObjective(){
-   for(int i = 0;i<objectives.size();i++)
-      if (objectives[i]->active)
-         return objectives[i]->end;
-   return glm::vec3(0,0,0);
+	for(int i = 0;i<objectives.size();i++)
+	 if (objectives[i]->active)
+		 return objectives[i]->end;
+	return glm::vec3(0,0,0);
 }
 
 //Draws the currently selected entity
@@ -179,9 +181,9 @@ void cameraColision(){
 }
 //Draws the entities into the world
 void drawEntities(int passNum, std::vector<Entity > *entities) {
-	int objects = 0;
+	//int objects = 0;
 	float sized;
-	
+
    if(Mode == GAME_MODE) {
       cameraColision();
    }
@@ -206,7 +208,7 @@ void drawEntities(int passNum, std::vector<Entity > *entities) {
          	if (passNum <= 2) {
          		PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
             		entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*3, entityTemp.BSRadius);
-            	++objects;		
+            	//++objects;		
             }
          }
       }
@@ -214,10 +216,10 @@ void drawEntities(int passNum, std::vector<Entity > *entities) {
          if (passNum == 2)
             SetMaterial(17);
          else {
-            int mat = rand()%13;
-            while(!(mat = rand()%13));
-               SetMaterial(mat);
-            }
+            //int mat = rand()%13;
+            //while(!(mat = rand()%13));
+               SetMaterial(entityTemp.material);
+         }
          if(!getGPressed('V')) PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
             entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*3, entityTemp.BSRadius);
       }
@@ -257,18 +259,27 @@ void pauseorUnpause() {
 void drawGameElements(int passNum, std::vector<Entity > *entities) {
    //DRAW THE DANCING CYLINDER HERE!!
    btTransform pla;
-
+   glm::vec3 ObjDir = getCurentObjective();
+  
    /*These are for animation. They should be removed later*/
    static unsigned int ctr = 0;
    static unsigned int frm = 0;
 
    /*REMOVE LATER TODO*/
    if (passNum == 0)
-      if (ctr++%1 == 0)
+      if (ctr++%3 == 0)
          frm++;
 
    PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY(), physGetPlayerZ(), .25, .25, .25, -getYaw()*180/3.14, 1.7, frm%24);
    //END OF DANCING CYLINDER CODE HERE!!
+   
+   /*Draw the arrow*/
+   if (Mode == GAME_MODE && passNum <= 2 && (ObjDir.x != 0 || ObjDir.y != 0 || ObjDir.z != 0)) {
+   	
+   	glm::vec3 gaze = glm::normalize(GetLookAt() - GetEye());
+   	glm::vec3 ArrowLoc = GetEye() + 3.f*gaze + glm::vec3(0, 1, 0);
+		PlaceArrow(arrow, ArrowLoc.x, ArrowLoc.y, ArrowLoc.z, .1, .1, .1, glm::lookAt(glm::normalize(GetEye()), glm::normalize(getCurentObjective()), glm::vec3(0, 1, 0)));
+   }
 
    drawSelectedObjects();
    drawEntities(passNum, entities);
@@ -307,6 +318,7 @@ void drawGameElements(int passNum, std::vector<Entity > *entities) {
    glColorMask(true, true, true, true);
 
    if (passNum == 1 || passNum == 3) {
+   	float ang = 90 + -getYaw()*180/3.14;
       //draw objectives
       for(int i = 0; i < objectives.size();++i){
          if(objectives[i]->active){
@@ -314,6 +326,7 @@ void drawGameElements(int passNum, std::vector<Entity > *entities) {
             SetupCube(objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 16, 60, 10, 5000, 10);
          }
          else{
+            PlaceModel(startNPC, objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, .25, .25, .25, ang, 1.7, frm%48);
             PlaceModel(flag,objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 50, 50, 50, 1, 1.7);
             SetupCube(objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 15, 60, 10, 5000, 10);
          }
@@ -326,7 +339,7 @@ void drawGameElements(int passNum, std::vector<Entity > *entities) {
 //         particleSpawner[i]->drawPart();
       }
 
-      if(particleSpawner.front() && particleSpawner.front()->age>60){
+      if(particleSpawner.size() && particleSpawner.front() && particleSpawner.front()->age>60){
          destroyDustPart( particleSpawner.front());
          particleSpawner.erase(particleSpawner.begin());
       }
@@ -413,7 +426,7 @@ void renderScene() {
 
 		holdMat = GetModel(entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x, entityTemp.scale.y, entityTemp.scale.z, entityTemp.angle);
 		
-		if (checkViewFrustum(glm::vec3 (0,0,0), entityTemp.BSRadius, curProj*curView*holdMat) == 0) {
+		if (entityTemp.meshIndex != 5 && entityTemp.meshIndex != 4 && checkViewFrustum(glm::vec3 (0,0,0), entityTemp.BSRadius, curProj*curView*holdMat) == 0) {
 			if (largestRadius < entityTemp.BSRadius) {
 				largestRadius = entityTemp.BSRadius;
 				largestEntity = entityTemp;
@@ -472,7 +485,7 @@ void renderScene() {
    glUniform1f(h_uTextMode, 2);
    glClearColor(1.0, 1.0, 1.0, 0.0);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   glfwDraw(window, 3, entities);
+   glfwDraw(window, 3, &entities);
    glowMap->UnbindDrawFBO(g_width, g_height);
    glUniform1f(h_uTextMode, 0);
 */
@@ -589,7 +602,9 @@ void initPlay(string fileName) {
    srand(time(0));
    SetEdit(Mode);
    paused = false;
-   playerMesh = LoadMesh("../Assets/Models/npcJumping.dae");
+   playerMesh = LoadMesh("../Assets/Models/npcWaving.dae");
+   startNPC = LoadMesh("../Assets/Models/npcJumping.dae");
+   arrow = LoadMesh("../Assets/Models/arrow.obj");
 
    //music
    if (!musicStarted) {
@@ -636,13 +651,13 @@ float getFPS() {
    static float curr;
    float diff;
    char title[30];
-   float cap = 40.0;
+   float cap = 60.0;
 
    curr = glfwGetTime();
    diff = curr - prev;
    prev = curr;
 
-   if (1.0/diff > cap) {
+	if (1.0/diff > cap) {
       usleep((1.0/cap - diff)*1000000);
       diff = 1.0/cap; 
    }
