@@ -40,12 +40,12 @@ Mesh::Mesh(AssimpMesh aMesh)
     
     weightCtr.push_back((float) aMesh.skeleton_vertices[i].weight_array.size());
     
-    printf("vertex %d: ", i);
+    //printf("vertex %d: ", i);
     for (int j = 0; j < aMesh.skeleton_vertices[i].weight_array.size(); j++) {
       weights.push_back((float) aMesh.skeleton_vertices[i].weight_array[j]);
-      printf("weight %d: %lf ", j, aMesh.skeleton_vertices[i].weight_array[j]);
+      //printf("weight %d: %lf ", j, aMesh.skeleton_vertices[i].weight_array[j]);
     }
-    printf("\n");
+    //printf("\n");
     
     for (int j = 0; j < aMesh.skeleton_vertices[i].bone_array.size(); j++)
       joints.push_back((float) aMesh.skeleton_vertices[i].bone_array[j]);

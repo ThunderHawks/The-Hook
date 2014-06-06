@@ -172,9 +172,6 @@ void cameraColision(){
 }
 //Draws the entities into the world
 void drawEntities(int passNum, std::vector<Entity > *entities) {
-	glm::vec3 gaze = GetLookAt() - GetEye();
-	glm::vec3 backPoint = GetEye() - gaze;
-	glm::vec3 temp;
 	int objects = 0;
 	float sized;
 	
@@ -198,8 +195,8 @@ void drawEntities(int passNum, std::vector<Entity > *entities) {
          }
             
          if(!getGPressed('V')) {
-         	temp = entityTemp.position - backPoint;
-         	if (passNum < 2 || glm::dot(temp, gaze) > entityTemp.BSRadius) {
+         	
+         	if (passNum < 2) {
          		PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
             		entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*3, entityTemp.BSRadius);
             	++objects;		
@@ -409,14 +406,22 @@ void renderScene() {
    glUniform3f(h_uCamPos, 0.0, 3.0, 4.0);
    
    //do culling here TODO
+   
+   ggaze = GetLookAt() - GetEye();
+	gw = ggaze/magnitude(ggaze);
+	gw = glm::vec3(-1.0 * gw.x, -1.0 * gw.y, -1.0 * gw.z);
+	gu = glm::cross(GetUp(), gw)/magnitude(glm::cross(GetUp(), gw));
+	  	
    //all = GetNearby(FAR_PLANE);
    for (int i = getEntityNum() - 1; i > 0; i--) {
    	Entity entityTemp = getEntityAt(i);
-   	holdMat = GetModel(entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x, entityTemp.scale.y, entityTemp.scale.z, entityTemp.angle);
+
+		holdMat = GetModel(entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x, entityTemp.scale.y, entityTemp.scale.z, entityTemp.angle);
+		
+		if (checkViewFrustum(glm::vec3 (0,0,0), entityTemp.BSRadius/2, curProj*curView*holdMat) == 0) {
+			entities.push_back(entityTemp);
+		}
    	
-   	if (checkViewFrustum(glm::vec3 (0,0,0), entityTemp.BSRadius/10, curProj*curView*holdMat) == 0) {
-   		entities.push_back(entityTemp);
-   	}
    }
    
    
@@ -428,10 +433,6 @@ void renderScene() {
    if (Mode != GAME_MODE) {
    	SetLookAt(origLookAt);
    } else {
-   	ggaze = GetLookAt() - GetEye();
-		gw = ggaze/magnitude(ggaze);
-	  	gw = glm::vec3(-1.0 * gw.x, -1.0 * gw.y, -1.0 * gw.z);
-	  	gu = glm::cross(GetUp(), gw)/magnitude(glm::cross(GetUp(), gw));
 		SetLookAt(origLookAt + vec3(0, 2, 0) + 2.f*vec3(gu.x, 0, gu.z));
    }
    curView = SetView();

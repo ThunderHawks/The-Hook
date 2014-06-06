@@ -155,7 +155,7 @@ void initGui() {
    glGenTextures(1, textures + 0);
    glGenTextures(1, textures + 1);
 
-   printf("here\n");
+   //printf("here\n");
    LoadTexture((char *)"../Assets/Textures/ModMBasicBldg.bmp", textures[0]);
    LoadTexture((char *)"../Assets/Textures/shopBldg.bmp", textures[1]);
    LoadTexture((char *)"../Assets/Textures/cinderblock.bmp", textures[2]);

@@ -173,7 +173,7 @@ int grappleInRange(float lx,float ly,float lz){
 
    lookAt -= glm::vec3(gu.x, 0, gu.z);
 //   int ret = //inRange(50,75,glm::lookAt(playerPoss(),glm::vec3(tempLookAt.x+75*dir.x,tempLookAt.y+75*dir.y,tempLookAt.z+75*dir.z),glm::vec3(0,1,0)));
-   printf("grapple is %d range\n",RayCallback.hasHit());
+   //printf("grapple is %d range\n",RayCallback.hasHit());
    if(RayCallback.hasHit())   printf("%f %f %f",RayCallback.m_hitPointWorld.getX(),RayCallback.m_hitPointWorld.getY(),RayCallback.m_hitPointWorld.getZ());
    return    RayCallback.hasHit();
 }
@@ -274,13 +274,13 @@ void physGrapplePoint(){
    if(dist<1.1 && !hold){
       if(flip==0){
          flip = 1;
-         printf("pls rotate camera to normal of building\n");
+         //printf("pls rotate camera to normal of building\n");
 //         rotateCamera(pi);
       }
       playerJump = 1;
       playerGrappleActive=0;
       //setPlayerSpeed(0,10,0);
-      printf("reset\n");
+      //printf("reset\n");
    }
 }
 void holdGrapple(int h){
@@ -330,7 +330,7 @@ void physStep(){
       fspeed*fspeed>.0001 && playerFall==1){
       if(!playerJump)      particleSpawner.push_front(createDustPart(250,1.0,playerPoss()-glm::vec3(0,1,0)));
       playerJump = 1;
-      printf("can boing\n");
+      //printf("can boing\n");
    }
    
    //NOT SURE IF NEEDED
