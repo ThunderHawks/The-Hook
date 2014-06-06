@@ -129,12 +129,12 @@ part* createDustPart(int max,float scatter,glm::vec3 getPos){
    thing->seed = rand();
    srand(thing->seed);
    //position vbo object
-   printf("%d %d %d  then",thing->posBuff,thing->norBuff,thing->sizBuff);
+   //printf("%d %d %d  then",thing->posBuff,thing->norBuff,thing->sizBuff);
    glGenBuffers(1,&(thing->posBuff));
    glGenBuffers(1,&(thing->norBuff));
    glGenBuffers(1,&(thing->sizBuff));
-   printf("%d %d %d\n",thing->posBuff,thing->norBuff,thing->sizBuff);
-   printf("startinit\n");
+   //printf("%d %d %d\n",thing->posBuff,thing->norBuff,thing->sizBuff);
+   //printf("startinit\n");
    for(int i=0;i<max;i++){
       //printf("a\n");
       thing->pos[i] = thing->getPos;//+glm::vec3(rand()*1.0/RAND_MAX,rand()*1.0/RAND_MAX,rand()*1.0/RAND_MAX);
@@ -148,7 +148,7 @@ part* createDustPart(int max,float scatter,glm::vec3 getPos){
       thing->size[i] = 10;
       //printf("d\n");
    }
-   printf("ending\n");
+   //printf("ending\n");
 
    glBindBuffer(GL_ARRAY_BUFFER, thing->posBuff);
    glBufferData(GL_ARRAY_BUFFER, thing->amount*(sizeof(GLfloat)*3), NULL,GL_DYNAMIC_DRAW);//4 not 3?
@@ -156,7 +156,7 @@ part* createDustPart(int max,float scatter,glm::vec3 getPos){
    glBufferData(GL_ARRAY_BUFFER, thing->amount*(sizeof(GLfloat)*3), NULL,GL_DYNAMIC_DRAW);//4 not 3?
    glBindBuffer(GL_ARRAY_BUFFER, thing->sizBuff);
    glBufferData(GL_ARRAY_BUFFER, thing->amount*(sizeof(GLfloat)), NULL,GL_DYNAMIC_DRAW);//4 not 3?
-   printf("wut\n");
+   //printf("wut\n");
    return thing;
 }
 void destroyDustPart(part* thing){
@@ -220,12 +220,12 @@ part* createMoneyPart(int max,float scatter,glm::vec3 getPos){
    thing->seed = rand();
    srand(thing->seed);
    //position vbo object
-   printf("%d %d %d  then",thing->posBuff,thing->norBuff,thing->sizBuff);
+   //printf("%d %d %d  then",thing->posBuff,thing->norBuff,thing->sizBuff);
    glGenBuffers(1,&(thing->posBuff));
    glGenBuffers(1,&(thing->norBuff));
    glGenBuffers(1,&(thing->sizBuff));
-   printf("%d %d %d\n",thing->posBuff,thing->norBuff,thing->sizBuff);
-   printf("startinit\n");
+   //printf("%d %d %d\n",thing->posBuff,thing->norBuff,thing->sizBuff);
+   //printf("startinit\n");
    for(int i=0;i<max;i++){
       //printf("a\n");
 //      thing->pos[i] = thing->getPos+glm::vec3(rand()*1.0/RAND_MAX,rand()*1.0/RAND_MAX,rand()*1.0/RAND_MAX);
@@ -239,7 +239,7 @@ part* createMoneyPart(int max,float scatter,glm::vec3 getPos){
       thing->size[i] = 25;
       //printf("d\n");
    }
-   printf("ending\n");
+   //printf("ending\n");
 
    glBindBuffer(GL_ARRAY_BUFFER, thing->posBuff);
    glBufferData(GL_ARRAY_BUFFER, thing->amount*(sizeof(GLfloat)*3), NULL,GL_DYNAMIC_DRAW);//4 not 3?
@@ -247,7 +247,7 @@ part* createMoneyPart(int max,float scatter,glm::vec3 getPos){
    glBufferData(GL_ARRAY_BUFFER, thing->amount*(sizeof(GLfloat)*3), NULL,GL_DYNAMIC_DRAW);//4 not 3?
    glBindBuffer(GL_ARRAY_BUFFER, thing->sizBuff);
    glBufferData(GL_ARRAY_BUFFER, thing->amount*(sizeof(GLfloat)), NULL,GL_DYNAMIC_DRAW);//4 not 3?
-   printf("wut\n");
+   //printf("wut\n");
    return thing;
 }
 /*void destroyMoneyPart(part* thing){

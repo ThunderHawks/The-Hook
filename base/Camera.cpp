@@ -111,7 +111,7 @@ glm::vec3 SetLookAt(glm::vec3 newLookAt) {
 /*Increment the lookAt by this vec3 and return its new location*/
 glm::vec3 MoveLookAt(glm::vec3 toAdd) {
 	lookAtPoint += toAdd;
-	std::cout << "You are at " << lookAtPoint.x << " " << lookAtPoint.y << " " << lookAtPoint.z << std::endl;
+	//std::cout << "You are at " << lookAtPoint.x << " " << lookAtPoint.y << " " << lookAtPoint.z << std::endl;
 	return lookAtPoint;
 }
 /*gets the up vector and returns it*/

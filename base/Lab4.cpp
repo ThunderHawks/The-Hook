@@ -181,7 +181,7 @@ void cameraColision(){
 }
 //Draws the entities into the world
 void drawEntities(int passNum, std::vector<Entity > *entities) {
-	int objects = 0;
+	//int objects = 0;
 	float sized;
 
    if(Mode == GAME_MODE) {
@@ -208,7 +208,7 @@ void drawEntities(int passNum, std::vector<Entity > *entities) {
          	if (passNum <= 2) {
          		PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
             		entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*3, entityTemp.BSRadius);
-            	++objects;		
+            	//++objects;		
             }
          }
       }
@@ -651,7 +651,7 @@ float getFPS() {
    static float curr;
    float diff;
    char title[30];
-   float cap = 40.0;
+   float cap = 60.0;
 
    curr = glfwGetTime();
    diff = curr - prev;
