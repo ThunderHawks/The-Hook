@@ -636,7 +636,7 @@ float getFPS() {
    static float curr;
    float diff;
    char title[30];
-   float cap = 40.0
+   float cap = 40.0;
 
    curr = glfwGetTime();
    diff = curr - prev;
