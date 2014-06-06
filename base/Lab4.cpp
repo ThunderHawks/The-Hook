@@ -85,7 +85,9 @@ GLuint MeshBuffObj, MeshIndxBuffObj;
 
 //The assimp mesh stuff
 Mesh playerMesh;
+Mesh startNPC;
 Mesh flag;
+Mesh arrow;
 
 //animation stuff here
 GLint h_uAnimFlag, h_uNumWeights, h_uBoneMatrix, h_uWeights, h_uJoints;
@@ -107,10 +109,10 @@ glm::mat4 SetProjectionMatrix() {
 }
 
 glm::vec3 getCurentObjective(){
-   for(int i = 0;i<objectives.size();i++)
-      if (objectives[i]->active)
-         return objectives[i]->end;
-   return glm::vec3(0,0,0);
+	for(int i = 0;i<objectives.size();i++)
+	 if (objectives[i]->active)
+		 return objectives[i]->end;
+	return glm::vec3(0,0,0);
 }
 
 //Draws the currently selected entity
@@ -181,6 +183,7 @@ void cameraColision(){
 void drawEntities(int passNum, std::vector<Entity > *entities) {
 	int objects = 0;
 	float sized;
+	glm::vec3 ObjectiveDir = getCurentObjective();
 	
    if(Mode == GAME_MODE) {
       cameraColision();
@@ -222,6 +225,10 @@ void drawEntities(int passNum, std::vector<Entity > *entities) {
             entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*3, entityTemp.BSRadius);
       }
    }
+   
+   if (Mode == GAME_MODE && passNum >= 2 && (ObjectiveDir.x != 0 || ObjectiveDir.y != 0 || ObjectiveDir.z != 0)) {
+   	
+   }
 
    if(getGPressed('B')) cool = 1;
    if(cool) sizer+=.06;
@@ -257,18 +264,31 @@ void pauseorUnpause() {
 void drawGameElements(int passNum, std::vector<Entity > *entities) {
    //DRAW THE DANCING CYLINDER HERE!!
    btTransform pla;
-
+   glm::vec3 ObjDir = getCurentObjective();
+   
+  
    /*These are for animation. They should be removed later*/
    static unsigned int ctr = 0;
    static unsigned int frm = 0;
 
    /*REMOVE LATER TODO*/
    if (passNum == 0)
-      if (ctr++%1 == 0)
+      if (ctr++%3 == 0)
          frm++;
 
    PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY(), physGetPlayerZ(), .25, .25, .25, -getYaw()*180/3.14, 1.7, frm%24);
    //END OF DANCING CYLINDER CODE HERE!!
+   
+   /*Draw the arrow*/
+   if (Mode == GAME_MODE && passNum <= 2 && (ObjDir.x != 0 || ObjDir.y != 0 || ObjDir.z != 0)) {
+   	
+   	glm::vec3 gaze = glm::normalize(GetLookAt() - GetEye());
+   	glm::vec3 ArrowLoc = GetEye() + 2.f*gaze + glm::vec3(0, 1, 0);
+   	gaze.y = 0;
+   	ObjDir.y = 0;
+
+		PlaceModel(arrow, ArrowLoc.x, ArrowLoc.y, ArrowLoc.z, .1, .1, .1, glm::dot(gaze, ObjDir) + 90, 0);
+   }
 
    drawSelectedObjects();
    drawEntities(passNum, entities);
@@ -307,6 +327,7 @@ void drawGameElements(int passNum, std::vector<Entity > *entities) {
    glColorMask(true, true, true, true);
 
    if (passNum == 1 || passNum == 3) {
+   	float ang = 90 + -getYaw()*180/3.14;
       //draw objectives
       for(int i = 0; i < objectives.size();++i){
          if(objectives[i]->active){
@@ -314,6 +335,7 @@ void drawGameElements(int passNum, std::vector<Entity > *entities) {
             SetupCube(objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 16, 60, 10, 5000, 10);
          }
          else{
+            PlaceModel(startNPC, objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, .25, .25, .25, ang, 1.7, frm%48);
             PlaceModel(flag,objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 50, 50, 50, 1, 1.7);
             SetupCube(objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 15, 60, 10, 5000, 10);
          }
@@ -589,7 +611,9 @@ void initPlay(string fileName) {
    srand(time(0));
    SetEdit(Mode);
    paused = false;
-   playerMesh = LoadMesh("../Assets/Models/npcJumping.dae");
+   playerMesh = LoadMesh("../Assets/Models/npcWaving.dae");
+   startNPC = LoadMesh("../Assets/Models/npcJumping.dae");
+   arrow = LoadMesh("../Assets/Models/arrow.obj");
 
    //music
    if (!musicStarted) {
@@ -642,7 +666,7 @@ float getFPS() {
    diff = curr - prev;
    prev = curr;
 
-   if (1.0/diff > cap) {
+	if (1.0/diff > cap) {
       usleep((1.0/cap - diff)*1000000);
       diff = 1.0/cap; 
    }

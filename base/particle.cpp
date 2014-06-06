@@ -162,6 +162,7 @@ part* createDustPart(int max,float scatter,glm::vec3 getPos){
 void destroyDustPart(part* thing){
   //unbind things on gpu?
   free(thing->pos);
+  /*The line below causes segfaults. Free invalid pointer*/
   free(thing->velocity);
   free(thing->active);
   free(thing->ambientColor);
