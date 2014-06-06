@@ -485,7 +485,7 @@ void renderScene() {
    glUniform1f(h_uTextMode, 2);
    glClearColor(1.0, 1.0, 1.0, 0.0);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   glfwDraw(window, 3, entities);
+   glfwDraw(window, 3, &entities);
    glowMap->UnbindDrawFBO(g_width, g_height);
    glUniform1f(h_uTextMode, 0);
 */
