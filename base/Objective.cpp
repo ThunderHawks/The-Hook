@@ -23,7 +23,10 @@
 #include "SoundPlayer.h"
 #include "particle.h"
 #include "Lab4.h"
+#include "level.h"
 
+int counter = 0;
+int inProgress = 0;
 int score = 0;
 int seed = rand();
 int getPoints(){
@@ -49,11 +52,11 @@ Objective::~Objective() {
 
 void Objective::Init() {
    float sX, sY, sZ, eX, eY, eZ;
-
+   vector<glm::vec3> points = getObjectiveDestinationPositions();
    srand(seed);
    seed = rand();
 
-   do {
+/*   do {
       sX = rand() % (int)(maxX - minX) + minX;
       sZ = rand() % (int)(maxZ - minZ) + minZ;
    } while ((sY = physGetHeight(sX, sZ)) == -1);
@@ -61,10 +64,19 @@ void Objective::Init() {
    do {
       eX = rand() % (int)(maxX - minX) + minX;
       eZ = rand() % (int)(maxZ - minZ) + minZ;
-   } while ((eY = physGetHeight(eX, eZ)) == -1);
+   } while ((eY = physGetHeight(eX, eZ)) == -1);*/
+   //sX = points[select].x;
+   //sY = points[select].z;
+   //eX = points[selectb].x;
+   //eY = points[selectb].z;
    
-   start = glm::vec3(sX, sY, sZ+1.7);
-   end = glm::vec3(eX, eY, eZ+1.7);
+   //start = glm::vec3(sX, sY, sZ);
+   //end = glm::vec3(eX, eY, eZ);
+   counter = (counter+1)%points.size();
+   start = points[counter];
+   counter = (counter+1)%points.size();
+   end =  points[counter];
+
    printf("objective starts as %f %f %f",sX,sY,sZ);
    printf("%f %f %f \n",physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
 }
@@ -79,12 +91,14 @@ void Objective::Update(glm::vec3 playerPos) {
       PlayFX(SUCCESS_FX);
       printf("score is %d\n",deltaScore);
       particleSpawner.push_front(createMoneyPart(deltaScore/50,1.0,playerPoss()));
-      setCool(60);
+      setCool(150);
+      inProgress = 0;
 //      particleSpawner.push_front(createDustPart(deltaScore/100,1.0,playerPoss()));
    }
-   else if (sqrt((playerPos.x-start.x)*(playerPos.x-start.x) + (playerPos.z-start.z)*(playerPos.z-start.z)) < 7 && !active) {
+   else if (sqrt((playerPos.x-start.x)*(playerPos.x-start.x) + (playerPos.z-start.z)*(playerPos.z-start.z)) < 7 && !active &&(inProgress==0)) {
       active = true;
       time = 0;
+      inProgress = 1;
    }
    else {
       time++;

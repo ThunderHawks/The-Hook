@@ -241,6 +241,7 @@ void loadLevel(string fileName){
       entities.push_back(tempEntity);
    }
    loadOctTree();
+   for(int i = 0; i<entities.size();i++)      entities[i].material = rand()%12+1;//andrew fixed things
 }
 
 

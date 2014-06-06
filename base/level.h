@@ -19,6 +19,7 @@ using namespace std;
 //Structure used to represent models in the world
 struct Entity {
    Mesh *mesh;
+   int material;
    float angle;
    glm::vec3 position;
    glm::vec3 scale;
