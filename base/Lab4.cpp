@@ -203,7 +203,7 @@ void drawEntities(int passNum) {
          	temp = entityTemp.position - backPoint;
          	if (passNum < 2 || glm::dot(temp, gaze) > entityTemp.BSRadius) {
          		PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
-            		entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*10, entityTemp.BSRadius);
+            		entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*3, entityTemp.BSRadius);
             	++objects;		
             }
          }
@@ -217,12 +217,12 @@ void drawEntities(int passNum) {
                SetMaterial(mat);
             }
          if(!getGPressed('V')) PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
-            entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*10, entityTemp.BSRadius);
+            entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*3, entityTemp.BSRadius);
       }
    }
 
    if(getGPressed('B')) cool = 1;
-   if(cool) sizer+=.16;
+   if(cool) sizer+=.06;
    else{
       cool = 0;
       sizer=0;
