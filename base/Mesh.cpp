@@ -165,9 +165,9 @@ void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float s
       glBindBuffer(GL_ARRAY_BUFFER, mesh.WeightCount);
       glVertexAttribPointer(h_uNumWeights, 1, GL_FLOAT, GL_FALSE, 0, 0);
       
-    } else {
+	} else {
       glUniform1i(h_uAnimFlag, 0);
-    }
+	}
   
     //safe_glEnableVertexAttribArray(h_aPosition);
     glEnableVertexAttribArray(h_aPosition);
@@ -186,6 +186,8 @@ void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float s
 
     glDrawElements(GL_TRIANGLES, mesh.IndexBufferLength, GL_UNSIGNED_SHORT, 0);
    }
+   
+   glUniform1i(h_uAnimFlag, 0);
 }
 
 /*******************************************************************************
