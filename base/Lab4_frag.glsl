@@ -21,6 +21,7 @@ varying vec2 vUV;
 
 varying vec2 vTexCoord;
 uniform float uGuiMode;
+uniform float uMatMode;
 uniform float uTextMode;
 
 float Gaussian (float x) {
@@ -46,8 +47,11 @@ void main() {
             gl_FragColor = vec4(texColor1[0], texColor1[1], texColor1[2], 1);
          }
       }
+      else if(uMatMode == 1.0) {
+         gl_FragColor = vec4(uMat.aColor.r, uMat.aColor.g, uMat.aColor.b, 1);      
+      }
       else {
-        gl_FragColor = vec4(texColor1[0], texColor1[1], texColor1[2], 1);
+         gl_FragColor = vec4(texColor1[0], texColor1[1], texColor1[2], 1);
       }
    }
    else if (uTextMode == 2.0) {
@@ -155,24 +159,24 @@ void main() {
             color += uLColor * uMat.sColor * angleNH;
       }
 
-   // Ambient lighting
-   color += uLColor * uMat.aColor;
+      // Ambient lighting
+      color += uLColor * uMat.aColor;
 
-   //color = (uLColor * uMat.dColor * angleNL) + (uLColor * uMat.sColor * angleNH) + (uLColor * uMat.aColor);   
+      //color = (uLColor * uMat.dColor * angleNL) + (uLColor * uMat.sColor * angleNH) + (uLColor * uMat.aColor);   
 
-   // Apply fog
-   float fogDistance = min(length(vPos - uCamPos), 290.0) / 290.0;
-   if (uMat.aColor == vec3(0.0, 0.0, 0.0) && uMat.dColor == vec3(0.0, 0.0, 0.0) && uMat.sColor == vec3(0.0, 0.0, 0.0))
-      color = mix(vec3(0.0, 0.0, 0.0), vec3(0.7, 0.8, 0.9), pow(fogDistance, 5.0));
-   else
-      color = mix(color, vec3(0.7, 0.8, 0.9), pow(fogDistance, 5.0));
+      // Apply fog
+      float fogDistance = min(length(vPos - uCamPos), 290.0) / 290.0;
+      if (uMat.aColor == vec3(0.0, 0.0, 0.0) && uMat.dColor == vec3(0.0, 0.0, 0.0) && uMat.sColor == vec3(0.0, 0.0, 0.0))
+         color = mix(vec3(0.0, 0.0, 0.0), vec3(0.7, 0.8, 0.9), pow(fogDistance, 5.0));
+      else
+         color = mix(color, vec3(0.7, 0.8, 0.9), pow(fogDistance, 5.0));
 
-   vec3 texColor = texture2D(uTexSampler, vUV).rgb;
+      vec3 texColor = texture2D(uTexSampler, vUV).rgb;
 
-   gl_FragColor = vec4(color, uMat.alpha);
-   //gl_FragColor *= vec4(texColor, 1.0);
-   //gl_FragColor = vec4(norm, 1.0);
-   //gl_FragColor = vec4(depth, depth, depth, 1.0);
-   //gl_FragColor = vec4(dist, dist, dist, 1.0);
+      gl_FragColor = vec4(color, uMat.alpha);
+     //gl_FragColor *= vec4(texColor, 1.0);
+     //gl_FragColor = vec4(norm, 1.0);
+      //gl_FragColor = vec4(depth, depth, depth, 1.0);
+      //gl_FragColor = vec4(dist, dist, dist, 1.0);
    }
 }

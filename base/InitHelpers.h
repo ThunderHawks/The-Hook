@@ -20,7 +20,7 @@ extern GLint h_uLightColor;
 extern GLint h_uCamPos, h_uShadeMode;
 extern GLint h_uModelMatrix;
 extern RenderingHelper ModelTrans;
-extern GLint h_uTexCoord, h_aTexCoord, h_uGuiMode, h_uTextMode, h_utexpos;
+extern GLint h_uTexCoord, h_aTexCoord, h_uGuiMode, h_uTextMode, h_utexpos, h_uMatMode;
 
 // Animation stuff
 extern GLint h_uAnimFlag;

@@ -88,6 +88,7 @@ int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName) {
         h_uGuiMode = safe_glGetUniformLocation(ShadeProg, "uGuiMode");
         h_uTextMode = safe_glGetUniformLocation(ShadeProg, "uTextMode");
         h_utexpos = safe_glGetAttribLocation(ShadeProg, "textPos");
+        h_uMatMode = safe_glGetUniformLocation(ShadeProg, "uMatMode");
         //animation stuff below
         h_uAnimFlag = safe_glGetUniformLocation(ShadeProg, "animFlag");
         h_uNumWeights = safe_glGetAttribLocation(ShadeProg, "numWeights");

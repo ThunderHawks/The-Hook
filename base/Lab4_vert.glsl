@@ -29,6 +29,7 @@ attribute vec2 textPos;
 
 uniform float uMGuiMode;
 uniform float uTextMode;
+uniform float uMatMode;
 
 // animation stuff here
 uniform int animFlag;

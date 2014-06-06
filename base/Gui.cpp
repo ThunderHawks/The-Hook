@@ -28,7 +28,7 @@ Icon lastSelectedIcon;
 GLuint textures[30];
 //FT_Library library;
 //FT_Face face;
-int debt = 200000;
+int debt = 100000;
 
 Button createButton(int textureIndex, glm::vec2 position, int ID) {
    Button button;
@@ -202,7 +202,6 @@ void initGui() {
    LoadTexture((char *)"../Assets/Textures/redCrossHair.bmp", textures[43]);
    LoadTexture((char *)"../Assets/Textures/greenCrossHair.bmp", textures[44]);
    LoadTexture((char *)"../Assets/Fonts/collegeFund.bmp", textures[45]);
-   
 
    //Initialize HotBar icons
    HBIndices.push_back(createIcon(0, textures[0], 23.5, glm::vec2(-0.6, -0.88)));
@@ -341,7 +340,6 @@ vector<int> scoreDigitTextures() {
          case 9:
             digitTextures.push_back(textures[42]);
             break;
-
       }
    }
    
@@ -391,16 +389,29 @@ vector<int> scoreDigitTextures() {
 void DrawScore() {
    vector<int> digitTextures = scoreDigitTextures();
    //Background
-   SetupSq(p2i_x(g_width) - 0.3, p2i_y(g_height) - 0.3,  textures[32], 0.5, 0.4);
+
+   float debtTemp = debt - getPoints()/10;
+   float normalDebt = debtTemp/debt;
+
+   //printf("\nnormalDebt: %f\n", normalDebt);
+
+   //printf("\nnormalDebt: %f %f %f\n", normalDebt, 1.0 - normalDebt, 0.0);
+   //Black border
+   SetupColoredSq(p2i_x(g_width) - 0.3, p2i_y(g_height) - 0.35,  glm::vec3(0.0, 0.0, 0.0), 0.51, 0.515);
+   //Background
+   SetupColoredSq(p2i_x(g_width) - 0.3, p2i_y(g_height) - 0.35,  glm::vec3(normalDebt, 1.0 - normalDebt, 0), 0.5, 0.5);
 
    glUniform1f(h_uTextMode, 1);
+   SetupSq(p2i_x(g_width) - 0.3, p2i_y(g_height) - 0.3,  textures[45], 0.5, 0.4);
 
-   SetupSq(p2i_x(g_width) - 0.46, p2i_y(g_height) - 0.365,  digitTextures[5], DIGIT_WIDTH, DIGIT_HEIGHT);
-   SetupSq(p2i_x(g_width) - 0.41, p2i_y(g_height) - 0.365,  digitTextures[4], DIGIT_WIDTH, DIGIT_HEIGHT);
-   SetupSq(p2i_x(g_width) - 0.36, p2i_y(g_height) - 0.365,  digitTextures[3], DIGIT_WIDTH, DIGIT_HEIGHT);
-   SetupSq(p2i_x(g_width) - 0.31, p2i_y(g_height) - 0.365,  digitTextures[2], DIGIT_WIDTH, DIGIT_HEIGHT);
-   SetupSq(p2i_x(g_width) - 0.26, p2i_y(g_height) - 0.365,  digitTextures[1], DIGIT_WIDTH, DIGIT_HEIGHT);
-   SetupSq(p2i_x(g_width) - 0.21, p2i_y(g_height) - 0.365,  digitTextures[0], DIGIT_WIDTH, DIGIT_HEIGHT); 
+   //SetupColoredSq(0, 0.35, glm::vec3(1.0, 0.2, 0.2), 1.4, 1.1);
+
+   SetupSq(p2i_x(g_width) - 0.46, p2i_y(g_height) - 0.5,  digitTextures[5], DIGIT_WIDTH, DIGIT_HEIGHT);
+   SetupSq(p2i_x(g_width) - 0.41, p2i_y(g_height) - 0.5,  digitTextures[4], DIGIT_WIDTH, DIGIT_HEIGHT);
+   SetupSq(p2i_x(g_width) - 0.36, p2i_y(g_height) - 0.5,  digitTextures[3], DIGIT_WIDTH, DIGIT_HEIGHT);
+   SetupSq(p2i_x(g_width) - 0.31, p2i_y(g_height) - 0.5,  digitTextures[2], DIGIT_WIDTH, DIGIT_HEIGHT);
+   SetupSq(p2i_x(g_width) - 0.26, p2i_y(g_height) - 0.5,  digitTextures[1], DIGIT_WIDTH, DIGIT_HEIGHT);
+   SetupSq(p2i_x(g_width) - 0.21, p2i_y(g_height) - 0.5,  digitTextures[0], DIGIT_WIDTH, DIGIT_HEIGHT); 
    glUniform1f(h_uTextMode, 0);
 }
 
@@ -537,7 +548,7 @@ void GuiPressing(int mode, int xPos, int yPos) {
          //printf("Gui Pressed StartScreen mode\n");
          for(int i = 0; i < (int)StartScreen1.size(); i++) {
             if(buttonPressed(StartScreen1[i].position, xPos, yPos) == true) {
-               printf("button %d pressed\n", i);
+               //printf("button %d pressed\n", i);
                switch(StartScreen1[i].ID) {
                   case(PLAY_BUTTON):
                      StartScreenShowing = 2;
@@ -546,7 +557,7 @@ void GuiPressing(int mode, int xPos, int yPos) {
                      StartScreenShowing = 3;
                      break;
                   case(QUIT_BUTTON):
-                     printf("exiting\n");
+                     //printf("exiting\n");
                      //exit( EXIT_SUCCESS );
                      glfwDestroyWindow(window);
                      break;
@@ -609,14 +620,14 @@ void GuiPressing(int mode, int xPos, int yPos) {
       }
    }
    else if(mode == EDIT_MODE) {
-      printf("Gui Pressed Edit mode\n");
+      //printf("Gui Pressed Edit mode\n");
       //printf("Tried to press button at %d %d\n", xPos, yPos);
 
       //Test HB icons
       for(int i = 0; i < HBIndices.size(); i++) {
 
          if(iconPressed(HBIndices[i].position, xPos, yPos) == true) {
-            printf("~~~~Icon %d Pressed on hotbar\n", i);
+            //printf("~~~~Icon %d Pressed on hotbar\n", i);
             if(iconSelected == true) {
                SetHBIcon(lastSelectedIcon, i);
                iconSelected = false;
@@ -628,7 +639,7 @@ void GuiPressing(int mode, int xPos, int yPos) {
       //Test SS icons
       for(int i = 0; i < SSIndices.size(); i++) {
          if(iconPressed(SSIndices[i].position, xPos, yPos) == true) {
-            printf("~~~~Icon %d Pressed on selection\n", i);
+            //printf("~~~~Icon %d Pressed on selection\n", i);
             lastSelectedIcon = SSIndices[i];
             iconSelected = true;
             return; 

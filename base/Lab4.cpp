@@ -73,7 +73,7 @@ GLint h_uCamPos, h_uShadeMode;
 GLint h_uMatAmb, h_uMatDif, h_uMatSpec, h_uMatShine, h_uMatAlpha;
 GLint h_uLightViewMatrix, h_uLightProjMatrix;
 GLint h_uTexUnit, h_uTexUnit2;
-GLint h_uTexCoord, h_aTexCoord, h_uGuiMode, h_uTextMode, h_utexpos;
+GLint h_uTexCoord, h_aTexCoord, h_uGuiMode, h_uTextMode, h_utexpos, h_uMatMode;
 GLuint TexBuffObj;
 
 //declare Matrix stack
@@ -545,10 +545,10 @@ void initPlay(string fileName) {
    static bool musicStarted = false;
 
    Mode = GAME_MODE;
-   //srand(time(0));
+   srand(time(0));
    SetEdit(Mode);
    paused = false;
-   playerMesh = LoadMesh("../Assets/Models/dancingCylinderTriangulated.dae");
+   playerMesh = LoadMesh("../Assets/Models/npcJumping.dae");
 
    //music
    if (!musicStarted) {

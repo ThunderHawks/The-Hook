@@ -8,7 +8,7 @@
 using namespace std;
  
 //All of the meshes
-Mesh mesh[100];
+Mesh mesh[30];
 //All entities placed in world
 vector<Entity> entities;
 //If entities are selected
@@ -59,6 +59,11 @@ void initLevelLoader(int EditMode) {
    mesh[16] = LoadMesh("../Assets/Models/asymBldg.obj"); //10h 1d 7w
    mesh[17] = LoadMesh("../Assets/Models/pointyBldg.obj"); //10h 1d 7w
    mesh[18] = LoadMesh("../Assets/Models/asymBldg.obj"); //10h 1d 7w
+   mesh[19] = LoadMesh("../Assets/Models/roundedCube.obj"); //60 40 60
+   mesh[20] = LoadMesh("../Assets/Models/cafe.obj"); //30 40.636 20
+   mesh[21] = LoadMesh("../Assets/Models/mailbox.obj"); //7.5 3.0 4.0
+   mesh[22] = LoadMesh("../Assets/Models/flowerpot1.obj"); // :O?
+   mesh[23] = LoadMesh("../Assets/Models/flowerpot2.obj");
 
    printf("Loaded meshes..\n");
 
@@ -208,6 +213,15 @@ void loadLevel(string fileName){
          case 18:
             tempEntity.phyScale = glm::vec3(140, 500, 140);
             break;
+         case 19:
+            tempEntity.phyScale = glm::vec3(60, 40, 40);
+            break;
+         case 20:
+            tempEntity.phyScale = glm::vec3(40, 30, 20);
+            break;
+         case 21:
+            tempEntity.phyScale = glm::vec3(7.5, 3, 4);
+            break;
         }
 
       if(!(tempEntity.angle>-10&&tempEntity.angle<10||tempEntity.angle>170&&tempEntity.angle<190)){
@@ -312,6 +326,15 @@ Entity createEntity(glm::vec3 position, glm::vec3 scale, float angle, int meshIn
          //Destination Beacon
          case 18:
             entity.phyScale = glm::vec3(140, 500, 140);
+            break;
+         case 19:
+            entity.phyScale = glm::vec3(60, 40, 40);
+            break;
+         case 20:
+            entity.phyScale = glm::vec3(40, 30, 20);
+            break;
+         case 21:
+            entity.phyScale = glm::vec3(7.5, 3, 4);
             break;
         }
 

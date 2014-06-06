@@ -248,7 +248,6 @@ void initScore(glm::vec2 upLeft, glm::vec2 upRight, glm::vec2 downLeft, glm::vec
 void SetupScore(float x, float y, int texture, float scaleX, float scaleY) {
    /*First Cube*/
    SetModel(x, y, scaleX, scaleY);
- 
    //setup texture unit
    //glEnable(GL_TEXTURE_2D);
    glActiveTexture(GL_TEXTURE1);
@@ -303,9 +302,11 @@ void SetupCube(float x, float y, float z, int material, float angle, float scale
 }
 
 void SetupColoredSq(float x, float y, glm::vec3 rgbVals, float scaleX, float scaleY) {
+   glUniform1f(h_uMatMode, 1);
    SetModel(x, y, scaleX, scaleY);
    //SetCustomMaterialColor(rgbVals.x, rgbVals.y, rgbVals.z);  
-   SetMaterial(3);
+   //SetMaterial(3);
+   SetCustomMaterialColor(rgbVals.x, rgbVals.y, rgbVals.z);
 
    safe_glEnableVertexAttribArray(h_aPosition);
    glBindBuffer(GL_ARRAY_BUFFER, SqBuffObj);
@@ -316,9 +317,11 @@ void SetupColoredSq(float x, float y, glm::vec3 rgbVals, float scaleX, float sca
    safe_glVertexAttribPointer(h_aNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, SqIndxBuffObj);
+
    glDrawElements(GL_TRIANGLES, g_SqiboLen, GL_UNSIGNED_SHORT, 0);
    safe_glDisableVertexAttribArray(h_aPosition);
    safe_glDisableVertexAttribArray(h_aNormal);
+   glUniform1f(h_uMatMode, 0);
 }
 
 void SetupSq(float x, float y, int texture, float scaleX, float scaleY) {
@@ -409,7 +412,7 @@ void SetMaterial(int i) {
         break;
     //Sapphire
     case 3:
-        safe_glUniform3f(h_uMatAmb, 0.1, 0.1, 0.2);
+        safe_glUniform3f(h_uMatAmb, 0.9, 0.1, 0.2);
         safe_glUniform3f(h_uMatDif, 0.3, 0.3, 0.4);
         safe_glUniform3f(h_uMatSpec, 0.3, 0.3, 0.4);
         safe_glUniform1f(h_uMatShine, 150.0);
