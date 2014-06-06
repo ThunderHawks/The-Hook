@@ -194,9 +194,9 @@ void drawEntities(int passNum) {
          if (passNum == 2)
             SetMaterial(17);
          else {
-            int mat = rand()%13;
-            while(!(mat = rand()%13));
-               SetMaterial(mat);
+            //int mat = rand()%13;
+            //while(!(mat = rand()%13));
+               SetMaterial(entityTemp.material);
          }
             
          if(!getGPressed('V')) {
