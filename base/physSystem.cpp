@@ -237,7 +237,7 @@ bool physGrapple(float lx,float ly,float lz){
 }
 void physJump(){
    if(playerJump==1){
-      setPlayerSpeed(0,20,0);
+      setPlayerSpeed(0,30,0);
       playerJump=0;
       playerFall = 0;
    }
