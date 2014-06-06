@@ -602,7 +602,7 @@ void getFPS() {
 
    if (1.0/diff > 60.0) {
       usleep((1.0/60.0 - diff)*1000000);
-      diff = 1.0/60.0;
+      diff = 1.0/60.0; 
    }
 
    sprintf(title, "Grapple --- FPS: %d", int(1.0/diff));
