@@ -15,7 +15,7 @@
 using namespace std;
 
 #define SCALE_MIN 0.0
-
+ 
 //Structure used to represent models in the world
 struct Entity {
    Mesh *mesh;

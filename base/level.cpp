@@ -6,7 +6,7 @@
 #include "octree.h"
 #include <vector>
 using namespace std;
-
+ 
 //All of the meshes
 Mesh mesh[100];
 //All entities placed in world
