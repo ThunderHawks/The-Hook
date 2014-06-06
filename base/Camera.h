@@ -11,6 +11,8 @@ extern GLint h_uLightViewMatrix;
 
 /*Sends the view matrix to the shader and returns it*/
 glm::mat4 SetView();
+/*get the view matrix from a position*/
+glm::mat4 GetView(glm::vec3 NewEye);
 /*Set the view matrix and light's view matrix to the shader and returns it*/
 glm::mat4 SetShadowView();
 /*Returns the a vec3 of the Eye*/

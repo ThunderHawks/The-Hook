@@ -52,6 +52,11 @@ glm::mat4 SetView() {
    return view;
 }
 
+/*get the view matrix from a point*/
+glm::mat4 GetView(glm::vec3 NewEye) {
+   return glm::lookAt(NewEye, lookAtPoint, up);
+}
+
 /* Set the view matrix and light's view matrix to the shader */
 glm::mat4 SetShadowView() {
    glm::mat4 view = glm::lookAt(eye, lookAtPoint, up);
