@@ -171,14 +171,12 @@ void cameraColision(){
 
 }
 //Draws the entities into the world
-void drawEntities(int passNum) {
+void drawEntities(int passNum, std::vector<Entity > entities) {
 	glm::vec3 gaze = GetLookAt() - GetEye();
 	glm::vec3 backPoint = GetEye() - gaze;
 	glm::vec3 temp;
 	int objects = 0;
 	float sized;
-	
-	std::vector<Entity *> entities = GetNearby(FAR_PLANE);
 	
    if(Mode == GAME_MODE) {
       cameraColision();
@@ -189,7 +187,7 @@ void drawEntities(int passNum) {
    int hit = 0;
    //printf("num ent rend %d\n",getEntityNum());
    for(int i = 0; i < entities.size(); ++i) {
-      entityTemp = *(entities[i]);
+      entityTemp = entities[i];
       if(entityTemp.meshIndex != 18 && Mode == GAME_MODE) {
          if (passNum == 2)
             SetMaterial(17);
@@ -252,7 +250,7 @@ void pauseorUnpause() {
    }
 }
 
-void drawGameElements(int passNum) {
+void drawGameElements(int passNum, std::vector<Entity > entities) {
    //DRAW THE DANCING CYLINDER HERE!!
    btTransform pla;
 
@@ -269,7 +267,7 @@ void drawGameElements(int passNum) {
    //END OF DANCING CYLINDER CODE HERE!!
 
    drawSelectedObjects();
-   drawEntities(passNum);
+   drawEntities(passNum, entities);
 
    // Disable backface culling for grapple
    glCullFace(GL_BACK);
@@ -339,7 +337,7 @@ void drawGameElements(int passNum) {
  *          2 = Draw outlines around objects
  *          3 = Create glow map for bloom effect
  */
-void glfwDraw (GLFWwindow *window, int passNum)
+void glfwDraw (GLFWwindow *window, int passNum, std::vector<Entity > entities)
 {   
    if (passNum == 3)
       glColorMask(false, false, false, false);
@@ -377,13 +375,16 @@ void glfwDraw (GLFWwindow *window, int passNum)
 
       SetMaterial(17);
    }
-   drawGameElements(passNum);
+   drawGameElements(passNum, entities);
    glColorMask(true, true, true, true);
 }
 
 void renderScene() {
    glm::vec3 origEye = GetEye();
    glm::vec3 origLookAt = GetLookAt();
+   
+   std::vector<Entity> entities, all;
+   glm::mat4 holdMat;
    
    glm::vec3 ggaze;
    glm::vec3 gw;
@@ -406,7 +407,20 @@ void renderScene() {
    curView = SetShadowView();
    curProj = SetOrthoProjectionMatrix(GetEye(), GetLookAt(), 10.0);
    glUniform3f(h_uCamPos, 0.0, 3.0, 4.0);
-   glfwDraw(window, 0);
+   
+   //do culling here TODO
+   //all = GetNearby(FAR_PLANE);
+   for (int i = getEntityNum() - 1; i > 0; i--) {
+   	Entity entityTemp = getEntityAt(i);
+   	holdMat = GetModel(entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x, entityTemp.scale.y, entityTemp.scale.z, entityTemp.angle);
+   	
+   	if (checkViewFrustum(glm::vec3 (0,0,0), entityTemp.BSRadius/10, curProj*curView*holdMat) == 0) {
+   		entities.push_back(entityTemp);
+   	}
+   }
+   
+   
+   glfwDraw(window, 0, entities);
    shadowMap->UnbindDrawFBO(g_width, g_height);
 
    // Set the eye and look at point to their original locations
@@ -431,20 +445,20 @@ void renderScene() {
    glUniform1f(h_uTextMode, 2);
    glClearColor(1.0, 1.0, 1.0, 0.0);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   glfwDraw(window, 3);
+   glfwDraw(window, 3, entities);
    glowMap->UnbindDrawFBO(g_width, g_height);
    glUniform1f(h_uTextMode, 0);
 */
    // Render scene normally and draw
    glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   glfwDraw(window, 1);
+   glfwDraw(window, 1, entities);
    shadowMap->UnbindTex();
    glowMap->UnbindTex();
 
    // Draw outlines
    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-   glfwDraw(window, 2);
+   glfwDraw(window, 2, entities);
    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 /*
    // Blur the glow map

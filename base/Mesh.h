@@ -60,5 +60,6 @@ void PlaceModel(Mesh mesh, float locx, float locy, float locz, float sx, float s
 glm::mat4 SetModelStat();
 glm::mat4 SetModel(float x, float y, float Sx, float Sy);
 glm::mat4 SetModel(float x, float y, float z, float Sx, float Sy, float Sz, float angle);
+glm::mat4 GetModel(float x, float y, float z, float Sx, float Sy, float Sz, float angle);
 
 #endif
