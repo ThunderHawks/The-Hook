@@ -387,6 +387,44 @@ void renderScene() {
    glm::vec3 gw;
   	glm::vec3 gu;
    glUseProgram(ShadeProg);
+   
+   float largestRadius = 0;
+   Entity largestEntity;
+
+
+	//do culling here TODO
+	curView = SetView();
+   curProj = SetProjectionMatrix();
+   ggaze = GetLookAt() - GetEye();
+	gw = ggaze/magnitude(ggaze);
+	gw = glm::vec3(-1.0 * gw.x, -1.0 * gw.y, -1.0 * gw.z);
+	gu = glm::cross(GetUp(), gw)/magnitude(glm::cross(GetUp(), gw));
+	  	
+   //all = GetNearby(FAR_PLANE);
+   for (int i = getEntityNum() - 1; i > 0; i--) {
+   	Entity entityTemp = getEntityAt(i);
+
+		holdMat = GetModel(entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x, entityTemp.scale.y, entityTemp.scale.z, entityTemp.angle);
+		
+		if (checkViewFrustum(glm::vec3 (0,0,0), entityTemp.BSRadius, curProj*curView*holdMat) == 0) {
+			if (largestRadius < entityTemp.BSRadius) {
+				largestRadius = entityTemp.BSRadius;
+				largestEntity = entityTemp;
+			}
+			all.push_back(entityTemp);
+		}
+   	
+   }
+   entities = all;
+   
+   
+   /*for (int i = 0; i < all.size(); i++) {
+   	Entity entityTemp = all[i];
+   	holdMat = GetModel(entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x, entityTemp.scale.y, entityTemp.scale.z, entityTemp.angle);
+   	if (checkViewFrustum(glm::vec3 (0,0,0), -entityTemp.BSRadius, curProj*GetView(largestEntity.position)*holdMat) != 0)
+   		entities.push_back(entityTemp);
+   }*/
+
 
    glUniform1i(h_uShadeMode, ShadeMode);
 
@@ -404,25 +442,6 @@ void renderScene() {
    curView = SetShadowView();
    curProj = SetOrthoProjectionMatrix(GetEye(), GetLookAt(), 10.0);
    glUniform3f(h_uCamPos, 0.0, 3.0, 4.0);
-   
-   //do culling here TODO
-   
-   ggaze = GetLookAt() - GetEye();
-	gw = ggaze/magnitude(ggaze);
-	gw = glm::vec3(-1.0 * gw.x, -1.0 * gw.y, -1.0 * gw.z);
-	gu = glm::cross(GetUp(), gw)/magnitude(glm::cross(GetUp(), gw));
-	  	
-   //all = GetNearby(FAR_PLANE);
-   for (int i = getEntityNum() - 1; i > 0; i--) {
-   	Entity entityTemp = getEntityAt(i);
-
-		holdMat = GetModel(entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x, entityTemp.scale.y, entityTemp.scale.z, entityTemp.angle);
-		
-		if (checkViewFrustum(glm::vec3 (0,0,0), entityTemp.BSRadius/2, curProj*curView*holdMat) == 0) {
-			entities.push_back(entityTemp);
-		}
-   	
-   }
    
    
    glfwDraw(window, 0, &entities);
@@ -622,12 +641,13 @@ float getFPS() {
 
    sprintf(title, "Grapple --- FPS: %d", int(1.0/diff));
    glfwSetWindowTitle(window, title); 
+   
    return 1.0/diff;
 }
 
 int main( int argc, char *argv[] )
 {
-   float t;
+	float t;
    initStartScreen();
 
    printf("Starting main loop\n");
