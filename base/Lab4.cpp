@@ -176,6 +176,7 @@ void drawEntities(int passNum) {
 	glm::vec3 backPoint = GetEye() - gaze;
 	glm::vec3 temp;
 	int objects = 0;
+	float sized;
 	
 	std::vector<Entity *> entities = GetNearby(FAR_PLANE);
 	
@@ -184,6 +185,7 @@ void drawEntities(int passNum) {
    }
    Entity entityTemp;
    srand(sizer);
+   sized = sin(sizer);
    int hit = 0;
    //printf("num ent rend %d\n",getEntityNum());
    for(int i = 0; i < entities.size(); ++i) {
@@ -201,7 +203,7 @@ void drawEntities(int passNum) {
          	temp = entityTemp.position - backPoint;
          	if (passNum < 2 || glm::dot(temp, gaze) > entityTemp.BSRadius) {
          		PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
-            		entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
+            		entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*10, entityTemp.BSRadius);
             	++objects;		
             }
          }
@@ -215,7 +217,7 @@ void drawEntities(int passNum) {
                SetMaterial(mat);
             }
          if(!getGPressed('V')) PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
-            entityTemp.scale.x*(sin(sizer)*.3+1), entityTemp.scale.y*(sin(sizer)*.3+1), entityTemp.scale.z*(sin(sizer)*.3+1), entityTemp.angle+sin(sizer)*10, entityTemp.BSRadius);
+            entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*10, entityTemp.BSRadius);
       }
    }
 

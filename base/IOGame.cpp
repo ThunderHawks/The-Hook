@@ -43,9 +43,6 @@ int gKeysPressed[255];
 
 //Mouse scroll callback for Play mode to adjust camera
 void glfwGameScroll(GLFWwindow *window, double xOffset, double yOffset) {
-   //printf("getDistance %f\n", getDistance());
-   //printf("yOffset: %f\n", yOffset);
-   //printf("%f\n", getDistance() + yOffset);
    if(getDistance() - yOffset <= 20.0 && getDistance() - yOffset >= 2.0) {
       MAX_DISTANCE = getDistance() - yOffset;
    }
