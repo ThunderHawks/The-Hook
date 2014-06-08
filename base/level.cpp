@@ -70,7 +70,7 @@ void initLevelLoader(int EditMode) {
    //Load into current index to prevent segfault. Doesn't appear.
    if(EditMode) {
       selectAtHotBarIndex(1);
-      printf("selectedHotBarIndex\n");
+      //printf("selectedHotBarIndex\n");
       entitiesSelected = false;
    }
 }

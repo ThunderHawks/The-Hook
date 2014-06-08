@@ -31,6 +31,13 @@ bool debtMode = true;
 bool displayedVictory = false; 
 int debt = 100000;
 int savings = 0;
+//Used to keep track of addition in score
+int lastScore = 0;
+vector<int> fpsTextures;
+vector<int> digitTextures;
+
+//Clock
+clock_t t;
 
 Button createButton(int textureIndex, glm::vec2 position, int ID) {
    Button button;
@@ -165,7 +172,6 @@ void initGui() {
    glGenTextures(1, textures + 0);
    glGenTextures(1, textures + 1);
 
-   printf("here\n");
    LoadTexture((char *)"../Assets/Textures/ModMBasicBldg.bmp", textures[0]);
    LoadTexture((char *)"../Assets/Textures/shopBldg.bmp", textures[1]);
    LoadTexture((char *)"../Assets/Textures/cinderblock.bmp", textures[2]);
@@ -273,6 +279,19 @@ void initGui() {
    StartScreen2.push_back(createButton(textures[29], glm::vec2(0.7, -0.4), WORLD4_SELECT_BUTTON));
    StartScreen2.push_back(createButton(textures[30], glm::vec2(0.7, -0.8), BACK_BUTTON));
 
+   //Textures for score
+   digitTextures.push_back(textures[33]);
+   digitTextures.push_back(textures[33]);
+   digitTextures.push_back(textures[33]);
+   digitTextures.push_back(textures[33]);
+   digitTextures.push_back(textures[33]);
+   digitTextures.push_back(textures[34]);
+   //Textures for fps
+   fpsTextures.push_back(textures[33]);
+   fpsTextures.push_back(textures[39]);
+   //Clock
+   t = clock();
+
    //For the time being
    glEnable(GL_TEXTURE_2D);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -300,57 +319,63 @@ void DrawCrosshair() {
    glUniform1f(h_uTextMode, 0);
 }
 
-vector<int> fpsDigitTextures() {
+
+
+void fpsDigitTextures() {
    int fpsTemp;
    int fps = (int)getFPS();
-   vector<int> fpsTextures;
 
-   for(int i = 1; i >= 0; i--) {
+   for(int i = 0; i < 2; i++) {
       fpsTemp = fps%10;
       fps /= 10;
 
       switch(fpsTemp) {
          case 0:
-            fpsTextures.push_back(textures[33]);
+            fpsTextures[i] = textures[33];
             break;
          case 1:
-            fpsTextures.push_back(textures[34]);
+            fpsTextures[i] = textures[34];
             break;
          case 2:
-            fpsTextures.push_back(textures[35]);
+            fpsTextures[i] = textures[35];
             break;
          case 3:
-            fpsTextures.push_back(textures[36]);
+            fpsTextures[i] = textures[36];
             break;
          case 4:
-            fpsTextures.push_back(textures[37]);
+            fpsTextures[i] = textures[37];
             break;
          case 5:
-            fpsTextures.push_back(textures[38]);
+            fpsTextures[i] = textures[38];
             break;
          case 6:
-            fpsTextures.push_back(textures[39]);
+            fpsTextures[i] = textures[39];
             break;
          case 7:
-            fpsTextures.push_back(textures[40]);
+            fpsTextures[i] = textures[40];
             break;
          case 8:
-            fpsTextures.push_back(textures[41]);
+            fpsTextures[i] = textures[41];
             break;
          case 9:
-            fpsTextures.push_back(textures[42]);
+            fpsTextures[i] = textures[42];
             break;
       }
    }
-   return fpsTextures;
 }
 
 void DrawFPS() {
-   vector<int> fpsTextures = fpsDigitTextures();
+
+   //Don't update too often
+   if((clock() - t)/CLOCKS_PER_SEC > 0.5) {
+      fpsDigitTextures();
+      t = clock();
+   }
 
    glUniform1f(h_uTextMode, 1.0);
    //Draw the fps background
    SetupSq(-1.0 * p2i_x(g_width) + 0.1, -1.0 * p2i_y(g_height) + 0.2, textures[49], 0.2, 0.4);
+   //SetupColoredSq(-1.0 * p2i_x(g_width) + 0.1, -1.0 * p2i_y(g_height) + 0.2, glm::vec3(0.0, 0.0, 0.0), 0.2, 0.4);
 
    //Draw fps digits
    SetupSq(-1.0 * p2i_x(g_width) + 0.07, -1.0 * p2i_y(g_height) + 0.15, fpsTextures[1], DIGIT_WIDTH, DIGIT_HEIGHT);
@@ -368,9 +393,7 @@ void DrawVictory() {
    glUniform1f(h_uTextMode, 0);
 }
 
-vector<int> scoreDigitTextures() {
-   vector<int> digitTextures;
-   int array[6];
+void scoreDigitTextures() {
    int debtTemp, digitTemp;
 
    //Show debt
@@ -397,40 +420,40 @@ vector<int> scoreDigitTextures() {
    }
 
    //Convert debt number into an array of ints
-   for(int i = 5; i >= 0; i--) {
+   for(int i = 0; i < 6; i++) {
       digitTemp = debtTemp%10;
       debtTemp /= 10;
 
       switch(digitTemp) {
          case 0:
-            digitTextures.push_back(textures[33]);
+            digitTextures[i] = textures[33];
             break;
          case 1:
-            digitTextures.push_back(textures[34]);
+            digitTextures[i] = textures[34];
             break;
          case 2:
-            digitTextures.push_back(textures[35]);
+            digitTextures[i] = textures[35];
             break;
          case 3:
-            digitTextures.push_back(textures[36]);
+            digitTextures[i] = textures[36];
             break;
          case 4:
-            digitTextures.push_back(textures[37]);
+            digitTextures[i] = textures[37];
             break;
          case 5:
-            digitTextures.push_back(textures[38]);
+            digitTextures[i] = textures[38];
             break;
          case 6:
-            digitTextures.push_back(textures[39]);
+            digitTextures[i] = textures[39];
             break;
          case 7:
-            digitTextures.push_back(textures[40]);
+            digitTextures[i] = textures[40];
             break;
          case 8:
-            digitTextures.push_back(textures[41]);
+            digitTextures[i] = textures[41];
             break;
          case 9:
-            digitTextures.push_back(textures[42]);
+            digitTextures[i] = textures[42];
             break;
       }
    }
@@ -475,11 +498,15 @@ vector<int> scoreDigitTextures() {
             break;
       }
    }*/
-   return digitTextures;
 }
 
 void DrawScore() {
-   vector<int> digitTextures = scoreDigitTextures();
+
+   //Only call scoreDigitTextures if the score has changed
+   if(getPoints() != lastScore) {
+      scoreDigitTextures();
+      lastScore = getPoints();
+   }
    //Background
 
    float debtTemp = debt - getPoints()/10;
@@ -942,105 +969,4 @@ void makeCheckerBoard ( int nRows, int nCols )
   /* set up the checker board texture as well */
   glBindTexture(GL_TEXTURE_2D, 2);
   glTexImage2D(GL_TEXTURE_2D, 0, 3, 64, 64, 0, GL_RGB, GL_UNSIGNED_BYTE, g_pixel);
-}
-
-/***************LET'S WRITE TEXT!!!!! :D ***************************************************************/
-std::vector<glm::vec2> vertices;
-std::vector<glm::vec2> UVs;
-unsigned short idx[] = {0, 1, 2,
-                        3, 1, 2,
-                               };
-
-void initText2D(const char * texturePath) {
-
-}
-
-void cleanupText2D() {
-  glUniform1f(h_uTextMode, 0);
-}
-
-/*Made with help from http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-11-2d-text/ */
-void printText2D(string text, int x, int y, int size) {
-  char character;
-  float uv_x, uv_y;
-  GLuint vertex_Buffer;
-  GLuint uvBuffer;
-  GLuint IndexBuffer;
-
-  //cleanupText2D();
-  //initText2D("../Assets/Fonts/font1.bmp");
-  glUniform1f(h_uTextMode, 1);
-   //setup texture unit
- //glEnable(GL_TEXTURE_2D);
-  glActiveTexture(GL_TEXTURE1);
-  glBindTexture(GL_TEXTURE_2D, textures[0]);
-
-  for ( unsigned int i=0 ; i < text.size() ; i++ ){
-    character = text[i] - 32;
-    uv_x = (character%10)/10.0f;
-    uv_y = (character/10)/10.0f;
-
-    glm::vec2 vertex_up_left    = glm::vec2( x+i*size     , y+size );
-    glm::vec2 vertex_up_right   = glm::vec2( x+i*size+size, y+size );
-    glm::vec2 vertex_down_right = glm::vec2( x+i*size+size, y      );
-    glm::vec2 vertex_down_left  = glm::vec2( x+i*size     , y      );
-
-    vertices.push_back(vertex_up_left   );
-    vertices.push_back(vertex_down_left );
-    vertices.push_back(vertex_up_right  );
-
-    vertices.push_back(vertex_down_right);
-    vertices.push_back(vertex_up_right);
-    vertices.push_back(vertex_down_left);
-
-    glm::vec2 uv_up_left    = glm::vec2( uv_x           , 1.0f - uv_y );
-    glm::vec2 uv_up_right   = glm::vec2( uv_x+1.0f/10.0f, 1.0f - uv_y );
-    glm::vec2 uv_down_right = glm::vec2( uv_x+1.0f/10.0f, 1.0f - (uv_y + 1.0f/10.0f) );
-    glm::vec2 uv_down_left  = glm::vec2( uv_x           , 1.0f - (uv_y + 1.0f/10.0f) );
-//void initScore(glm::vec2 upLeft, glm::vec2 upRight, glm::vec2 downLeft, glm::vec2 downRight)
-  //  initScore(uv_up_left, uv_up_right, uv_down_left, uv_down_right);
-    //SetupScore(float x, float y, int texture, float scaleX, float scaleY) 
-  //  SetupScore(0, 0, 3, 0.2, 0.2);
-
-    UVs.push_back(uv_up_left   );
-    UVs.push_back(uv_down_left );
-    UVs.push_back(uv_up_right  );
-
-    UVs.push_back(uv_down_right);
-    UVs.push_back(uv_up_right  );
-    UVs.push_back(uv_down_left );
-  }
-
-  glGenBuffers(1, &vertex_Buffer);
-  glBindBuffer(GL_ARRAY_BUFFER, vertex_Buffer);
-  glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(glm::vec2), &vertices.front(), GL_STATIC_DRAW);
-
-  glGenBuffers(1, &uvBuffer);
-  glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-  glBufferData(GL_ARRAY_BUFFER, UVs.size()*sizeof(glm::vec2), &UVs.front(), GL_STATIC_DRAW);
-
-  
-  safe_glEnableVertexAttribArray(h_utexpos);
-  glBindBuffer(GL_ARRAY_BUFFER, vertex_Buffer);
-  safe_glVertexAttribPointer(safe_glGetAttribLocation(ShadeProg, "textPos"), 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-  safe_glEnableVertexAttribArray(h_aTexCoord);
-  glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-  safe_glVertexAttribPointer(h_aTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-  glGenBuffers(1, &IndexBuffer);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBuffer);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idx), idx, GL_STATIC_DRAW);
-
-
-  /* draw!*/
-  glDrawElements(GL_TRIANGLES, vertices.size(), GL_UNSIGNED_SHORT, 0);
-
-  //safe_glUniform1i(h_uTexUnit, 0);
-  /* Disable the attributes used by our shader*/
-  glDisable(GL_TEXTURE_2D);
-  safe_glDisableVertexAttribArray(safe_glGetAttribLocation(ShadeProg, "textPos"));
-  safe_glDisableVertexAttribArray(h_aTexCoord);
-
-  cleanupText2D();
 }

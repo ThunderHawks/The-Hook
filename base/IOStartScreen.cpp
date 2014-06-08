@@ -32,9 +32,9 @@ glm::vec2 lastCurPosSS;
 void glfwStartScreenMouse(GLFWwindow *window, int button, int action, int mods) {
    //If the left button is pressed
    if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-      printf("Gui pressing\n");
+      //printf("Gui pressing\n");
       GuiPressing(STARTSCREEN_MODE, lastCurPosSS.x, lastCurPosSS.y);
-      printf("after gui pressed\n");
+      //printf("after gui pressed\n");
    }
 }
 

@@ -2,6 +2,7 @@
 #define GUI_H_
 
 #include "Lab4.h"
+#include <time.h>
 #include "IOEdit.h"
 #include "IOGame.h"
 #include "level.h"
@@ -76,9 +77,4 @@ Icon getHBIcon(int index);
 int ImageLoad(char *filename, TexImage *image);
 GLvoid LoadTexture(char *image_file, int tex_id);
 void makeCheckerBoard ( int nRows, int nCols );
-
-//text stuff at the bottom! Yay
-void initText2D(const char * texturePath);
-void printText2D(string text, int x, int y, int size);
-void cleanupText2D();
 #endif

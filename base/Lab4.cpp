@@ -285,7 +285,7 @@ void drawGameElements(int passNum, std::vector<Entity > *entities) {
 		tmpa.y=0;
 		tmpb.y=0;
 		
-		printf("%f is angle %f %f\n",acos((tmpa.z-tmpb.z)/(tmpa-tmpb).length()),tmpa.z-tmpb.z,(tmpa-tmpb).length());	
+		//printf("%f is angle %f %f\n",acos((tmpa.z-tmpb.z)/(tmpa-tmpb).length()),tmpa.z-tmpb.z,(tmpa-tmpb).length());	
 		PlaceModel(arrow, ArrowLoc.x, ArrowLoc.y, ArrowLoc.z, .1, .1, .1 , acos((tmpa.z-tmpb.z)/(tmpa-tmpb).length())*180/3.14159 ,0);
    }
 

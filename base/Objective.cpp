@@ -77,8 +77,8 @@ void Objective::Init() {
    counter = (counter+1)%points.size();
    end =  points[counter];
 
-   printf("objective starts as %f %f %f",sX,sY,sZ);
-   printf("%f %f %f \n",physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
+   //printf("objective starts as %f %f %f",sX,sY,sZ);
+   //printf("%f %f %f \n",physGetPlayerX(),physGetPlayerY(),physGetPlayerZ());
 }
 
 void Objective::Update(glm::vec3 playerPos) {
@@ -89,7 +89,7 @@ void Objective::Update(glm::vec3 playerPos) {
       time = 0;
       this->Init();
       PlayFX(SUCCESS_FX);
-      printf("score is %d\n",deltaScore);
+      //printf("score is %d\n",deltaScore);
       particleSpawner.push_front(createMoneyPart(deltaScore/50,1.0,playerPoss()));
       setCool(150);
       inProgress = 0;
