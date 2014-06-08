@@ -25,10 +25,12 @@ int StartScreenShowing = 1;
 bool iconSelected = false;
 Icon lastSelectedIcon;
 
-GLuint textures[30];
-//FT_Library library;
-//FT_Face face;
+GLuint textures[50];
+
+bool debtMode = true;
+bool displayedVictory = false; 
 int debt = 100000;
+int savings = 0;
 
 Button createButton(int textureIndex, glm::vec2 position, int ID) {
    Button button;
@@ -195,7 +197,7 @@ void initGui() {
    LoadTexture((char *)"../Assets/Textures/world3Button.bmp", textures[28]);
    LoadTexture((char *)"../Assets/Textures/world4Button.bmp", textures[29]);
    LoadTexture((char *)"../Assets/Textures/backButton.bmp", textures[30]);
-   LoadTexture((char *)"../Assets/Textures/gameInstructions1.0.bmp", textures[31]);
+   LoadTexture((char *)"../Assets/Textures/controls.bmp", textures[31]);
    LoadTexture((char *)"../Assets/Textures/ScoreBackground.bmp", textures[32]);
    LoadTexture((char *)"../Assets/Fonts/0.bmp", textures[33]);
    LoadTexture((char *)"../Assets/Fonts/1.bmp", textures[34]);
@@ -209,7 +211,11 @@ void initGui() {
    LoadTexture((char *)"../Assets/Fonts/9.bmp", textures[42]);
    LoadTexture((char *)"../Assets/Textures/redCrossHair.bmp", textures[43]);
    LoadTexture((char *)"../Assets/Textures/greenCrossHair.bmp", textures[44]);
-   LoadTexture((char *)"../Assets/Fonts/collegeFund.bmp", textures[45]);
+   LoadTexture((char *)"../Assets/Fonts/collegeLoans.bmp", textures[45]);
+   LoadTexture((char *)"../Assets/Textures/winScreen.bmp", textures[46]);
+   LoadTexture((char *)"../Assets/Fonts/savings.bmp", textures[47]);
+   LoadTexture((char *)"../Assets/Fonts/$.bmp", textures[48]);
+   LoadTexture((char *)"../Assets/Textures/fps.bmp", textures[49]);
 
    //Initialize HotBar icons
    HBIndices.push_back(createIcon(0, textures[0], 23.5, glm::vec2(-0.6, -0.88)));
@@ -267,19 +273,7 @@ void initGui() {
    StartScreen2.push_back(createButton(textures[29], glm::vec2(0.7, -0.4), WORLD4_SELECT_BUTTON));
    StartScreen2.push_back(createButton(textures[30], glm::vec2(0.7, -0.8), BACK_BUTTON));
 
-      //Row 4*/
-/*
-      SSIndices.push_back(createIcon(40, 8.0, glm::vec2(-0.6, -0.2)));
-      SSIndices.push_back(createIcon(40, 8.0, glm::vec2(-0.45, -0.2)));
-      SSIndices.push_back(createIcon(40, 8.0, glm::vec2(-0.3, -0.2)));
-      SSIndices.push_back(createIcon(40, 8.0, glm::vec2(-0.15, -0.2)));
-      SSIndices.push_back(createIcon(40, 8.0, glm::vec2(0.0, -0.2)));
-      SSIndices.push_back(createIcon(40, 8.0, glm::vec2(0.15, -0.2)));
-      SSIndices.push_back(createIcon(40, 8.0, glm::vec2(0.3, -0.2)));
-      SSIndices.push_back(createIcon(40, 8.0, glm::vec2(0.45, -0.2)));
-      SSIndices.push_back(createIcon(40, 8.0, glm::vec2(0.6, -0.2)));
-*/
-      //For the time being
+   //For the time being
    glEnable(GL_TEXTURE_2D);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
@@ -306,14 +300,100 @@ void DrawCrosshair() {
    glUniform1f(h_uTextMode, 0);
 }
 
+vector<int> fpsDigitTextures() {
+   int fpsTemp;
+   int fps = (int)getFPS();
+   vector<int> fpsTextures;
+
+   for(int i = 1; i >= 0; i--) {
+      fpsTemp = fps%10;
+      fps /= 10;
+
+      switch(fpsTemp) {
+         case 0:
+            fpsTextures.push_back(textures[33]);
+            break;
+         case 1:
+            fpsTextures.push_back(textures[34]);
+            break;
+         case 2:
+            fpsTextures.push_back(textures[35]);
+            break;
+         case 3:
+            fpsTextures.push_back(textures[36]);
+            break;
+         case 4:
+            fpsTextures.push_back(textures[37]);
+            break;
+         case 5:
+            fpsTextures.push_back(textures[38]);
+            break;
+         case 6:
+            fpsTextures.push_back(textures[39]);
+            break;
+         case 7:
+            fpsTextures.push_back(textures[40]);
+            break;
+         case 8:
+            fpsTextures.push_back(textures[41]);
+            break;
+         case 9:
+            fpsTextures.push_back(textures[42]);
+            break;
+      }
+   }
+   return fpsTextures;
+}
+
+void DrawFPS() {
+   vector<int> fpsTextures = fpsDigitTextures();
+
+   glUniform1f(h_uTextMode, 1.0);
+   //Draw the fps background
+   SetupSq(-1.0 * p2i_x(g_width) + 0.1, -1.0 * p2i_y(g_height) + 0.2, textures[49], 0.2, 0.4);
+
+   //Draw fps digits
+   SetupSq(-1.0 * p2i_x(g_width) + 0.07, -1.0 * p2i_y(g_height) + 0.15, fpsTextures[1], DIGIT_WIDTH, DIGIT_HEIGHT);
+   SetupSq(-1.0 * p2i_x(g_width) + 0.12, -1.0 * p2i_y(g_height) + 0.15,  fpsTextures[0], DIGIT_WIDTH, DIGIT_HEIGHT);
+
+   glUniform1f(h_uTextMode, 0);
+}
+
+void DrawVictory() {
+   glUniform1f(h_uTextMode, 1.1);
+
+   //Draw the victory screen
+   SetupSq(0, 0, textures[46], 1.0, 1.0);
+
+   glUniform1f(h_uTextMode, 0);
+}
+
 vector<int> scoreDigitTextures() {
    vector<int> digitTextures;
    int array[6];
-   int debtTemp = debt - getPoints()/10;
-   int digitTemp;
+   int debtTemp, digitTemp;
 
-   if(debtTemp <= 0) {
-      debtTemp = 0;
+   //Show debt
+   if(debtMode == true) {
+      //Debt to display
+      debtTemp = debt - getPoints()/10;
+
+      //If reached zero
+      if(debtTemp <= 0) {
+         //Make no lower than zero
+         debtTemp = 0;
+         debt = 0;
+         //Display victory
+         debtMode = false;
+      }
+   }
+   //Show savings
+   else if(debtMode == false) {
+      debtTemp = savings + getPoints()/10 - 100000;
+      //debtTemp = savings;
+      if(debtTemp >= 999999) {
+         debtTemp = 999999;
+      }
    }
 
    //Convert debt number into an array of ints
@@ -403,7 +483,7 @@ void DrawScore() {
    //Background
 
    float debtTemp = debt - getPoints()/10;
-   float normalDebt = debtTemp/debt;
+   float normalizeDebt = debtTemp/debt;
 
    //printf("\nnormalDebt: %f\n", normalDebt);
 
@@ -411,13 +491,22 @@ void DrawScore() {
    //Black border
    SetupColoredSq(p2i_x(g_width) - 0.3, p2i_y(g_height) - 0.35,  glm::vec3(0.0, 0.0, 0.0), 0.51, 0.515);
    //Background
-   SetupColoredSq(p2i_x(g_width) - 0.3, p2i_y(g_height) - 0.35,  glm::vec3(normalDebt, 1.0 - normalDebt, 0), 0.5, 0.5);
+   SetupColoredSq(p2i_x(g_width) - 0.3, p2i_y(g_height) - 0.35,  glm::vec3(normalizeDebt, 1.0 - normalizeDebt, 0), 0.5, 0.5);
 
    glUniform1f(h_uTextMode, 1);
-   SetupSq(p2i_x(g_width) - 0.3, p2i_y(g_height) - 0.3,  textures[45], 0.5, 0.4);
+
+   //Draw "College Loan"
+   if(debtMode == true) {
+      SetupSq(p2i_x(g_width) - 0.3, p2i_y(g_height) - 0.3,  textures[45], 0.5, 0.4);
+   }
+   //Draw "Savings"
+   else {
+      SetupSq(p2i_x(g_width) - 0.3, p2i_y(g_height) - 0.3,  textures[47], 0.5, 0.4);
+   }
 
    //SetupColoredSq(0, 0.35, glm::vec3(1.0, 0.2, 0.2), 1.4, 1.1);
 
+   SetupSq(p2i_x(g_width) - 0.51, p2i_y(g_height) - 0.5,  textures[48], DIGIT_WIDTH, DIGIT_HEIGHT);
    SetupSq(p2i_x(g_width) - 0.46, p2i_y(g_height) - 0.5,  digitTextures[5], DIGIT_WIDTH, DIGIT_HEIGHT);
    SetupSq(p2i_x(g_width) - 0.41, p2i_y(g_height) - 0.5,  digitTextures[4], DIGIT_WIDTH, DIGIT_HEIGHT);
    SetupSq(p2i_x(g_width) - 0.36, p2i_y(g_height) - 0.5,  digitTextures[3], DIGIT_WIDTH, DIGIT_HEIGHT);
@@ -682,12 +771,28 @@ void DrawGui(int mode) {
    }
    //Else game mode
    else {
-      DrawCrosshair();
-      DrawScore();
 
-      if(getGPressed('H')) {
+      DrawScore();
+      DrawFPS();
+
+      //Draw the victory screen if debt is just paid off
+      if(displayedVictory == false && debtMode == false) {
+         DrawVictory();
+
+         //Turn off victory screen if V is pressed to continue
+         if(getGPressed('V')) {
+            displayedVictory = true;
+         }
+      }
+      //Else draw help screen if 'H' is held
+      else if(getGPressed('H')) {
          DrawGameControls();
       }
+      //Else draw Crosshair
+      else {
+         DrawCrosshair();
+      }
+
       //printText2D(string text, int x, int y, int size)
       //printText2D("Corn Flakes", 0, 0, 1.0);
    }

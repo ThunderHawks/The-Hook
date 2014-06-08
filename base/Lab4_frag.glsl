@@ -39,8 +39,18 @@ void main() {
    vec4 texColor1 = texture2D(uTexUnit, vTexCoord);
 
    if(uGuiMode == 1.0) {
+      //Almost completely black
       if(uTextMode == 1.0) {
-         if(texColor1[0] > 0.4 && texColor1[1] > 0.4 && texColor1[2] > 0.4) {
+         if(texColor1[0] > 0.2 && texColor1[1] > 0.2 && texColor1[2] > 0.2) {
+            discard;
+         }
+         else {
+            gl_FragColor = vec4(texColor1[0], texColor1[1], texColor1[2], 1);
+         }
+      }
+      //Only pure white is gone
+      if(uTextMode == 1.1) {
+         if(texColor1[0] < 0.5 && texColor1[1] < 0.5 && texColor1[2] > 0.7) {
             discard;
          }
          else {
