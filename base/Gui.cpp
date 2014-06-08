@@ -27,6 +27,7 @@ Icon lastSelectedIcon;
 
 GLuint textures[50];
 
+
 bool debtMode = true;
 bool displayedVictory = false; 
 int debt = 100000;
@@ -35,6 +36,14 @@ int savings = 0;
 int lastScore = 0;
 vector<int> fpsTextures;
 vector<int> digitTextures;
+//Where updated textures are stored until dance
+//of that digit is completed
+vector<int> updatedDigitTextures;
+//Allows the score text to dance!
+bool danceScore = false;
+bool goingUp;
+vector<glm::vec2> scoreDigitPosition;
+int digitDanceIndex;
 
 //Clock
 clock_t t;
@@ -280,17 +289,32 @@ void initGui() {
    StartScreen2.push_back(createButton(textures[30], glm::vec2(0.7, -0.8), BACK_BUTTON));
 
    //Textures for score
-   digitTextures.push_back(textures[33]);
-   digitTextures.push_back(textures[33]);
-   digitTextures.push_back(textures[33]);
-   digitTextures.push_back(textures[33]);
-   digitTextures.push_back(textures[33]);
    digitTextures.push_back(textures[34]);
+   digitTextures.push_back(textures[33]);
+   digitTextures.push_back(textures[33]);
+   digitTextures.push_back(textures[33]);
+   digitTextures.push_back(textures[33]);
+   digitTextures.push_back(textures[33]);
+
+
+   updatedDigitTextures.push_back(textures[33]);
+   updatedDigitTextures.push_back(textures[33]);
+   updatedDigitTextures.push_back(textures[33]);
+   updatedDigitTextures.push_back(textures[33]);
+   updatedDigitTextures.push_back(textures[33]);
+   updatedDigitTextures.push_back(textures[33]);
    //Textures for fps
    fpsTextures.push_back(textures[33]);
    fpsTextures.push_back(textures[39]);
    //Clock
    t = clock();
+   //Positions for score text
+   scoreDigitPosition.push_back(glm::vec2(p2i_x(g_width) - 0.46, p2i_y(g_height) - 0.5));
+   scoreDigitPosition.push_back(glm::vec2(p2i_x(g_width) - 0.41, p2i_y(g_height) - 0.5));
+   scoreDigitPosition.push_back(glm::vec2(p2i_x(g_width) - 0.36, p2i_y(g_height) - 0.5));
+   scoreDigitPosition.push_back(glm::vec2(p2i_x(g_width) - 0.31, p2i_y(g_height) - 0.5));
+   scoreDigitPosition.push_back(glm::vec2(p2i_x(g_width) - 0.26, p2i_y(g_height) - 0.5));
+   scoreDigitPosition.push_back(glm::vec2(p2i_x(g_width) - 0.21, p2i_y(g_height) - 0.5));
 
    //For the time being
    glEnable(GL_TEXTURE_2D);
@@ -420,40 +444,49 @@ void scoreDigitTextures() {
    }
 
    //Convert debt number into an array of ints
-   for(int i = 0; i < 6; i++) {
+   for(int i = 5; i >= 0; i--) {
       digitTemp = debtTemp%10;
       debtTemp /= 10;
 
       switch(digitTemp) {
          case 0:
-            digitTextures[i] = textures[33];
+            updatedDigitTextures[i] = textures[33];
             break;
          case 1:
-            digitTextures[i] = textures[34];
+            //printf("%d to 1\n", i);
+            updatedDigitTextures[i] = textures[34];
             break;
          case 2:
-            digitTextures[i] = textures[35];
+            //printf("%d to 2\n", i);
+            updatedDigitTextures[i] = textures[35];
             break;
          case 3:
-            digitTextures[i] = textures[36];
+            //printf("%d to 3\n", i);
+            updatedDigitTextures[i] = textures[36];
             break;
          case 4:
-            digitTextures[i] = textures[37];
+            //printf("%d to 4\n", i);
+            updatedDigitTextures[i] = textures[37];
             break;
          case 5:
-            digitTextures[i] = textures[38];
+            //printf("%d to 5\n", i);
+            updatedDigitTextures[i] = textures[38];
             break;
          case 6:
-            digitTextures[i] = textures[39];
+            //printf("%d to 6\n", i);
+            updatedDigitTextures[i] = textures[39];
             break;
          case 7:
-            digitTextures[i] = textures[40];
+            //printf("%d to 7\n", i);
+            updatedDigitTextures[i] = textures[40];
             break;
          case 8:
-            digitTextures[i] = textures[41];
+            //printf("%d to 8\n", i);
+            updatedDigitTextures[i] = textures[41];
             break;
          case 9:
-            digitTextures[i] = textures[42];
+            //printf("%d to 9\n", i);
+            updatedDigitTextures[i] = textures[42];
             break;
       }
    }
@@ -500,25 +533,30 @@ void scoreDigitTextures() {
    }*/
 }
 
+void initScoreDance() {
+   lastScore = getPoints();
+   danceScore = true;
+   digitDanceIndex = 0;
+   goingUp = true;
+}
+
 void DrawScore() {
 
    //Only call scoreDigitTextures if the score has changed
    if(getPoints() != lastScore) {
       scoreDigitTextures();
-      lastScore = getPoints();
+      initScoreDance();
    }
+
    //Background
 
    float debtTemp = debt - getPoints()/10;
    float normalizeDebt = debtTemp/debt;
-
-   //printf("\nnormalDebt: %f\n", normalDebt);
-
-   //printf("\nnormalDebt: %f %f %f\n", normalDebt, 1.0 - normalDebt, 0.0);
+   //printf("debtTemp: %f\n", debtTemp);
    //Black border
    SetupColoredSq(p2i_x(g_width) - 0.3, p2i_y(g_height) - 0.35,  glm::vec3(0.0, 0.0, 0.0), 0.51, 0.515);
    //Background
-   SetupColoredSq(p2i_x(g_width) - 0.3, p2i_y(g_height) - 0.35,  glm::vec3(normalizeDebt, 1.0 - normalizeDebt, 0), 0.5, 0.5);
+   SetupColoredSq(p2i_x(g_width) - 0.3, p2i_y(g_height) - 0.35,  glm::vec3(normalizeDebt, 1.0 - normalizeDebt, 0.1), 0.5, 0.5);
 
    glUniform1f(h_uTextMode, 1);
 
@@ -533,13 +571,16 @@ void DrawScore() {
 
    //SetupColoredSq(0, 0.35, glm::vec3(1.0, 0.2, 0.2), 1.4, 1.1);
 
+
+   //scoreDigitPosition.push_back(glm::vec2(p2i_x(g_width) - 0.51, p2i_y(g_height) - 0.5));
+   
    SetupSq(p2i_x(g_width) - 0.51, p2i_y(g_height) - 0.5,  textures[48], DIGIT_WIDTH, DIGIT_HEIGHT);
-   SetupSq(p2i_x(g_width) - 0.46, p2i_y(g_height) - 0.5,  digitTextures[5], DIGIT_WIDTH, DIGIT_HEIGHT);
-   SetupSq(p2i_x(g_width) - 0.41, p2i_y(g_height) - 0.5,  digitTextures[4], DIGIT_WIDTH, DIGIT_HEIGHT);
-   SetupSq(p2i_x(g_width) - 0.36, p2i_y(g_height) - 0.5,  digitTextures[3], DIGIT_WIDTH, DIGIT_HEIGHT);
-   SetupSq(p2i_x(g_width) - 0.31, p2i_y(g_height) - 0.5,  digitTextures[2], DIGIT_WIDTH, DIGIT_HEIGHT);
-   SetupSq(p2i_x(g_width) - 0.26, p2i_y(g_height) - 0.5,  digitTextures[1], DIGIT_WIDTH, DIGIT_HEIGHT);
-   SetupSq(p2i_x(g_width) - 0.21, p2i_y(g_height) - 0.5,  digitTextures[0], DIGIT_WIDTH, DIGIT_HEIGHT); 
+   SetupSq(scoreDigitPosition[0].x, scoreDigitPosition[0].y,  digitTextures[0], DIGIT_WIDTH, DIGIT_HEIGHT);
+   SetupSq(scoreDigitPosition[1].x, scoreDigitPosition[1].y,  digitTextures[1], DIGIT_WIDTH, DIGIT_HEIGHT);
+   SetupSq(scoreDigitPosition[2].x, scoreDigitPosition[2].y,  digitTextures[2], DIGIT_WIDTH, DIGIT_HEIGHT);
+   SetupSq(scoreDigitPosition[3].x, scoreDigitPosition[3].y,  digitTextures[3], DIGIT_WIDTH, DIGIT_HEIGHT);
+   SetupSq(scoreDigitPosition[4].x, scoreDigitPosition[4].y,  digitTextures[4], DIGIT_WIDTH, DIGIT_HEIGHT);
+   SetupSq(scoreDigitPosition[5].x, scoreDigitPosition[5].y,  digitTextures[5], DIGIT_WIDTH, DIGIT_HEIGHT); 
    glUniform1f(h_uTextMode, 0);
 }
 
@@ -776,9 +817,52 @@ void GuiPressing(int mode, int xPos, int yPos) {
    }
 }
 
+void AnimationStep() {
+   if(danceScore == true) {
+      glm::vec2 temp = scoreDigitPosition[digitDanceIndex];
+
+      if(goingUp == true) {
+         //If dancing digit is less than the height limit
+         if(temp.y < 0.6) {
+            //Move up slightly
+            scoreDigitPosition[digitDanceIndex] = glm::vec2(temp.x, temp.y + 0.025);
+         }
+         //Else at height limit so go back down
+         else {
+            goingUp = false;
+            //Update texture at that position
+            digitTextures[digitDanceIndex] = updatedDigitTextures[digitDanceIndex];
+            scoreDigitPosition[digitDanceIndex] = glm::vec2(temp.x, temp.y - 0.025);
+         }
+      }
+      else {
+         //If dancing digit is greater than the height limit
+         if(temp.y - 0.025 >= 0.5) {
+            //Move up slightly
+            scoreDigitPosition[digitDanceIndex] = glm::vec2(temp.x, temp.y - 0.025);
+         }
+         //Else at height limit so stop with this index
+         else {
+            goingUp = true;
+            //If last dance index
+            if(digitDanceIndex == 5) {
+               //Stop dance
+               danceScore = false;
+            }
+            //Else continue dance
+            else {
+               digitDanceIndex++;
+            }
+         }
+      }
+   }
+}
+
 void DrawGui(int mode) {
    
    ready2D();
+
+   AnimationStep();
 
    //printf("Mode; %d\n", mode);
    //If start screen mode
