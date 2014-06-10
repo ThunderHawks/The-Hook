@@ -204,12 +204,9 @@ void drawEntities(int passNum, std::vector<Entity > *entities) {
          }
             
          if(!getGPressed('V')) {
-         	
-         	if (passNum <= 2) {
-         		PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
-            		entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*3, entityTemp.BSRadius);
-            	//++objects;		
-            }
+      		PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
+         		entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*3, entityTemp.BSRadius);
+         	//++objects;		
          }
       }
       else if(Mode == EDIT_MODE) {
@@ -274,7 +271,7 @@ void drawGameElements(int passNum, std::vector<Entity > *entities) {
    //END OF DANCING CYLINDER CODE HERE!!
    
    /*Draw the arrow*/
-   if (Mode == GAME_MODE && passNum <= 2 && (ObjDir.x != 0 || ObjDir.y != 0 || ObjDir.z != 0)) {
+   if (Mode == GAME_MODE && passNum != 0 && (ObjDir.x != 0 || ObjDir.y != 0 || ObjDir.z != 0)) {
    	
    	glm::vec3 gaze = glm::normalize(GetLookAt() - GetEye());
    	glm::vec3 ArrowLoc = GetEye() + 3.f*gaze + glm::vec3(0, 1, 0);
@@ -470,8 +467,6 @@ void renderScene() {
    curView = SetShadowView();
    curProj = SetOrthoProjectionMatrix(GetEye(), GetLookAt(), 10.0);
    glUniform3f(h_uCamPos, 0.0, 3.0, 4.0);
-   
-   
    glfwDraw(window, 0, &entities);
    shadowMap->UnbindDrawFBO(g_width, g_height);
 
@@ -485,7 +480,7 @@ void renderScene() {
    curView = SetView();
    curProj = SetProjectionMatrix();
    glUniform3f(h_uCamPos, GetEye().x, GetEye().y, GetEye().z);
-/*
+
    // Render glow map
    glowMap->BindDrawFBO();
    GLenum renderTargets[] = {GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT};
@@ -496,7 +491,7 @@ void renderScene() {
    glfwDraw(window, 3, &entities);
    glowMap->UnbindDrawFBO(g_width, g_height);
    glUniform1f(h_uTextMode, 0);
-*/
+
    // Render scene normally and draw
    glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -508,7 +503,7 @@ void renderScene() {
    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
    glfwDraw(window, 2, &entities);
    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-/*
+
    // Blur the glow map
    glowMap->BindReadFBO();
    glowBlurMap->BindDrawFBO();
@@ -527,7 +522,7 @@ void renderScene() {
    ready3D();
    glUniform1f(h_uTextMode, 0);
    glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
-*/
+
    //Draw any gui elements that should be on the screen
    DrawGui(Mode);
 
