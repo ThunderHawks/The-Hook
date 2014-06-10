@@ -277,13 +277,25 @@ void drawGameElements(int passNum, std::vector<Entity > *entities) {
    	glm::vec3 ArrowLoc = GetEye() + 3.f*gaze + glm::vec3(0, 1, 0);
 
 		glm::vec3 tmpa,tmpb;
-		tmpa = GetEye();
+      float angle, diffX, diffZ;
+		tmpa = ArrowLoc;//GetEye();
 		tmpb = getCurentObjective();
+
+      diffZ = tmpb.z - tmpa.z;
+      diffX = tmpb.x - tmpa.x;
+      angle = -atan(diffZ/diffX) * 180.0 / 3.14159;
+      if (diffZ < 0.0 && diffX < 0.0) // Quadrant III wrt tmpa
+         angle += 180.0;
+      else if (diffZ > 0.0 && diffX < 0.0) // Quadrant IV wrt tmpb
+         angle -= 180.0;
+      PlaceModel(arrow, ArrowLoc.x, ArrowLoc.y, ArrowLoc.z, .1, .1, .1, angle, 0);
+/*
 		tmpa.y=0;
 		tmpb.y=0;
 		
 		//printf("%f is angle %f %f\n",acos((tmpa.z-tmpb.z)/(tmpa-tmpb).length()),tmpa.z-tmpb.z,(tmpa-tmpb).length());	
 		PlaceModel(arrow, ArrowLoc.x, ArrowLoc.y, ArrowLoc.z, .1, .1, .1 , acos((tmpa.z-tmpb.z)/(tmpa-tmpb).length())*180/3.14159 ,0);
+*/
    }
 
    drawSelectedObjects();
