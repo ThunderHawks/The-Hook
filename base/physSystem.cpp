@@ -321,7 +321,7 @@ void physStep(float time){
    //printf("the h is %d\n",getPressed('E'));
    if(playerGrappleActive) physGrapplePoint();
    //printf("a\n");
-   dynamicsWorld->stepSimulation(1/time,5);
+   dynamicsWorld->stepSimulation(1/time,10);
    //printf("fall %f %f\n",fspeed,player->getLinearVelocity().getY());
    if(fspeed<-8 && player->getLinearVelocity().getY()<-8){
       playerFall = 1;
