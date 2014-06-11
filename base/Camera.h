@@ -5,7 +5,7 @@
 #define GLM_HPP_
 #include "glm/glm.hpp"
 #endif
-
+#include "InitHelpers.h"
 extern GLint h_uViewMatrix;
 extern GLint h_uLightViewMatrix;
 

@@ -128,10 +128,21 @@ void Sound::playSFX(char* path) {
 	engine->play2D(path);
 }
 
-void Sound::play3DSFX(char* path, float x, float y, float z) {
-	vec3df position(x, y, z);
+void Sound::play3DSFX(char* path, float charX, float charY, float charZ, float grappleX, float grappleY, float grappleZ) {
+	glm::vec3 gaze = GetLookAt() - GetEye();
+	vec3df grapplePosition(grappleX, grappleY, grappleZ);
 
-	engine->play3D(path, position);
+	vec3df position(charX, charY, charZ);    			// position of the listener
+	vec3df lookDirection(gaze.x, gaze.y, gaze.z); 	// the direction the listener looks into
+	vec3df velPerSecond(0,0,0);    						// only relevant for doppler effects
+ 	vec3df upVector(0,1,0);        						// where 'up' is in your 3D scene
+
+ 	engine->setListenerPosition(position, lookDirection, velPerSecond, upVector);
+
+	ISound * snd = engine->play3D(path, grapplePosition, false, true);
+	snd->setMinDistance(30.0f); // a loud sound
+   snd->setIsPaused(false); 	 // unpause the sound
+	snd->drop(); 					 //garbage clean up
 }
 
 /**************************
@@ -154,6 +165,13 @@ void Sound::muteAll() {
 		unmute();
 	else
 		setMute();
+}
+
+void Sound::muteBGM() {
+	if(!isPaused())
+		music->setIsPaused(true);
+	else
+		music->setIsPaused(false);
 }
 
 /**************************

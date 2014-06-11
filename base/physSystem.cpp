@@ -16,6 +16,7 @@
 #include <vector>
 #include "particle.h"
 #include "camBox.h"
+#include "IOGame.h"
 
 //phys//
 btRigidBody* groundRigidBody;
@@ -174,7 +175,7 @@ int grappleInRange(float lx,float ly,float lz){
    lookAt -= glm::vec3(gu.x, 0, gu.z);
 //   int ret = //inRange(50,75,glm::lookAt(playerPoss(),glm::vec3(tempLookAt.x+75*dir.x,tempLookAt.y+75*dir.y,tempLookAt.z+75*dir.z),glm::vec3(0,1,0)));
    //printf("grapple is %d range\n",RayCallback.hasHit());
-   if(RayCallback.hasHit())   printf("%f %f %f",RayCallback.m_hitPointWorld.getX(),RayCallback.m_hitPointWorld.getY(),RayCallback.m_hitPointWorld.getZ());
+   //if(RayCallback.hasHit())   printf("%f %f %f",RayCallback.m_hitPointWorld.getX(),RayCallback.m_hitPointWorld.getY(),RayCallback.m_hitPointWorld.getZ());
    return    RayCallback.hasHit();
 }
 
@@ -222,8 +223,11 @@ bool physGrapple(float lx,float ly,float lz){
       if(tmp.getY()>1){
          playerGrappleActive =1;
          //SFX HERE
-         Sound s = Sound();
-         s.play3DSFX("../Assets/Sounds/HookShot.mp3", grapplingHookLocation().x, grapplingHookLocation().y, grapplingHookLocation().z);
+         //Sound s = Sound();
+         //s.playSFX("../Assets/Sounds/HookShot.mp3");
+         //printf("%f %f %f - player loc; %f %f %f grapple loc\n", physGetPlayerX(), physGetPlayerY(), physGetPlayerZ(), grapplingHookLocation().x, grapplingHookLocation().y, grapplingHookLocation().z);
+         //printf("%f %f %f grapple sfx distance\n", abs(grapplingHookLocation().x - physGetPlayerX()), abs(grapplingHookLocation().y - physGetPlayerY()), abs(grapplingHookLocation().z - physGetPlayerZ()));
+         musicPlayer.BGM.play3DSFX("../Assets/Sounds/HookShot.mp3", physGetPlayerX(), physGetPlayerY(), physGetPlayerZ(), grapplingHookLocation().x, grapplingHookLocation().y, grapplingHookLocation().z);
          
          ret = true;
       }
@@ -240,6 +244,7 @@ void physJump(){
       setPlayerSpeed(0,30,0);
       playerJump=0;
       playerFall = 0;
+      musicPlayer.BGM.playSFX("../Assets/Sounds/Jump.wav");
    }
 }
 float physGetHeight(float x, float y){
@@ -321,7 +326,7 @@ void physStep(float time){
    //printf("the h is %d\n",getPressed('E'));
    if(playerGrappleActive) physGrapplePoint();
    //printf("a\n");
-   dynamicsWorld->stepSimulation(1/time,5);
+   dynamicsWorld->stepSimulation(1/time,10);
    //printf("fall %f %f\n",fspeed,player->getLinearVelocity().getY());
    if(fspeed<-8 && player->getLinearVelocity().getY()<-8){
       playerFall = 1;

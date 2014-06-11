@@ -558,6 +558,8 @@ void renderScene() {
 }
 
 void toStartScreen() {
+	if (!musicPlayer.BGM.isPaused())
+		musicPlayer.muteBGM();
    Mode = STARTSCREEN_MODE;
    glfwSetMouseButtonCallback( window, glfwStartScreenMouse );
    glfwSetCursorPosCallback( window, glfwStartScreenGetCursorPos );
@@ -637,6 +639,8 @@ void initPlay(string fileName) {
       musicPlayer = SoundPlayer();
       musicPlayer.CreatePlayList("./playList.txt");
       musicStarted = true;
+   } else {
+   	musicPlayer.muteBGM();
    }
 
    glfwSetKeyCallback(window, glfwGameKeyPress);
