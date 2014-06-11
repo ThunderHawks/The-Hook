@@ -67,17 +67,17 @@ void main() {
    else if (uTextMode == 2.0) {
       // Fill the bloom map, taking fog into account
       float fogDist = min(length(vPos - uCamPos), 350.0) / 350.0;
-      gl_FragColor = mix(vec4(uMat.aColor, 1.0), vec4(0.0, 0.0, 0.0, 0.0), pow(fogDist, 5.0));
+      gl_FragColor = mix(vec4(uMat.aColor, uMat.alpha), vec4(0.0, 0.0, 0.0, 0.0), pow(fogDist, 5.0));
    }
    else if (uTextMode == 3.0) {
       // Blur the bloom map horizontally
-      float blurSize = 1.0/200.0;
+      float blurSize = 1.0/300.0;
       vec4 blur = vec4(0.0);
       vec4 clear = vec4(1.0, 1.0, 1.0, 0.0);
       // If the fragment is in the glowing light, use the light color
       if (texture2D(uTexUnit, vTexCoord).a != 0.0) {
          blur = texture2D(uTexUnit, vTexCoord);
-         blur = vec4(blur.rgb, blur.a * 0.75);
+         blur = vec4(blur.rgb, blur.a*.5);
       }     
       // Otherwise, blur the bloom map    
       else {
