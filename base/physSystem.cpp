@@ -83,7 +83,7 @@ void physicsInit() {
 
    //player
 //   printf("%d is pl point\n",player);
-   player = createStaticSphere(1,1,1,1,1,1,btQuaternion(0,0,0,1),1,0,0,0);
+   player = createStaticSphere(1,1,1,1.7,1,1,btQuaternion(0,0,0,1),1,0,0,0);
    
    player->setSleepingThresholds (0, 0);
    //chara = LoadMesh("../Assets/Models/topHatChar.obj");

@@ -95,6 +95,10 @@ glm::mat4 curProj, curView;
 vector<Objective*> objectives;
 std::list<part*> particleSpawner;
 
+/*adding in a way to store model matricies for each building/unmoving object*/
+vector<glm::mat4> allModelMats;
+vector<Entity> allEnts;
+
 //camera thing
 int MAX_DISTANCE = 20;
 
@@ -203,7 +207,10 @@ void drawEntities(int passNum, std::vector<Entity > *entities, std::vector <glm:
          }
             
          if(!getGPressed('V')) {
-      		PlaceModel(*entityTemp.mesh, modelMat);
+         	if (cool)
+         		PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*3);
+         	else
+      			PlaceModel(*entityTemp.mesh, modelMat);
          	//++objects;		
          }
       }
@@ -215,7 +222,12 @@ void drawEntities(int passNum, std::vector<Entity > *entities, std::vector <glm:
             //while(!(mat = rand()%13));
                SetMaterial(entityTemp.material);
          }
-         if(!getGPressed('V')) PlaceModel(*entityTemp.mesh, modelMat);
+         if(!getGPressed('V')) {
+          	if (cool)
+         		PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*3);
+         	else
+      			PlaceModel(*entityTemp.mesh, modelMat);
+         }
       }
    }
 
@@ -264,7 +276,7 @@ void drawGameElements(int passNum, std::vector<Entity > *entities, std::vector <
       if (ctr++%3 == 0)
          frm++;
 
-   PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY() - .7, physGetPlayerZ(), .25, .25, .25, -getYaw()*180/3.14 - 90, frm%120);
+   PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY() - 1.3, physGetPlayerZ(), .25, .25, .25, -getYaw()*180/3.14 - 90, frm%120);
    //END OF DANCING CYLINDER CODE HERE!!
    
    /*Draw the arrow*/
@@ -432,6 +444,7 @@ void renderScene() {
    
    float largestRadius = 0;
    Entity largestEntity;
+   int i;
 
 
 	curView = SetView();
@@ -442,21 +455,43 @@ void renderScene() {
 	gu = glm::cross(GetUp(), gw)/magnitude(glm::cross(GetUp(), gw));
 	  	
    //all = GetNearby(FAR_PLANE);
-   for (int i = getEntityNum() - 1; i > 0; i--) {
-   	Entity entityTemp = getEntityAt(i);
+   /*TODO change to an iterator*/
+   if (Mode == GAME_MODE) {
+   	printf("The size is %d\n", allEnts.size());
+   	for (i = allEnts.size() - 1; i > 0; i--) {
+			Entity entityTemp = allEnts[i];
 
-		holdMat = GetModel(entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x, entityTemp.scale.y, entityTemp.scale.z, entityTemp.angle);
+			holdMat = allModelMats[i];
 		
 		
-		if ( checkViewFrustum(glm::vec3 (0,0,0), entityTemp.BSRadius, curProj*curView*holdMat) == 0) {
-			if (largestRadius < entityTemp.BSRadius) {
-				largestRadius = entityTemp.BSRadius;
-				largestEntity = entityTemp;
+			if ( checkViewFrustum(glm::vec3 (0,0,0), entityTemp.BSRadius, curProj*curView*holdMat) == 0) {
+				if (largestRadius < entityTemp.BSRadius) {
+					largestRadius = entityTemp.BSRadius;
+					largestEntity = entityTemp;
+				}
+				entities.push_back(entityTemp);
+				storedModels.push_back(holdMat);
 			}
-			entities.push_back(entityTemp);
-			storedModels.push_back(holdMat);
+			
 		}
-   	
+   } else {
+		for (i = getEntityNum() - 1; i > 0; i--) {
+			Entity entityTemp = getEntityAt(i);
+			
+
+			holdMat = GetModel(entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x, entityTemp.scale.y, entityTemp.scale.z, entityTemp.angle);
+		
+		
+			if ( checkViewFrustum(glm::vec3 (0,0,0), entityTemp.BSRadius, curProj*curView*holdMat) == 0) {
+				if (largestRadius < entityTemp.BSRadius) {
+					largestRadius = entityTemp.BSRadius;
+					largestEntity = entityTemp;
+				}
+				entities.push_back(entityTemp);
+				storedModels.push_back(holdMat);
+			}
+			
+		}
    }
    //entities = all; Change the entities 5 lines up to all if you want.
    
@@ -478,11 +513,11 @@ void renderScene() {
    shadowMap->BindDepthTex();
 
    // Render depth info from light's perspective
-   bool isLock = isLocked();
-   camlock(false);
-   glm::vec3 tempEye = GetEye();
-   glm::vec3 tempLook = GetLookAt();
-   float tempDist = getDistance();
+	bool isLock = isLocked();
+	camlock(false);
+	glm::vec3 tempEye = GetEye();
+	glm::vec3 tempLook = GetLookAt();
+	float tempDist = getDistance();
 
    shadowMap->BindDrawFBO();
    glClear(GL_DEPTH_BUFFER_BIT);
@@ -493,14 +528,14 @@ void renderScene() {
    glUniform3f(h_uCamPos, 0.0, 3.0, 4.0);
    glfwDraw(window, 0, &entities, &storedModels);
    shadowMap->UnbindDrawFBO(g_width, g_height);
-
+   
    SetLookAt(tempLook);
-   SetEye(tempEye);   
-   setDistance(tempDist);
+	SetEye(tempEye);   
+	setDistance(tempDist);
 
    // Set the eye and look at point to their original locations
    resetVecs();
-   camlock(isLock);
+	camlock(isLock);
 
    if (Mode != GAME_MODE) {
    	SetLookAt(origLookAt);
@@ -576,6 +611,7 @@ void toStartScreen() {
    glfwSetCursorPosCallback( window, glfwStartScreenGetCursorPos );
    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
    freeLevelData();
+   
 }
 
 void initStartScreen() {
@@ -662,7 +698,15 @@ void initPlay(string fileName) {
    physicsInit();
    initLevelLoader(Mode);
    loadLevel(fileName);
-
+   
+   /*liquid efficiency poured here*/
+   //all = GetNearby(FAR_PLANE);
+   for (int i = getEntityNum() - 1; i > 0; i--) {
+   	Entity entityTemp = getEntityAt(i);
+		allModelMats.push_back(GetModel(entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x, entityTemp.scale.y, entityTemp.scale.z, entityTemp.angle) );
+		allEnts.push_back(entityTemp);
+   }
+	
    Objective *tObj;
    while (objectives.size() < 4) {
       tObj = new Objective(-42.0, -379.0, 230.0, 67.0);
@@ -709,8 +753,9 @@ float getFPS() {
    return 1.0/diff;
 }
 
-float camTime= 0;
-float camH  = 0;
+float camTime = 0;
+float camH = 0;
+
 int main( int argc, char *argv[] )
 {
 	float t;
@@ -734,30 +779,30 @@ int main( int argc, char *argv[] )
       }
       else if(Mode == GAME_MODE){
          if(paused == false) {
-            if(camTime<7){
-               camlock(false);
-               camTime+=1/t;
-               SetLookAt(glm::vec3(0,20,0));
-               incrementYaw(1.2/t);
-               setPitch(.5);
-               setDistance(25+50*(9-camTime));
-               resetVecs();
-               camlock(true);
-            }
-            else if(camTime<9){
-               camlock(false);
-               camTime+=1/t;
-               camH+=1/t;
-               SetLookAt(glm::vec3(0,25-camH*11.75,0));
-               incrementYaw(1/t);
-               setPitch(.5);
-               setDistance(20+50*(9-camTime));
-               resetVecs();
-               camlock(true);
-            }
-            else{
-               camlock(false);
-            }
+				if(camTime<7){
+					camlock(false);
+					camTime+=1/t;
+					SetLookAt(glm::vec3(0,20,0));
+					incrementYaw(1.2/t);
+					setPitch(.5);
+					setDistance(25+50*(9-camTime));
+					resetVecs();
+					camlock(true);
+				}
+				else if(camTime<9){
+					camlock(false);
+					camTime+=1/t;
+					camH+=1/t;
+					SetLookAt(glm::vec3(0,25-camH*11.75,0));
+					incrementYaw(1/t);
+					setPitch(.5);
+					setDistance(20+50*(9-camTime));
+					resetVecs();
+					camlock(true);
+				}
+				else{
+					camlock(false);
+				}
             //player appy physics controls
             SetLookAt(glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ()));
             SetSpeed(.05*magnitude(getPlayerSpeed()));
