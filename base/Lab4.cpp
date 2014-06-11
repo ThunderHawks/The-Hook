@@ -457,7 +457,6 @@ void renderScene() {
    //all = GetNearby(FAR_PLANE);
    /*TODO change to an iterator*/
    if (Mode == GAME_MODE) {
-   	printf("The size is %d\n", allEnts.size());
    	for (i = allEnts.size() - 1; i > 0; i--) {
 			Entity entityTemp = allEnts[i];
 
@@ -611,7 +610,9 @@ void toStartScreen() {
    glfwSetCursorPosCallback( window, glfwStartScreenGetCursorPos );
    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
    freeLevelData();
-   
+
+	allModelMats.clear();
+	allEnts.clear();   
 }
 
 void initStartScreen() {
