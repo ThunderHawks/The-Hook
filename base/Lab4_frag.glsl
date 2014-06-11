@@ -109,7 +109,7 @@ void main() {
          }
          
          if (onLeft && onRight)
-            blur = clear;
+            blur = vec4(0.0);
          else
             blur = vec4(blurColor.rgb, alpha);
       }
@@ -119,7 +119,8 @@ void main() {
    }
    else if (uTextMode == 5.0) {
       // Add bloom light to the scene
-      gl_FragColor = texColor1;
+      if (texColor1.a > 0.0000001)
+         gl_FragColor = texColor1;
    }
    else {
       norm = normalize(vNorm);
