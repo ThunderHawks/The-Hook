@@ -30,6 +30,7 @@
 #define BACK_BUTTON 8
 
 extern GLFWwindow *window;
+extern int inProgress;
 
 /*TEXTURING*/
 

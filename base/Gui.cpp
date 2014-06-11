@@ -25,8 +25,7 @@ int StartScreenShowing = 1;
 bool iconSelected = false;
 Icon lastSelectedIcon;
 
-GLuint textures[50];
-
+GLuint textures[57];
 
 bool debtMode = true;
 bool displayedVictory = false; 
@@ -36,6 +35,7 @@ int savings = 0;
 int lastScore = 0;
 vector<int> fpsTextures;
 vector<int> digitTextures;
+vector<int> penaltyTextures;
 //Where updated textures are stored until dance
 //of that digit is completed
 vector<int> updatedDigitTextures;
@@ -44,9 +44,12 @@ bool danceScore = false;
 bool goingUp;
 vector<glm::vec2> scoreDigitPosition;
 int digitDanceIndex;
-
 //Clock
 clock_t t;
+clock_t scorePenalty;
+//Bool to determine if penalty timer is active
+bool penaltyTimer = false;
+long startPenaltyTime, currentPenaltyTime;
 
 Button createButton(int textureIndex, glm::vec2 position, int ID) {
    Button button;
@@ -162,22 +165,7 @@ void initGui() {
 
    Icon iconTemp;
 
-      //Initialize Freetype library
-      /*int error = FT_Init_FreeType(&library);
-      if(error) {
-         printf("Error: An error has occurred initializing the FREETYPE library\n");
-      }
-      //Initialize Freetype New Face
-      error = FT_New_Face(library, "/usr/share/fonts/truetype/arial.ttf", 0, &face );
-      if(error == FT_Err_Unknown_File_Format) {
-         printf("Error: Font file could be opened and read but unsupported format\n");
-      }
-      else if(error) {
-         printf("Error: Font file could not be opened and read or broken\n");
-      }
-*/
-
-   glGenTextures(50, textures);
+   glGenTextures(57, textures);
    glGenTextures(1, textures + 0);
    glGenTextures(1, textures + 1);
 
@@ -231,6 +219,13 @@ void initGui() {
    LoadTexture((char *)"../Assets/Fonts/savings.bmp", textures[47]);
    LoadTexture((char *)"../Assets/Fonts/$.bmp", textures[48]);
    LoadTexture((char *)"../Assets/Textures/fps.bmp", textures[49]);
+   LoadTexture((char *)"../Assets/Textures/StartTitle.bmp", textures[50]);
+   LoadTexture((char *)"../Assets/Textures/SSPic.bmp", textures[51]);
+   LoadTexture((char *)"../Assets/Textures/timePenalty.bmp", textures[52]);
+   LoadTexture((char *)"../Assets/Textures/roundedCube.bmp", textures[53]);
+   LoadTexture((char *)"../Assets/Textures/mailBox.bmp", textures[54]);
+   LoadTexture((char *)"../Assets/Textures/cafe.bmp", textures[55]);
+   LoadTexture((char *)"../Assets/Textures/missionBeacon.bmp", textures[56]);
 
    //Initialize HotBar icons
    HBIndices.push_back(createIcon(0, textures[0], 23.5, glm::vec2(-0.6, -0.88)));
@@ -265,10 +260,10 @@ void initGui() {
    SSIndices.push_back(createIcon(16, textures[16], 54.7, glm::vec2(0.45, 0.4)));
    SSIndices.push_back(createIcon(17, textures[17], 70.0, glm::vec2(0.6, 0.4)));
    //Row 3 
-   SSIndices.push_back(createIcon(18, textures[16], 8.0, glm::vec2(-0.6, 0.1)));
-   SSIndices.push_back(createIcon(19, textures[2], 15.0, glm::vec2(-0.45, 0.1)));
-   SSIndices.push_back(createIcon(20, textures[2], 15.0, glm::vec2(-0.3, 0.1)));
-   SSIndices.push_back(createIcon(21, textures[2], 8.0, glm::vec2(-0.15, 0.1)));
+   SSIndices.push_back(createIcon(18, textures[56], 8.0, glm::vec2(-0.6, 0.1)));
+   SSIndices.push_back(createIcon(19, textures[53], 15.0, glm::vec2(-0.45, 0.1)));
+   SSIndices.push_back(createIcon(20, textures[55], 15.0, glm::vec2(-0.3, 0.1)));
+   SSIndices.push_back(createIcon(21, textures[54], 8.0, glm::vec2(-0.15, 0.1)));
    SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.0, 0.1)));
    SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.15, 0.1)));
    SSIndices.push_back(createIcon(0, textures[21], 8.0, glm::vec2(0.3, 0.1)));
@@ -295,8 +290,6 @@ void initGui() {
    digitTextures.push_back(textures[33]);
    digitTextures.push_back(textures[33]);
    digitTextures.push_back(textures[33]);
-
-
    updatedDigitTextures.push_back(textures[33]);
    updatedDigitTextures.push_back(textures[33]);
    updatedDigitTextures.push_back(textures[33]);
@@ -306,8 +299,14 @@ void initGui() {
    //Textures for fps
    fpsTextures.push_back(textures[33]);
    fpsTextures.push_back(textures[39]);
+   //Textures for time
+   penaltyTextures.push_back(textures[33]);
+   penaltyTextures.push_back(textures[33]);  
+   penaltyTextures.push_back(textures[33]);  
+
    //Clock
    t = clock();
+   scorePenalty = clock();
    //Positions for score text
    scoreDigitPosition.push_back(glm::vec2(p2i_x(g_width) - 0.46, p2i_y(g_height) - 0.5));
    scoreDigitPosition.push_back(glm::vec2(p2i_x(g_width) - 0.41, p2i_y(g_height) - 0.5));
@@ -343,7 +342,51 @@ void DrawCrosshair() {
    glUniform1f(h_uTextMode, 0);
 }
 
+void penaltyDigitTextures() {
+   int timeTemp;
+   currentPenaltyTime = t;
+   int time = (int)((currentPenaltyTime - startPenaltyTime)/CLOCKS_PER_SEC) - 1;
+   //printf("Time so far: %d\n", time);
+   //printf("Current: %lu & start: %lu\n", currentPenaltyTime, startPenaltyTime);
 
+   for(int i = 0; i < 3; i++) {
+      timeTemp = time%10;
+      time /= 10;
+
+      switch(timeTemp) {
+         case 0:
+            penaltyTextures[i] = textures[33];
+            break;
+         case 1:
+            penaltyTextures[i] = textures[34];
+            break;
+         case 2:
+            penaltyTextures[i] = textures[35];
+            break;
+         case 3:
+            penaltyTextures[i] = textures[36];
+            break;
+         case 4:
+            penaltyTextures[i] = textures[37];
+            break;
+         case 5:
+            penaltyTextures[i] = textures[38];
+            break;
+         case 6:
+            penaltyTextures[i] = textures[39];
+            break;
+         case 7:
+            penaltyTextures[i] = textures[40];
+            break;
+         case 8:
+            penaltyTextures[i] = textures[41];
+            break;
+         case 9:
+            penaltyTextures[i] = textures[42];
+            break;
+      }
+   }
+}
 
 void fpsDigitTextures() {
    int fpsTemp;
@@ -490,47 +533,6 @@ void scoreDigitTextures() {
             break;
       }
    }
-   
-  // printf("%d%d%d,%d%d%d\n", array[0], array[1], array[2], array[3], array[4], array[5]);
-  // printf("hi?\n");
-//   printf("%d\n", array[0]);
-/*
-   //Convert array of ints into array of digit textures
-   for(int i = 5; i >= 0; i--) {
-      printf("i: %d\n", i);
-      switch(array[i]) {
-         case 0: 
-            digitTextures[i] = textures[33];
-            break;
-         case 1: 
-            digitTextures[i] = textures[34];
-            break;
-         case 2: 
-            digitTextures[i] = textures[35];
-            break;
-         case 3: 
-            digitTextures[i] = textures[36];
-            break;
-         case 4: 
-            digitTextures[i] = textures[37];
-            break;
-         case 5: 
-            digitTextures[i] = textures[38];
-            break;
-         case 6: 
-            digitTextures[i] = textures[39];
-            break;
-         case 7: 
-            digitTextures[i] = textures[40];
-            break;
-         case 8: 
-            digitTextures[i] = textures[41];
-            break;
-         case 9: 
-            digitTextures[i] = textures[42];
-            break;
-      }
-   }*/
 }
 
 void initScoreDance() {
@@ -629,7 +631,12 @@ void DrawStartScreen() {
    //printf("Screen: %d\n", StartScreenShowing);
 
    //Background
-   SetupSq(0, 0, textures[31], p2w_x(g_width), p2w_y(g_height) * 2.0);
+   SetupSq(0, 0, textures[51], p2w_x(g_width), p2w_y(g_height) * 2.0);
+
+   //Title (animate if time)  
+   glUniform1f(h_uTextMode, 1);
+   SetupSq(0, -0.2, textures[50], (p2w_x(g_width)/2.0), p2w_y(g_height));
+   glUniform1f(h_uTextMode, 0);
 
    if(StartScreenShowing == 1) {
       //printf("SS1: %d\n", (int)StartScreen1.size());
@@ -858,6 +865,22 @@ void AnimationStep() {
    }
 }
 
+void DrawPenaltyTimer() {
+   //currentTime = t;
+   //Get get passed for this mission
+   //int time = currentTime - startTime;
+   penaltyDigitTextures();
+   //printf("Time so far: %d\n", int((currentPenaltyTime - startPenaltyTime)/CLOCKS_PER_SEC));
+   //Draw background of Penalty Texture
+   SetupSq(p2i_x(g_width) - 0.2, p2i_y(g_height) - 0.9,  textures[52], 0.3, 0.5);
+   //Draw penalty digits
+   glUniform1f(h_uTextMode, 1);
+   SetupSq(p2i_x(g_width) - 0.25, p2i_y(g_height) - 1.05, penaltyTextures[2], DIGIT_WIDTH, DIGIT_HEIGHT);
+   SetupSq(p2i_x(g_width) - 0.2, p2i_y(g_height) - 1.05, penaltyTextures[1], DIGIT_WIDTH, DIGIT_HEIGHT);
+   SetupSq(p2i_x(g_width) - 0.15, p2i_y(g_height) - 1.05, penaltyTextures[0], DIGIT_WIDTH, DIGIT_HEIGHT);
+   glUniform1f(h_uTextMode, 0);
+}
+
 void DrawGui(int mode) {
    
    ready2D();
@@ -883,8 +906,25 @@ void DrawGui(int mode) {
    //Else game mode
    else {
 
+      //If mission is started then begin penalty timer!
+      if(inProgress && penaltyTimer == false) {
+         //Start timer
+         startPenaltyTime = t;
+         penaltyTimer = true;
+         //printf("BOOP BOOP, MISSION ALERT, ACTIVATING TIMER\n");
+      }
+      //Else mission has ended, so take away penalty timer!
+      else if(!inProgress && penaltyTimer == true) {
+         penaltyTimer = false;
+         //printf("BOOP BOOP, MISSION COMPLETE, DEACTIVATING TIMER\n");
+      }
+
       DrawScore();
       DrawFPS();
+      //If mission is active
+      if(inProgress) {
+         DrawPenaltyTimer();
+      }
 
       //Draw the victory screen if debt is just paid off
       if(displayedVictory == false && debtMode == false) {
