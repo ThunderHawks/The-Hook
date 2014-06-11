@@ -67,15 +67,16 @@ void main() {
    else if (uTextMode == 2.0) {
       // Fill the bloom map, taking fog into account
       float fogDist = min(length(vPos - uCamPos), 350.0) / 350.0;
-      gl_FragColor = mix(vec4(uMat.aColor, uMat.alpha), vec4(0.0, 0.0, 0.0, 0.0), pow(fogDist, 5.0));
+      gl_FragColor = mix(vec4(uMat.aColor, uMat.alpha), vec4(1.0, 1.0, 1.0, 0.0), pow(fogDist, 5.0));
    }
    else if (uTextMode == 3.0) {
       // Blur the bloom map horizontally
-      float blurSize = 1.0/300.0;
+      float blurSize = 1.0/250.0;
       vec4 blur = vec4(0.0);
       vec4 clear = vec4(1.0, 1.0, 1.0, 0.0);
+      vec4 blurColor = clear;
       // If the fragment is in the glowing light, use the light color
-      if (texture2D(uTexUnit, vTexCoord).a != 0.0) {
+      if (texture2D(uTexUnit, vTexCoord).a > 0.01) {
          blur = texture2D(uTexUnit, vTexCoord);
          blur = vec4(blur.rgb, blur.a*.5);
       }     
@@ -95,8 +96,11 @@ void main() {
             posRange = (1.0 - vTexCoord.x) / blurSize;
 
          // Take the weighted Gaussian distribution
+         blurColor = clear;
          for (count = negRange; count <= posRange; count++) {
             temp = texture2D(uTexUnit, vec2(vTexCoord.x + count*blurSize, vTexCoord.y));
+            if (temp.a > 0.5)//temp.rgb != clear.rgb)
+               blurColor = temp;
             if (count < 0.0 && temp != clear)
                onLeft = true;
             else if (count > 0.0 && temp != clear)
@@ -104,14 +108,23 @@ void main() {
             if (temp != clear)   // Comment this out to have white glow
                blur += temp * Gaussian(count);
          }
+         //blur.rgb = blurColor.rgb;
+         
          if (onLeft && onRight)
             blur = vec4(0.0);
+         //blur/=(posRange-negRange);
       }
-      gl_FragColor = blur;
+      //if (blur.a > 0.01)
+         //blur.rgb = vec3(0,0,1.0);//normalize(blurColor.rgb);
+         blur.rgb = blurColor.rgb;
+         blur.a *= 1.7;
+//      blur.rgb = normalize(blur.rgb);
+      gl_FragColor = blur;//vec4(blur.rgb,0.7);
    }
    else if (uTextMode == 5.0) {
       // Add bloom light to the scene
-      gl_FragColor += texColor1;
+//      gl_FragColor += texColor1;
+      if(texColor1.a>.0000001) gl_FragColor = vec4(texColor1.r,texColor1.g,texColor1.b,texColor1.a); 
    }
    else {
       norm = normalize(vNorm);

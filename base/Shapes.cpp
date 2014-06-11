@@ -517,7 +517,7 @@ void SetMaterial(int i) {
        break;
     //End Beacon
     case 16:
-       safe_glUniform3f(h_uMatAmb, 0.0, 1.0, 0.0);
+       safe_glUniform3f(h_uMatAmb, 0.3, 1.0, 0.3);
        safe_glUniform3f(h_uMatDif, 0.0, 0.0, 0.0);
        safe_glUniform3f(h_uMatSpec, 0.0, 0.0, 0.0);
        safe_glUniform1f(h_uMatShine, 0.0);
