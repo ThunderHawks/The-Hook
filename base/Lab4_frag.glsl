@@ -142,7 +142,7 @@ void main() {
          color = uLColor * uMat.dColor * 0.2;
 
       // Test if the fragment is in a shadow
-      if (uShadeMode == 0) {
+      if (uShadeMode != 2) {
          if (depth < dist && dist < 1.0 && abs(angleNL) >= 0.01)
             color *= 0.3;
          else if (uMat.alpha == 1.0) // If not in a shadow, add specular

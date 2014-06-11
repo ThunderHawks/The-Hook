@@ -500,15 +500,17 @@ void renderScene() {
    glUniform3f(h_uCamPos, GetEye().x, GetEye().y, GetEye().z);
 
    // Render glow map
-   glowMap->BindDrawFBO();
-   GLenum renderTargets[] = {GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT};
-   glDrawBuffers(2, renderTargets);
-   glUniform1f(h_uTextMode, 2);
-   glClearColor(1.0, 1.0, 1.0, 0.0);
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   glfwDraw(window, 3, &entities);
-   glowMap->UnbindDrawFBO(g_width, g_height);
-   glUniform1f(h_uTextMode, 0);
+   if (ShadeMode == 1) {
+      glowMap->BindDrawFBO();
+      GLenum renderTargets[] = {GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT};
+      glDrawBuffers(2, renderTargets);
+      glUniform1f(h_uTextMode, 2);
+      glClearColor(1.0, 1.0, 1.0, 0.0);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      glfwDraw(window, 3, &entities);
+      glowMap->UnbindDrawFBO(g_width, g_height);
+      glUniform1f(h_uTextMode, 0);
+   }
 
    // Render scene normally and draw
    glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
@@ -523,23 +525,25 @@ void renderScene() {
    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
    // Blur the glow map
-   glowMap->BindReadFBO();
-   glowBlurMap->BindDrawFBO();
-   glClearColor(1.0, 1.0, 1.0, 0.0);
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   ready2D();
-   glUniform1f(h_uGuiMode, 0);
-   glUniform1f(h_uTextMode, 3);
-   SetupSq(0.0, 0.0, glowMap->GetColorTex(), 2.0, 2.0);
-   glowMap->UnbindReadFBO(g_width, g_height);
-   glowBlurMap->UnbindDrawFBO(g_width, g_height);
+   if (ShadeMode == 1) {
+      glowMap->BindReadFBO();
+      glowBlurMap->BindDrawFBO();
+      glClearColor(1.0, 1.0, 1.0, 0.0);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      ready2D();
+      glUniform1f(h_uGuiMode, 0);
+      glUniform1f(h_uTextMode, 3);
+      SetupSq(0.0, 0.0, glowMap->GetColorTex(), 2.0, 2.0);
+      glowMap->UnbindReadFBO(g_width, g_height);
+      glowBlurMap->UnbindDrawFBO(g_width, g_height);
 
-   // Draw glowmap over scene
-   glUniform1f(h_uTextMode, 5);
-   SetupSq(0.0, 0.0, glowBlurMap->GetColorTex(), 2.0, 2.0);
-   ready3D();
-   glUniform1f(h_uTextMode, 0);
-   glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
+      // Draw glowmap over scene
+      glUniform1f(h_uTextMode, 5);
+      SetupSq(0.0, 0.0, glowBlurMap->GetColorTex(), 2.0, 2.0);
+      ready3D();
+      glUniform1f(h_uTextMode, 0);
+      glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
+   }
 
    //Draw any gui elements that should be on the screen
    DrawGui(Mode);

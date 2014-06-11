@@ -204,9 +204,9 @@ void glfwGameKeyboard(void) {
       gKeysPressed['M'] = 2;
    }
    if (gKeysPressed['N']) {
-      if (++ShadeMode == 2)
+      if (++ShadeMode == 3)
          ShadeMode = 0;
-      gKeysPressed['N'] = 0;
+      gKeysPressed['N'] = 2;
    }
 }
 
