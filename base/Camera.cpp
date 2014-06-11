@@ -17,7 +17,11 @@ float inSpeed = 0;
 int inEdit = 0;
 glm::vec3 ideal;
 float idealYaw = 0, idealPitch = 0;
+bool cameraLock = false;
 
+void lock(bool l){
+   cameraLock = l;
+}
 void resetVecs() {
 	if (inEdit == 0) {
 		yaw += (idealYaw - yaw)/2 + (idealYaw - yaw)/20;
@@ -25,7 +29,8 @@ void resetVecs() {
 		
 		GetEye();
 	}
-	else {
+	else if(!cameraLock){
+
 		pitch = idealPitch;
 		yaw = idealYaw;
 		lookAtPoint.x = cos(pitch) * cos(yaw);
@@ -91,12 +96,12 @@ glm::vec3 GetEye() {
 }
 /*Sets the eye to a new vec3 and returns it's new location*/
 glm::vec3 SetEye(glm::vec3 newEye) {
-	eye = newEye;
+	if(!cameraLock) eye = newEye;
 	return eye;
 }
 /*Increment the eye by this vec3 and returns its new location*/
 glm::vec3 MoveEye(glm::vec3 toAdd) {
-	eye += toAdd;
+	if(!cameraLock) eye += toAdd;
 	return eye;
 }
 /*returns a vec3 of the LookAt point*/
@@ -105,12 +110,12 @@ glm::vec3 GetLookAt() {
 }
 /*Sets the lookAtPoint to a new location, and returns it*/
 glm::vec3 SetLookAt(glm::vec3 newLookAt) {
-	lookAtPoint = newLookAt;
+	if(!cameraLock) lookAtPoint = newLookAt;
 	return lookAtPoint;
 }
 /*Increment the lookAt by this vec3 and return its new location*/
 glm::vec3 MoveLookAt(glm::vec3 toAdd) {
-	lookAtPoint += toAdd;
+	if(!cameraLock) lookAtPoint += toAdd;
 	//std::cout << "You are at " << lookAtPoint.x << " " << lookAtPoint.y << " " << lookAtPoint.z << std::endl;
 	return lookAtPoint;
 }
@@ -120,27 +125,27 @@ glm::vec3 GetUp() {
 }
 /*Sets the up vector to a new direction, and returns it*/
 glm::vec3 SetUp(glm::vec3 newUp) {
-	up = newUp;
+	if(!cameraLock) up = newUp;
 	return up;
 }
 /*Sets the pitch and returns it*/
 float setPitch (float newPitch) {
-	idealPitch = pitch = newPitch;
+	if(!cameraLock) idealPitch = pitch = newPitch;
 	return idealPitch;
 }
 /*Increment the pitch by the input and return its new location*/
 float incrementPitch(float toAdd) {
-	idealPitch += toAdd;
+	if(!cameraLock) idealPitch += toAdd;
 	return idealPitch;
 }
 /*Sets the yaw and returns it*/
 float setYaw (float newYaw) {
-	idealYaw = yaw = newYaw;
+	if(!cameraLock) idealYaw = yaw = newYaw;
 	return idealYaw;
 }
 /*Increment the yaw by the input and return its new location*/
 float incrementYaw(float toAdd) {
-	idealYaw += toAdd;
+	if(!cameraLock) idealYaw += toAdd;
 	return idealYaw;
 }
 /*returns the yaw*/
@@ -149,12 +154,12 @@ float getYaw() {
 }
 /*Sets the distance and returns it*/
 float setDistance(float newDist) {
-	dist = newDist;
+	if(!cameraLock) dist = newDist;
 	return dist;
 }
 /*Increment the distance by the input and return its new location*/
 float addDistance(float toAdd) {
-	dist += toAdd;
+	if(!cameraLock) dist += toAdd;
 	return dist;
 }
 /*gets the distance*/
@@ -171,7 +176,7 @@ bool checkCollision(glm::vec3 point, float rad) {
 }
 /*Adds a speed factor to the camera*/
 void SetSpeed(float speed) {
-	inSpeed = speed;
+	if(!cameraLock) inSpeed = speed;
 }
 void SetEdit (int status) {
 	inEdit = status;
