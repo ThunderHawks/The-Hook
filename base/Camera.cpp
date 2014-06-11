@@ -19,7 +19,7 @@ glm::vec3 ideal;
 float idealYaw = 0, idealPitch = 0;
 bool cameraLock = false;
 
-void lock(bool l){
+void camlock(bool l){
    cameraLock = l;
 }
 void resetVecs() {

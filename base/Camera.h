@@ -54,5 +54,5 @@ void SetSpeed(float speed);
 /*check if you are in edit mode*/
 void SetEdit (int status);
 void resetVecs();
-void lock(bool l);
+void camlock(bool l);
 #endif

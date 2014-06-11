@@ -697,6 +697,8 @@ float getFPS() {
    return 1.0/diff;
 }
 
+float camTime= 0;
+float camH  = 0;
 int main( int argc, char *argv[] )
 {
 	float t;
@@ -716,9 +718,34 @@ int main( int argc, char *argv[] )
          DrawGui(Mode);
        	 glUseProgram(0);	
          glfwSwapBuffers(window);
+         camTime = 0;
       }
       else if(Mode == GAME_MODE){
          if(paused == false) {
+            if(camTime<7){
+               camlock(false);
+               camTime+=1/t;
+               SetLookAt(glm::vec3(0,20,0));
+               incrementYaw(1.2/t);
+               setPitch(.5);
+               setDistance(25+50*(9-camTime));
+               resetVecs();
+               camlock(true);
+            }
+            else if(camTime<9){
+               camlock(false);
+               camTime+=1/t;
+               camH+=1/t;
+               SetLookAt(glm::vec3(0,25-camH*11.75,0));
+               incrementYaw(1/t);
+               setPitch(.5);
+               setDistance(20+50*(9-camTime));
+               resetVecs();
+               camlock(true);
+            }
+            else{
+               camlock(false);
+            }
             //player appy physics controls
             SetLookAt(glm::vec3(physGetPlayerX(),physGetPlayerY(),physGetPlayerZ()));
             SetSpeed(.05*magnitude(getPlayerSpeed()));
