@@ -82,6 +82,9 @@ class SoundPlayer {
 		
 		//Mutes everything; SFX don't play
 		void muteAll();
+		
+		//Mutes the BGM; SFX plays
+		void muteBGM();
 
 };
 

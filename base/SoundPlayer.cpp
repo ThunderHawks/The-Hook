@@ -65,6 +65,10 @@ void SoundPlayer::prevSong() {
 void SoundPlayer::muteAll() {
 	BGM.muteAll();
 }
+
+void SoundPlayer::muteBGM() {
+	BGM.muteBGM();
+}
 /******************************************************************************/
 
 void PlayBackground() {

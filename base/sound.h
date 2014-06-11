@@ -6,6 +6,8 @@
 #include <cstdlib>
 #include <algorithm>
 
+#include "Camera.h"
+
 class Sound {
 
 	private:
@@ -78,7 +80,7 @@ class Sound {
 		void playSFX(char* path);
 		
 		// Plays a 3D sound effect
-		void play3DSFX(char* path, float x, float y, float z);
+		void play3DSFX(char* path, float charX, float charY, float charZ, float grappleX, float grappleY, float grappleZ);
 
 		/**************************
 		 VOLUME CONTROL FUNCTIONS
@@ -94,6 +96,9 @@ class Sound {
 
 		//Either mutes or unmutes all sounds (volume = 0)
 		void muteAll();
+		
+		//Either mutes or unmutes BGM
+		void muteBGM();
 
 		/**************************
 		 OTHER FUNCTIONS

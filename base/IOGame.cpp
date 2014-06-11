@@ -199,7 +199,7 @@ void glfwGameKeyboard(void) {
    }
    if(gKeysPressed['M']){
    	if (gKeysPressed['M'] == 1) {
-           musicPlayer.muteAll();	
+           musicPlayer.muteBGM();	
         }
       gKeysPressed['M'] = 2;
    }
