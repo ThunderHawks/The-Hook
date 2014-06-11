@@ -293,6 +293,7 @@ void drawGameElements(int passNum, std::vector<Entity > *entities) {
          angle += 180.0;
       else if (diffZ > 0.0 && diffX < 0.0) // Quadrant IV wrt tmpa
          angle -= 180.0;
+      angle -= 90.0;
 
       PlaceModel(arrow, ArrowLoc.x, ArrowLoc.y, ArrowLoc.z, .1, .1, .1, angle, 0);
 /*
