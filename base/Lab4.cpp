@@ -84,10 +84,7 @@ GLuint NormalBuffObj;
 GLuint MeshBuffObj, MeshIndxBuffObj;
 
 //The assimp mesh stuff
-Mesh playerMesh;
-Mesh startNPC;
-Mesh flag;
-Mesh arrow;
+Mesh playerMesh, startNPC, flag, arrow;
 
 //animation stuff here
 GLint h_uAnimFlag, h_uNumWeights, h_uBoneMatrix, h_uWeights, h_uJoints;
@@ -126,7 +123,7 @@ void drawSelectedObjects() {
 
       //Place each selected objects
       for(int i = 0; i < tempEntities.size(); ++i) {
-         PlaceModel(*tempEntities.at(i).mesh, tempEntities.at(i).position.x, tempEntities.at(i).position.y, tempEntities.at(i).position.z, tempEntities.at(i).scale.x, tempEntities.at(i).scale.y, tempEntities.at(i).scale.z, tempEntities.at(i).angle, tempEntities.at(i).BSRadius);
+         PlaceModel(*tempEntities.at(i).mesh, tempEntities.at(i).position.x, tempEntities.at(i).position.y, tempEntities.at(i).position.z, tempEntities.at(i).scale.x, tempEntities.at(i).scale.y, tempEntities.at(i).scale.z, tempEntities.at(i).angle);
       }
    }
 }
@@ -180,9 +177,10 @@ void cameraColision(){
 
 }
 //Draws the entities into the world
-void drawEntities(int passNum, std::vector<Entity > *entities) {
+void drawEntities(int passNum, std::vector<Entity > *entities, std::vector <glm::mat4> *storedModels) {
 	//int objects = 0;
 	float sized;
+	glm::mat4 modelMat;
 
    if(Mode == GAME_MODE) {
       cameraColision();
@@ -194,6 +192,7 @@ void drawEntities(int passNum, std::vector<Entity > *entities) {
    //printf("num ent rend %d\n",getEntityNum());
    for(int i = 0; i < entities->size(); ++i) {
       entityTemp = (*entities)[i];
+      modelMat = storedModels->at(i);
       if(entityTemp.meshIndex != 18 && Mode == GAME_MODE) {
          if (passNum == 2)
             SetMaterial(17);
@@ -204,8 +203,7 @@ void drawEntities(int passNum, std::vector<Entity > *entities) {
          }
             
          if(!getGPressed('V')) {
-      		PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
-         		entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*3, entityTemp.BSRadius);
+      		PlaceModel(*entityTemp.mesh, modelMat);
          	//++objects;		
          }
       }
@@ -217,8 +215,7 @@ void drawEntities(int passNum, std::vector<Entity > *entities) {
             //while(!(mat = rand()%13));
                SetMaterial(entityTemp.material);
          }
-         if(!getGPressed('V')) PlaceModel(*entityTemp.mesh, entityTemp.position.x, entityTemp.position.y, entityTemp.position.z,
-            entityTemp.scale.x*(sized*.3+1), entityTemp.scale.y*(sized*.3+1), entityTemp.scale.z*(sized*.3+1), entityTemp.angle+sized*3, entityTemp.BSRadius);
+         if(!getGPressed('V')) PlaceModel(*entityTemp.mesh, modelMat);
       }
    }
 
@@ -253,7 +250,7 @@ void pauseorUnpause() {
    }
 }
 
-void drawGameElements(int passNum, std::vector<Entity > *entities) {
+void drawGameElements(int passNum, std::vector<Entity > *entities, std::vector <glm::mat4> *storedModels) {
    //DRAW THE DANCING CYLINDER HERE!!
    btTransform pla;
    glm::vec3 ObjDir = getCurentObjective();
@@ -267,7 +264,7 @@ void drawGameElements(int passNum, std::vector<Entity > *entities) {
       if (ctr++%3 == 0)
          frm++;
 
-   PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY() - .7, physGetPlayerZ(), .25, .25, .25, -getYaw()*180/3.14 - 90, 1.7, frm%120);
+   PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY() - .7, physGetPlayerZ(), .25, .25, .25, -getYaw()*180/3.14 - 90, frm%120);
    //END OF DANCING CYLINDER CODE HERE!!
    
    /*Draw the arrow*/
@@ -295,18 +292,18 @@ void drawGameElements(int passNum, std::vector<Entity > *entities) {
          angle -= 180.0;
       angle -= 90.0;
 
-      PlaceModel(arrow, ArrowLoc.x, ArrowLoc.y, ArrowLoc.z, .1, .1, .1, angle, 0);
+      PlaceModel(arrow, ArrowLoc.x, ArrowLoc.y, ArrowLoc.z, .1, .1, .1, angle);
 /*
 		tmpa.y=0;
 		tmpb.y=0;
 		
 		//printf("%f is angle %f %f\n",acos((tmpa.z-tmpb.z)/(tmpa-tmpb).length()),tmpa.z-tmpb.z,(tmpa-tmpb).length());	
-		PlaceModel(arrow, ArrowLoc.x, ArrowLoc.y, ArrowLoc.z, .1, .1, .1 , acos((tmpa.z-tmpb.z)/(tmpa-tmpb).length())*180/3.14159 ,0);
+		PlaceModel(arrow, ArrowLoc.x, ArrowLoc.y, ArrowLoc.z, .1, .1, .1 , acos((tmpa.z-tmpb.z)/(tmpa-tmpb).length())*180/3.14159);
 */
    }
 
    drawSelectedObjects();
-   drawEntities(passNum, entities);
+   drawEntities(passNum, entities, storedModels);
 
    // Disable backface culling for grapple
    glCullFace(GL_BACK);
@@ -346,12 +343,12 @@ void drawGameElements(int passNum, std::vector<Entity > *entities) {
       //draw objectives
       for(int i = 0; i < objectives.size();++i){
          if(objectives[i]->active){
-            PlaceModel(flag,objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 50, 50, 50, 1, 1.7);
+            //PlaceModel(flag,objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 50, 50, 50, 1);
             SetupCube(objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 16, 60, 10, 5000, 10);
          }
          else{
-            PlaceModel(startNPC, objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, .25, .25, .25, ang, 1.7, frm%48);
-            PlaceModel(flag,objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 50, 50, 50, 1, 1.7);
+            PlaceModel(startNPC, objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, .25, .25, .25, ang, frm%48);
+            //PlaceModel(flag,objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 50, 50, 50, 1);
             SetupCube(objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 15, 60, 10, 5000, 10);
          }
       }
@@ -378,7 +375,7 @@ void drawGameElements(int passNum, std::vector<Entity > *entities) {
  *          2 = Draw outlines around objects
  *          3 = Create glow map for bloom effect
  */
-void glfwDraw (GLFWwindow *window, int passNum, std::vector<Entity > *entities)
+void glfwDraw (GLFWwindow *window, int passNum, std::vector<Entity > *entities, std::vector <glm::mat4> *storedModels)
 {   
    if (passNum == 3)
       glColorMask(false, false, false, false);
@@ -416,7 +413,7 @@ void glfwDraw (GLFWwindow *window, int passNum, std::vector<Entity > *entities)
 
       SetMaterial(17);
    }
-   drawGameElements(passNum, entities);
+   drawGameElements(passNum, entities, storedModels);
    glColorMask(true, true, true, true);
 }
 
@@ -426,6 +423,7 @@ void renderScene() {
    
    std::vector<Entity> entities, all;
    glm::mat4 holdMat;
+	vector<glm::mat4> storedModels;
    
    glm::vec3 ggaze;
    glm::vec3 gw;
@@ -436,7 +434,6 @@ void renderScene() {
    Entity largestEntity;
 
 
-	//do culling here TODO
 	curView = SetView();
    curProj = SetProjectionMatrix();
    ggaze = GetLookAt() - GetEye();
@@ -450,16 +447,18 @@ void renderScene() {
 
 		holdMat = GetModel(entityTemp.position.x, entityTemp.position.y, entityTemp.position.z, entityTemp.scale.x, entityTemp.scale.y, entityTemp.scale.z, entityTemp.angle);
 		
-		if (entityTemp.meshIndex != 5 && entityTemp.meshIndex != 4 && checkViewFrustum(glm::vec3 (0,0,0), entityTemp.BSRadius, curProj*curView*holdMat) == 0) {
+		
+		if ( checkViewFrustum(glm::vec3 (0,0,0), entityTemp.BSRadius, curProj*curView*holdMat) == 0) {
 			if (largestRadius < entityTemp.BSRadius) {
 				largestRadius = entityTemp.BSRadius;
 				largestEntity = entityTemp;
 			}
-			all.push_back(entityTemp);
+			entities.push_back(entityTemp);
+			storedModels.push_back(holdMat);
 		}
    	
    }
-   entities = all;
+   //entities = all; Change the entities 5 lines up to all if you want.
    
    
    /*for (int i = 0; i < all.size(); i++) {
@@ -486,7 +485,7 @@ void renderScene() {
    curView = SetShadowView();
    curProj = SetOrthoProjectionMatrix(GetEye(), GetLookAt(), 10.0);
    glUniform3f(h_uCamPos, 0.0, 3.0, 4.0);
-   glfwDraw(window, 0, &entities);
+   glfwDraw(window, 0, &entities, &storedModels);
    shadowMap->UnbindDrawFBO(g_width, g_height);
 
    // Set the eye and look at point to their original locations
@@ -508,7 +507,7 @@ void renderScene() {
       glUniform1f(h_uTextMode, 2);
       glClearColor(1.0, 1.0, 1.0, 0.0);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      glfwDraw(window, 3, &entities);
+      glfwDraw(window, 3, &entities, &storedModels);
       glowMap->UnbindDrawFBO(g_width, g_height);
       glUniform1f(h_uTextMode, 0);
    }
@@ -516,13 +515,13 @@ void renderScene() {
    // Render scene normally and draw
    glClearColor(0.7f, 0.8f, 0.9f, 1.0f);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   glfwDraw(window, 1, &entities);
+   glfwDraw(window, 1, &entities, &storedModels);
    shadowMap->UnbindTex();
    glowMap->UnbindTex();
 
    // Draw outlines
    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-   glfwDraw(window, 2, &entities);
+   glfwDraw(window, 2, &entities, &storedModels);
    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
    // Blur the glow map
