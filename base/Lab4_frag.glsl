@@ -105,15 +105,15 @@ void main() {
             else if (count > 0.0 && temp != clear)
                onRight = true;
             if (temp != clear)
-               alpha += temp.a * Gaussian(count);
+               blur += temp * Gaussian(count);//alpha += temp.a * Gaussian(count);
          }
-         
+
          if (onLeft && onRight)
             blur = vec4(0.0);
-         else
-            blur = vec4(blurColor.rgb, alpha);
+         //else
+         //   blur = vec4(blurColor.rgb, alpha);
       }
-
+      blur.rgb = blurColor.rgb;
       blur.a *= 1.7;
       gl_FragColor = blur;
    }
