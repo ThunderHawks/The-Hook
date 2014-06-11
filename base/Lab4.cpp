@@ -33,6 +33,7 @@
 
 #include "types.h"
 #include "Image.h"
+#include "playerAnim.h"
 
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
@@ -84,7 +85,10 @@ GLuint NormalBuffObj;
 GLuint MeshBuffObj, MeshIndxBuffObj;
 
 //The assimp mesh stuff
-Mesh playerMesh, startNPC, flag, arrow;
+Player player;
+Mesh startNPC, flag, arrow;
+int startFrames[]  = {1,  2, 19, 61, 74, 91, 101, 111, 121};
+int animDuration[] = {1, 16, 41, 12, 16,  9,   9,   9,   9};
 
 //animation stuff here
 GLint h_uAnimFlag, h_uNumWeights, h_uBoneMatrix, h_uWeights, h_uJoints;
@@ -272,11 +276,12 @@ void drawGameElements(int passNum, std::vector<Entity > *entities, std::vector <
    static unsigned int frm = 0;
 
    /*REMOVE LATER TODO*/
-   if (passNum == 0)
+   /*if (passNum == 0)
       if (ctr++%3 == 0)
-         frm++;
+         frm++;*/
 
-   PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY() - 1.3, physGetPlayerZ(), .25, .25, .25, -getYaw()*180/3.14 - 90, frm%120);
+	player.Animate(START_RUN, startFrame[START_RUN], animDuration[START_RUN]);
+   //PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY() - 1.3, physGetPlayerZ(), .25, .25, .25, -getYaw()*180/3.14 - 90, frm%120);
    //END OF DANCING CYLINDER CODE HERE!!
    
    /*Draw the arrow*/
@@ -678,7 +683,7 @@ void initPlay(string fileName) {
    srand(time(0));
    SetEdit(Mode);
    paused = false;
-   playerMesh = LoadMesh("../Assets/Models/MainChar.dae");
+   player = Player();
    startNPC = LoadMesh("../Assets/Models/npcJumping.dae");
    arrow = LoadMesh("../Assets/Models/arrow.obj");
 

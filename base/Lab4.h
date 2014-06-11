@@ -49,6 +49,17 @@
 #define GAME_MODE 0
 #define EDIT_MODE 1
 
+// For playerAnim
+#define BIND_POSE 0
+#define START_RUN 1
+#define RUN			2
+#define JUMP		3
+#define LAND		4
+#define FIRE		5
+#define FLAIL		6
+#define CRASH		7
+#define IDLE		8
+
 using namespace std;
 
 extern float g_width, g_height;
