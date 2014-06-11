@@ -82,7 +82,7 @@ void main() {
       }     
       // Otherwise, blur the bloom map    
       else {
-         float count, negRange, posRange;
+         float count, negRange, posRange, alpha;
          vec4 temp;
          bool onLeft = false, onRight = false;
 
@@ -96,35 +96,30 @@ void main() {
             posRange = (1.0 - vTexCoord.x) / blurSize;
 
          // Take the weighted Gaussian distribution
-         blurColor = clear;
          for (count = negRange; count <= posRange; count++) {
             temp = texture2D(uTexUnit, vec2(vTexCoord.x + count*blurSize, vTexCoord.y));
-            if (temp.a > 0.5)//temp.rgb != clear.rgb)
+            if (temp.a > 0.5)
                blurColor = temp;
             if (count < 0.0 && temp != clear)
                onLeft = true;
             else if (count > 0.0 && temp != clear)
                onRight = true;
-            if (temp != clear)   // Comment this out to have white glow
-               blur += temp * Gaussian(count);
+            if (temp != clear)
+               alpha += temp.a * Gaussian(count);
          }
-         //blur.rgb = blurColor.rgb;
          
          if (onLeft && onRight)
-            blur = vec4(0.0);
-         //blur/=(posRange-negRange);
+            blur = clear;
+         else
+            blur = vec4(blurColor.rgb, alpha);
       }
-      //if (blur.a > 0.01)
-         //blur.rgb = vec3(0,0,1.0);//normalize(blurColor.rgb);
-         blur.rgb = blurColor.rgb;
-         blur.a *= 1.7;
-//      blur.rgb = normalize(blur.rgb);
-      gl_FragColor = blur;//vec4(blur.rgb,0.7);
+
+      blur.a *= 1.7;
+      gl_FragColor = blur;
    }
    else if (uTextMode == 5.0) {
       // Add bloom light to the scene
-//      gl_FragColor += texColor1;
-      if(texColor1.a>.0000001) gl_FragColor = vec4(texColor1.r,texColor1.g,texColor1.b,texColor1.a); 
+      gl_FragColor = texColor1;
    }
    else {
       norm = normalize(vNorm);
