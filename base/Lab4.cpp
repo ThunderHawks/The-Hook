@@ -267,7 +267,7 @@ void drawGameElements(int passNum, std::vector<Entity > *entities) {
       if (ctr++%3 == 0)
          frm++;
 
-   PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY(), physGetPlayerZ(), .25, .25, .25, -getYaw()*180/3.14, 1.7, frm%24);
+   PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY() - .7, physGetPlayerZ(), .25, .25, .25, -getYaw()*180/3.14 - 90, 1.7, frm%120);
    //END OF DANCING CYLINDER CODE HERE!!
    
    /*Draw the arrow*/
@@ -630,7 +630,7 @@ void initPlay(string fileName) {
    srand(time(0));
    SetEdit(Mode);
    paused = false;
-   playerMesh = LoadMesh("../Assets/Models/npcWaving.dae");
+   playerMesh = LoadMesh("../Assets/Models/MainChar.dae");
    startNPC = LoadMesh("../Assets/Models/npcJumping.dae");
    arrow = LoadMesh("../Assets/Models/arrow.obj");
 
