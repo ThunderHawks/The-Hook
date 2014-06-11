@@ -280,7 +280,7 @@ void drawGameElements(int passNum, std::vector<Entity > *entities, std::vector <
 	//Animation ifs
 	if (isGrappleActive())
 		anim = FLAIL;
-
+   SetMaterial(7);
 	Animate(anim, startFrames[anim], endFrames[anim]);
    //PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY() - 1.3, physGetPlayerZ(), .25, .25, .25, -getYaw()*180/3.14 - 90, frm%120);
    //END OF DANCING CYLINDER CODE HERE!!
