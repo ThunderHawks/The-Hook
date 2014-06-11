@@ -244,6 +244,7 @@ void physJump(){
       setPlayerSpeed(0,30,0);
       playerJump=0;
       playerFall = 0;
+      anim = JUMP;
       musicPlayer.BGM.playSFX("../Assets/Sounds/Jump.wav");
    }
 }
@@ -335,6 +336,7 @@ void physStep(float time){
       fspeed*fspeed>.0001 && playerFall==1){
       if(!playerJump)      particleSpawner.push_front(createDustPart(250,1.0,playerPoss()-glm::vec3(0,1,0)));
       playerJump = 1;
+      anim = LAND;
       //printf("can boing\n");
    }
    

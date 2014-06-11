@@ -64,7 +64,9 @@ void glfwGameMouse(GLFWwindow *window, int button, int action, int mods) {
             ReleaseGrapple();
           } else {
            //check to see if the grappling hook hit. If it did, play a sound
-           if (physGrapple(-dir.x,-dir.y,-dir.z));
+           if (physGrapple(-dir.x,-dir.y,-dir.z)) {
+           		anim = FIRE;
+           }
         	   //PlayFX(THROW_GRAP_FX);
         
            //pull on the grapple
@@ -140,13 +142,21 @@ void glfwGameKeyboard(void) {
   gu = glm::cross(GetUp(), gw)/magnitude(glm::cross(GetUp(), gw));
    //GLFW_KEY_S
    if(gKeysPressed['S']) {
-       if(canMove()==1) setPlayerSpeed(gw.x*3,0,gw.z*3);
+       if(canMove()==1){ 
+       	setPlayerSpeed(gw.x*3,0,gw.z*3);
+       	if(anim != JUMP && anim != RUN) {
+   			anim = START_RUN;
+   		}
+   	}
        else setPlayerSpeed(gw.x*1,0,gw.z*1);
        //newSpeed.x=newSpeed.x+w.x*3;
        //newSpeed.z=newSpeed.z+w.z*3;
    }
    //GLFW_KEY_W
    if(gKeysPressed['W']) {
+   	if(anim != JUMP && anim != RUN) {
+   		anim = START_RUN;
+   	}
    	 //printf("%lf %lf %lf\n", GetEye().x, GetEye().y, GetEye().z);
        //printf("%f player X %f player Y\n",physGetPlayerX(),physGetPlayerZ());
        //if(canMove()==1) setPlayerSpeed(-w.x*3,0,-w.z*3);
@@ -157,7 +167,12 @@ void glfwGameKeyboard(void) {
    }
    //GLFW_KEY_D
    if(gKeysPressed['D']) {
-       if(canMove()==1) setPlayerSpeed(gu.x*3,0,gu.z*3);
+       if(canMove()==1) {
+       	setPlayerSpeed(gu.x*3,0,gu.z*3);
+       	if(anim != JUMP && anim != RUN) {
+				anim = START_RUN;
+			}
+   	}
         else setPlayerSpeed(gu.x*3,0,gu.z*3);
 
        //newSpeed.x=newSpeed.x+u.x*3;
@@ -165,9 +180,12 @@ void glfwGameKeyboard(void) {
    }
    //GLFW_KEY_A
    if(gKeysPressed['A']) {
-        if(canMove()==1) 
+        if(canMove()==1) {
         		setPlayerSpeed(-gu.x*3,0,-gu.z*3);
-       else 
+        		if(anim != JUMP && anim != RUN) {
+					anim = START_RUN;
+				}
+       } else 
  				setPlayerSpeed(-gu.x*3,0,-gu.z*3);
        //newSpeed.x=newSpeed.x-u.x*3;
        //newSpeed.z=newSpeed.z-u.z*3;

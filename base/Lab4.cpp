@@ -30,10 +30,11 @@
 #include "camBox.h"
 #include "Gui.h"
 //#include "particle.h"
+#include "playerAnim.h"
 
 #include "types.h"
 #include "Image.h"
-#include "playerAnim.h"
+
 
 #include <bullet/btBulletDynamicsCommon.h>
 #include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
@@ -85,10 +86,11 @@ GLuint NormalBuffObj;
 GLuint MeshBuffObj, MeshIndxBuffObj;
 
 //The assimp mesh stuff
-Player player;
-Mesh startNPC, flag, arrow;
-int startFrames[]  = {1,  2, 19, 61, 74, 91, 101, 111, 121};
-int animDuration[] = {1, 16, 41, 12, 16,  9,   9,   9,   9};
+//PlayerAnim PlayerChar;
+Mesh NPC1, NPC2, flag, arrow;
+int anim = 0;
+int startFrames[]  = {1,  2, 19, 61, 74, 91, 111, 121, 131};
+int endFrames[] = {1, 18, 59, 73, 90,  110,   120,   130, 145};
 
 //animation stuff here
 GLint h_uAnimFlag, h_uNumWeights, h_uBoneMatrix, h_uWeights, h_uJoints;
@@ -275,12 +277,11 @@ void drawGameElements(int passNum, std::vector<Entity > *entities, std::vector <
    static unsigned int ctr = 0;
    static unsigned int frm = 0;
 
-   /*REMOVE LATER TODO*/
-   /*if (passNum == 0)
-      if (ctr++%3 == 0)
-         frm++;*/
+	//Animation ifs
+	if (isGrappleActive())
+		anim = FLAIL;
 
-	player.Animate(START_RUN, startFrame[START_RUN], animDuration[START_RUN]);
+	Animate(anim, startFrames[anim], endFrames[anim]);
    //PlaceModel(playerMesh, physGetPlayerX(), physGetPlayerY() - 1.3, physGetPlayerZ(), .25, .25, .25, -getYaw()*180/3.14 - 90, frm%120);
    //END OF DANCING CYLINDER CODE HERE!!
    
@@ -355,16 +356,23 @@ void drawGameElements(int passNum, std::vector<Entity > *entities, std::vector <
    srand(0);
    glColorMask(true, true, true, true);
 
+	if (passNum == 1 && ctr++%2)
+		frm++;
+
    if (passNum == 1 || passNum == 3) {
    	float ang = 90 + -getYaw()*180/3.14;
       //draw objectives
       for(int i = 0; i < objectives.size();++i){
          if(objectives[i]->active){
             //PlaceModel(flag,objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 50, 50, 50, 1);
+            PlaceModel(flag, objectives[i]->end.x, objectives[i]->end.y + 1.5, objectives[i]->end.z, .75, .75, .75, ang);
             SetupCube(objectives[i]->end.x, objectives[i]->end.y, objectives[i]->end.z, 16, 60, 10, 5000, 10);
          }
          else{
-            PlaceModel(startNPC, objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, .25, .25, .25, ang, frm%48);
+         	if (i%2)
+            	PlaceModel(NPC1, objectives[i]->start.x, objectives[i]->start.y + 1.5, objectives[i]->start.z, .75, .75, .75, ang, frm%48);
+            else
+            	PlaceModel(NPC2, objectives[i]->start.x, objectives[i]->start.y + 1.5, objectives[i]->start.z, .75, .75, .75, ang, frm%24);
             //PlaceModel(flag,objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 50, 50, 50, 1);
             SetupCube(objectives[i]->start.x, objectives[i]->start.y, objectives[i]->start.z, 15, 60, 10, 5000, 10);
          }
@@ -678,14 +686,16 @@ void initStartScreen() {
 
 void initPlay(string fileName) {
    static bool musicStarted = false;
-
    Mode = GAME_MODE;
    srand(time(0));
    SetEdit(Mode);
    paused = false;
-   player = Player();
-   startNPC = LoadMesh("../Assets/Models/npcJumping.dae");
+   //PlayerChar = PlayerAnim("../Assets/Models/MainChar.dae");
+   SetPlayer("../Assets/Models/MainChar.dae");
+   NPC1 = LoadMesh("../Assets/Models/npcJumping.dae");
+   NPC2 = LoadMesh("../Assets/Models/npcWaving.dae");
    arrow = LoadMesh("../Assets/Models/arrow.obj");
+   flag = LoadMesh("../Assets/Models/flag.obj");
 
    //music
    if (!musicStarted) {

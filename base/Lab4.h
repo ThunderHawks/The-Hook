@@ -75,6 +75,10 @@ extern std::list<part*> particleSpawner;
 extern GLuint TexBuffObj;
 extern RenderingHelper ModelTrans;
 
+extern int anim;
+extern int startFrames[10];
+extern int endFrames[10];
+
 
 typedef struct Node {
    glm::vec3 Position;

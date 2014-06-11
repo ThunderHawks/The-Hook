@@ -93,6 +93,9 @@ glm::vec3 GetEye() {
 		eye.x += lookAtPoint.x;
 		eye.y += lookAtPoint.y;
 		eye.z += lookAtPoint.z;
+		
+		if (eye.y < 0)
+			eye.y = 0;
 	}
 
 	return eye;

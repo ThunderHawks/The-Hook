@@ -112,7 +112,7 @@ AssimpMesh loadMesh(const std::string& path) {
 			for (j = 0; j < scene->mAnimations[i]->mNumChannels; j++) {
 				//go through each bone and see if it matches the node in the animation
 				for(int k = 0; k < ret.boneCt; k++) {
-					printf("animation channels %d\n", scene->mAnimations[i]->mNumChannels);
+					//printf("animation channels %d\n", scene->mAnimations[i]->mNumChannels);
 					//if there is a bone whos name matches a node in the animation, then we must give it the key frames
 					if (ret.bone_array[k]->name == scene->mAnimations[i]->mChannels[j]->mNodeName) {
 						//this variable is a sanity check :D
@@ -131,7 +131,7 @@ AssimpMesh loadMesh(const std::string& path) {
 							ret.bone_array[k]->scaleKeys.push_back(nodeHold->mScalingKeys[l]);
 						}
 
-						printf("The keyframes are: %d position, %d rotation, %d scaling\n", nodeHold->mNumPositionKeys, nodeHold->mNumRotationKeys, nodeHold->mNumScalingKeys);
+						//printf("The keyframes are: %d position, %d rotation, %d scaling\n", nodeHold->mNumPositionKeys, nodeHold->mNumRotationKeys, nodeHold->mNumScalingKeys);
 						
 					}
 				}
