@@ -22,6 +22,9 @@ bool cameraLock = false;
 void camlock(bool l){
    cameraLock = l;
 }
+bool isLocked() {
+   return cameraLock;
+}
 void resetVecs() {
 	if (inEdit == 0) {
 		yaw += (idealYaw - yaw)/2 + (idealYaw - yaw)/20;

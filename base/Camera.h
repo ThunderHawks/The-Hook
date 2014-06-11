@@ -55,4 +55,5 @@ void SetSpeed(float speed);
 void SetEdit (int status);
 void resetVecs();
 void camlock(bool l);
+bool isLocked();
 #endif

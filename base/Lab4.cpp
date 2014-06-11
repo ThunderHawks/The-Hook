@@ -478,6 +478,12 @@ void renderScene() {
    shadowMap->BindDepthTex();
 
    // Render depth info from light's perspective
+   bool isLock = isLocked();
+   camlock(false);
+   glm::vec3 tempEye = GetEye();
+   glm::vec3 tempLook = GetLookAt();
+   float tempDist = getDistance();
+
    shadowMap->BindDrawFBO();
    glClear(GL_DEPTH_BUFFER_BIT);
    SetEye(glm::vec3(origLookAt.x, origLookAt.y + 6.0, origLookAt.z + 8.0));
@@ -488,8 +494,14 @@ void renderScene() {
    glfwDraw(window, 0, &entities, &storedModels);
    shadowMap->UnbindDrawFBO(g_width, g_height);
 
+   SetLookAt(tempLook);
+   SetEye(tempEye);   
+   setDistance(tempDist);
+
    // Set the eye and look at point to their original locations
-   SetEye(origEye);
+   resetVecs();
+   camlock(isLock);
+
    if (Mode != GAME_MODE) {
    	SetLookAt(origLookAt);
    } else {
