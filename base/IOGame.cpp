@@ -206,7 +206,7 @@ void glfwGameKeyboard(void) {
    if (gKeysPressed['N']) {
       if (++ShadeMode == 3)
          ShadeMode = 0;
-      gKeysPressed['N'] = 2;
+      gKeysPressed['N'] = 0;
    }
 }
 
